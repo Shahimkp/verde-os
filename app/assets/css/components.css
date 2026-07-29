@@ -93,7 +93,7 @@
   border-radius: var(--radius-md, 12px);
   padding: var(--space-5);
   box-shadow: var(--shadow-sm);
-  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+  transition: transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease;
 }
 
 .card-elevated {
@@ -101,7 +101,7 @@
 }
 
 .card-interactive:hover {
-  transform: translateY(-3px);
+  transform: translateY(-1px);
   box-shadow: var(--shadow-md);
   border-color: var(--border-hover);
   cursor: pointer;

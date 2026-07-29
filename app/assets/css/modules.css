@@ -86,11 +86,11 @@
   flex-direction: column;
   gap: 10px;
   cursor: grab;
-  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  transition: transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease;
 }
 
 .crm-lead-card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-1px);
   box-shadow: var(--shadow-md);
   border-color: var(--border-hover);
 }
@@ -157,11 +157,11 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  transition: transform 180ms ease, box-shadow 180ms ease;
+  transition: transform 250ms ease, box-shadow 250ms ease;
 }
 
 .team-alloc-card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }
 
@@ -662,11 +662,11 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  transition: transform 200ms ease, box-shadow 200ms ease;
+  transition: transform 250ms ease, box-shadow 250ms ease;
 }
 
 .premium-kpi-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }
 

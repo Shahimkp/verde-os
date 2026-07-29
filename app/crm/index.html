@@ -87,10 +87,10 @@
       display: flex;
       flex-direction: column;
       gap: 16px;
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease;
     }
     .crm-kpi-card:hover {
-      transform: translateY(-2px);
+      transform: translateY(-1px);
       box-shadow: var(--shadow-md);
       border-color: var(--border);
     }
@@ -175,10 +175,10 @@
       padding: 20px;
       box-shadow: var(--shadow-sm);
       cursor: grab;
-      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      transition: transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease;
     }
     .crm-kanban-card:hover {
-      transform: translateY(-2px);
+      transform: translateY(-1px);
       box-shadow: var(--shadow-md);
       border-color: var(--primary-30);
     }
