@@ -62,7 +62,8 @@
       'reports': 'Reports & Analytics',
       'communication': 'Communication Workspace',
       'team': 'Team Management',
-      'create-project': 'Create Project'
+      'create-project': 'Create Project',
+      'ai-hub': 'VERDE Copilot'
     };
 
     let activePageKey = 'dashboard';
