@@ -13,56 +13,371 @@
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/modules.css" />
   <style>
-    .project-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 32px;
+    .projects-layout {
+      padding: 0 0 64px 0;
+      animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
-    .project-card {
+
+    /* Page Header */
+    .proj-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 48px;
+    }
+    .proj-header-title {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      color: var(--text-1);
+      margin-bottom: 8px;
+    }
+    .proj-header-desc {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-3);
+    }
+    .proj-toolbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .proj-search {
+      display: flex;
+      align-items: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      width: 240px;
+    }
+    .proj-search input {
+      border: none;
+      background: transparent;
+      outline: none;
+      width: 100%;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-1);
+      margin-left: 8px;
+    }
+    .proj-search input::placeholder {
+      color: var(--text-3);
+    }
+
+    /* KPI Grid */
+    .proj-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+    .proj-kpi-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease;
       box-shadow: var(--shadow-sm);
     }
-    .project-card-header {
+    .proj-kpi-card:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+    .proj-kpi-value {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      color: var(--text-1);
+      line-height: 1;
+    }
+    .proj-kpi-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Sections */
+    .proj-section {
+      margin-bottom: 48px;
+    }
+    .proj-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .proj-section-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-1);
+      letter-spacing: -0.3px;
+    }
+
+    /* Projects Grid */
+    .proj-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .proj-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      transition: transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease;
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+    }
+    .proj-card:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--border-hover);
+    }
+    .proj-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .proj-card-title {
       font-size: 16px;
       font-weight: 800;
       color: var(--text-1);
-      margin-bottom: 24px;
+      margin-bottom: 4px;
     }
-    /* Simple Gantt visual */
-    .gantt-row {
+    .proj-card-client {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-3);
+    }
+    .proj-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+    .badge-active { background: var(--success-10); color: var(--success); }
+    .badge-risk { background: var(--warning-10); color: var(--warning); }
+    .badge-completed { background: var(--text-3); color: #fff; }
+    
+    .proj-progress-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .proj-progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-2);
+    }
+    .proj-progress {
+      background: var(--bg-2);
+      border-radius: 4px;
+      height: 6px;
+      overflow: hidden;
+    }
+    .proj-progress-bar {
+      height: 100%;
+      background: var(--primary);
+      border-radius: 4px;
+    }
+    .proj-card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-2);
+      border-top: 1px dashed var(--border);
+      padding-top: 16px;
+    }
+    .proj-avatars {
+      display: flex;
+    }
+    .proj-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid var(--surface);
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 800;
+      margin-left: -8px;
+    }
+    .proj-avatar:first-child {
+      margin-left: 0;
+    }
+    .proj-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* Half Grid for Timeline & Activity */
+    .proj-half-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    
+    /* Box Container */
+    .proj-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 250ms ease, box-shadow 250ms ease;
+    }
+    .proj-box:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+    .proj-box-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-1);
+    }
+    .proj-list {
+      display: flex;
+      flex-direction: column;
+    }
+    .proj-list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .proj-list-item:last-child {
+      border-bottom: none;
+    }
+    .proj-list-content {
       display: flex;
       align-items: center;
       gap: 16px;
-      margin-bottom: 16px;
     }
-    .gantt-label {
-      width: 150px;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text-1);
-    }
-    .gantt-track {
-      flex: 1;
-      height: 28px;
-      background: var(--bg);
-      border-radius: 6px;
-      position: relative;
-    }
-    .gantt-bar {
-      height: 100%;
-      border-radius: 6px;
+    .proj-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--bg-2);
       display: flex;
       align-items: center;
-      padding: 0 12px;
-      font-size: 11px;
-      font-weight: 700;
-      color: white;
+      justify-content: center;
+      color: var(--text-2);
     }
-    @media (max-width: 1024px) {
-      .project-grid { grid-template-columns: 1fr; }
+    .proj-item-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-1);
+    }
+    .proj-item-sub {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-3);
+    }
+
+    /* Project Details Slide-over Panel */
+    .proj-panel {
+      position: fixed;
+      top: 0;
+      right: -650px;
+      width: 650px;
+      height: 100vh;
+      background: var(--surface);
+      box-shadow: -4px 0 24px rgba(0,0,0,0.05);
+      border-left: 1px solid var(--border);
+      z-index: 1000;
+      transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+    }
+    .proj-panel.active {
+      right: 0;
+    }
+    .proj-panel-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.2);
+      backdrop-filter: blur(2px);
+      z-index: 999;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .proj-panel-overlay.active {
+      display: block;
+      opacity: 1;
+    }
+    .proj-panel-header {
+      padding: 24px 32px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .proj-panel-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-1);
+      margin-bottom: 4px;
+    }
+    .proj-panel-tabs {
+      display: flex;
+      gap: 24px;
+      padding: 0 32px;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+    }
+    .proj-tab {
+      padding: 16px 0;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-3);
+      cursor: pointer;
+      position: relative;
+      white-space: nowrap;
+    }
+    .proj-tab.active {
+      color: var(--primary);
+    }
+    .proj-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--primary);
+      border-radius: 2px 2px 0 0;
+    }
+    .proj-panel-body {
+      padding: 32px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
@@ -72,104 +387,290 @@
     <div id="sidebar-container"></div>
     <div class="shell-main">
       <div id="topbar-container"></div>
+      
       <main class="app-content">
-        
-        <div class="premium-module-layout">
+        <div class="projects-layout">
           
-          <!-- Page Header -->
-          <header class="premium-header">
+          <!-- 1. Page Header -->
+          <header class="proj-header">
             <div>
-              <h1 class="premium-header-title">Projects</h1>
-              <p class="premium-header-desc">Portfolio oversight, milestones, and budget allocation</p>
+              <h1 class="proj-header-title">Projects</h1>
+              <div class="proj-header-desc">How are my projects progressing today?</div>
             </div>
-            <div class="premium-toolbar-group">
-              <button class="btn btn-primary" onclick="window.location.href='../create-project/index.html'">+ New Project</button>
+            <div class="proj-toolbar">
+              <div class="proj-search">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" placeholder="Search projects..." />
+              </div>
+              <button class="btn btn-ghost" style="background:var(--surface); border:1px solid var(--border);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+                Filters
+              </button>
+              <div class="btn-group" style="display:flex; border:1px solid var(--border); border-radius:8px; background:var(--surface); padding:4px;">
+                <button class="btn btn-sm btn-ghost" style="background:var(--bg-2); border-radius:4px; padding:4px 8px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                </button>
+                <button class="btn btn-sm btn-ghost" style="border-radius:4px; padding:4px 8px; color:var(--text-3);">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                </button>
+              </div>
+              <button class="btn btn-primary">+ New Project</button>
             </div>
           </header>
 
-          <!-- Primary KPI Row -->
-          <section class="premium-kpi-grid">
-            <div class="premium-kpi-card">
-              <span class="premium-kpi-label">Active Portfolio</span>
-              <div class="premium-kpi-value">8</div>
+          <!-- 2. KPI Cards (Max 4) -->
+          <section class="proj-kpi-grid">
+            <div class="proj-kpi-card">
+              <div class="proj-kpi-value">14</div>
+              <div class="proj-kpi-label">Active Projects</div>
             </div>
-            <div class="premium-kpi-card">
-              <span class="premium-kpi-label">Delayed Projects</span>
-              <div class="premium-kpi-value" style="color: var(--danger);">2</div>
+            <div class="proj-kpi-card">
+              <div class="proj-kpi-value">8</div>
+              <div class="proj-kpi-label">Completed</div>
             </div>
-            <div class="premium-kpi-card">
-              <span class="premium-kpi-label">Total Allocated Budget</span>
-              <div class="premium-kpi-value">₹84.5L</div>
+            <div class="proj-kpi-card">
+              <div class="proj-kpi-value" style="color:var(--danger);">2</div>
+              <div class="proj-kpi-label">At Risk</div>
             </div>
-            <div class="premium-kpi-card">
-              <span class="premium-kpi-label">Avg. Completion</span>
-              <div class="premium-kpi-value" style="color: var(--primary);">68%</div>
+            <div class="proj-kpi-card">
+              <div class="proj-kpi-value" style="color:var(--primary);">3</div>
+              <div class="proj-kpi-label">Due This Week</div>
             </div>
           </section>
 
-          <!-- Grid: Timeline & Milestones -->
-          <div class="project-grid">
+          <!-- 3. Projects Grid -->
+          <section class="proj-section">
+            <div class="proj-grid">
+              
+              <!-- Project 1 -->
+              <div class="proj-card" onclick="openProject()">
+                <div class="proj-card-header">
+                  <div>
+                    <div class="proj-card-title">Cabo Travels Website</div>
+                    <div class="proj-card-client">Cabo Travels</div>
+                  </div>
+                  <span class="proj-badge badge-active">Active</span>
+                </div>
+                <div class="proj-progress-wrap">
+                  <div class="proj-progress-label">
+                    <span>Progress</span>
+                    <span>65%</span>
+                  </div>
+                  <div class="proj-progress">
+                    <div class="proj-progress-bar" style="width: 65%;"></div>
+                  </div>
+                </div>
+                <div class="proj-card-meta">
+                  <div>Aug 30, 2026</div>
+                  <div class="proj-avatars">
+                    <div class="proj-avatar">SH</div>
+                    <div class="proj-avatar" style="background:var(--warning);">JD</div>
+                  </div>
+                  <div class="proj-actions">
+                    <button class="btn btn-sm btn-ghost" style="border:1px solid var(--border);">View</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Project 2 -->
+              <div class="proj-card" onclick="openProject()">
+                <div class="proj-card-header">
+                  <div>
+                    <div class="proj-card-title">GreenLeaf Branding</div>
+                    <div class="proj-card-client">GreenLeaf</div>
+                  </div>
+                  <span class="proj-badge badge-active">Active</span>
+                </div>
+                <div class="proj-progress-wrap">
+                  <div class="proj-progress-label">
+                    <span>Progress</span>
+                    <span>30%</span>
+                  </div>
+                  <div class="proj-progress">
+                    <div class="proj-progress-bar" style="width: 30%;"></div>
+                  </div>
+                </div>
+                <div class="proj-card-meta">
+                  <div>Sep 15, 2026</div>
+                  <div class="proj-avatars">
+                    <div class="proj-avatar" style="background:var(--success);">AK</div>
+                  </div>
+                  <div class="proj-actions">
+                    <button class="btn btn-sm btn-ghost" style="border:1px solid var(--border);">View</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Project 3 -->
+              <div class="proj-card" onclick="openProject()" style="border-color:var(--warning-30);">
+                <div class="proj-card-header">
+                  <div>
+                    <div class="proj-card-title">BlueWave CRM Portal</div>
+                    <div class="proj-card-client">BlueWave Tech</div>
+                  </div>
+                  <span class="proj-badge badge-risk">At Risk</span>
+                </div>
+                <div class="proj-progress-wrap">
+                  <div class="proj-progress-label">
+                    <span>Progress</span>
+                    <span style="color:var(--warning);">85%</span>
+                  </div>
+                  <div class="proj-progress">
+                    <div class="proj-progress-bar" style="width: 85%; background:var(--warning);"></div>
+                  </div>
+                </div>
+                <div class="proj-card-meta">
+                  <div style="color:var(--warning);">Aug 05, 2026</div>
+                  <div class="proj-avatars">
+                    <div class="proj-avatar">SH</div>
+                    <div class="proj-avatar" style="background:var(--success);">AK</div>
+                    <div class="proj-avatar" style="background:var(--text-3);">+2</div>
+                  </div>
+                  <div class="proj-actions">
+                    <button class="btn btn-sm btn-ghost" style="border:1px solid var(--border);">View</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Project 4 -->
+              <div class="proj-card" onclick="openProject()">
+                <div class="proj-card-header">
+                  <div>
+                    <div class="proj-card-title">TechNova Dashboard</div>
+                    <div class="proj-card-client">TechNova</div>
+                  </div>
+                  <span class="proj-badge badge-completed">Completed</span>
+                </div>
+                <div class="proj-progress-wrap">
+                  <div class="proj-progress-label">
+                    <span>Progress</span>
+                    <span style="color:var(--success);">100%</span>
+                  </div>
+                  <div class="proj-progress">
+                    <div class="proj-progress-bar" style="width: 100%; background:var(--success);"></div>
+                  </div>
+                </div>
+                <div class="proj-card-meta">
+                  <div>Jul 25, 2026</div>
+                  <div class="proj-avatars">
+                    <div class="proj-avatar" style="background:var(--warning);">JD</div>
+                  </div>
+                  <div class="proj-actions">
+                    <button class="btn btn-sm btn-ghost" style="border:1px solid var(--border);">View</button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+          <!-- 4 & 5. Timeline & Activity -->
+          <div class="proj-half-grid">
             
-            <!-- Left: Gantt Timeline -->
-            <div class="project-card">
-              <div class="project-card-header">Q3 Delivery Timeline</div>
-              
-              <div class="gantt-row">
-                <div class="gantt-label">Cabo Travels Revamp</div>
-                <div class="gantt-track">
-                  <div class="gantt-bar" style="width: 72%; background: var(--primary);">72% (Review Due)</div>
+            <!-- 4. Timeline -->
+            <div class="proj-box">
+              <div class="proj-box-header">Milestone Timeline</div>
+              <div class="proj-list">
+                
+                <div class="proj-list-item">
+                  <div class="proj-list-content">
+                    <div class="proj-icon" style="color:var(--primary); background:var(--primary-10);">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    </div>
+                    <div>
+                      <div class="proj-item-text">UI Design Handoff (GreenLeaf)</div>
+                      <div class="proj-item-sub">Deadline: Tomorrow</div>
+                    </div>
+                  </div>
                 </div>
-              </div>
 
-              <div class="gantt-row">
-                <div class="gantt-label">MedCare Mobile App</div>
-                <div class="gantt-track">
-                  <div class="gantt-bar" style="width: 45%; background: var(--warning);">45% (Development)</div>
+                <div class="proj-list-item">
+                  <div class="proj-list-content">
+                    <div class="proj-icon">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    </div>
+                    <div>
+                      <div class="proj-item-text">Backend API Integration (BlueWave)</div>
+                      <div class="proj-item-sub">Deliverable: Aug 02</div>
+                    </div>
+                  </div>
                 </div>
-              </div>
 
-              <div class="gantt-row">
-                <div class="gantt-label">GreenLeaf Branding</div>
-                <div class="gantt-track">
-                  <div class="gantt-bar" style="width: 85%; background: var(--success);">85% (Final Review)</div>
+                <div class="proj-list-item">
+                  <div class="proj-list-content">
+                    <div class="proj-icon">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    </div>
+                    <div>
+                      <div class="proj-item-text">Content Migration (Cabo Travels)</div>
+                      <div class="proj-item-sub">Milestone: Aug 10</div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              
-              <div class="gantt-row">
-                <div class="gantt-label">Vertex Data Migration</div>
-                <div class="gantt-track">
-                  <div class="gantt-bar" style="width: 15%; background: var(--primary);">15% (Planning)</div>
-                </div>
+
               </div>
             </div>
 
-            <!-- Right: Upcoming Milestones -->
-            <div class="project-card">
-              <div class="project-card-header">Critical Milestones</div>
-              <div style="display: flex; flex-direction: column; gap: 16px;">
+            <!-- 5. Recent Activity -->
+            <div class="proj-box">
+              <div class="proj-box-header">Recent Activity</div>
+              <div class="proj-list">
                 
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 16px; border-bottom: 1px solid var(--border-subtle);">
-                  <div>
-                    <div style="font-weight: 700; font-size: 13px;">Cabo: Homepage Wireframes</div>
-                    <div style="font-size: 11px; color: var(--text-3); margin-top: 4px;">Assigned to Midhul K</div>
+                <div class="proj-list-item" style="padding: 12px 24px;">
+                  <div class="proj-list-content">
+                    <div class="proj-icon" style="width:28px; height:28px; color:var(--success);">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </div>
+                    <div class="proj-item-text" style="font-size:12px;">Task Completed: Homepage wireframes (Cabo Travels)</div>
                   </div>
-                  <span class="badge badge-danger">Due Today</span>
                 </div>
 
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 16px; border-bottom: 1px solid var(--border-subtle);">
-                  <div>
-                    <div style="font-weight: 700; font-size: 13px;">GreenLeaf: Brand Guidelines</div>
-                    <div style="font-size: 11px; color: var(--text-3); margin-top: 4px;">Assigned to Shafna F</div>
+                <div class="proj-list-item" style="padding: 12px 24px;">
+                  <div class="proj-list-content">
+                    <div class="proj-icon" style="width:28px; height:28px; color:var(--info);">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    </div>
+                    <div class="proj-item-text" style="font-size:12px;">File Uploaded: brand-guidelines-v2.pdf (GreenLeaf)</div>
                   </div>
-                  <span class="badge badge-primary">Aug 05</span>
                 </div>
 
-                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                  <div>
-                    <div style="font-weight: 700; font-size: 13px;">MedCare: API Structure</div>
-                    <div style="font-size: 11px; color: var(--text-3); margin-top: 4px;">Assigned to Shahim</div>
+                <div class="proj-list-item" style="padding: 12px 24px;">
+                  <div class="proj-list-content">
+                    <div class="proj-icon" style="width:28px; height:28px; color:var(--success);">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    </div>
+                    <div class="proj-item-text" style="font-size:12px;">Client Approved: User flows (TechNova)</div>
                   </div>
-                  <span class="badge badge-neutral">Aug 12</span>
+                </div>
+
+                <div class="proj-list-item" style="padding: 12px 24px;">
+                  <div class="proj-list-content">
+                    <div class="proj-icon" style="width:28px; height:28px;">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                    </div>
+                    <div class="proj-item-text" style="font-size:12px;">Comment Added: "Please revise hero section" (BlueWave)</div>
+                  </div>
+                </div>
+                
+                <div class="proj-list-item" style="padding: 12px 24px;">
+                  <div class="proj-list-content">
+                    <div class="proj-icon" style="width:28px; height:28px; color:var(--warning);">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    </div>
+                    <div class="proj-item-text" style="font-size:12px;">Milestone Reached: Phase 1 sign-off (Cabo Travels)</div>
+                  </div>
+                </div>
+
+                <div class="proj-list-item" style="padding: 12px 24px;">
+                  <div class="proj-list-content">
+                    <div class="proj-icon" style="width:28px; height:28px; color:var(--success);">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </div>
+                    <div class="proj-item-text" style="font-size:12px;">Task Completed: DB schema design (BlueWave)</div>
+                  </div>
                 </div>
 
               </div>
@@ -177,87 +678,67 @@
 
           </div>
 
-          <!-- Main Table: Project Master Directory -->
-          <section class="premium-section">
-            <div class="premium-table-container">
-              <div style="padding: 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between;">
-                <h2 style="font-size: 16px; font-weight: 800;">Project Master Directory</h2>
-                <div class="premium-toolbar-group">
-                  <input type="text" class="premium-input" placeholder="Search projects..." style="width: 250px; padding: 8px 12px; font-size: 12px;" />
-                </div>
-              </div>
-              <table class="premium-table">
-                <thead>
-                  <tr>
-                    <th>Project Name</th>
-                    <th>Client</th>
-                    <th>Budget Used</th>
-                    <th>Status</th>
-                    <th>Team</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <div class="premium-table-title">Cabo Travels Redesign</div>
-                      <div class="premium-table-sub">Due: Aug 15, 2026</div>
-                    </td>
-                    <td>Cabo Travels Inc</td>
-                    <td>
-                      <div style="font-weight: 700;">₹12.5L / ₹18.5L</div>
-                      <div style="width: 100px; height: 4px; background: var(--bg); margin-top: 4px; border-radius: 2px;"><div style="width: 68%; height: 100%; background: var(--warning);"></div></div>
-                    </td>
-                    <td><span class="badge badge-danger">Review Due</span></td>
-                    <td>
-                      <div style="display: flex; gap: -8px;">
-                        <div class="avatar avatar-sm">SH</div>
-                        <div class="avatar avatar-sm" style="background: #6366F1; color: white;">MK</div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="premium-table-title">MedCare ERP Mobile App</div>
-                      <div class="premium-table-sub">Due: Sep 01, 2026</div>
-                    </td>
-                    <td>MedCare Health</td>
-                    <td>
-                      <div style="font-weight: 700;">₹10.0L / ₹24.0L</div>
-                      <div style="width: 100px; height: 4px; background: var(--bg); margin-top: 4px; border-radius: 2px;"><div style="width: 42%; height: 100%; background: var(--primary);"></div></div>
-                    </td>
-                    <td><span class="badge badge-warning">Development</span></td>
-                    <td>
-                      <div style="display: flex; gap: -8px;">
-                        <div class="avatar avatar-sm" style="background: #F59E0B; color: white;">MK</div>
-                        <div class="avatar avatar-sm" style="background: #EC4899; color: white;">SF</div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="premium-table-title">GreenLeaf Brand Guide</div>
-                      <div class="premium-table-sub">Due: Jul 30, 2026</div>
-                    </td>
-                    <td>GreenLeaf Corp</td>
-                    <td>
-                      <div style="font-weight: 700;">₹11.0L / ₹12.0L</div>
-                      <div style="width: 100px; height: 4px; background: var(--bg); margin-top: 4px; border-radius: 2px;"><div style="width: 92%; height: 100%; background: var(--danger);"></div></div>
-                    </td>
-                    <td><span class="badge badge-success">Final Review</span></td>
-                    <td>
-                      <div style="display: flex; gap: -8px;">
-                        <div class="avatar avatar-sm" style="background: #EC4899; color: white;">SF</div>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </section>
+        </div>
+      </main>
 
+    </div>
+  </div>
+
+  <!-- 6. Project Details Slide-over Panel -->
+  <div class="proj-panel-overlay" id="projOverlay" onclick="closeProject()"></div>
+  <div class="proj-panel" id="projPanel">
+    <div class="proj-panel-header">
+      <div>
+        <div class="proj-panel-title">Cabo Travels Website</div>
+        <div class="proj-card-client">Cabo Travels</div>
+      </div>
+      <button class="btn btn-ghost" onclick="closeProject()" style="padding:8px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <div class="proj-panel-tabs">
+      <div class="proj-tab active">Overview</div>
+      <div class="proj-tab">Tasks</div>
+      <div class="proj-tab">Files</div>
+      <div class="proj-tab">Timeline</div>
+      <div class="proj-tab">Team Members</div>
+      <div class="proj-tab">Budget</div>
+      <div class="proj-tab">Notes</div>
+    </div>
+    <div class="proj-panel-body">
+      <div style="display:flex; flex-direction:column; gap:32px;">
+        
+        <div>
+          <div style="font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; margin-bottom:8px;">Description</div>
+          <div style="font-size:14px; font-weight:500; color:var(--text-2); line-height:1.6;">Full redesign and development of the Cabo Travels corporate website, including a booking portal integration and custom CMS setup.</div>
         </div>
 
-      </main>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+          <div class="proj-box" style="padding:20px; transition:none; cursor:default;">
+            <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Status</div>
+            <div style="font-size:14px; font-weight:700; color:var(--success); margin-top:4px;">On Track</div>
+          </div>
+          <div class="proj-box" style="padding:20px; transition:none; cursor:default;">
+            <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Due Date</div>
+            <div style="font-size:14px; font-weight:700; color:var(--text-1); margin-top:4px;">Aug 30, 2026</div>
+          </div>
+        </div>
+
+        <div class="proj-box" style="padding:24px; transition:none; cursor:default;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+            <span style="font-size:14px; font-weight:800; color:var(--text-1);">Progress Overview</span>
+            <span style="font-size:14px; font-weight:800; color:var(--text-1);">65%</span>
+          </div>
+          <div class="proj-progress" style="height:8px; border-radius:8px;">
+            <div class="proj-progress-bar" style="width:65%; border-radius:8px;"></div>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-top:16px; font-size:13px; font-weight:600; color:var(--text-2);">
+            <div>12 Tasks Completed</div>
+            <div>8 Tasks Remaining</div>
+          </div>
+        </div>
+
+      </div>
     </div>
   </div>
 
@@ -268,5 +749,15 @@
   <script src="../assets/js/components.js"></script>
   <script src="../assets/js/navigation.js"></script>
   <script src="../assets/js/app.js"></script>
+  <script>
+    function openProject() {
+      document.getElementById('projPanel').classList.add('active');
+      document.getElementById('projOverlay').classList.add('active');
+    }
+    function closeProject() {
+      document.getElementById('projPanel').classList.remove('active');
+      document.getElementById('projOverlay').classList.remove('active');
+    }
+  </script>
 </body>
 </html>
