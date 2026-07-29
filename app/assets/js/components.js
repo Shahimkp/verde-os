@@ -15,7 +15,7 @@
       <div class="sidebar-logo">V</div>
       <div class="sidebar-title">
         <span class="sidebar-name">VERDE OS</span>
-        <span class="sidebar-subtitle">VERDE LABS</span>
+        <span class="sidebar-subtitle">MISSION CONTROL</span>
       </div>
       <button class="sidebar-collapse-btn" id="sidebar-collapse-btn" title="Toggle Sidebar (Ctrl+B)">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -24,21 +24,11 @@
       </button>
     </div>
 
-    <!-- Workspace Selector -->
-    <div class="sidebar-workspace-switcher" id="sidebar-workspace-switcher">
-      <div class="ws-icon">VL</div>
-      <div class="ws-info">
-        <span class="ws-name">VERDE LABS</span>
-        <span class="ws-plan">Enterprise Plan</span>
-      </div>
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ws-arrow"><polyline points="6 9 12 15 18 9"></polyline></svg>
-    </div>
-
     <!-- Navigation Scroll Area -->
     <nav class="sidebar-nav">
 
-      <!-- GROUP 1: WORKSPACE -->
-      <div class="sidebar-section-title">WORKSPACE</div>
+      <!-- GROUP 1: MAIN -->
+      <div class="sidebar-section-title">MAIN</div>
 
       <a href="../dashboard/index.html" class="sidebar-item nav-item" data-page="dashboard" title="Mission Control">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -59,6 +49,16 @@
         <span class="badge badge-primary nav-badge">4</span>
       </a>
 
+      <a href="../crm/index.html" class="sidebar-item nav-item" data-page="crm" title="CRM & Sales">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+        <span>CRM & Sales</span>
+      </a>
+
       <a href="../projects/index.html" class="sidebar-item nav-item" data-page="projects" title="Projects">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
@@ -76,15 +76,18 @@
         <span class="badge badge-warning nav-badge">18</span>
       </a>
 
-      <a href="../crm/index.html" class="sidebar-item nav-item" data-page="crm" title="CRM & Sales">
+      <a href="../team/index.html" class="sidebar-item nav-item" data-page="team" title="Team">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
           <circle cx="9" cy="7" r="4"></circle>
-          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          <line x1="19" y1="8" x2="19" y2="14"></line>
+          <line x1="22" y1="11" x2="16" y2="11"></line>
         </svg>
-        <span>CRM & Sales</span>
+        <span>Team</span>
       </a>
+
+      <!-- GROUP 2: BUSINESS -->
+      <div class="sidebar-section-title">BUSINESS</div>
 
       <a href="../finance/index.html" class="sidebar-item nav-item" data-page="finance" title="Finance">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -92,6 +95,33 @@
           <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
         </svg>
         <span>Finance</span>
+      </a>
+
+      <a href="#" class="sidebar-item nav-item" data-page="marketing" title="Marketing">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <circle cx="12" cy="12" r="6"></circle>
+          <circle cx="12" cy="12" r="2"></circle>
+        </svg>
+        <span>Marketing</span>
+      </a>
+
+      <a href="#" class="sidebar-item nav-item" data-page="ai-hub" title="AI Hub">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+        </svg>
+        <span>AI Hub</span>
+      </a>
+
+      <!-- GROUP 3: SYSTEM -->
+      <div class="sidebar-section-title">SYSTEM</div>
+
+      <a href="#" class="sidebar-item nav-item" data-page="workspace" title="Workspace">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+        </svg>
+        <span>Workspace</span>
       </a>
 
       <a href="../reports/index.html" class="sidebar-item nav-item" data-page="reports" title="Reports">
@@ -103,36 +133,12 @@
         <span>Reports</span>
       </a>
 
-      <a href="../communication/index.html" class="sidebar-item nav-item" data-page="communication" title="Communication">
+      <a href="../global/settings.html" class="sidebar-item nav-item" data-page="settings" title="Settings">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
         </svg>
-        <span>Communication</span>
-        <span class="badge badge-danger nav-badge">3</span>
-      </a>
-
-      <!-- GROUP 2: TEAM -->
-      <div class="sidebar-section-title">TEAM</div>
-
-      <a href="../team/index.html" class="sidebar-item nav-item" data-page="team" title="Team Employees">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-          <circle cx="9" cy="7" r="4"></circle>
-          <line x1="19" y1="8" x2="19" y2="14"></line>
-          <line x1="22" y1="11" x2="16" y2="11"></line>
-        </svg>
-        <span>Employees & Team</span>
-      </a>
-
-      <!-- GROUP 3: SETTINGS & ACTIONS -->
-      <div class="sidebar-section-title">SETTINGS</div>
-
-      <a href="../create-project/index.html" class="sidebar-item nav-item" data-page="create-project" title="Create Project">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-        <span>Create Project</span>
+        <span>Settings</span>
       </a>
     </nav>
   </div>
@@ -142,7 +148,7 @@
     <div class="sidebar-user-avatar" id="sidebar-user-avatar">SH</div>
     <div class="sidebar-user-info">
       <span class="sidebar-user-name" id="sidebar-user-name">Shahim</span>
-      <span class="sidebar-user-role" id="sidebar-user-role">SuperAdmin</span>
+      <span class="sidebar-user-role" id="sidebar-user-role">CEO • Admin</span>
     </div>
   </div>
 </aside>
