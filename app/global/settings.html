@@ -7,7 +7,8 @@
   <title>Settings · VERDE OS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="../assets/css/global.css" />
   <link rel="stylesheet" href="../assets/css/layout.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
@@ -25,6 +26,7 @@
       align-items: flex-end;
       margin-bottom: 48px;
     }
+
     .set-header-title {
       font-size: 28px;
       font-weight: 900;
@@ -32,16 +34,19 @@
       color: var(--text-1);
       margin-bottom: 8px;
     }
+
     .set-header-desc {
       font-size: 14px;
       font-weight: 500;
       color: var(--text-3);
     }
+
     .set-toolbar {
       display: flex;
       gap: 12px;
       align-items: center;
     }
+
     .set-search {
       display: flex;
       align-items: center;
@@ -51,6 +56,7 @@
       padding: 8px 12px;
       width: 240px;
     }
+
     .set-search input {
       border: none;
       background: transparent;
@@ -61,6 +67,7 @@
       color: var(--text-1);
       margin-left: 8px;
     }
+
     .set-search input::placeholder {
       color: var(--text-3);
     }
@@ -69,15 +76,17 @@
     .set-section {
       margin-bottom: 64px;
     }
+
     .set-section-header {
       margin-bottom: 24px;
     }
+
     .set-section-title {
       font-size: 18px;
       font-weight: 800;
       color: var(--text-1);
     }
-    
+
     .set-half-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -96,10 +105,12 @@
       transition: transform 250ms ease, box-shadow 250ms ease;
       overflow: hidden;
     }
+
     .set-box:hover {
       transform: translateY(-1px);
       box-shadow: var(--shadow-md);
     }
+
     .set-box-header {
       padding: 24px;
       border-bottom: 1px solid var(--border);
@@ -107,6 +118,7 @@
       justify-content: space-between;
       align-items: center;
     }
+
     .set-box-title {
       font-size: 16px;
       font-weight: 800;
@@ -125,10 +137,12 @@
       gap: 32px;
       transition: transform 250ms ease, box-shadow 250ms ease;
     }
+
     .set-profile-card:hover {
       transform: translateY(-1px);
       box-shadow: var(--shadow-md);
     }
+
     .set-profile-avatar {
       width: 120px;
       height: 120px;
@@ -142,35 +156,41 @@
       font-weight: 900;
       flex-shrink: 0;
     }
+
     .set-profile-content {
       flex: 1;
       display: flex;
       flex-direction: column;
       justify-content: center;
     }
+
     .set-profile-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
       margin-bottom: 24px;
     }
+
     .set-profile-name {
       font-size: 24px;
       font-weight: 900;
       color: var(--text-1);
       letter-spacing: -0.5px;
     }
+
     .set-profile-job {
       font-size: 14px;
       font-weight: 600;
       color: var(--primary);
       margin-top: 4px;
     }
+
     .set-profile-details {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 16px;
     }
+
     .set-profile-item {
       display: flex;
       align-items: center;
@@ -179,6 +199,7 @@
       font-weight: 500;
       color: var(--text-2);
     }
+
     .set-profile-icon {
       color: var(--text-3);
     }
@@ -190,6 +211,7 @@
       gap: 24px;
       margin-bottom: 64px;
     }
+
     .set-notif-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -201,19 +223,23 @@
       box-shadow: var(--shadow-sm);
       transition: transform 250ms ease, box-shadow 250ms ease;
     }
+
     .set-notif-card:hover {
       transform: translateY(-1px);
       box-shadow: var(--shadow-md);
     }
+
     .set-notif-info {
       flex: 1;
     }
+
     .set-notif-title {
       font-size: 14px;
       font-weight: 800;
       color: var(--text-1);
       margin-bottom: 4px;
     }
+
     .set-notif-desc {
       font-size: 12px;
       font-weight: 500;
@@ -228,19 +254,25 @@
       height: 24px;
       flex-shrink: 0;
     }
+
     .toggle-switch input {
       opacity: 0;
       width: 0;
       height: 0;
     }
+
     .slider {
       position: absolute;
       cursor: pointer;
-      top: 0; left: 0; right: 0; bottom: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       background-color: var(--border);
       transition: .2s;
       border-radius: 24px;
     }
+
     .slider:before {
       position: absolute;
       content: "";
@@ -251,12 +283,14 @@
       background-color: white;
       transition: .2s;
       border-radius: 50%;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
-    input:checked + .slider {
+
+    input:checked+.slider {
       background-color: var(--primary);
     }
-    input:checked + .slider:before {
+
+    input:checked+.slider:before {
       transform: translateX(16px);
     }
 
@@ -265,6 +299,7 @@
       display: flex;
       flex-direction: column;
     }
+
     .set-list-item {
       padding: 16px 24px;
       border-bottom: 1px solid var(--border-subtle);
@@ -274,26 +309,32 @@
       transition: background 150ms ease;
       cursor: pointer;
     }
+
     .set-list-item:hover {
       background: var(--bg);
     }
+
     .set-list-item:last-child {
       border-bottom: none;
     }
+
     .set-list-title {
       font-size: 13px;
       font-weight: 700;
       color: var(--text-1);
     }
+
     .set-list-title.danger {
       color: var(--danger);
     }
+
     .set-list-sub {
       font-size: 12px;
       font-weight: 500;
       color: var(--text-3);
       margin-top: 4px;
     }
+
     .set-list-value {
       font-size: 13px;
       font-weight: 600;
@@ -309,6 +350,7 @@
       border-collapse: collapse;
       text-align: left;
     }
+
     .set-table th {
       padding: 16px 24px;
       font-size: 11px;
@@ -319,6 +361,7 @@
       border-bottom: 1px solid var(--border);
       background: var(--bg-2);
     }
+
     .set-table td {
       padding: 16px 24px;
       font-size: 13px;
@@ -326,12 +369,15 @@
       color: var(--text-2);
       border-bottom: 1px solid var(--border-subtle);
     }
+
     .set-table tr:last-child td {
       border-bottom: none;
     }
+
     .set-table tr:hover td {
       background: var(--bg);
     }
+
     .set-device-name {
       font-weight: 700;
       color: var(--text-1);
@@ -348,15 +394,42 @@
       border-radius: 6px;
       display: inline-block;
     }
-    .badge-success { background: var(--success-10); color: var(--success); }
-    .badge-warning { background: var(--warning-10); color: var(--warning); }
-    .badge-danger { background: var(--danger-10); color: var(--danger); }
-    .badge-primary { background: var(--primary-10); color: var(--primary); }
-    .badge-neutral { background: var(--bg-2); color: var(--text-2); }
+
+    .badge-success {
+      background: var(--success-10);
+      color: var(--success);
+    }
+
+    .badge-warning {
+      background: var(--warning-10);
+      color: var(--warning);
+    }
+
+    .badge-danger {
+      background: var(--danger-10);
+      color: var(--danger);
+    }
+
+    .badge-primary {
+      background: var(--primary-10);
+      color: var(--primary);
+    }
+
+    .badge-neutral {
+      background: var(--bg-2);
+      color: var(--text-2);
+    }
 
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   </style>
 </head>
@@ -366,10 +439,10 @@
     <div id="sidebar-container"></div>
     <div class="shell-main">
       <div id="topbar-container"></div>
-      
+
       <main class="app-content">
         <div class="set-layout">
-          
+
           <!-- 1. Page Header -->
           <header class="set-header">
             <div>
@@ -378,7 +451,9 @@
             </div>
             <div class="set-toolbar">
               <div class="set-search">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  style="color:var(--text-3)">
                   <circle cx="11" cy="11" r="8"></circle>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
@@ -400,11 +475,20 @@
               </div>
               <div class="set-profile-details">
                 <div class="set-profile-item">
-                  <svg class="set-profile-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                  <svg class="set-profile-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                  </svg>
                   shahim@verdelabs.co
                 </div>
                 <div class="set-profile-item">
-                  <svg class="set-profile-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                  <svg class="set-profile-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path
+                      d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                    </path>
+                  </svg>
                   +1 (555) 019-2026
                 </div>
               </div>
@@ -413,21 +497,24 @@
 
           <!-- 3 & 5. Split Section -->
           <section class="set-half-grid">
-            
+
             <!-- 3. Account & Security -->
             <div class="set-box">
               <div class="set-box-header">
                 <div class="set-box-title">Account & Security</div>
               </div>
               <div class="set-list">
-                
+
                 <div class="set-list-item">
                   <div>
                     <div class="set-list-title">Change Password</div>
                     <div class="set-list-sub">Update your authentication credentials</div>
                   </div>
                   <div class="set-list-value">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
                   </div>
                 </div>
 
@@ -438,7 +525,10 @@
                   </div>
                   <div class="set-list-value" style="color:var(--success);">
                     Enabled
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
                   </div>
                 </div>
 
@@ -449,7 +539,10 @@
                   </div>
                   <div class="set-list-value">
                     3 Devices
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
                   </div>
                 </div>
 
@@ -460,7 +553,10 @@
                   </div>
                   <div class="set-list-value">
                     s.kp@verdelabs.co
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
                   </div>
                 </div>
 
@@ -473,7 +569,7 @@
                 <div class="set-box-title">Appearance</div>
               </div>
               <div class="set-list">
-                
+
                 <div class="set-list-item">
                   <div>
                     <div class="set-list-title">Theme</div>
@@ -481,7 +577,10 @@
                   </div>
                   <div class="set-list-value">
                     System Default
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
                   </div>
                 </div>
 
@@ -492,7 +591,10 @@
                   </div>
                   <div class="set-list-value">
                     Medium (Default)
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
                   </div>
                 </div>
 
@@ -508,16 +610,20 @@
                     </label>
                   </div>
                 </div>
-                
+
                 <div class="set-list-item">
                   <div>
                     <div class="set-list-title">Accent Color</div>
                     <div class="set-list-sub">Customize primary brand highlights</div>
                   </div>
                   <div class="set-list-value">
-                    <span style="width:16px;height:16px;background:var(--primary);border-radius:50%;display:inline-block;margin-right:8px;"></span>
+                    <span
+                      style="width:16px;height:16px;background:var(--primary);border-radius:50%;display:inline-block;margin-right:8px;"></span>
                     VERDE Green
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
                   </div>
                 </div>
 
@@ -532,7 +638,7 @@
               <h2 class="set-section-title">Notifications</h2>
             </div>
             <div class="set-notif-grid">
-              
+
               <div class="set-notif-card">
                 <div class="set-notif-info">
                   <div class="set-notif-title">Email Notifications</div>
@@ -593,14 +699,14 @@
 
           <!-- 6 & 7. Split Section (Language & Privacy) -->
           <section class="set-half-grid">
-            
+
             <!-- 6. Language & Region -->
             <div class="set-box">
               <div class="set-box-header">
                 <div class="set-box-title">Language & Region</div>
               </div>
               <div class="set-list">
-                
+
                 <div class="set-list-item">
                   <div>
                     <div class="set-list-title">Language</div>
@@ -608,7 +714,10 @@
                   </div>
                   <div class="set-list-value">
                     English (US)
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
                   </div>
                 </div>
 
@@ -619,7 +728,10 @@
                   </div>
                   <div class="set-list-value">
                     UTC-08:00 (Pacific)
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
                   </div>
                 </div>
 
@@ -630,7 +742,10 @@
                   </div>
                   <div class="set-list-value">
                     MMM DD, YYYY
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
                   </div>
                 </div>
 
@@ -641,7 +756,10 @@
                   </div>
                   <div class="set-list-value">
                     USD ($)
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
                   </div>
                 </div>
 
@@ -654,14 +772,17 @@
                 <div class="set-box-title">Privacy & Data</div>
               </div>
               <div class="set-list">
-                
+
                 <div class="set-list-item">
                   <div>
                     <div class="set-list-title">Privacy Preferences</div>
                     <div class="set-list-sub">Manage data sharing and telemetry</div>
                   </div>
                   <div class="set-list-value">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
                   </div>
                 </div>
 
@@ -671,7 +792,10 @@
                     <div class="set-list-sub">Request an archive of your personal information</div>
                   </div>
                   <div class="set-list-value">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
                   </div>
                 </div>
 
@@ -681,17 +805,23 @@
                     <div class="set-list-sub">Transfer your data to another workspace</div>
                   </div>
                   <div class="set-list-value">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
                   </div>
                 </div>
-                
+
                 <div class="set-list-item">
                   <div>
                     <div class="set-list-title danger">Delete Account</div>
                     <div class="set-list-sub">Permanently remove your account and data</div>
                   </div>
                   <div class="set-list-value">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
                   </div>
                 </div>
 
@@ -722,7 +852,12 @@
                   <tr>
                     <td>
                       <div class="set-device-name">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3);"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor" stroke-width="2" style="color:var(--text-3);">
+                          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                          <line x1="8" y1="21" x2="16" y2="21"></line>
+                          <line x1="12" y1="17" x2="12" y2="21"></line>
+                        </svg>
                         MacBook Pro 16"
                       </div>
                     </td>
@@ -735,7 +870,11 @@
                   <tr>
                     <td>
                       <div class="set-device-name">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3);"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor" stroke-width="2" style="color:var(--text-3);">
+                          <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                          <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                        </svg>
                         iPhone 15 Pro
                       </div>
                     </td>
@@ -743,12 +882,18 @@
                     <td>San Francisco, CA</td>
                     <td>2 hours ago</td>
                     <td><span class="badge badge-neutral">Offline</span></td>
-                    <td><button class="btn btn-ghost btn-sm" style="color:var(--danger); padding:0;">Logout</button></td>
+                    <td><button class="btn btn-ghost btn-sm" style="color:var(--danger); padding:0;">Logout</button>
+                    </td>
                   </tr>
                   <tr>
                     <td>
                       <div class="set-device-name">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3);"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor" stroke-width="2" style="color:var(--text-3);">
+                          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                          <line x1="8" y1="21" x2="16" y2="21"></line>
+                          <line x1="12" y1="17" x2="12" y2="21"></line>
+                        </svg>
                         Windows Desktop
                       </div>
                     </td>
@@ -756,7 +901,8 @@
                     <td>New York, NY</td>
                     <td>Oct 12, 2026</td>
                     <td><span class="badge badge-neutral">Offline</span></td>
-                    <td><button class="btn btn-ghost btn-sm" style="color:var(--danger); padding:0;">Logout</button></td>
+                    <td><button class="btn btn-ghost btn-sm" style="color:var(--danger); padding:0;">Logout</button>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -777,4 +923,5 @@
   <script src="../assets/js/navigation.js"></script>
   <script src="../assets/js/app.js"></script>
 </body>
+
 </html>
