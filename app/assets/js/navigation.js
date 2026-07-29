@@ -64,7 +64,8 @@
       'team': 'Team Management',
       'create-project': 'Create Project',
       'ai-hub': 'VERDE Copilot',
-      'workspace': 'Organization Workspace'
+      'workspace': 'Organization Workspace',
+      'marketing': 'Digital Marketing Command Center'
     };
 
     let activePageKey = 'dashboard';
