@@ -38,6 +38,16 @@
   width: 100%;
 }
 
+/* Standardized Spacing & Grids (8px system) */
+.section, .layout-section {
+  margin-bottom: var(--space-16, 64px);
+}
+
+.grid-standard {
+  display: grid;
+  gap: var(--space-6, 24px);
+}
+
 /* Sidebar Layout (280px expanded / 84px collapsed) */
 .app-sidebar,
 .sidebar {

@@ -53,8 +53,8 @@
   flex: 0 0 280px;
   background-color: var(--bg);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md, 12px);
-  padding: 16px;
+  border-radius: var(--radius-lg, 16px);
+  padding: var(--space-4, 16px);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -79,8 +79,8 @@
 .crm-lead-card {
   background-color: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md, 12px);
-  padding: 16px;
+  border-radius: var(--radius-lg, 16px);
+  padding: var(--space-4, 16px);
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
@@ -145,14 +145,14 @@
 .team-alloc-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  gap: var(--space-6, 24px);
 }
 
 .team-alloc-card {
   background-color: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md, 12px);
-  padding: 20px;
+  border-radius: var(--radius-lg, 16px);
+  padding: var(--space-6, 24px);
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
@@ -169,14 +169,14 @@
 .milestones-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  gap: var(--space-6, 24px);
 }
 
 .milestone-card {
   background-color: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md, 12px);
-  padding: 20px;
+  border-radius: var(--radius-lg, 16px);
+  padding: var(--space-6, 24px);
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
@@ -531,7 +531,7 @@
 .grid-4 {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  gap: var(--space-6, 24px);
 }
 
 @media (max-width: 1280px) {

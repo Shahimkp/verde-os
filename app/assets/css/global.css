@@ -60,8 +60,8 @@
   --info-50: #EFF6FF;
 
   /* Master Radii Scale */
-  --radius: 12px;
-  --radius-sm: 6px;
+  --radius: 16px;
+  --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 20px;
@@ -74,7 +74,7 @@
   --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
   --shadow-xl: 0 24px 56px rgba(0, 0, 0, 0.05), 0 6px 16px rgba(0, 0, 0, 0.03);
 
-  /* Spacing Scale */
+  /* Spacing Scale (8px Base Grid) */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -83,6 +83,8 @@
   --space-6: 24px;
   --space-8: 32px;
   --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
 
   /* Typography Fonts */
   --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
