@@ -7,7 +7,8 @@
   <title>Team · VERDE OS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="../assets/css/global.css" />
   <link rel="stylesheet" href="../assets/css/layout.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
@@ -25,6 +26,7 @@
       align-items: flex-end;
       margin-bottom: 48px;
     }
+
     .team-header-title {
       font-size: 28px;
       font-weight: 900;
@@ -32,16 +34,19 @@
       color: var(--text-1);
       margin-bottom: 8px;
     }
+
     .team-header-desc {
       font-size: 14px;
       font-weight: 500;
       color: var(--text-3);
     }
+
     .team-toolbar {
       display: flex;
       gap: 12px;
       align-items: center;
     }
+
     .team-search {
       display: flex;
       align-items: center;
@@ -51,6 +56,7 @@
       padding: 8px 12px;
       width: 240px;
     }
+
     .team-search input {
       border: none;
       background: transparent;
@@ -61,6 +67,7 @@
       color: var(--text-1);
       margin-left: 8px;
     }
+
     .team-search input::placeholder {
       color: var(--text-3);
     }
@@ -72,6 +79,7 @@
       gap: 24px;
       margin-bottom: 48px;
     }
+
     .team-kpi-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -83,10 +91,12 @@
       transition: transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease;
       box-shadow: var(--shadow-sm);
     }
+
     .team-kpi-card:hover {
       transform: translateY(-1px);
       box-shadow: var(--shadow-md);
     }
+
     .team-kpi-value {
       font-size: 32px;
       font-weight: 800;
@@ -94,6 +104,7 @@
       color: var(--text-1);
       line-height: 1;
     }
+
     .team-kpi-label {
       font-size: 12px;
       font-weight: 700;
@@ -106,12 +117,14 @@
     .team-section {
       margin-bottom: 64px;
     }
+
     .team-section-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 24px;
     }
+
     .team-section-title {
       font-size: 18px;
       font-weight: 800;
@@ -125,6 +138,7 @@
       grid-template-columns: repeat(4, 1fr);
       gap: 24px;
     }
+
     .team-dir-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -139,10 +153,12 @@
       box-shadow: var(--shadow-sm);
       position: relative;
     }
+
     .team-dir-card:hover {
       transform: translateY(-1px);
       box-shadow: var(--shadow-md);
     }
+
     .team-status-dot {
       width: 10px;
       height: 10px;
@@ -152,10 +168,19 @@
       top: 24px;
       right: 24px;
     }
-    .status-online { background: var(--success); }
-    .status-offline { background: var(--text-3); }
-    .status-busy { background: var(--danger); }
-    
+
+    .status-online {
+      background: var(--success);
+    }
+
+    .status-offline {
+      background: var(--text-3);
+    }
+
+    .status-busy {
+      background: var(--danger);
+    }
+
     .team-avatar-lg {
       width: 64px;
       height: 64px;
@@ -168,16 +193,19 @@
       font-size: 20px;
       font-weight: 800;
     }
+
     .team-dir-name {
       font-size: 16px;
       font-weight: 800;
       color: var(--text-1);
     }
+
     .team-dir-role {
       font-size: 13px;
       font-weight: 600;
       color: var(--text-2);
     }
+
     .team-dir-dept {
       font-size: 11px;
       font-weight: 700;
@@ -186,6 +214,7 @@
       letter-spacing: 0.5px;
       margin-top: -8px;
     }
+
     .team-dir-workload {
       display: flex;
       flex-direction: column;
@@ -196,6 +225,7 @@
       border-top: 1px dashed var(--border);
       padding-top: 16px;
     }
+
     .team-wl-label {
       font-size: 11px;
       font-weight: 700;
@@ -203,17 +233,20 @@
       display: flex;
       justify-content: space-between;
     }
+
     .team-wl-bar {
       height: 4px;
       background: var(--bg-2);
       border-radius: 4px;
       overflow: hidden;
     }
+
     .team-wl-fill {
       height: 100%;
       background: var(--primary);
       border-radius: 4px;
     }
+
     .team-dir-action {
       width: 100%;
       margin-top: 8px;
@@ -225,6 +258,7 @@
       grid-template-columns: repeat(4, 1fr);
       gap: 24px;
     }
+
     .perf-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -236,10 +270,12 @@
       box-shadow: var(--shadow-sm);
       transition: transform 250ms ease, box-shadow 250ms ease;
     }
+
     .perf-card:hover {
       transform: translateY(-1px);
       box-shadow: var(--shadow-md);
     }
+
     .perf-icon {
       width: 48px;
       height: 48px;
@@ -248,21 +284,25 @@
       align-items: center;
       justify-content: center;
     }
+
     .perf-info {
       display: flex;
       flex-direction: column;
       gap: 4px;
     }
+
     .perf-val {
       font-size: 20px;
       font-weight: 800;
       color: var(--text-1);
     }
+
     .perf-label {
       font-size: 12px;
       font-weight: 600;
       color: var(--text-3);
     }
+
     .badge-perf {
       font-size: 10px;
       font-weight: 800;
@@ -279,6 +319,7 @@
       overflow: hidden;
       transition: transform 250ms ease, box-shadow 250ms ease;
     }
+
     .team-table-toolbar {
       padding: 16px 24px;
       border-bottom: 1px solid var(--border);
@@ -287,10 +328,12 @@
       align-items: center;
       background: var(--bg);
     }
+
     .team-table {
       width: 100%;
       border-collapse: collapse;
     }
+
     .team-table th {
       text-align: left;
       padding: 16px 24px;
@@ -302,6 +345,7 @@
       border-bottom: 1px solid var(--border);
       background: var(--bg-2);
     }
+
     .team-table td {
       padding: 16px 24px;
       font-size: 13px;
@@ -310,9 +354,11 @@
       border-bottom: 1px solid var(--border-subtle);
       transition: background 0.15s;
     }
+
     .team-table tbody tr:hover td {
       background: var(--bg-2);
     }
+
     .team-table tbody tr:last-child td {
       border-bottom: none;
     }
@@ -323,6 +369,7 @@
       grid-template-columns: 1fr 1fr;
       gap: 24px;
     }
+
     .team-box {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -330,10 +377,12 @@
       box-shadow: var(--shadow-sm);
       transition: transform 250ms ease, box-shadow 250ms ease;
     }
+
     .team-box:hover {
       transform: translateY(-1px);
       box-shadow: var(--shadow-md);
     }
+
     .team-box-header {
       padding: 16px 24px;
       border-bottom: 1px solid var(--border);
@@ -341,11 +390,13 @@
       justify-content: space-between;
       align-items: center;
     }
+
     .team-box-title {
       font-size: 14px;
       font-weight: 800;
       color: var(--text-1);
     }
+
     .team-list-item {
       display: flex;
       align-items: center;
@@ -353,14 +404,17 @@
       padding: 16px 24px;
       border-bottom: 1px solid var(--border-subtle);
     }
+
     .team-list-item:last-child {
       border-bottom: none;
     }
+
     .team-list-content {
       display: flex;
       align-items: center;
       gap: 16px;
     }
+
     .team-icon {
       width: 32px;
       height: 32px;
@@ -371,23 +425,39 @@
       justify-content: center;
       color: var(--text-2);
     }
+
     .team-item-text {
       font-size: 13px;
       font-weight: 700;
       color: var(--text-1);
     }
+
     .team-item-sub {
       font-size: 12px;
       font-weight: 500;
       color: var(--text-3);
     }
 
-    .badge-leave-pending { background: var(--warning-10); color: var(--warning); }
-    .badge-leave-approved { background: var(--success-10); color: var(--success); }
+    .badge-leave-pending {
+      background: var(--warning-10);
+      color: var(--warning);
+    }
+
+    .badge-leave-approved {
+      background: var(--success-10);
+      color: var(--success);
+    }
 
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   </style>
 </head>
@@ -397,10 +467,10 @@
     <div id="sidebar-container"></div>
     <div class="shell-main">
       <div id="topbar-container"></div>
-      
+
       <main class="app-content">
         <div class="team-layout">
-          
+
           <!-- 1. Page Header -->
           <header class="team-header">
             <div>
@@ -409,7 +479,9 @@
             </div>
             <div class="team-toolbar">
               <div class="team-search">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  style="color:var(--text-3)">
                   <circle cx="11" cy="11" r="8"></circle>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
@@ -451,7 +523,7 @@
               <h2 class="team-section-title">Team Directory</h2>
             </div>
             <div class="team-dir-grid">
-              
+
               <!-- Employee 1 -->
               <div class="team-dir-card">
                 <div class="team-status-dot status-online"></div>
@@ -467,7 +539,8 @@
                     <div class="team-wl-fill" style="width: 100%; background:var(--danger);"></div>
                   </div>
                 </div>
-                <button class="btn btn-ghost btn-sm team-dir-action" style="border:1px solid var(--border);">View Profile</button>
+                <button class="btn btn-ghost btn-sm team-dir-action" style="border:1px solid var(--border);">View
+                  Profile</button>
               </div>
 
               <!-- Employee 2 -->
@@ -485,7 +558,8 @@
                     <div class="team-wl-fill" style="width: 85%; background:var(--warning);"></div>
                   </div>
                 </div>
-                <button class="btn btn-ghost btn-sm team-dir-action" style="border:1px solid var(--border);">View Profile</button>
+                <button class="btn btn-ghost btn-sm team-dir-action" style="border:1px solid var(--border);">View
+                  Profile</button>
               </div>
 
               <!-- Employee 3 -->
@@ -503,7 +577,8 @@
                     <div class="team-wl-fill" style="width: 60%; background:var(--primary);"></div>
                   </div>
                 </div>
-                <button class="btn btn-ghost btn-sm team-dir-action" style="border:1px solid var(--border);">View Profile</button>
+                <button class="btn btn-ghost btn-sm team-dir-action" style="border:1px solid var(--border);">View
+                  Profile</button>
               </div>
 
               <!-- Employee 4 -->
@@ -521,7 +596,8 @@
                     <div class="team-wl-fill" style="width: 45%; background:var(--success);"></div>
                   </div>
                 </div>
-                <button class="btn btn-ghost btn-sm team-dir-action" style="border:1px solid var(--border);">View Profile</button>
+                <button class="btn btn-ghost btn-sm team-dir-action" style="border:1px solid var(--border);">View
+                  Profile</button>
               </div>
 
             </div>
@@ -535,7 +611,11 @@
             <div class="perf-grid">
               <div class="perf-card">
                 <div class="perf-icon" style="background:var(--primary-10); color:var(--primary);">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                  </svg>
                 </div>
                 <div class="perf-info">
                   <div class="perf-val">94%</div>
@@ -544,7 +624,11 @@
               </div>
               <div class="perf-card">
                 <div class="perf-icon" style="background:var(--success-10); color:var(--success);">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 11 12 14 22 4"></polyline>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                  </svg>
                 </div>
                 <div class="perf-info">
                   <div class="perf-val">128</div>
@@ -553,7 +637,11 @@
               </div>
               <div class="perf-card">
                 <div class="perf-icon" style="background:var(--warning-10); color:var(--warning);">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
                 </div>
                 <div class="perf-info">
                   <div class="perf-val">1,450h</div>
@@ -562,7 +650,12 @@
               </div>
               <div class="perf-card">
                 <div class="perf-icon" style="background:var(--danger-10); color:var(--danger);">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon
+                      points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                    </polygon>
+                  </svg>
                 </div>
                 <div class="perf-info">
                   <div class="perf-val">Excellent</div>
@@ -580,15 +673,22 @@
             <div class="team-table-container">
               <div class="team-table-toolbar">
                 <div class="team-search" style="width: 300px; border-color: transparent; background: var(--bg-2);">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    style="color:var(--text-3)">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
                   <input type="text" placeholder="Filter by employee name..." />
                 </div>
                 <div style="display:flex; gap:12px; align-items:center;">
-                  <button class="btn btn-ghost btn-sm" style="background:var(--surface); border:1px solid var(--border);">Filter</button>
-                  <button class="btn btn-ghost btn-sm" style="background:var(--surface); border:1px solid var(--border);">Sort</button>
+                  <button class="btn btn-ghost btn-sm"
+                    style="background:var(--surface); border:1px solid var(--border);">Filter</button>
+                  <button class="btn btn-ghost btn-sm"
+                    style="background:var(--surface); border:1px solid var(--border);">Sort</button>
                 </div>
               </div>
-              
+
               <table class="team-table">
                 <thead>
                   <tr>
@@ -617,7 +717,9 @@
                   <tr>
                     <td>
                       <div style="display:flex; align-items:center; gap:12px;">
-                        <div class="team-avatar-lg" style="width:32px; height:32px; font-size:11px; background:var(--success-10); color:var(--success);">MI</div>
+                        <div class="team-avatar-lg"
+                          style="width:32px; height:32px; font-size:11px; background:var(--success-10); color:var(--success);">
+                          MI</div>
                         <span style="font-weight:700;">Midhul</span>
                       </div>
                     </td>
@@ -630,7 +732,9 @@
                   <tr>
                     <td>
                       <div style="display:flex; align-items:center; gap:12px;">
-                        <div class="team-avatar-lg" style="width:32px; height:32px; font-size:11px; background:var(--warning-10); color:var(--warning);">AM</div>
+                        <div class="team-avatar-lg"
+                          style="width:32px; height:32px; font-size:11px; background:var(--warning-10); color:var(--warning);">
+                          AM</div>
                         <span style="font-weight:700;">Ameen</span>
                       </div>
                     </td>
@@ -643,7 +747,9 @@
                   <tr>
                     <td>
                       <div style="display:flex; align-items:center; gap:12px;">
-                        <div class="team-avatar-lg" style="width:32px; height:32px; font-size:11px; background:var(--text-3); color:#fff;">NH</div>
+                        <div class="team-avatar-lg"
+                          style="width:32px; height:32px; font-size:11px; background:var(--text-3); color:#fff;">NH
+                        </div>
                         <span style="font-weight:700;">Nihal</span>
                       </div>
                     </td>
@@ -660,17 +766,18 @@
 
           <!-- 6 & 7. Leave Requests & Recent Activity -->
           <section class="team-half-grid">
-            
+
             <!-- 6. Leave Requests -->
             <div class="team-box">
               <div class="team-box-header">
                 <div class="team-box-title">Leave Requests</div>
               </div>
               <div class="team-list">
-                
+
                 <div class="team-list-item">
                   <div class="team-list-content">
-                    <div class="team-avatar-lg" style="width:32px; height:32px; font-size:11px; background:var(--text-3); color:#fff;">NH</div>
+                    <div class="team-avatar-lg"
+                      style="width:32px; height:32px; font-size:11px; background:var(--text-3); color:#fff;">NH</div>
                     <div>
                       <div class="team-item-text">Nihal</div>
                       <div class="team-item-sub">Sick Leave • Aug 10 - Aug 12</div>
@@ -684,7 +791,9 @@
 
                 <div class="team-list-item">
                   <div class="team-list-content">
-                    <div class="team-avatar-lg" style="width:32px; height:32px; font-size:11px; background:var(--primary-10); color:var(--primary);">SH</div>
+                    <div class="team-avatar-lg"
+                      style="width:32px; height:32px; font-size:11px; background:var(--primary-10); color:var(--primary);">
+                      SH</div>
                     <div>
                       <div class="team-item-text">Shahim</div>
                       <div class="team-item-sub">Annual Leave • Sep 01 - Sep 05</div>
@@ -705,11 +814,17 @@
                 <div class="team-box-title">Recent Team Activity</div>
               </div>
               <div class="team-list">
-                
+
                 <div class="team-list-item" style="padding: 12px 24px;">
                   <div class="team-list-content">
                     <div class="team-icon" style="width:28px; height:28px; color:var(--primary);">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <line x1="19" y1="8" x2="19" y2="14"></line>
+                        <line x1="22" y1="11" x2="16" y2="11"></line>
+                      </svg>
                     </div>
                     <div>
                       <div class="team-item-text" style="font-size:12px;">Joined Project</div>
@@ -721,7 +836,10 @@
                 <div class="team-list-item" style="padding: 12px 24px;">
                   <div class="team-list-content">
                     <div class="team-icon" style="width:28px; height:28px; color:var(--success);">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
                     </div>
                     <div>
                       <div class="team-item-text" style="font-size:12px;">Completed Task</div>
@@ -733,7 +851,13 @@
                 <div class="team-list-item" style="padding: 12px 24px;">
                   <div class="team-list-content">
                     <div class="team-icon" style="width:28px; height:28px; color:var(--warning);">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                      </svg>
                     </div>
                     <div>
                       <div class="team-item-text" style="font-size:12px;">Requested Leave</div>
@@ -745,7 +869,12 @@
                 <div class="team-list-item" style="padding: 12px 24px;">
                   <div class="team-list-content">
                     <div class="team-icon" style="width:28px; height:28px; color:var(--info);">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                      </svg>
                     </div>
                     <div>
                       <div class="team-item-text" style="font-size:12px;">Uploaded File</div>
@@ -757,7 +886,12 @@
                 <div class="team-list-item" style="padding: 12px 24px;">
                   <div class="team-list-content">
                     <div class="team-icon" style="width:28px; height:28px; color:var(--danger);">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <polygon
+                          points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                        </polygon>
+                      </svg>
                     </div>
                     <div>
                       <div class="team-item-text" style="font-size:12px;">Promoted</div>
@@ -765,11 +899,14 @@
                     </div>
                   </div>
                 </div>
-                
+
                 <div class="team-list-item" style="padding: 12px 24px;">
                   <div class="team-list-content">
                     <div class="team-icon" style="width:28px; height:28px; color:var(--success);">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
                     </div>
                     <div>
                       <div class="team-item-text" style="font-size:12px;">Completed Task</div>
@@ -797,4 +934,5 @@
   <script src="../assets/js/navigation.js"></script>
   <script src="../assets/js/app.js"></script>
 </body>
+
 </html>
