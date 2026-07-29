@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Settings Modal · VERDE OS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../assets/css/global.css" />
+<style>
+
+
+body{font-family:var(--font);background:var(--bg-2);height:100vh;display:flex;align-items:center;justify-content:center;}
+
+.backdrop { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(17, 24, 39, 0.4); backdrop-filter:blur(4px); z-index:100; }
+
+.settings-modal { position:relative; width:90%; max-width:900px; height:80vh; max-height:700px; background:var(--bg); border-radius:12px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.25); z-index:110; display:flex; overflow:hidden; border:1px solid var(--border); }
+.set-sidebar { width:240px; background:var(--bg-2); border-right:1px solid var(--border); padding:24px 16px; display:flex; flex-direction:column; overflow-y:auto; }
+.set-title { font-size:18px; font-weight:800; padding-left:12px; margin-bottom:24px; color:var(--text-1); }
+.set-nav-item { padding:10px 12px; display:flex; align-items:center; gap:12px; font-size:14px; font-weight:600; color:var(--text-2); border-radius:6px; cursor:pointer; margin-bottom:4px; }
+.set-nav-item:hover { background:#E8E8F4; color:var(--primary); }
+.set-nav-item.active { background:var(--primary); color:#fff; }
+.set-nav-item svg { width:16px; height:16px; color:inherit; }
+
+.set-content { flex:1; padding:40px 64px; overflow-y:auto; background:var(--bg); position:relative; }
+.close-btn { position:absolute; top:24px; right:24px; width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:50%; cursor:pointer; color:var(--text-3); }
+.close-btn:hover { background:var(--bg-2); color:var(--text-1); }
+
+.set-h2 { font-size:24px; font-weight:800; margin-bottom:8px; color:var(--text-1); }
+.set-desc { font-size:14px; color:var(--text-2); margin-bottom:32px; }
+
+.set-group { margin-bottom:32px; border-top:1px solid var(--border); padding-top:24px; display:flex; justify-content:space-between; align-items:flex-start; gap:40px; }
+.set-g-text { flex:1; max-width:400px; }
+.set-g-title { font-size:15px; font-weight:700; margin-bottom:4px; color:var(--text-1); }
+.set-g-desc { font-size:13px; color:var(--text-2); line-height:1.5; }
+.set-g-action { flex:1; display:flex; flex-direction:column; gap:12px; align-items:flex-end; }
+
+.input-field { width:100%; max-width:280px; padding:10px 14px; font-size:14px; border:1px solid var(--border); border-radius:6px; outline:none; font-family:var(--font); }
+.input-field:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(0,0,138,0.1); }
+.btn-s { background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:10px 16px; font-size:13px; font-weight:600; cursor:pointer; color:var(--text-1); }
+.btn-s:hover { background:var(--bg-2); }
+.btn-p { background:var(--primary); color:#fff; border:none; border-radius:6px; padding:10px 16px; font-size:13px; font-weight:600; cursor:pointer; }
+.btn-p:hover { background:var(--primary-h); }
+
+/* Toggle */
+.toggle { width:44px; height:24px; background:var(--primary); border-radius:99px; position:relative; cursor:pointer; }
+.toggle::after { content:''; position:absolute; top:2px; right:2px; width:20px; height:20px; background:#fff; border-radius:50%; box-shadow:0 1px 2px rgba(0,0,0,0.1); }
+.toggle.off { background:var(--border); }
+.toggle.off::after { right:auto; left:2px; }
+</style>
+</head>
+<body>
+<div class="backdrop"></div>
+<div class="settings-modal">
+  <div class="set-sidebar">
+    <div class="set-title">Global Settings</div>
+    <div class="set-nav-item active"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Workspace</div>
+    <div class="set-nav-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg> Appearance</div>
+    <div class="set-nav-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Notifications</div>
+    <div class="set-nav-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Security</div>
+    <div class="set-nav-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Permissions</div>
+    <div class="set-nav-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg> Integrations</div>
+    <div class="set-nav-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.2 15c.7-1.2 1-2.5.7-3.9-.6-2-2.4-3.5-4.4-3.5h-1.2c-.7-3-3.2-5.2-6.2-5.6-3-.3-5.9 1.3-7.3 4-1.2 2.5-1 6.5.5 8.8m8.7-1.6V21"/><path d="M16 16l-4-4-4 4"/></svg> Backup & Export</div>
+  </div>
+  
+  <div class="set-content">
+    <div class="close-btn"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+    
+    <div class="set-h2">Workspace Profile</div>
+    <div class="set-desc">Manage your company details and global workspace preferences.</div>
+    
+    <div class="set-group" style="border-top:none; padding-top:0;">
+      <div class="set-g-text">
+        <div class="set-g-title">Workspace Name</div>
+        <div class="set-g-desc">This is the public name of your ERP workspace. Visible to all employees and invited clients.</div>
+      </div>
+      <div class="set-g-action">
+        <input type="text" class="input-field" value="VERDE LABS" />
+      </div>
+    </div>
+    
+    <div class="set-group">
+      <div class="set-g-text">
+        <div class="set-g-title">Company Logo</div>
+        <div class="set-g-desc">Update the logo displayed in the top navigation and on exported PDF reports.</div>
+      </div>
+      <div class="set-g-action" style="flex-direction:row; align-items:center;">
+        <div style="width:48px;height:48px;background:var(--primary);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;">VL</div>
+        <button class="btn-s">Upload New</button>
+      </div>
+    </div>
+    
+    <div class="set-group">
+      <div class="set-g-text">
+        <div class="set-g-title">Allow Public Client Portal</div>
+        <div class="set-g-desc">When enabled, clients can log in to view their specific projects, invoices, and proposals.</div>
+      </div>
+      <div class="set-g-action">
+        <div class="toggle"></div>
+      </div>
+    </div>
+    
+    <div class="set-group">
+      <div class="set-g-text">
+        <div class="set-g-title">Delete Workspace</div>
+        <div class="set-g-desc">Permanently delete this workspace and all associated data. This action cannot be undone.</div>
+      </div>
+      <div class="set-g-action">
+        <button class="btn-s" style="color:var(--danger); border-color:var(--danger);">Delete Workspace</button>
+      </div>
+    </div>
+    
+    <div style="margin-top:48px; display:flex; justify-content:flex-end;">
+      <button class="btn-p">Save Changes</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Shortcuts Guide · VERDE OS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../assets/css/global.css" />
+<style>
+
+
+body{font-family:var(--font);background:var(--bg-2);height:100vh;display:flex;align-items:center;justify-content:center;}
+
+.backdrop { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(17, 24, 39, 0.4); backdrop-filter:blur(4px); z-index:100; }
+
+.shortcuts-modal { position:relative; width:90%; max-width:640px; background:var(--bg); border-radius:12px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.25); z-index:110; padding:40px; border:1px solid var(--border); }
+
+.modal-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:32px; }
+.set-h2 { font-size:24px; font-weight:800; margin-bottom:8px; color:var(--text-1); }
+.set-desc { font-size:14px; color:var(--text-2); }
+.close-btn { width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:50%; cursor:pointer; color:var(--text-3); margin-top:-8px; margin-right:-8px; }
+.close-btn:hover { background:var(--bg-2); color:var(--text-1); }
+
+.sg-grid { display:grid; grid-template-columns:1fr 1fr; gap:40px; }
+.cmd-label { font-size:11px; font-weight:800; color:var(--text-3); text-transform:uppercase; margin-bottom:12px; }
+
+.sg-item { display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--border); }
+.sg-item:last-child { border-bottom:none; }
+.sg-label { font-size:14px; font-weight:500; color:var(--text-1); }
+
+.cmd-shortcut { font-size:12px; color:var(--text-3); font-weight:600; display:flex; gap:6px; }
+.cmd-key { background:var(--bg-2); border:1px solid var(--border); padding:4px 8px; border-radius:6px; box-shadow:0 2px 0 var(--border); font-family:monospace; font-size:13px; color:var(--text-1); }
+</style>
+</head>
+<body>
+<div class="backdrop"></div>
+<div class="shortcuts-modal">
+  <div class="modal-header">
+    <div>
+      <div class="set-h2">Keyboard Shortcuts</div>
+      <div class="set-desc">Master VERDE OS without leaving your keyboard.</div>
+    </div>
+    <div class="close-btn"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+  </div>
+  
+  <div class="sg-grid">
+    <div>
+      <div class="cmd-label">Global Navigation</div>
+      <div class="sg-item"><span class="sg-label">Command Palette</span><span class="cmd-shortcut"><span class="cmd-key">Ctrl</span><span class="cmd-key">K</span></span></div>
+      <div class="sg-item"><span class="sg-label">Global Search</span><span class="cmd-shortcut"><span class="cmd-key">/</span></span></div>
+      <div class="sg-item"><span class="sg-label">Close Overlay</span><span class="cmd-shortcut"><span class="cmd-key">Esc</span></span></div>
+      <div class="sg-item"><span class="sg-label">Show Shortcuts</span><span class="cmd-shortcut"><span class="cmd-key">?</span></span></div>
+    </div>
+    <div>
+      <div class="cmd-label">Quick Actions</div>
+      <div class="sg-item"><span class="sg-label">New Task</span><span class="cmd-shortcut"><span class="cmd-key">N</span></span></div>
+      <div class="sg-item"><span class="sg-label">Go to Projects</span><span class="cmd-shortcut"><span class="cmd-key">P</span></span></div>
+      <div class="sg-item"><span class="sg-label">Go to CRM</span><span class="cmd-shortcut"><span class="cmd-key">C</span></span></div>
+      <div class="sg-item"><span class="sg-label">Go to Tasks</span><span class="cmd-shortcut"><span class="cmd-key">T</span></span></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Command Palette · VERDE OS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../assets/css/global.css" />
+<style>
+
+
+body{font-family:var(--font);background:var(--bg-2);height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+.demo-txt { position:absolute; top:40px; color:var(--text-2); font-weight:500; }
+
+.backdrop { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(17, 24, 39, 0.4); backdrop-filter:blur(4px); z-index:100; }
+
+.cmd-palette { position:relative; width:90%; max-width:640px; background:var(--bg); border-radius:12px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.25); z-index:110; overflow:hidden; border:1px solid var(--border); margin-bottom:15vh; }
+.cmd-header { display:flex; align-items:center; border-bottom:1px solid var(--border); padding:0 24px; }
+.cmd-icon { width:20px; height:20px; color:var(--text-3); flex-shrink:0; }
+.cmd-input { flex:1; padding:20px 16px; font-size:18px; color:var(--text-1); outline:none; border:none; background:transparent; font-weight:500; }
+.cmd-input::placeholder { color:var(--text-3); }
+
+.cmd-body { max-height:400px; overflow-y:auto; padding:12px; }
+.cmd-group { margin-bottom:12px; }
+.cmd-label { font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase; padding:8px 12px; }
+.cmd-item { display:flex; align-items:center; justify-content:space-between; padding:12px; border-radius:6px; cursor:pointer; color:var(--text-2); font-weight:500; font-size:14px; margin-bottom:2px; }
+.cmd-item:hover, .cmd-item.active { background:#E8E8F4; color:var(--primary); }
+.cmd-item-left { display:flex; align-items:center; gap:12px; }
+.cmd-item svg { width:16px; height:16px; color:var(--text-3); }
+.cmd-item:hover svg, .cmd-item.active svg { color:var(--primary); }
+
+.cmd-shortcut { font-size:12px; color:var(--text-3); font-weight:600; display:flex; gap:4px; }
+.cmd-key { background:var(--bg); border:1px solid var(--border); padding:2px 6px; border-radius:4px; box-shadow:0 1px 1px rgba(0,0,0,0.05); }
+
+.cmd-footer { padding:12px 24px; border-top:1px solid var(--border); background:var(--bg-2); display:flex; justify-content:flex-end; gap:16px; font-size:12px; color:var(--text-3); font-weight:500; }
+</style>
+</head>
+<body>
+<div class="demo-txt">Press Esc to close • Ctrl+K to open</div>
+
+<div class="backdrop"></div>
+<div class="cmd-palette">
+  <div class="cmd-header">
+    <svg class="cmd-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" class="cmd-input" placeholder="Search VERDE OS..." autofocus />
+  </div>
+  <div class="cmd-body">
+    <div class="cmd-group">
+      <div class="cmd-label">Quick Actions</div>
+      <div class="cmd-item active">
+        <div class="cmd-item-left"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg> Create Task</div>
+      </div>
+      <div class="cmd-item">
+        <div class="cmd-item-left"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> Create Project</div>
+      </div>
+      <div class="cmd-item">
+        <div class="cmd-item-left"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg> Create Lead</div>
+      </div>
+    </div>
+    <div class="cmd-group">
+      <div class="cmd-label">Recent Navigation</div>
+      <div class="cmd-item">
+        <div class="cmd-item-left"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg> Go to CRM</div>
+      </div>
+      <div class="cmd-item">
+        <div class="cmd-item-left"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Go to Finance</div>
+      </div>
+    </div>
+  </div>
+  <div class="cmd-footer">
+    <span class="cmd-shortcut"><span class="cmd-key">↑</span><span class="cmd-key">↓</span> Navigate</span>
+    <span class="cmd-shortcut"><span class="cmd-key">↵</span> Select</span>
+    <span class="cmd-shortcut"><span class="cmd-key">Esc</span> Close</span>
+  </div>
+</div>
+</body>
+</html>

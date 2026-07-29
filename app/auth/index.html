@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>VERDE OS · Sign In</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/global.css" />
+  <link rel="stylesheet" href="../assets/css/layout.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/modules.css" />
+  <style>
+    /* ══════════════════════════════════════════════
+   VERDE OS — AUTHENTICATION EXPERIENCE
+   Premium · Minimal · Apple-level polish
+   ══════════════════════════════════════════════ */
+
+
+
+
+    html {
+      font-size: 16px;
+      -webkit-text-size-adjust: 100%
+    }
+
+    body {
+      font-family: var(--font);
+      color: var(--text-1);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.5;
+      overflow: hidden;
+      height: 100vh
+    }
+
+    button,
+    input {
+      font-family: inherit;
+      font-size: inherit
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none
+    }
+
+    ::selection {
+      background: var(--primary);
+      color: #fff
+    }
+
+    /* ══════════════════════════════════════════════
+   SPLIT LAYOUT
+   ══════════════════════════════════════════════ */
+    .auth-shell {
+      display: flex;
+      height: 100vh;
+      width: 100%
+    }
+
+    /* ── LEFT PANEL ── */
+    .auth-left {
+      flex: 1;
+      background: #FAFAFF;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 60px 56px;
+      position: relative;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    /* Subtle geometric accents */
+    .auth-left::before {
+      content: '';
+      position: absolute;
+      top: -80px;
+      right: -80px;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0, 0, 138, 0.03) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .auth-left::after {
+      content: '';
+      position: absolute;
+      bottom: -60px;
+      left: -60px;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.03) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Decorative geometric dots */
+    .geo-dots {
+      position: absolute;
+      top: 48px;
+      right: 48px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      opacity: 0.15;
+    }
+
+    .geo-dots span {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--primary)
+    }
+
+    .geo-lines {
+      position: absolute;
+      bottom: 80px;
+      left: 48px;
+      opacity: 0.08;
+    }
+
+    .geo-lines span {
+      display: block;
+      height: 1px;
+      background: var(--primary);
+      margin-bottom: 8px;
+      border-radius: 1px
+    }
+
+    .auth-left-content {
+      max-width: 420px;
+      width: 100%;
+      position: relative;
+      z-index: 1
+    }
+
+    /* Logo */
+    .auth-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 48px
+    }
+
+    .auth-logo-mark {
+      width: 44px;
+      height: 44px;
+      background: var(--primary);
+      border-radius: var(--r-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: -0.5px;
+      box-shadow: 0 2px 8px rgba(0, 0, 138, 0.2);
+    }
+
+    .auth-logo-text {
+      display: flex;
+      flex-direction: column
+    }
+
+    .auth-logo-name {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-1);
+      letter-spacing: -.4px
+    }
+
+    .auth-logo-sub {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-3);
+      letter-spacing: 1.5px;
+      text-transform: uppercase
+    }
+
+    /* Headline */
+    .auth-headline {
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--text-1);
+      letter-spacing: -1px;
+      line-height: 1.15;
+      margin-bottom: 12px
+    }
+
+    .auth-headline span {
+      color: var(--primary)
+    }
+
+    .auth-subheadline {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--text-2);
+      line-height: 1.6;
+      margin-bottom: 48px
+    }
+
+    /* Feature highlights */
+    .auth-features {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 64px
+    }
+
+    .auth-feature {
+      display: flex;
+      align-items: center;
+      gap: 14px
+    }
+
+    .auth-feature-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--r-sm);
+      background: var(--bg);
+      border: 1px solid var(--border-l);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .auth-feature-icon svg {
+      width: 16px;
+      height: 16px;
+      color: var(--primary);
+      stroke-width: 1.75
+    }
+
+    .auth-feature-text {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-2)
+    }
+
+    /* Footer */
+    .auth-left-footer {
+      position: absolute;
+      bottom: 32px;
+      left: 56px;
+      right: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .auth-left-footer span {
+      font-size: 11px;
+      color: var(--text-3);
+      font-weight: 500
+    }
+
+    /* ── RIGHT PANEL ── */
+    .auth-right {
+      flex: 1;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 56px;
+      position: relative;
+      min-width: 0;
+    }
+
+    /* ══════════════════════════════════════════════
+   AUTH FORM VIEWS
+   ══════════════════════════════════════════════ */
+    .auth-form-wrap {
+      width: 100%;
+      max-width: 380px;
+      position: relative
+    }
+
+    /* View Container — handles transitions */
+    .auth-view {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      position: relative;
+    }
+
+    .auth-view.hidden {
+      opacity: 0;
+      transform: translateY(8px);
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      pointer-events: none;
+    }
+
+    /* Header */
+    .auth-form-header {
+      margin-bottom: 32px
+    }
+
+    .auth-form-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text-1);
+      letter-spacing: -.5px;
+      margin-bottom: 4px
+    }
+
+    .auth-form-subtitle {
+      font-size: 14px;
+      color: var(--text-2);
+      font-weight: 400;
+      line-height: 1.5
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 20px
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-1);
+      margin-bottom: 6px
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 11px 14px;
+      font-size: 14px;
+      color: var(--text-1);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      outline: none;
+      transition: all var(--ease);
+      line-height: 1.5;
+    }
+
+    .form-input::placeholder {
+      color: var(--text-3)
+    }
+
+    .form-input:hover {
+      border-color: #D1D5DB
+    }
+
+    .form-input:focus {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-focus)
+    }
+
+    .form-input.error {
+      border-color: var(--danger)
+    }
+
+    .form-input.error:focus {
+      box-shadow: var(--shadow-focus-danger)
+    }
+
+    /* Input with icon */
+    .form-input-wrap {
+      position: relative
+    }
+
+    .form-input-wrap .form-input {
+      padding-left: 40px
+    }
+
+    .form-input-wrap .input-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      color: var(--text-3);
+      pointer-events: none;
+      transition: color var(--ease);
+    }
+
+    .form-input-wrap:focus-within .input-icon {
+      color: var(--primary)
+    }
+
+    .form-input-wrap .input-action {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: var(--text-3);
+      border-radius: 6px;
+      transition: all var(--ease);
+    }
+
+    .form-input-wrap .input-action:hover {
+      background: var(--bg-2);
+      color: var(--text-2)
+    }
+
+    .form-input-wrap .input-action svg {
+      width: 16px;
+      height: 16px
+    }
+
+    /* Error message */
+    .form-error {
+      font-size: 12px;
+      color: var(--danger);
+      font-weight: 500;
+      margin-top: 5px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      opacity: 0;
+      height: 0;
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+
+    .form-error.show {
+      opacity: 1;
+      height: auto;
+      margin-top: 5px
+    }
+
+    .form-error svg {
+      width: 12px;
+      height: 12px;
+      flex-shrink: 0
+    }
+
+    /* Remember / Forgot row */
+    .form-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px
+    }
+
+    .form-check {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer
+    }
+
+    .form-checkbox {
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--border);
+      border-radius: 4px;
+      appearance: none;
+      cursor: pointer;
+      transition: all var(--ease);
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .form-checkbox:checked {
+      background: var(--primary);
+      border-color: var(--primary)
+    }
+
+    .form-checkbox:checked::after {
+      content: '';
+      position: absolute;
+      left: 4px;
+      top: 1px;
+      width: 4px;
+      height: 8px;
+      border: solid #fff;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+
+    .form-checkbox:focus-visible {
+      box-shadow: var(--shadow-focus)
+    }
+
+    .form-check-label {
+      font-size: 13px;
+      color: var(--text-2);
+      font-weight: 500;
+      cursor: pointer
+    }
+
+    .form-forgot {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary);
+      cursor: pointer;
+      transition: color var(--ease);
+      border: none;
+      background: none;
+    }
+
+    .form-forgot:hover {
+      color: var(--primary-h)
+    }
+
+    /* Primary Button */
+    .btn-auth {
+      width: 100%;
+      padding: 12px 24px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      background: var(--primary);
+      border: none;
+      border-radius: var(--r-md);
+      cursor: pointer;
+      transition: all var(--ease);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+      letter-spacing: -.1px;
+    }
+
+    .btn-auth:hover {
+      background: var(--primary-h);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 138, 0.2);
+    }
+
+    .btn-auth:active {
+      transform: translateY(0);
+      box-shadow: none
+    }
+
+    .btn-auth:focus-visible {
+      box-shadow: var(--shadow-focus)
+    }
+
+    .btn-auth:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none
+    }
+
+    .btn-auth svg {
+      width: 16px;
+      height: 16px
+    }
+
+    /* Loading state */
+    .btn-auth.loading .btn-label {
+      opacity: 0
+    }
+
+    .btn-auth .btn-spinner {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border: 2.5px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .6s linear infinite;
+      display: none;
+    }
+
+    .btn-auth.loading .btn-spinner {
+      display: block
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    /* Divider */
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    .auth-divider span {
+      font-size: 12px;
+      color: var(--text-3);
+      font-weight: 500;
+      white-space: nowrap
+    }
+
+    .auth-divider::before,
+    .auth-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-l);
+    }
+
+    /* SSO Button */
+    .btn-sso {
+      width: 100%;
+      padding: 11px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-1);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      cursor: pointer;
+      transition: all var(--ease);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-sso:hover {
+      background: var(--bg-2);
+      border-color: #D1D5DB
+    }
+
+    .btn-sso svg {
+      width: 18px;
+      height: 18px
+    }
+
+    /* Trust indicators */
+    .auth-trust {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 32px;
+    }
+
+    .auth-trust-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-3);
+    }
+
+    .auth-trust-item svg {
+      width: 12px;
+      height: 12px;
+      color: var(--text-3)
+    }
+
+    /* Right panel footer */
+    .auth-right-footer {
+      position: absolute;
+      bottom: 32px;
+      left: 56px;
+      right: 56px;
+      text-align: center;
+    }
+
+    .auth-right-footer span {
+      font-size: 11px;
+      color: var(--text-3);
+      font-weight: 400
+    }
+
+    /* ══════════════════════════════════════════════
+   SUCCESS / RESET STATES
+   ══════════════════════════════════════════════ */
+    .state-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--r-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .state-icon svg {
+      width: 24px;
+      height: 24px;
+      stroke-width: 1.75
+    }
+
+    /* Alert Banner */
+    .auth-alert {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: var(--r-md);
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.5;
+      margin-bottom: 20px;
+      opacity: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .auth-alert.show {
+      opacity: 1;
+      max-height: 100px;
+      margin-bottom: 20px
+    }
+
+    .auth-alert svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      margin-top: 1px
+    }
+
+    .auth-alert-error {
+      background: var(--danger-50);
+      color: #991B1B;
+      border: 1px solid #FEE2E2
+    }
+
+    .auth-alert-success {
+      background: var(--success-50);
+      color: #065F46;
+      border: 1px solid #D1FAE5
+    }
+
+    .auth-alert-warning {
+      background: var(--warning-50);
+      color: #92400E;
+      border: 1px solid #FDE68A
+    }
+
+    /* ══════════════════════════════════════════════
+   LOADING TRANSITION SCREEN
+   ══════════════════════════════════════════════ */
+    .loading-screen {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .loading-screen.active {
+      opacity: 1;
+      pointer-events: all
+    }
+
+    .loading-logo {
+      width: 56px;
+      height: 56px;
+      background: var(--primary);
+      border-radius: var(--r-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 900;
+      font-size: 22px;
+      letter-spacing: -0.5px;
+      margin-bottom: 28px;
+      animation: logoPulse 2s ease infinite;
+      box-shadow: 0 4px 20px rgba(0, 0, 138, 0.15);
+    }
+
+    @keyframes logoPulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+        box-shadow: 0 4px 20px rgba(0, 0, 138, 0.15)
+      }
+
+      50% {
+        transform: scale(1.04);
+        box-shadow: 0 6px 30px rgba(0, 0, 138, 0.25)
+      }
+    }
+
+    .loading-brand {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-1);
+      letter-spacing: -.3px;
+      margin-bottom: 4px
+    }
+
+    .loading-sub {
+      font-size: 13px;
+      color: var(--text-3);
+      font-weight: 400;
+      margin-bottom: 32px
+    }
+
+    .loading-bar-track {
+      width: 200px;
+      height: 3px;
+      background: var(--bg-3);
+      border-radius: var(--r-full);
+      overflow: hidden;
+    }
+
+    .loading-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--primary);
+      border-radius: var(--r-full);
+      transition: width 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .loading-screen.active .loading-bar-fill {
+      width: 100%
+    }
+
+    .loading-status {
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--text-3);
+      font-weight: 500;
+      letter-spacing: .2px;
+    }
+
+    /* ══════════════════════════════════════════════
+   OFFLINE / MAINTENANCE STATES (FULL SCREEN)
+   ══════════════════════════════════════════════ */
+    .full-state {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 90;
+      text-align: center;
+      padding: 40px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .full-state.active {
+      opacity: 1;
+      pointer-events: all
+    }
+
+    .full-state-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: var(--r-xl);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+
+    .full-state-icon svg {
+      width: 32px;
+      height: 32px;
+      stroke-width: 1.5
+    }
+
+    .full-state-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-1);
+      letter-spacing: -.4px;
+      margin-bottom: 8px
+    }
+
+    .full-state-desc {
+      font-size: 14px;
+      color: var(--text-2);
+      max-width: 360px;
+      line-height: 1.6;
+      margin-bottom: 28px
+    }
+
+    .full-state-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--r-md);
+      cursor: pointer;
+      transition: all var(--ease);
+    }
+
+    .full-state-btn:hover {
+      background: var(--primary-h);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md)
+    }
+
+    .full-state-btn svg {
+      width: 16px;
+      height: 16px
+    }
+
+    .full-state-meta {
+      margin-top: 24px;
+      font-size: 11px;
+      color: var(--text-3);
+      font-weight: 500
+    }
+
+    .full-state-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+
+    .full-state-logo-mark {
+      width: 32px;
+      height: 32px;
+      background: var(--primary);
+      border-radius: var(--r-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    .full-state-logo-name {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-1)
+    }
+
+    /* ══════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════ */
+    @media(max-width:1024px) {
+      .auth-left {
+        padding: 48px 40px
+      }
+
+      .auth-right {
+        padding: 48px 40px
+      }
+
+      .auth-headline {
+        font-size: 30px
+      }
+
+      .auth-left-footer {
+        left: 40px;
+        right: 40px;
+        bottom: 24px
+      }
+
+      .auth-right-footer {
+        left: 40px;
+        right: 40px;
+        bottom: 24px
+      }
+    }
+
+    @media(max-width:860px) {
+      .auth-shell {
+        flex-direction: column
+      }
+
+      .auth-left {
+        flex: none;
+        padding: 32px 32px 24px;
+        min-height: auto;
+      }
+
+      .auth-left-content {
+        max-width: 100%
+      }
+
+      .auth-headline {
+        font-size: 24px;
+        margin-bottom: 8px
+      }
+
+      .auth-subheadline {
+        font-size: 14px;
+        margin-bottom: 24px
+      }
+
+      .auth-features {
+        flex-direction: row;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 0
+      }
+
+      .auth-left-footer {
+        display: none
+      }
+
+      .geo-dots,
+      .geo-lines {
+        display: none
+      }
+
+      .auth-right {
+        flex: 1;
+        padding: 32px
+      }
+    }
+
+    @media(max-width:480px) {
+      .auth-right {
+        padding: 24px 20px
+      }
+
+      .auth-form-wrap {
+        max-width: 100%
+      }
+
+      .auth-trust {
+        flex-direction: column;
+        gap: 8px
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══════════════════════ MAIN AUTH SHELL ═══════════════════════ -->
+  <div class="auth-shell" id="authShell">
+
+    <!-- ── LEFT PANEL ── -->
+    <div class="auth-left">
+
+      <!-- Geometric accents -->
+      <div class="geo-dots">
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <div class="geo-lines">
+        <span style="width:80px"></span>
+        <span style="width:60px"></span>
+        <span style="width:100px"></span>
+        <span style="width:45px"></span>
+      </div>
+
+      <div class="auth-left-content">
+
+        <!-- Logo -->
+        <div class="auth-logo">
+          <div class="auth-logo-mark">V</div>
+          <div class="auth-logo-text">
+            <span class="auth-logo-name">VERDE LABS</span>
+            <span class="auth-logo-sub">Digital Solutions</span>
+          </div>
+        </div>
+
+        <!-- Headline -->
+        <h1 class="auth-headline">Welcome to<br /><span>VERDE OS</span></h1>
+        <p class="auth-subheadline">The Operating System for Modern Execution.</p>
+
+        <!-- Features -->
+        <div class="auth-features">
+          <div class="auth-feature">
+            <div class="auth-feature-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+              </svg>
+            </div>
+            <span class="auth-feature-text">Manage Projects with Clarity</span>
+          </div>
+          <div class="auth-feature">
+            <div class="auth-feature-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+              </svg>
+            </div>
+            <span class="auth-feature-text">Execute Faster Than Ever</span>
+          </div>
+          <div class="auth-feature">
+            <div class="auth-feature-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+            </div>
+            <span class="auth-feature-text">Grow Together as a Team</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer -->
+      <div class="auth-left-footer">
+        <span>© 2026 VERDE LABS</span>
+        <span>All rights reserved</span>
+      </div>
+
+    </div>
+
+    <!-- ── RIGHT PANEL ── -->
+    <div class="auth-right">
+      <div class="auth-form-wrap">
+
+        <!-- ═══ VIEW: LOGIN ═══ -->
+        <div class="auth-view" id="view-login">
+          <div class="auth-form-header">
+            <h2 class="auth-form-title">Welcome back</h2>
+            <p class="auth-form-subtitle">Sign in to your VERDE OS workspace</p>
+          </div>
+
+          <!-- Error Alert -->
+          <div class="auth-alert auth-alert-error" id="login-error">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="15" y1="9" x2="9" y2="15" />
+              <line x1="9" y1="9" x2="15" y2="15" />
+            </svg>
+            <span id="login-error-text">Invalid email or password. Please try again.</span>
+          </div>
+
+          <form id="loginForm" onsubmit="handleLogin(event)">
+            <!-- Email -->
+            <div class="form-group">
+              <label class="form-label" for="email">Email Address</label>
+              <div class="form-input-wrap">
+                <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <rect x="2" y="4" width="20" height="16" rx="2" />
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                </svg>
+                <input id="email" type="email" class="form-input" placeholder="you@verdelabs.com" autocomplete="email"
+                  required />
+              </div>
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+              <label class="form-label" for="password">Password</label>
+              <div class="form-input-wrap">
+                <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+                <input id="password" type="password" class="form-input" placeholder="Enter your password"
+                  autocomplete="current-password" required />
+                <button type="button" class="input-action" onclick="togglePw()" aria-label="Toggle password visibility">
+                  <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                </button>
+              </div>
+              <div class="form-error" id="pw-error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+                Password must be at least 8 characters
+              </div>
+            </div>
+
+            <!-- Remember / Forgot -->
+            <div class="form-row">
+              <label class="form-check">
+                <input type="checkbox" class="form-checkbox" checked />
+                <span class="form-check-label">Remember me</span>
+              </label>
+              <button type="button" class="form-forgot" onclick="showView('forgot')">Forgot password?</button>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="btn-auth" id="loginBtn">
+              <span class="btn-label">Sign in to VERDE OS</span>
+              <span class="btn-spinner"></span>
+            </button>
+          </form>
+
+          <!-- Divider -->
+          <div class="auth-divider"><span>or continue with</span></div>
+
+          <!-- SSO -->
+          <button class="btn-sso" onclick="handleSSO()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              <circle cx="12" cy="16" r="1" />
+            </svg>
+            Sign in with SSO
+          </button>
+
+          <!-- Trust -->
+          <div class="auth-trust">
+            <span class="auth-trust-item">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              </svg>
+              Encrypted Workspace
+            </span>
+            <span class="auth-trust-item">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+              Secure Login
+            </span>
+            <span class="auth-trust-item">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round">
+                <rect x="2" y="3" width="20" height="14" rx="2" />
+                <line x1="8" y1="21" x2="16" y2="21" />
+                <line x1="12" y1="17" x2="12" y2="21" />
+              </svg>
+              Internal Access
+            </span>
+          </div>
+        </div>
+
+        <!-- ═══ VIEW: FORGOT PASSWORD ═══ -->
+        <div class="auth-view hidden" id="view-forgot">
+          <div class="auth-form-header">
+            <div class="state-icon" style="background:var(--primary-50);color:var(--primary)">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+            </div>
+            <h2 class="auth-form-title">Reset your password</h2>
+            <p class="auth-form-subtitle">Enter the email associated with your account and we'll send you a reset link.
+            </p>
+          </div>
+
+          <form onsubmit="handleForgot(event)">
+            <div class="form-group">
+              <label class="form-label" for="resetEmail">Email Address</label>
+              <div class="form-input-wrap">
+                <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <rect x="2" y="4" width="20" height="16" rx="2" />
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                </svg>
+                <input id="resetEmail" type="email" class="form-input" placeholder="you@verdelabs.com" required />
+              </div>
+            </div>
+            <button type="submit" class="btn-auth" id="resetBtn">
+              <span class="btn-label">Send Reset Link</span>
+              <span class="btn-spinner"></span>
+            </button>
+          </form>
+          <button
+            style="width:100%;margin-top:16px;padding:10px;font-size:13px;font-weight:600;color:var(--text-2);background:none;border:none;cursor:pointer;border-radius:var(--r-md);transition:all .2s ease"
+            onmouseover="this.style.background='var(--bg-2)'" onmouseout="this.style.background='none'"
+            onclick="showView('login')">← Back to Sign In</button>
+        </div>
+
+        <!-- ═══ VIEW: RESET LINK SENT ═══ -->
+        <div class="auth-view hidden" id="view-reset-sent">
+          <div style="text-align:center">
+            <div class="state-icon" style="background:var(--success-50);color:var(--success);margin:0 auto 20px">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                <polyline points="22 4 12 14.01 9 11.01" />
+              </svg>
+            </div>
+            <h2 class="auth-form-title" style="text-align:center">Check your email</h2>
+            <p class="auth-form-subtitle" style="text-align:center;margin-bottom:8px">We've sent a password reset link
+              to:</p>
+            <p style="font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:32px" id="resetEmailDisplay">
+              shahim@verdelabs.com</p>
+            <p style="font-size:13px;color:var(--text-3);margin-bottom:24px">Didn't receive it? Check your spam folder
+              or try again.</p>
+            <button class="btn-auth" onclick="showView('forgot')" style="margin-bottom:12px">
+              <span class="btn-label">Resend Email</span>
+            </button>
+            <button
+              style="width:100%;padding:10px;font-size:13px;font-weight:600;color:var(--text-2);background:none;border:none;cursor:pointer;border-radius:var(--r-md);transition:all .2s ease"
+              onmouseover="this.style.background='var(--bg-2)'" onmouseout="this.style.background='none'"
+              onclick="showView('login')">← Back to Sign In</button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="auth-right-footer">
+        <span>Need help? Contact your administrator</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════ LOADING SCREEN ═══════════════════════ -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-logo">V</div>
+    <div class="loading-brand">VERDE OS</div>
+    <div class="loading-sub">by VERDE LABS</div>
+    <div class="loading-bar-track">
+      <div class="loading-bar-fill" id="loadingBar"></div>
+    </div>
+    <div class="loading-status" id="loadingStatus">Preparing your workspace…</div>
+  </div>
+
+  <!-- ═══════════════════════ OFFLINE STATE ═══════════════════════ -->
+  <div class="full-state" id="offlineState">
+    <div class="full-state-logo">
+      <div class="full-state-logo-mark">V</div>
+      <span class="full-state-logo-name">VERDE OS</span>
+    </div>
+    <div class="full-state-icon" style="background:var(--warning-50);color:var(--warning)">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-linecap="round" stroke-linejoin="round">
+        <line x1="1" y1="1" x2="23" y2="23" />
+        <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55" />
+        <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39" />
+        <path d="M10.71 5.05A16 16 0 0 1 22.56 9" />
+        <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88" />
+        <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
+        <line x1="12" y1="20" x2="12.01" y2="20" />
+      </svg>
+    </div>
+    <div class="full-state-title">You're offline</div>
+    <div class="full-state-desc">VERDE OS requires an internet connection. Check your network and try again.</div>
+    <button class="full-state-btn" onclick="location.reload()">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round">
+        <polyline points="23 4 23 10 17 10" />
+        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+      </svg>
+      Try Again
+    </button>
+    <div class="full-state-meta">VERDE LABS · Internal Platform</div>
+  </div>
+
+  <!-- ═══════════════════════ MAINTENANCE STATE ═══════════════════════ -->
+  <div class="full-state" id="maintenanceState">
+    <div class="full-state-logo">
+      <div class="full-state-logo-mark">V</div>
+      <span class="full-state-logo-name">VERDE OS</span>
+    </div>
+    <div class="full-state-icon" style="background:var(--primary-50);color:var(--primary)">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3" />
+        <path
+          d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+      </svg>
+    </div>
+    <div class="full-state-title">Scheduled Maintenance</div>
+    <div class="full-state-desc">VERDE OS is currently undergoing scheduled maintenance. We'll be back shortly. Thank
+      you for your patience.</div>
+    <div style="font-size:13px;color:var(--text-2);font-weight:500;margin-bottom:20px">
+      Estimated downtime: <strong>30 minutes</strong>
+    </div>
+    <button class="full-state-btn" onclick="location.reload()">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round">
+        <polyline points="23 4 23 10 17 10" />
+        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+      </svg>
+      Refresh
+    </button>
+    <div class="full-state-meta">VERDE LABS · System Status</div>
+  </div>
+
+  <!-- ═══════════════════════ JAVASCRIPT ═══════════════════════ -->
+  <script>
+    // ── View Management ──
+    function showView(viewName) {
+      document.querySelectorAll('.auth-view').forEach(v => v.classList.add('hidden'));
+      const target = document.getElementById('view-' + viewName);
+      if (target) {
+        setTimeout(() => target.classList.remove('hidden'), 50);
+      }
+      // Clear alerts
+      document.getElementById('login-error').classList.remove('show');
+    }
+
+    // ── Toggle Password Visibility ──
+    function togglePw() {
+      const pw = document.getElementById('password');
+      pw.type = pw.type === 'password' ? 'text' : 'password';
+    }
+
+    // ── Login Handler ──
+    function handleLogin(e) {
+      e.preventDefault();
+      const btn = document.getElementById('loginBtn');
+      const email = document.getElementById('email').value;
+      const pw = document.getElementById('password').value;
+
+      // Reset errors
+      document.getElementById('login-error').classList.remove('show');
+      document.getElementById('pw-error').classList.remove('show');
+      document.getElementById('password').classList.remove('error');
+
+      // Validation
+      if (pw.length < 8) {
+        document.getElementById('pw-error').classList.add('show');
+        document.getElementById('password').classList.add('error');
+        return;
+      }
+
+      // Loading
+      btn.classList.add('loading');
+      btn.disabled = true;
+
+      // Simulate auth
+      setTimeout(() => {
+        // Demo: if email contains "wrong", show error
+        if (email.includes('wrong')) {
+          btn.classList.remove('loading');
+          btn.disabled = false;
+          document.getElementById('login-error').classList.add('show');
+          return;
+        }
+
+        // Success → show loading screen
+        btn.classList.remove('loading');
+        showLoadingScreen();
+      }, 1500);
+    }
+
+    // ── Forgot Password Handler ──
+    function handleForgot(e) {
+      e.preventDefault();
+      const btn = document.getElementById('resetBtn');
+      const email = document.getElementById('resetEmail').value;
+
+      btn.classList.add('loading');
+      btn.disabled = true;
+
+      setTimeout(() => {
+        btn.classList.remove('loading');
+        btn.disabled = false;
+        document.getElementById('resetEmailDisplay').textContent = email;
+        showView('reset-sent');
+      }, 1200);
+    }
+
+    // ── SSO Handler ──
+    function handleSSO() {
+      // Simulate SSO redirect
+      showLoadingScreen();
+    }
+
+    // ── Loading Screen ──
+    function showLoadingScreen() {
+      const screen = document.getElementById('loadingScreen');
+      const status = document.getElementById('loadingStatus');
+      screen.classList.add('active');
+
+      const messages = [
+        'Authenticating…',
+        'Loading your workspace…',
+        'Preparing Mission Control…',
+        'Almost ready…'
+      ];
+
+      let i = 0;
+      const interval = setInterval(() => {
+        i++;
+        if (i < messages.length) {
+          status.textContent = messages[i];
+        }
+        if (i >= messages.length) {
+          clearInterval(interval);
+          // In production, redirect to dashboard
+          setTimeout(() => {
+            status.textContent = 'Welcome to VERDE OS ✓';
+          }, 500);
+        }
+      }, 700);
+    }
+
+    // ── Keyboard shortcut: Escape to go back ──
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        showView('login');
+      }
+    });
+
+    // ── Demo Controls (via URL params) ──
+    // ?state=offline, ?state=maintenance
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const state = params.get('state');
+      if (state === 'offline') document.getElementById('offlineState').classList.add('active');
+      if (state === 'maintenance') document.getElementById('maintenanceState').classList.add('active');
+    })();
+  </script>
+
+  <script src="../assets/js/session.js"></script>
+  <script src="../assets/js/components.js"></script>
+  <script src="../assets/js/navigation.js"></script>
+  <script src="../assets/js/app.js"></script>
+</body>
+
+</html>

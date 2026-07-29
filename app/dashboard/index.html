@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mission Control · VERDE OS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/global.css" />
+  <link rel="stylesheet" href="../assets/css/layout.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/modules.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+
+<body>
+
+  <div class="shell-container">
+    <div id="sidebar-container"></div>
+    <div class="shell-main">
+      <div id="topbar-container"></div>
+      <main class="app-content">
+
+        <div class="mc-dashboard-layout fade-stagger">
+          
+          <!-- ==========================================
+               MAIN CONTENT COLUMN
+               ========================================== -->
+          <div class="mc-main-content">
+
+            <!-- 1. EXECUTIVE HERO -->
+            <section class="mc-hero">
+              <h1 class="mc-hero-greeting">Good Evening, Shahim 👋</h1>
+              <div class="mc-hero-date">Sunday, July 27, 2026 · Your daily intelligence briefing</div>
+
+              <div class="mc-hero-stats">
+                <div class="mc-hero-stat-card">
+                  <div class="mc-stat-icon" style="background:var(--primary-light);color:var(--primary);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  </div>
+                  <div class="mc-stat-content">
+                    <div class="mc-stat-label">Today's Focus</div>
+                    <div class="mc-stat-value">3 client deliverables due today</div>
+                  </div>
+                </div>
+                <div class="mc-hero-stat-card">
+                  <div class="mc-stat-icon" style="background:var(--danger-50);color:var(--danger);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                  </div>
+                  <div class="mc-stat-content">
+                    <div class="mc-stat-label" style="color:var(--danger);">Critical</div>
+                    <div class="mc-stat-value">Cabo Travels website needs review</div>
+                  </div>
+                </div>
+                <div class="mc-hero-stat-card">
+                  <div class="mc-stat-icon" style="background:var(--warning-50);color:var(--warning);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  </div>
+                  <div class="mc-stat-content">
+                    <div class="mc-stat-label">Meetings</div>
+                    <div class="mc-stat-value">2 scheduled — 10AM standup, 2PM client</div>
+                  </div>
+                </div>
+                <div class="mc-hero-stat-card">
+                  <div class="mc-stat-icon" style="background:var(--success-50);color:var(--success);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                  </div>
+                  <div class="mc-stat-content">
+                    <div class="mc-stat-label">Revenue</div>
+                    <div class="mc-stat-value">₹4.2L this month · <span style="color:var(--success);">↑12%</span> vs last month</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mc-hero-ai">
+                <div class="mc-hero-ai-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                </div>
+                <div class="mc-hero-ai-text">
+                  <strong>AI RECOMMENDATION</strong><br>
+                  Focus on the Cabo Travels homepage review first — it's been pending for 2 days and the client follow-up is tomorrow. After that, review the GreenLeaf brand deliverables before the 2 PM call.
+                </div>
+              </div>
+            </section>
+
+            <div class="mc-grid-half">
+              <!-- 2. TODAY'S MISSION -->
+              <section>
+                <div class="mc-section-head">
+                  <h2 class="mc-section-title">Today's Mission</h2>
+                  <a href="#" class="mc-section-link">View Tasks →</a>
+                </div>
+                <div class="mc-card mc-mission-card">
+                  <div class="mc-progress-ring" style="--percentage: 67;">
+                    <div class="mc-progress-content">
+                      <div class="mc-progress-pct">67%</div>
+                      <div class="mc-progress-label">Complete</div>
+                    </div>
+                  </div>
+                  <div class="mc-mission-stats">
+                    <div>
+                      <div class="mc-mstat-value">8<span style="font-size:14px;color:var(--text-3);font-weight:600;">/12</span></div>
+                      <div class="mc-mstat-label">Tasks Done</div>
+                    </div>
+                    <div>
+                      <div class="mc-mstat-value" style="color:var(--warning);">4</div>
+                      <div class="mc-mstat-label">Remaining</div>
+                    </div>
+                    <div>
+                      <div class="mc-mstat-value">6.5<span style="font-size:14px;color:var(--text-3);font-weight:600;">h</span></div>
+                      <div class="mc-mstat-label">Hours Worked</div>
+                    </div>
+                    <div>
+                      <div class="mc-mstat-value" style="color:var(--success);">84</div>
+                      <div class="mc-mstat-label">Productivity</div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- 3. COMPANY HEALTH -->
+              <section>
+                <div class="mc-section-head">
+                  <h2 class="mc-section-title">Company Health</h2>
+                  <a href="#" class="mc-section-link">All Metrics →</a>
+                </div>
+                <div class="mc-health-grid">
+                  <div class="mc-health-card mc-health-card-large">
+                    <div class="mc-health-top">
+                      <div class="mc-health-icon" style="background:var(--success-50);color:var(--success);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                      </div>
+                      <span class="badge badge-success">~12%</span>
+                    </div>
+                    <div>
+                      <div class="mc-health-value">₹12.4L</div>
+                      <div class="mc-health-label">Revenue</div>
+                    </div>
+                  </div>
+                  <div class="mc-health-card">
+                    <div class="mc-health-top">
+                      <div class="mc-health-icon" style="background:var(--primary-light);color:var(--primary);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                      </div>
+                      <span class="badge badge-primary" style="font-size:10px;padding:2px 6px;">+2</span>
+                    </div>
+                    <div>
+                      <div class="mc-health-value">8</div>
+                      <div class="mc-health-label">Active Projects</div>
+                    </div>
+                  </div>
+                  <div class="mc-health-card">
+                    <div class="mc-health-top">
+                      <div class="mc-health-icon" style="background:var(--warning-50);color:var(--warning);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="mc-health-value">24</div>
+                      <div class="mc-health-label">Active Clients</div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <!-- 4. ACTIVE PROJECTS -->
+            <section>
+              <div class="mc-section-head">
+                <h2 class="mc-section-title">Active Projects</h2>
+                <a href="#" class="mc-section-link">View All →</a>
+              </div>
+              <div class="mc-projects-list">
+                <div class="mc-project-card">
+                  <div>
+                    <div class="mc-project-title">Cabo Travels Website</div>
+                    <div class="mc-project-client">Cabo Travels</div>
+                  </div>
+                  <div class="mc-project-meta">
+                    <span style="color:var(--primary);font-weight:700;">72%</span>
+                    <span style="color:var(--text-3);">Due Aug 15</span>
+                  </div>
+                  <div class="mc-project-bar"><div class="mc-project-bar-fill" style="width:72%;"></div></div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div class="mc-avatars">
+                      <div class="mc-avatar">MK</div>
+                      <div class="mc-avatar">SF</div>
+                    </div>
+                    <span class="badge badge-warning">Review</span>
+                  </div>
+                </div>
+                <div class="mc-project-card">
+                  <div>
+                    <div class="mc-project-title">MedCare ERP App</div>
+                    <div class="mc-project-client">MedCare Inc</div>
+                  </div>
+                  <div class="mc-project-meta">
+                    <span style="color:var(--warning);font-weight:700;">45%</span>
+                    <span style="color:var(--text-3);">Due Sep 01</span>
+                  </div>
+                  <div class="mc-project-bar"><div class="mc-project-bar-fill" style="width:45%;background:var(--warning);"></div></div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div class="mc-avatars">
+                      <div class="mc-avatar">SH</div>
+                      <div class="mc-avatar">RN</div>
+                    </div>
+                    <span class="badge badge-primary">In Progress</span>
+                  </div>
+                </div>
+                <div class="mc-project-card">
+                  <div>
+                    <div class="mc-project-title">GreenLeaf Brand Guide</div>
+                    <div class="mc-project-client">GreenLeaf Corp</div>
+                  </div>
+                  <div class="mc-project-meta">
+                    <span style="color:var(--success);font-weight:700;">85%</span>
+                    <span style="color:var(--text-3);">Due Jul 30</span>
+                  </div>
+                  <div class="mc-project-bar"><div class="mc-project-bar-fill" style="width:85%;background:var(--success);"></div></div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div class="mc-avatars">
+                      <div class="mc-avatar" style="background:var(--success-50);color:var(--success);">SF</div>
+                    </div>
+                    <span class="badge badge-success">On Track</span>
+                  </div>
+                </div>
+                <div class="mc-project-card">
+                  <div>
+                    <div class="mc-project-title">TechNova SEO</div>
+                    <div class="mc-project-client">TechNova Solutions</div>
+                  </div>
+                  <div class="mc-project-meta">
+                    <span style="color:var(--primary);font-weight:700;">60%</span>
+                    <span style="color:var(--text-3);">Due Aug 20</span>
+                  </div>
+                  <div class="mc-project-bar"><div class="mc-project-bar-fill" style="width:60%;"></div></div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div class="mc-avatars">
+                      <div class="mc-avatar">RN</div>
+                    </div>
+                    <span class="badge badge-primary">In Progress</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <div class="mc-grid-half">
+              <!-- 5. TEAM ACTIVITY -->
+              <section>
+                <div class="mc-section-head">
+                  <h2 class="mc-section-title">Team Activity</h2>
+                  <a href="#" class="mc-section-link">View All →</a>
+                </div>
+                <div class="mc-card mc-activity-feed">
+                  <div class="mc-activity-item">
+                    <div class="mc-avatar" style="width:32px;height:32px;font-size:11px;background:#6366F1;color:#fff;">MK</div>
+                    <div>
+                      <div class="mc-activity-text"><strong>Midhul</strong> uploaded homepage design for <strong>Cabo Travels</strong></div>
+                      <div class="mc-activity-time">10 min ago</div>
+                    </div>
+                  </div>
+                  <div class="mc-activity-item">
+                    <div class="mc-avatar" style="width:32px;height:32px;font-size:11px;background:#EC4899;color:#fff;">SF</div>
+                    <div>
+                      <div class="mc-activity-text"><strong>Shafna</strong> added a new lead — <strong>BlueWave Tech</strong></div>
+                      <div class="mc-activity-time">25 min ago</div>
+                    </div>
+                  </div>
+                  <div class="mc-activity-item">
+                    <div class="mc-avatar" style="width:32px;height:32px;font-size:11px;background:#F59E0B;color:#fff;">RN</div>
+                    <div>
+                      <div class="mc-activity-text"><strong>Rahan</strong> completed SEO audit for <strong>TechNova</strong></div>
+                      <div class="mc-activity-time">1 hour ago</div>
+                    </div>
+                  </div>
+                  <div class="mc-activity-item">
+                    <div class="mc-avatar" style="width:32px;height:32px;font-size:11px;background:var(--success);color:#fff;">₹</div>
+                    <div>
+                      <div class="mc-activity-text">Payment received from <strong>GreenLeaf</strong> — ₹85,000</div>
+                      <div class="mc-activity-time">2 hours ago</div>
+                    </div>
+                  </div>
+                  <div class="mc-activity-item">
+                    <div class="mc-avatar" style="width:32px;height:32px;font-size:11px;background:var(--primary);color:#fff;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                    <div>
+                      <div class="mc-activity-text">Proposal approved by <strong>TechNova</strong></div>
+                      <div class="mc-activity-time">3 hours ago</div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- 6. PENDING APPROVALS -->
+              <section>
+                <div class="mc-section-head">
+                  <h2 class="mc-section-title">Pending Approvals</h2>
+                  <span class="badge badge-warning" style="border-radius:12px;font-size:11px;">3</span>
+                </div>
+                <div class="mc-card mc-activity-feed">
+                  <div class="mc-approval-item">
+                    <div class="mc-approval-icon" style="background:var(--success-50);color:var(--success);">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    </div>
+                    <div class="mc-approval-info">
+                      <div class="mc-approval-title">Invoice #VL-0042</div>
+                      <div class="mc-approval-sub">₹85,000 · Cabo Travels</div>
+                    </div>
+                    <div class="mc-approval-actions">
+                      <button class="mc-btn-sm mc-btn-approve">Approve</button>
+                      <button class="mc-btn-sm mc-btn-reject">Reject</button>
+                    </div>
+                  </div>
+                  <div class="mc-approval-item">
+                    <div class="mc-approval-icon" style="background:var(--primary-light);color:var(--primary);">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    </div>
+                    <div class="mc-approval-info">
+                      <div class="mc-approval-title">Leave Request</div>
+                      <div class="mc-approval-sub">Midhul · July 30 — 31</div>
+                    </div>
+                    <div class="mc-approval-actions">
+                      <button class="mc-btn-sm mc-btn-approve">Approve</button>
+                      <button class="mc-btn-sm mc-btn-reject">Reject</button>
+                    </div>
+                  </div>
+                  <div class="mc-approval-item">
+                    <div class="mc-approval-icon" style="background:var(--warning-50);color:var(--warning);">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                    </div>
+                    <div class="mc-approval-info">
+                      <div class="mc-approval-title">Budget Increase</div>
+                      <div class="mc-approval-sub">Marketing Campaign · +₹15,000</div>
+                    </div>
+                    <div class="mc-approval-actions">
+                      <button class="mc-btn-sm mc-btn-review">Review</button>
+                      <button class="mc-btn-sm mc-btn-approve">Approve</button>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <!-- 7. TODAY'S PERFORMANCE -->
+            <section>
+              <div class="mc-section-head">
+                <h2 class="mc-section-title">Today's Performance</h2>
+                <a href="#" class="mc-section-link">Team Dashboard →</a>
+              </div>
+              <div class="mc-performance-grid">
+                <div class="mc-perf-card">
+                  <div class="mc-perf-avatar" style="background:var(--primary);">SH</div>
+                  <div>
+                    <div class="mc-perf-name">Shahim</div>
+                    <div class="mc-perf-role">CEO · Admin</div>
+                  </div>
+                </div>
+                <div class="mc-perf-card">
+                  <div class="mc-perf-avatar" style="background:#6366F1;">MK</div>
+                  <div>
+                    <div class="mc-perf-name">Midhul K</div>
+                    <div class="mc-perf-role">Design Lead</div>
+                  </div>
+                </div>
+                <div class="mc-perf-card">
+                  <div class="mc-perf-avatar" style="background:#EC4899;">SF</div>
+                  <div>
+                    <div class="mc-perf-name">Shafna F</div>
+                    <div class="mc-perf-role">Sales Manager</div>
+                  </div>
+                </div>
+                <div class="mc-perf-card">
+                  <div class="mc-perf-avatar" style="background:#F59E0B;">RN</div>
+                  <div>
+                    <div class="mc-perf-name">Rahan N</div>
+                    <div class="mc-perf-role">Marketing Lead</div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+          </div> <!-- /mc-main-content -->
+
+          <!-- ==========================================
+               RIGHT SIDEBAR COLUMN
+               ========================================== -->
+          <aside class="mc-right-sidebar">
+            
+            <!-- Calendar Widget -->
+            <div>
+              <div class="mc-sidebar-title">
+                <span>Calendar</span>
+                <span style="font-size:11px;font-weight:600;color:var(--text-3);">July 2026</span>
+              </div>
+              <div class="mc-calendar">
+                <div class="mc-cal-header">
+                  <div>MO</div><div>TU</div><div>WE</div><div>TH</div><div>FR</div><div>SA</div><div>SU</div>
+                </div>
+                <div class="mc-cal-grid">
+                  <div class="mc-cal-day fade">29</div><div class="mc-cal-day fade">30</div>
+                  <div class="mc-cal-day">1</div><div class="mc-cal-day">2</div><div class="mc-cal-day">3</div><div class="mc-cal-day">4</div><div class="mc-cal-day">5</div>
+                  <div class="mc-cal-day">6</div><div class="mc-cal-day">7</div><div class="mc-cal-day">8</div><div class="mc-cal-day">9</div><div class="mc-cal-day">10</div><div class="mc-cal-day">11</div><div class="mc-cal-day">12</div>
+                  <div class="mc-cal-day">13</div><div class="mc-cal-day">14</div><div class="mc-cal-day">15</div><div class="mc-cal-day">16</div><div class="mc-cal-day">17</div><div class="mc-cal-day">18</div><div class="mc-cal-day">19</div>
+                  <div class="mc-cal-day">20</div><div class="mc-cal-day">21</div><div class="mc-cal-day">22</div><div class="mc-cal-day">23</div><div class="mc-cal-day">24</div><div class="mc-cal-day">25</div><div class="mc-cal-day">26</div>
+                  <div class="mc-cal-day active">27</div><div class="mc-cal-day">28</div><div class="mc-cal-day">29</div><div class="mc-cal-day">30</div><div class="mc-cal-day">31</div><div class="mc-cal-day fade">1</div><div class="mc-cal-day fade">2</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Upcoming Meetings -->
+            <div style="margin-top:24px;">
+              <div class="mc-sidebar-title">Upcoming Meetings</div>
+              <div class="mc-meeting-item">
+                <div class="mc-meeting-time">10:00</div>
+                <div>
+                  <div class="mc-meeting-title">Daily Standup</div>
+                  <div class="mc-meeting-sub">Entire Team</div>
+                </div>
+              </div>
+              <div class="mc-meeting-item">
+                <div class="mc-meeting-time">14:00</div>
+                <div>
+                  <div class="mc-meeting-title">Client Review</div>
+                  <div class="mc-meeting-sub">GreenLeaf - Brand Delivery</div>
+                </div>
+              </div>
+              <div class="mc-meeting-item">
+                <div class="mc-meeting-time">16:30</div>
+                <div>
+                  <div class="mc-meeting-title">Sprint Planning</div>
+                  <div class="mc-meeting-sub">Dev Team</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Notes -->
+            <div style="margin-top:24px;">
+              <div class="mc-sidebar-title">Quick Notes</div>
+              <textarea class="mc-quick-note" placeholder="Type a quick note..."></textarea>
+            </div>
+
+            <!-- Pinned Tasks -->
+            <div style="margin-top:24px;">
+              <div class="mc-sidebar-title">
+                <span>Pinned Tasks</span>
+                <span style="font-size:11px;font-weight:600;color:var(--text-3);font-weight:500;">4 tasks</span>
+              </div>
+              <div class="mc-pinned-task">
+                <div class="mc-pinned-check"></div>
+                <div class="mc-pinned-title">Review Cabo homepage</div>
+              </div>
+              <div class="mc-pinned-task">
+                <div class="mc-pinned-check"></div>
+                <div class="mc-pinned-title">Approve GreenLeaf invoice</div>
+              </div>
+              <div class="mc-pinned-task">
+                <div class="mc-pinned-check checked"></div>
+                <div class="mc-pinned-title" style="text-decoration:line-through;color:var(--text-3);">Send TechNova proposal</div>
+              </div>
+            </div>
+
+          </aside>
+        </div> <!-- /mc-dashboard-layout -->
+
+        <!-- ==========================================
+             WORKSPACE FRAMEWORK: FOOTER & AI PANEL
+             ========================================== -->
+        <footer class="ws-footer" style="margin-top:64px;">
+          <div style="display:flex;gap:16px;">
+            <span><strong>Last Sync:</strong> Live</span>
+            <span><strong>User:</strong> Shahim</span>
+          </div>
+          <div style="display:flex;gap:16px;">
+            <a href="#" style="color:var(--primary);text-decoration:none;">Help & Support</a>
+            <span>VERDE OS v2.0 Workspace</span>
+          </div>
+        </footer>
+
+        <aside class="ai-floating-panel" id="ws-ai-panel">
+          <div class="ai-panel-header">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+              Workspace AI Copilot
+            </div>
+            <button class="btn btn-ghost" style="padding:4px;height:auto;"
+              onclick="document.getElementById('ws-ai-panel').classList.remove('active')">✕</button>
+          </div>
+          <div class="ai-panel-body">
+            <p>Hello! I am your AI Assistant for this workspace. I can help you analyze trends, summarize data, and
+              automate actions.</p>
+            <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px;">
+              <button class="btn btn-sm btn-secondary" style="width:100%;justify-content:flex-start;">✨ Summarize this
+                view</button>
+              <button class="btn btn-sm btn-secondary" style="width:100%;justify-content:flex-start;">📈 Generate
+                Insight Report</button>
+            </div>
+          </div>
+        </aside>
+
+      </main>
+    </div>
+  </div>
+
+  <div id="statusbar-container"></div>
+  <div id="overlays-container"></div>
+
+  <script src="../assets/js/session.js"></script>
+  <script src="../assets/js/components.js"></script>
+  <script src="../assets/js/navigation.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script src="./script.js"></script>
+
+</body>
+
+</html>

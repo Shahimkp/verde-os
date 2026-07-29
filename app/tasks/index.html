@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tasks Workspace · VERDE OS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/global.css" />
+  <link rel="stylesheet" href="../assets/css/layout.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/modules.css" />
+</head>
+
+<body>
+
+  <div class="shell-container">
+    <div id="sidebar-container"></div>
+    <div class="shell-main">
+      <div id="topbar-container"></div>
+      <main class="app-content">
+
+        <div class="ceo-dashboard-wrap fade-stagger">
+
+          
+          <!-- ==========================================
+               WORKSPACE FRAMEWORK: HEADER & ACTIONS
+               ========================================== -->
+          <header class="ws-header">
+            <div class="ws-header-top">
+              <div class="ws-title-group">
+                <div class="ws-icon-box">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                </div>
+                <div>
+                  <div class="ws-breadcrumb">Workspace / Tasks</div>
+                  <h1 class="ws-title">Tasks <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="cursor:pointer;color:var(--text-3);"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></h1>
+                  <p class="ws-desc">Daily task and sprint execution</p>
+                </div>
+              </div>
+              <div class="ws-meta-group">
+                <div class="ws-last-updated">Last Updated: Just now</div>
+                <div class="input-search" style="width:200px;background:var(--surface);">
+                  <input type="text" placeholder="Quick Search..." style="border:none;background:none;outline:none;width:100%;font-size:12px;" />
+                </div>
+              </div>
+            </div>
+
+            <div class="ws-action-bar">
+              <div class="ws-actions-left">
+                <button class="btn btn-sm btn-ghost">Refresh</button>
+                <button class="btn btn-sm btn-ghost">Filter</button>
+                <button class="btn btn-sm btn-ghost">Sort</button>
+              </div>
+              <div class="ws-actions-right">
+                <button class="btn btn-sm btn-secondary" onclick="document.getElementById('ws-ai-panel').classList.toggle('active')">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                  AI Assistant
+                </button>
+                <button class="btn btn-sm btn-ghost">Import</button>
+                <button class="btn btn-sm btn-ghost">Export</button>
+                <button class="btn btn-sm btn-primary">+ New Task</button>
+              </div>
+            </div>
+          </header>
+<section class="kpi-grid-6">
+            <div class="kpi-card-v3">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="kpi-title-label">Active Tasks</span>
+                <div class="kpi-icon-wrap" style="background:var(--primary-light);color:var(--primary)">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                </div>
+              </div>
+              <div class="kpi-value-lg">18 Active</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:70%;"></div></div>
+              <div class="kpi-desc"><span class="badge badge-primary">Sprint 14</span><span>In progress</span></div>
+            </div>
+
+            <div class="kpi-card-v3">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="kpi-title-label">Completed</span>
+                <div class="kpi-icon-wrap" style="background:var(--success-50);color:var(--success)">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+              </div>
+              <div class="kpi-value-lg">42 Done</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:90%;background:var(--success);"></div></div>
+              <div class="kpi-desc"><span class="badge badge-success">High Velocity</span><span>Sprint Target</span></div>
+            </div>
+
+            <div class="kpi-card-v3">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="kpi-title-label">Overdue Risk</span>
+                <div class="kpi-icon-wrap" style="background:var(--danger-50);color:var(--danger)">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+                </div>
+              </div>
+              <div class="kpi-value-lg">2 Overdue</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:20%;background:var(--danger);"></div></div>
+              <div class="kpi-desc"><span class="badge badge-danger">High Priority</span><span>Review Due</span></div>
+            </div>
+
+            <div class="kpi-card-v3">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="kpi-title-label">Blocked Items</span>
+                <div class="kpi-icon-wrap" style="background:var(--warning-50);color:var(--warning)">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </div>
+              </div>
+              <div class="kpi-value-lg">1 Blocked</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:10%;background:var(--warning);"></div></div>
+              <div class="kpi-desc"><span class="badge badge-warning">Dependency</span><span>API Key Pending</span></div>
+            </div>
+
+            <div class="kpi-card-v3">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="kpi-title-label">Today's Focus</span>
+                <div class="kpi-icon-wrap" style="background:var(--info-50);color:var(--info)">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+              </div>
+              <div class="kpi-value-lg">3 Items</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:80%;background:var(--info);"></div></div>
+              <div class="kpi-desc"><span class="badge badge-info">Due Today</span><span>Deliverables</span></div>
+            </div>
+
+            <div class="kpi-card-v3">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="kpi-title-label">Completion Rate</span>
+                <div class="kpi-icon-wrap" style="background:var(--primary-light);color:var(--primary)">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                </div>
+              </div>
+              <div class="kpi-value-lg">84%</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:84%;"></div></div>
+              <div class="kpi-desc"><span class="badge badge-success">Optimal Pace</span><span>Efficiency</span></div>
+            </div>
+          </section>
+
+          <!-- ==========================================
+               SECTION 2: Task Board (Kanban)
+               ========================================== -->
+          <section>
+            <div class="sec-heading" style="margin-bottom:16px;">
+              <h2 class="sec-title-text">Task Kanban Board</h2>
+              <span class="badge badge-neutral">4 Columns</span>
+            </div>
+            <div class="crm-kanban-board">
+              <!-- To Do -->
+              <div class="crm-kanban-col">
+                <div class="crm-col-header">
+                  <span class="crm-col-title">To Do</span>
+                  <span class="badge badge-neutral">3</span>
+                </div>
+                <div class="task-card-v2">
+                  <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <span class="badge badge-primary">Medium</span>
+                    <span style="font-size:11px;color:var(--text-3);">Due 04:00 PM</span>
+                  </div>
+                  <div style="font-weight:700;font-size:14px;">Setup MedCare API Keys</div>
+                  <div style="font-size:12px;color:var(--text-2);">Backend integration setup</div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
+                    <div class="avatar avatar-sm" style="background:#F59E0B;color:#fff;">MK</div>
+                    <span style="font-size:11px;color:var(--text-3);">MedCare ERP</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- In Progress -->
+              <div class="crm-kanban-col">
+                <div class="crm-col-header">
+                  <span class="crm-col-title">In Progress</span>
+                  <span class="badge badge-primary">4</span>
+                </div>
+                <div class="task-card-v2">
+                  <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <span class="badge badge-danger">High Priority</span>
+                    <span style="font-size:11px;color:var(--text-3);">Due 11:30 AM</span>
+                  </div>
+                  <div style="font-weight:700;font-size:14px;">Review Cabo Travels Wireframes</div>
+                  <div style="font-size:12px;color:var(--text-2);">Client feedback pending</div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
+                    <div class="avatar avatar-sm">SH</div>
+                    <span style="font-size:11px;color:var(--primary);">Assignee: Shahim</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Review -->
+              <div class="crm-kanban-col">
+                <div class="crm-col-header">
+                  <span class="crm-col-title">Review</span>
+                  <span class="badge badge-warning">2</span>
+                </div>
+                <div class="task-card-v2">
+                  <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <span class="badge badge-warning">Review Needed</span>
+                    <span style="font-size:11px;color:var(--text-3);">Due 02:00 PM</span>
+                  </div>
+                  <div style="font-weight:700;font-size:14px;">GreenLeaf Brand Approval</div>
+                  <div style="font-size:12px;color:var(--text-2);">Prepare pitch deck</div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
+                    <div class="avatar avatar-sm" style="background:#EC4899;color:#fff;">SF</div>
+                    <span style="font-size:11px;color:var(--text-2);">Assignee: Shafna</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Completed -->
+              <div class="crm-kanban-col">
+                <div class="crm-col-header">
+                  <span class="crm-col-title">Completed</span>
+                  <span class="badge badge-success">8</span>
+                </div>
+                <div class="task-card-v2">
+                  <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <span class="badge badge-success">Done</span>
+                    <span style="font-size:11px;color:var(--text-3);">Done 09:15 AM</span>
+                  </div>
+                  <div style="font-weight:700;font-size:14px;text-decoration:line-through;color:var(--text-3);">TechNova SEO Audit Report</div>
+                  <div style="font-size:12px;color:var(--text-3);">Delivered to client manager</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ==========================================
+               SECTION 3: Task List Table & SECTION 4: Task Details Panel
+               ========================================== -->
+          <section class="grid-main-side">
+            <!-- SECTION 3: Task List Table -->
+            <div class="table-card-box">
+              <div class="sec-heading" style="margin-bottom:16px;">
+                <h2 class="sec-title-text">Task Master List</h2>
+                <div class="input-search" style="width:220px;">
+                  <input type="text" id="tasks-search-input" placeholder="Search tasks…" style="border:none;background:none;outline:none;width:100%;font-size:12px;" />
+                </div>
+              </div>
+              <div class="health-table-wrap">
+                <table class="health-table">
+                  <thead>
+                    <tr>
+                      <th>Task</th>
+                      <th>Priority</th>
+                      <th>Assignee</th>
+                      <th>Project</th>
+                      <th>Due Date</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tasks-table-tbody">
+                    <tr>
+                      <td style="font-weight:700;">Review Cabo Travels Wireframes</td>
+                      <td><span class="badge badge-danger">High</span></td>
+                      <td>Shahim</td>
+                      <td>Cabo Travels Redesign</td>
+                      <td>Today, 11:30 AM</td>
+                      <td><span class="badge badge-warning">In Progress</span></td>
+                      <td><button class="btn btn-sm btn-p">Complete</button></td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight:700;">GreenLeaf Brand Approval Deck</td>
+                      <td><span class="badge badge-warning">Medium</span></td>
+                      <td>Shafna F</td>
+                      <td>GreenLeaf Brand Guide</td>
+                      <td>Today, 02:00 PM</td>
+                      <td><span class="badge badge-primary">Review</span></td>
+                      <td><button class="btn btn-sm btn-s">Inspect</button></td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight:700;">TechNova SEO Audit Report</td>
+                      <td><span class="badge badge-neutral">Normal</span></td>
+                      <td>Rahan N</td>
+                      <td>TechNova SEO & Growth</td>
+                      <td>Today, 09:15 AM</td>
+                      <td><span class="badge badge-success">Completed</span></td>
+                      <td><button class="btn btn-sm btn-ghost">View</button></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- SECTION 4: Task Details Panel -->
+            <div class="widget-box">
+              <div class="sec-heading">
+                <h3 class="sec-title-text">Task Inspection Panel</h3>
+                <span class="badge badge-primary">Selected Task</span>
+              </div>
+              <div style="font-weight:800;font-size:16px;">Review Cabo Travels Wireframes</div>
+              <div style="font-size:12px;color:var(--text-2);">Assigned to <strong>Shahim (Admin)</strong> • Due Today 11:30 AM</div>
+              <div style="margin-top:10px;padding:12px;background:var(--bg);border-radius:8px;font-size:12px;color:var(--text-1);">
+                <strong>Description:</strong> Review the newly uploaded 4 homepage wireframe screens and provide final executive sign-off before client call.
+              </div>
+              <div style="font-size:12px;font-weight:700;margin-top:4px;">Checklist (2/3 Done):</div>
+              <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;">
+                <div>✓ Mobile layout verified</div>
+                <div>✓ Color palette checked</div>
+                <div>☐ Final sign-off button</div>
+              </div>
+              <button class="btn btn-success w-full" style="margin-top:10px;">Mark Task Complete</button>
+            </div>
+          </section>
+
+          <!-- ==========================================
+               SECTION 5: Today's Focus & SECTION 6: AI Task Suggestions
+               ========================================== -->
+          <section class="grid-2-col">
+            <!-- SECTION 5: Today's Focus Card -->
+            <div class="widget-box">
+              <div class="sec-heading">
+                <h3 class="sec-title-text">Today's Focus & Deliverables</h3>
+                <span class="badge badge-danger">3 Priority Items</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:12px;">
+                <div style="padding:12px;background:var(--bg);border-radius:8px;">
+                  <div style="font-weight:700;font-size:13px;">1. Review Cabo Travels Wireframes</div>
+                  <div style="font-size:11px;color:var(--text-3);">Client follow-up scheduled for 02:00 PM</div>
+                </div>
+
+                <div style="padding:12px;background:var(--bg);border-radius:8px;">
+                  <div style="font-weight:700;font-size:13px;">2. GreenLeaf Brand Book Approval</div>
+                  <div style="font-size:11px;color:var(--text-3);">Final sign-off requested by Shafna F</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SECTION 6: AI Task Suggestions -->
+            <div class="widget-box" style="background:linear-gradient(135deg, #EEF2FF 0%, #F5F7FF 100%);border-color:var(--primary-border);">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <div class="ai-icon-glow">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                </div>
+                <div>
+                  <h3 style="font-size:18px;font-weight:800;color:var(--primary);">VERDE AI Task Recommendations</h3>
+                  <p style="font-size:12px;color:var(--text-2);">Smart task prioritization engine</p>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;margin-top:6px;">
+                <div style="padding:10px;background:#fff;border-radius:8px;border:1px solid var(--border);">
+                  <strong>⚡ Priority Suggestion:</strong> Complete 2 high-priority wireframe reviews to maintain 85%+ sprint pace.
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ==========================================
+               SECTION 7: Recent Activity & SECTION 8: Quick Actions
+               ========================================== -->
+          <section class="grid-2-col">
+            <!-- SECTION 7: Recent Activity Timeline -->
+            <div class="widget-box">
+              <div class="sec-heading">
+                <h3 class="sec-title-text">Recent Task Activity</h3>
+                <span class="badge badge-neutral">Live Feed</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:12px;">
+                <div style="display:flex;align-items:flex-start;gap:10px;">
+                  <div class="avatar avatar-sm">SH</div>
+                  <div>
+                    <div style="font-size:13px;"><strong>Shahim</strong> updated status of <strong>Cabo Wireframes</strong></div>
+                    <div style="font-size:11px;color:var(--text-3);">10 mins ago</div>
+                  </div>
+                </div>
+
+                <div style="display:flex;align-items:flex-start;gap:10px;">
+                  <div class="avatar avatar-sm" style="background:#EC4899;color:#fff;">SF</div>
+                  <div>
+                    <div style="font-size:13px;"><strong>Shafna F</strong> marked <strong>Brand Guidelines</strong> as Ready for Review</div>
+                    <div style="font-size:11px;color:var(--text-3);">35 mins ago</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SECTION 8: Quick Actions Grid -->
+            <div class="widget-box">
+              <div class="sec-heading">
+                <h3 class="sec-title-text">Task Quick Actions</h3>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <button class="btn btn-primary" onclick="alert('New Task Modal')">New Task</button>
+                <button class="btn btn-secondary" onclick="alert('Assign Task Modal')">Assign Member</button>
+                <button class="btn btn-success" onclick="alert('Batch Complete Triggered')">Complete Task</button>
+                <button class="btn btn-secondary" onclick="alert('Duplicate Task')">Duplicate</button>
+              </div>
+            </div>
+          </section>
+
+        </div>
+
+      
+          <!-- ==========================================
+               WORKSPACE FRAMEWORK: FOOTER & AI PANEL
+               ========================================== -->
+          <footer class="ws-footer">
+            <div style="display:flex;gap:16px;">
+              <span><strong>Last Sync:</strong> Live</span>
+              <span><strong>User:</strong> Shahim</span>
+            </div>
+            <div style="display:flex;gap:16px;">
+              <a href="#" style="color:var(--primary);text-decoration:none;">Help & Support</a>
+              <span>VERDE OS v2.0 Workspace</span>
+            </div>
+          </footer>
+
+          <aside class="ai-floating-panel" id="ws-ai-panel">
+            <div class="ai-panel-header">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                Workspace AI Copilot
+              </div>
+              <button class="btn btn-ghost" style="padding:4px;height:auto;" onclick="document.getElementById('ws-ai-panel').classList.remove('active')">✕</button>
+            </div>
+            <div class="ai-panel-body">
+              <p>Hello! I am your AI Assistant for this workspace. I can help you analyze trends, summarize data, and automate actions.</p>
+              <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px;">
+                <button class="btn btn-sm btn-secondary" style="width:100%;justify-content:flex-start;">✨ Summarize this view</button>
+                <button class="btn btn-sm btn-secondary" style="width:100%;justify-content:flex-start;">📈 Generate Insight Report</button>
+              </div>
+            </div>
+          </aside>
+
+      </main>
+    </div>
+  </div>
+
+  <div id="statusbar-container"></div>
+  <div id="overlays-container"></div>
+
+  <script src="../assets/js/session.js"></script>
+  <script src="../assets/js/components.js"></script>
+  <script src="../assets/js/navigation.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script src="./script.js"></script>
+
+</body>
+
+</html>

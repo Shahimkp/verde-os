@@ -1,0 +1,1083 @@
+/* ==========================================================================
+   VERDE OS — DESIGN SYSTEM COMPONENT REFERENCE & UTILITIES
+   Mapped to Master Tokens in global.css
+   ========================================================================== */
+
+:root {
+  /* Mapped Aliases to Master Global Tokens */
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-secondary: var(--secondary);
+  --color-secondary-hover: var(--secondary-hover);
+
+  --color-success: var(--success);
+  --color-success-light: var(--success-50);
+  --color-warning: var(--warning);
+  --color-warning-light: var(--warning-50);
+  --color-danger: var(--danger);
+  --color-danger-light: var(--danger-50);
+  --color-info: var(--info);
+  --color-info-light: var(--info-50);
+
+  --color-background: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--bg-subtle);
+  --color-surface-active: var(--bg-hover);
+  --color-border: var(--border);
+  --color-border-focus: var(--primary);
+
+  --color-text-main: var(--text-1);
+  --color-text-muted: var(--text-3);
+  --color-text-inverse: var(--text-inverse);
+
+  --font-family: var(--font);
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  --spacing-1: var(--space-1);
+  --spacing-2: var(--space-2);
+  --spacing-3: var(--space-3);
+  --spacing-4: var(--space-4);
+  --spacing-5: var(--space-5);
+  --spacing-6: var(--space-6);
+  --spacing-8: var(--space-8);
+  --spacing-10: var(--space-10);
+  --spacing-12: var(--space-12);
+  --spacing-16: var(--space-16);
+
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+/* ==========================================================================
+   DESIGN SYSTEM LAYOUT
+   ========================================================================== */
+
+.ds-container {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.ds-sidebar {
+  width: 260px;
+  background-color: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  position: sticky;
+  top: 0;
+}
+
+.ds-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background-color: var(--color-background);
+}
+
+.ds-topbar {
+  height: 64px;
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--spacing-6);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.ds-content-area {
+  padding: var(--spacing-8) var(--spacing-6);
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.ds-section {
+  margin-bottom: var(--spacing-16);
+}
+
+.ds-section-title {
+  margin-bottom: var(--spacing-6);
+  padding-bottom: var(--spacing-2);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.ds-component-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-6);
+  align-items: flex-start;
+}
+
+/* ==========================================================================
+   BUTTONS (Border Radius: 12px)
+   ========================================================================== */
+.ds-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  padding: 0 var(--spacing-4);
+  height: 40px;
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.ds-btn:disabled,
+.ds-btn.is-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.ds-btn.is-loading {
+  pointer-events: none;
+  position: relative;
+  color: transparent !important;
+}
+
+.ds-btn.is-loading::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Primary */
+.ds-btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-sm);
+}
+
+.ds-btn-primary:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.ds-btn-primary.is-loading::after {
+  border-color: var(--color-text-inverse);
+  border-top-color: transparent;
+}
+
+/* Secondary */
+.ds-btn-secondary {
+  background-color: var(--color-secondary);
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-sm);
+}
+
+.ds-btn-secondary:hover {
+  background-color: var(--color-secondary-hover);
+}
+
+/* Outline */
+.ds-btn-outline {
+  background-color: transparent;
+  border-color: var(--color-border);
+  color: var(--color-text-main);
+}
+
+.ds-btn-outline:hover {
+  background-color: var(--color-surface-hover);
+  border-color: var(--color-border-focus);
+}
+
+/* Ghost */
+.ds-btn-ghost {
+  background-color: transparent;
+  color: var(--color-text-muted);
+}
+
+.ds-btn-ghost:hover {
+  background-color: var(--color-surface-hover);
+  color: var(--color-text-main);
+}
+
+/* Danger */
+.ds-btn-danger {
+  background-color: var(--color-danger);
+  color: var(--color-text-inverse);
+}
+
+.ds-btn-danger:hover {
+  background-color: #DC2626;
+  /* darker red */
+}
+
+/* Icon Button */
+.ds-btn-icon {
+  width: 40px;
+  padding: 0;
+}
+
+/* ==========================================================================
+   INPUTS (Border Radius: 12px)
+   ========================================================================== */
+.ds-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-4);
+  width: 100%;
+  max-width: 320px;
+}
+
+.ds-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-main);
+}
+
+.ds-input,
+.ds-select,
+.ds-textarea {
+  width: 100%;
+  height: 40px;
+  padding: 0 var(--spacing-3);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-main);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.ds-textarea {
+  height: auto;
+  padding: var(--spacing-3);
+  resize: vertical;
+  min-height: 80px;
+}
+
+.ds-input:focus,
+.ds-select:focus,
+.ds-textarea:focus {
+  outline: none;
+  border-color: var(--color-secondary);
+  box-shadow: var(--shadow-focus);
+}
+
+.ds-input::placeholder,
+.ds-textarea::placeholder {
+  color: var(--color-text-muted);
+}
+
+.ds-input:disabled {
+  background-color: var(--color-surface-hover);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+/* Search Input with Icon */
+.ds-input-icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ds-input-icon-wrapper .lucide {
+  position: absolute;
+  left: var(--spacing-3);
+  color: var(--color-text-muted);
+  width: 16px;
+  height: 16px;
+}
+
+.ds-input-icon-wrapper .ds-input {
+  padding-left: calc(var(--spacing-3) * 2 + 16px);
+}
+
+/* File Upload */
+.ds-file-upload {
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-6);
+  text-align: center;
+  background-color: var(--color-surface);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.ds-file-upload:hover {
+  border-color: var(--color-secondary);
+  background-color: var(--color-surface-hover);
+}
+
+.ds-file-upload input[type="file"] {
+  display: none;
+}
+
+/* Checkbox & Radio */
+.ds-checkbox-wrapper,
+.ds-radio-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  cursor: pointer;
+}
+
+.ds-checkbox,
+.ds-radio {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-secondary);
+  cursor: pointer;
+}
+
+/* Switch */
+.ds-switch {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+}
+
+.ds-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.ds-switch-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--color-border);
+  transition: .4s;
+  border-radius: 20px;
+}
+
+.ds-switch-slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+  box-shadow: var(--shadow-sm);
+}
+
+.ds-switch input:checked+.ds-switch-slider {
+  background-color: var(--color-secondary);
+}
+
+.ds-switch input:focus-visible+.ds-switch-slider {
+  box-shadow: var(--shadow-focus);
+}
+
+.ds-switch input:checked+.ds-switch-slider:before {
+  transform: translateX(16px);
+}
+
+/* OTP Input */
+.ds-otp-group {
+  display: flex;
+  gap: var(--spacing-2);
+}
+
+.ds-otp-input {
+  width: 40px;
+  height: 48px;
+  text-align: center;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+}
+
+/* ==========================================================================
+   CARDS (Border Radius: 16px)
+   ========================================================================== */
+.ds-card {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--spacing-6);
+  border: 1px solid var(--color-border);
+}
+
+.ds-stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  min-width: 200px;
+}
+
+.ds-stat-card-title {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.ds-stat-card-value {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-main);
+}
+
+.ds-stat-card-trend {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.ds-stat-card-trend.positive {
+  color: var(--color-success);
+}
+
+.ds-stat-card-trend.negative {
+  color: var(--color-danger);
+}
+
+/* ==========================================================================
+   BADGES & TAGS
+   ========================================================================== */
+.ds-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--spacing-2);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.ds-badge-neutral {
+  background-color: var(--color-surface-hover);
+  color: var(--color-text-main);
+}
+
+.ds-badge-primary {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.ds-badge-success {
+  background-color: var(--color-success-light);
+  color: #065F46;
+}
+
+.ds-badge-warning {
+  background-color: var(--color-warning-light);
+  color: #92400E;
+}
+
+.ds-badge-danger {
+  background-color: var(--color-danger-light);
+  color: #991B1B;
+}
+
+.ds-badge-info {
+  background-color: var(--color-info-light);
+  color: #1E40AF;
+}
+
+.ds-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  padding: 4px var(--spacing-2);
+  background-color: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-main);
+}
+
+.ds-tag-close {
+  cursor: pointer;
+  color: var(--color-text-muted);
+}
+
+.ds-tag-close:hover {
+  color: var(--color-text-main);
+}
+
+/* ==========================================================================
+   AVATAR
+   ========================================================================== */
+.ds-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary);
+  color: white;
+  font-weight: var(--font-weight-semibold);
+  overflow: hidden;
+  position: relative;
+}
+
+.ds-avatar-sm {
+  width: 24px;
+  height: 24px;
+  font-size: 10px;
+}
+
+.ds-avatar-md {
+  width: 32px;
+  height: 32px;
+  font-size: var(--font-size-sm);
+}
+
+.ds-avatar-lg {
+  width: 48px;
+  height: 48px;
+  font-size: var(--font-size-lg);
+}
+
+.ds-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ==========================================================================
+   TABLES & DATA GRID
+   ========================================================================== */
+.ds-table-container {
+  width: 100%;
+  overflow-x: auto;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.ds-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.ds-table th,
+.ds-table td {
+  padding: var(--spacing-3) var(--spacing-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.ds-table th {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background-color: var(--color-background);
+}
+
+.ds-table td {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-main);
+}
+
+.ds-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.ds-table tbody tr:hover {
+  background-color: var(--color-surface-hover);
+}
+
+/* Data Grid (more compact) */
+.ds-data-grid th,
+.ds-data-grid td {
+  padding: var(--spacing-2) var(--spacing-3);
+}
+
+/* ==========================================================================
+   PROGRESS & STEPPER
+   ========================================================================== */
+.ds-progress-bar-container {
+  width: 100%;
+  height: 8px;
+  background-color: var(--color-surface-active);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.ds-progress-bar {
+  height: 100%;
+  background-color: var(--color-secondary);
+  border-radius: var(--radius-full);
+  transition: width var(--transition-normal);
+}
+
+.ds-stepper {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.ds-step {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  color: var(--color-text-muted);
+}
+
+.ds-step.active {
+  color: var(--color-text-main);
+  font-weight: var(--font-weight-semibold);
+}
+
+.ds-step-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-surface-active);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xs);
+}
+
+.ds-step.active .ds-step-circle {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.ds-step.completed .ds-step-circle {
+  background-color: var(--color-success);
+  color: white;
+}
+
+.ds-step-line {
+  height: 2px;
+  width: 40px;
+  background-color: var(--color-surface-active);
+}
+
+.ds-step.completed+.ds-step-line {
+  background-color: var(--color-success);
+}
+
+/* ==========================================================================
+   MODAL & DRAWER (Dialogs: 20px)
+   ========================================================================== */
+.ds-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-normal);
+}
+
+.ds-modal.show .ds-modal-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.ds-modal-content {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  width: 100%;
+  max-width: 500px;
+  padding: var(--spacing-6);
+  transform: scale(0.95) translateY(10px);
+  transition: transform var(--transition-bounce);
+}
+
+.ds-modal.show .ds-modal-content {
+  transform: scale(1) translateY(0);
+}
+
+.ds-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-4);
+}
+
+.ds-modal-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+}
+
+.ds-modal-close {
+  cursor: pointer;
+  color: var(--color-text-muted);
+  background: none;
+  border: none;
+}
+
+.ds-modal-close:hover {
+  color: var(--color-text-main);
+}
+
+.ds-modal-footer {
+  margin-top: var(--spacing-6);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-3);
+}
+
+/* Drawer */
+.ds-drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-normal);
+}
+
+.ds-drawer.show .ds-drawer-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.ds-drawer-content {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 400px;
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-xl);
+  padding: var(--spacing-6);
+  transform: translateX(100%);
+  transition: transform var(--transition-normal);
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+}
+
+.ds-drawer.show .ds-drawer-content {
+  transform: translateX(0);
+}
+
+/* ==========================================================================
+   TABS & ACCORDION
+   ========================================================================== */
+.ds-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--color-border);
+  gap: var(--spacing-6);
+}
+
+.ds-tab {
+  padding: var(--spacing-3) 0;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all var(--transition-fast);
+}
+
+.ds-tab:hover {
+  color: var(--color-text-main);
+}
+
+.ds-tab.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+.ds-tab-panel {
+  display: none;
+  padding-top: var(--spacing-4);
+}
+
+.ds-tab-panel.active {
+  display: block;
+}
+
+/* Accordion Placeholder */
+.ds-accordion-item {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.ds-accordion-header {
+  padding: var(--spacing-4) 0;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: var(--font-weight-medium);
+}
+
+.ds-accordion-content {
+  padding-bottom: var(--spacing-4);
+  display: none;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* ==========================================================================
+   DROPDOWN MENU
+   ========================================================================== */
+.ds-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.ds-dropdown-menu {
+  position: absolute;
+  top: calc(100% + var(--spacing-1));
+  right: 0;
+  min-width: 200px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: var(--spacing-1);
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-5px);
+  transition: all var(--transition-fast);
+}
+
+.ds-dropdown-menu.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.ds-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-main);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.ds-dropdown-item:hover {
+  background-color: var(--color-surface-hover);
+}
+
+.ds-dropdown-divider {
+  height: 1px;
+  background-color: var(--color-border);
+  margin: var(--spacing-1) 0;
+}
+
+/* ==========================================================================
+   TOAST & NOTIFICATION
+   ========================================================================== */
+.ds-toast-container {
+  position: fixed;
+  bottom: var(--spacing-6);
+  right: var(--spacing-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  z-index: 2000;
+}
+
+.ds-toast {
+  background-color: var(--color-text-main);
+  color: var(--color-surface);
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  font-size: var(--font-size-sm);
+  transform: translateY(20px);
+  opacity: 0;
+  animation: slideUp 0.3s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes slideUp {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ==========================================================================
+   SKELETON & EMPTY STATES
+   ========================================================================== */
+.ds-skeleton {
+  background: linear-gradient(90deg, var(--color-surface-hover) 25%, var(--color-border) 50%, var(--color-surface-hover) 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.ds-skeleton-text {
+  height: 16px;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.ds-skeleton-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+}
+
+.ds-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-12);
+  text-align: center;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+}
+
+.ds-empty-icon {
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-4);
+  width: 48px;
+  height: 48px;
+}
+
+.ds-empty-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--spacing-2);
+}
+
+.ds-empty-desc {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--spacing-6);
+  max-width: 300px;
+}
+
+/* ==========================================================================
+   SPECIFIC COMPONENTS (Timeline, Kanban, Chat)
+   ========================================================================== */
+
+/* Timeline */
+.ds-timeline {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.ds-timeline::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: var(--color-border);
+}
+
+.ds-timeline-item {
+  display: flex;
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-6);
+  position: relative;
+}
+
+.ds-timeline-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-surface);
+  border: 2px solid var(--color-primary);
+  z-index: 1;
+}
+
+/* Kanban */
+.ds-kanban-board {
+  display: flex;
+  gap: var(--spacing-6);
+  overflow-x: auto;
+  padding-bottom: var(--spacing-4);
+}
+
+.ds-kanban-column {
+  width: 300px;
+  flex-shrink: 0;
+  background-color: var(--color-surface-hover);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+/* Chat & Comments */
+.ds-chat-bubble {
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--radius-lg);
+  max-width: 80%;
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--spacing-2);
+}
+
+.ds-chat-received {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-bottom-left-radius: 4px;
+  align-self: flex-start;
+}
+
+.ds-chat-sent {
+  background-color: var(--color-primary);
+  color: white;
+  border-bottom-right-radius: 4px;
+  align-self: flex-end;
+}

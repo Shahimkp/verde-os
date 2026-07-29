@@ -1,0 +1,156 @@
+/* ==========================================================================
+   VERDE OS — GLOBAL DESIGN SYSTEM & TOKENS (SPEC 004)
+   Linear / Notion / Stripe / Vercel / GitHub Enterprise Design Language
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  /* Master Brand Palette */
+  --primary: #00008A;
+  --primary-hover: #00006E;
+  --primary-active: #000052;
+  --primary-light: #EEF2FF;
+  --primary-50: #EEF2FF;
+  --primary-100: #E0E7FF;
+  --primary-200: #C7D2FE;
+  --primary-border: #C7D2FE;
+
+  --secondary: #7B88FF;
+  --secondary-hover: #6366F1;
+  --secondary-light: #F5F7FF;
+
+  /* Canvas & Surfaces */
+  --bg: #F7F8FC;
+  --bg-subtle: #F1F4F9;
+  --bg-hover: #EAEFF7;
+  --surface: #FFFFFF;
+  --card-bg: #FFFFFF;
+
+  /* Typography & Neutral Colors */
+  --text: #0F172A;
+  --text-1: #0F172A;
+  --text-primary: #0F172A;
+  --text-2: #475569;
+  --text-secondary: #475569;
+  --text-3: #94A3B8;
+  --text-tertiary: #94A3B8;
+  --text-inverse: #FFFFFF;
+
+  /* Borders & Dividers */
+  --border: #E6EAF2;
+  --border-subtle: #F1F5F9;
+  --border-hover: #CBD5E1;
+  --border-focus: #00008A;
+
+  /* Feedback Colors */
+  --success: #10B981;
+  --success-50: #ECFDF5;
+  --success-text: #065F46;
+
+  --warning: #F59E0B;
+  --warning-50: #FFFBEB;
+  --warning-text: #92400E;
+
+  --danger: #EF4444;
+  --danger-50: #FEF2F2;
+  --danger-text: #991B1B;
+
+  --info: #3B82F6;
+  --info-50: #EFF6FF;
+  --info-text: #1E40AF;
+
+  /* Spacing Scale (4, 8, 12, 16, 20, 24, 32, 40, 48, 64) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Border Radii Scale (6, 8, 12, 16, 24, full) */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+  --radius: 12px;
+
+  /* Shadow & Elevation System (Small, Medium, Large, Floating) */
+  --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.03);
+  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.04), 0 2px 4px -2px rgba(15, 23, 42, 0.02);
+  --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.05), 0 4px 6px -4px rgba(15, 23, 42, 0.02);
+  --shadow-floating: 0 20px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+  --shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.04);
+
+  /* Fonts */
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+  --focus-ring: 0 0 0 3px rgba(0, 0, 138, 0.15);
+}
+
+/* Base Resets */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--text);
+  background-color: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+a { color: inherit; text-decoration: none; }
+button, input, select, textarea { font-family: inherit; font-size: inherit; }
+
+/* Reusable Typography Classes */
+.text-heading-xl { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; color: var(--text-1); }
+.text-heading-l { font-size: 20px; font-weight: 800; letter-spacing: -0.01em; color: var(--text-1); }
+.text-heading-m { font-size: 16px; font-weight: 700; color: var(--text-1); }
+.text-body { font-size: 14px; font-weight: 400; color: var(--text-1); line-height: 1.5; }
+.text-caption { font-size: 12px; font-weight: 500; color: var(--text-2); }
+.text-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3); }
+.text-muted { color: var(--text-3); }
+
+/* Reusable Utility Classes */
+.flex { display: flex; }
+.flex-col { display: flex; flex-direction: column; }
+.grid { display: grid; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+
+.gap-1 { gap: var(--space-1); }
+.gap-2 { gap: var(--space-2); }
+.gap-3 { gap: var(--space-3); }
+.gap-4 { gap: var(--space-4); }
+.gap-6 { gap: var(--space-6); }
+.gap-8 { gap: var(--space-8); }
+
+.p-2 { padding: var(--space-2); }
+.p-4 { padding: var(--space-4); }
+.p-6 { padding: var(--space-6); }
+.p-8 { padding: var(--space-8); }
+
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+.overflow-hidden { overflow: hidden; }
+.overflow-x-auto { overflow-x: auto; }

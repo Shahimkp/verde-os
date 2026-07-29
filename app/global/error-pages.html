@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Error Pages · VERDE OS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../assets/css/global.css" />
+<style>
+
+
+body{font-family:var(--font);background:var(--bg-2);padding:64px;display:flex;flex-direction:column;align-items:center;gap:64px;}
+
+.error-page { display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:80px 24px; background:var(--bg); border:1px solid var(--border); border-radius:16px; width:100%; max-width:800px; box-shadow:0 10px 25px -5px rgba(0,0,0,0.05); }
+
+/* Massive Typography specific to error codes */
+.ep-code { font-size:140px; font-weight:900; color:var(--bg-2); letter-spacing:-8px; line-height:1; margin-bottom:16px; position:relative; }
+.ep-code::after { content:attr(data-code); position:absolute; left:0; top:0; color:var(--text-1); clip-path:polygon(0 0, 100% 0, 100% 45%, 0 45%); }
+
+.ep-title { font-size:32px; font-weight:800; color:var(--text-1); margin-bottom:16px; letter-spacing:-1px; }
+.ep-desc { font-size:16px; color:var(--text-2); max-width:500px; margin-bottom:40px; line-height:1.6; }
+
+.btn-p { background:var(--text-1); color:#fff; border:none; border-radius:8px; padding:14px 28px; font-size:15px; font-weight:600; cursor:pointer; transition:all 0.2s; }
+.btn-p:hover { background:var(--primary); }
+</style>
+</head>
+<body>
+
+  <div class="error-page">
+    <div class="ep-code" data-code="404">404</div>
+    <div class="ep-title">Page Not Found</div>
+    <div class="ep-desc">The specific workspace or resource you are looking for does not exist, or you may have typed the URL incorrectly.</div>
+    <button class="btn-p">Return to Dashboard</button>
+  </div>
+  
+  <div class="error-page">
+    <div class="ep-code" data-code="403">403</div>
+    <div class="ep-title">Access Denied</div>
+    <div class="ep-desc">You do not have the required permissions to view this module. Please contact the Managing Director for access.</div>
+    <button class="btn-p">Return to Dashboard</button>
+  </div>
+  
+  <div class="error-page">
+    <div class="ep-code" data-code="500">500</div>
+    <div class="ep-title">Internal Server Error</div>
+    <div class="ep-desc">VERDE OS is experiencing temporary server difficulties. Our engineering team has been automatically notified.</div>
+    <button class="btn-p" style="background:var(--primary);">Refresh Page</button>
+  </div>
+
+</body>
+</html>

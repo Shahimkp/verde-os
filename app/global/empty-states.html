@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Empty States · VERDE OS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../assets/css/global.css" />
+<style>
+
+
+body{font-family:var(--font);background:var(--bg-2);padding:64px;display:flex;flex-direction:column;align-items:center;}
+
+.h2 { font-size:24px; font-weight:800; margin-bottom:8px; color:var(--text-1); text-align:center; }
+.desc { font-size:14px; color:var(--text-2); margin-bottom:48px; text-align:center; }
+
+.grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:40px; max-width:1200px; width:100%; }
+
+.empty-state { text-align:center; padding:64px 24px; border:2px dashed var(--border); border-radius:12px; background:var(--bg); }
+.empty-icon { width:64px; height:64px; background:#E8E8F4; color:var(--primary); border-radius:50%; display:inline-flex; align-items:center; justify-content:center; margin-bottom:24px; }
+.empty-title { font-size:20px; font-weight:800; color:var(--text-1); margin-bottom:8px; letter-spacing:-0.5px; }
+.empty-desc { font-size:14px; color:var(--text-2); max-width:400px; margin:0 auto 24px; line-height:1.6; }
+
+.btn-p { background:var(--primary); color:#fff; border:none; border-radius:6px; padding:10px 20px; font-size:14px; font-weight:600; cursor:pointer; }
+.btn-p:hover { background:#000070; }
+.btn-s { background:var(--bg); border:1px solid var(--border); color:var(--text-1); border-radius:6px; padding:10px 20px; font-size:14px; font-weight:600; cursor:pointer; margin-left:12px; }
+.btn-s:hover { background:var(--bg-2); }
+</style>
+</head>
+<body>
+  <div class="h2">Empty States</div>
+  <div class="desc">Beautiful placeholders that appear when data is absent. Includes clear recovery CTAs.</div>
+  
+  <div class="grid">
+    <div class="empty-state">
+      <div class="empty-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
+      <div class="empty-title">No Active Projects</div>
+      <div class="empty-desc">You haven't created any projects yet. Click the button below to launch a new workspace.</div>
+      <button class="btn-p">Create Project</button>
+      <button class="btn-s">Learn More</button>
+    </div>
+    
+    <div class="empty-state">
+      <div class="empty-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></div>
+      <div class="empty-title">Zero Tasks Assigned</div>
+      <div class="empty-desc">Great job! Your task inbox is completely clear. Enjoy the rest of your day, or browse the backlog.</div>
+      <button class="btn-s">View Backlog</button>
+    </div>
+    
+    <div class="empty-state">
+      <div class="empty-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg></div>
+      <div class="empty-title">Pipeline is Empty</div>
+      <div class="empty-desc">Your CRM currently has no active leads. Begin by manually adding a lead or connecting a web form.</div>
+      <button class="btn-p">Add Lead</button>
+      <button class="btn-s">Integrations</button>
+    </div>
+    
+    <div class="empty-state">
+      <div class="empty-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+      <div class="empty-title">No Files Uploaded</div>
+      <div class="empty-desc">Drag and drop documents, images, or PDFs here to securely attach them to this project.</div>
+      <button class="btn-p">Upload Files</button>
+    </div>
+  </div>
+</body>
+</html>

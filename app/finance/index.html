@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Finance Center · VERDE OS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../assets/css/global.css"/>
+  <link rel="stylesheet" href="../assets/css/layout.css"/>
+  <link rel="stylesheet" href="../assets/css/components.css"/>
+  <link rel="stylesheet" href="../assets/css/modules.css"/>
+</head>
+<body>
+
+<div class="shell-container">
+  <div id="sidebar-container"></div>
+  <div class="shell-main">
+    <div id="topbar-container"></div>
+    <main class="app-content">
+
+      <div class="module-view">
+        
+        <div class="module-page-header">
+          <div class="view-title" id="topNavTitle">Finance Dashboard</div>
+          <div class="top-actions" id="topNavActions">
+            <button class="btn btn-s">Download Report</button>
+            <button class="btn btn-p" onclick="openModal('modal-new-invoice')">+ Generate Invoice</button>
+          </div>
+        </div>
+
+        <!-- ROUTE: DASHBOARD -->
+        <div id="route-dashboard" class="route active">
+          <div class="grid-4">
+            <div class="metric-card">
+              <div class="mc-label">Revenue (MTD)</div>
+              <div class="mc-val amt-green" id="dash-rev">$0</div>
+            </div>
+            <div class="metric-card">
+              <div class="mc-label">Expenses (MTD)</div>
+              <div class="mc-val amt-red" id="dash-exp">$0</div>
+            </div>
+            <div class="metric-card">
+              <div class="mc-label">Net Profit (MTD)</div>
+              <div class="mc-val" id="dash-profit">$0</div>
+            </div>
+            <div class="metric-card">
+              <div class="mc-label">Outstanding Payments <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--warning)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+              <div class="mc-val" id="dash-out">$0</div>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <div class="table-header">
+              <div style="font-size:15px; font-weight:700;">Recent Transactions</div>
+              <button class="btn btn-ghost" style="padding:0; font-size:12px;">View All</button>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Description</th>
+                  <th>Type</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="dash-tx-table">
+                <!-- JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ROUTE: QUOTATIONS -->
+        <div id="route-quotations" class="route">
+          <div class="table-container">
+            <div class="table-header">
+              <div style="font-size:15px; font-weight:700;">Quotations</div>
+              <button class="btn btn-p" style="padding:6px 12px; font-size:12px;">+ Create Quote</button>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Quote #</th>
+                  <th>Client</th>
+                  <th>Project Detail</th>
+                  <th>Value</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="quotations-table">
+                <!-- JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ROUTE: INVOICES -->
+        <div id="route-invoices" class="route">
+          <div class="table-container">
+            <div class="table-header">
+              <div style="font-size:15px; font-weight:700;">Invoices</div>
+              <button class="btn btn-p" style="padding:6px 12px; font-size:12px;" onclick="openModal('modal-new-invoice')">+ Generate Invoice</button>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Invoice #</th>
+                  <th>Client</th>
+                  <th>Due Date</th>
+                  <th>Total Amount</th>
+                  <th>Pending</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="invoices-table">
+                <!-- JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ROUTE: EXPENSES -->
+        <div id="route-expenses" class="route">
+          <div class="table-container">
+            <div class="table-header">
+              <div style="font-size:15px; font-weight:700;">Company Expenses</div>
+              <button class="btn btn-p" style="padding:6px 12px; font-size:12px;" onclick="openModal('modal-new-exp')">+ Record Expense</button>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Vendor / Desc</th>
+                  <th>Category</th>
+                  <th>Method</th>
+                  <th>Amount</th>
+                </tr>
+              </thead>
+              <tbody id="exp-table">
+                <!-- JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ROUTE: ANALYTICS -->
+        <div id="route-analytics" class="route">
+          <div class="chart-container" style="margin-bottom:32px;">
+            <div class="chart-title">Revenue Growth (Last 6 Months)</div>
+            <div class="bar-chart" id="chart-rev">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+          
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px;">
+            <div class="chart-container">
+              <div class="chart-title">Profit Margin Trend</div>
+              <div class="bar-chart" id="chart-profit">
+                <!-- Rendered via JS -->
+              </div>
+            </div>
+            <div class="chart-container">
+              <div class="chart-title">Expenses Breakdown</div>
+              <div class="bar-chart" id="chart-exp">
+                <!-- Rendered via JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- MODAL: NEW INVOICE -->
+<div class="modal-overlay" id="modal-new-invoice">
+  <div class="modal-content">
+    <div class="modal-head">
+      <h2 class="modal-title">Generate Invoice</h2>
+      <button class="modal-close" onclick="closeModal('modal-new-invoice')"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body form-grid">
+      <div class="form-group fg-full"><label class="form-label">Client</label>
+        <select class="form-input" id="ni-client">
+          <option>Nova Corp</option><option>Echo Systems</option><option>Pinnacle Health</option>
+        </select>
+      </div>
+      <div class="form-group fg-full"><label class="form-label">Project / Description</label><input type="text" id="ni-desc" class="form-input" placeholder="e.g. Website Final Payment"/></div>
+      <div class="form-group"><label class="form-label">Amount ($)</label><input type="number" id="ni-amt" class="form-input" placeholder="e.g. 5000"/></div>
+      <div class="form-group"><label class="form-label">Due Date</label><input type="date" id="ni-date" class="form-input"/></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-s" onclick="closeModal('modal-new-invoice')">Cancel</button>
+      <button class="btn btn-p" onclick="createInvoice()">Generate & Send</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: RECORD EXPENSE -->
+<div class="modal-overlay" id="modal-new-exp">
+  <div class="modal-content">
+    <div class="modal-head">
+      <h2 class="modal-title">Record Expense</h2>
+      <button class="modal-close" onclick="closeModal('modal-new-exp')"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body form-grid">
+      <div class="form-group fg-full"><label class="form-label">Vendor / Description</label><input type="text" id="ne-vendor" class="form-input" placeholder="e.g. Figma Subscription"/></div>
+      <div class="form-group"><label class="form-label">Category</label>
+        <select class="form-input" id="ne-cat">
+          <option>Software</option><option>Marketing</option><option>Salary</option><option>Office</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Amount ($)</label><input type="number" id="ne-amt" class="form-input" placeholder="e.g. 144"/></div>
+      <div class="form-group"><label class="form-label">Date</label><input type="date" id="ne-date" class="form-input"/></div>
+      <div class="form-group"><label class="form-label">Method</label>
+        <select class="form-input" id="ne-method">
+          <option>Corporate Card</option><option>Bank Transfer</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-s" onclick="closeModal('modal-new-exp')">Cancel</button>
+      <button class="btn btn-p" onclick="recordExpense()">Record Expense</button>
+    </div>
+  </div>
+</div>
+
+<div id="statusbar-container"></div>
+<div id="overlays-container"></div>
+
+<script src="../assets/js/session.js"></script>
+<script src="../assets/js/components.js"></script>
+<script src="../assets/js/navigation.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="./script.js"></script>
+
+</body>
+</html>
