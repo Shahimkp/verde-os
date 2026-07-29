@@ -13,61 +13,393 @@
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/modules.css" />
   <style>
-    .report-categories {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
+    .rep-layout {
+      padding: 0 0 64px 0;
+      animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
-    .report-card {
+
+    /* Page Header */
+    .rep-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 48px;
+    }
+    .rep-header-title {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      color: var(--text-1);
+      margin-bottom: 8px;
+    }
+    .rep-header-desc {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-3);
+    }
+    .rep-toolbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .rep-search {
+      display: flex;
+      align-items: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      width: 240px;
+    }
+    .rep-search input {
+      border: none;
+      background: transparent;
+      outline: none;
+      width: 100%;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-1);
+      margin-left: 8px;
+    }
+    .rep-search input::placeholder {
+      color: var(--text-3);
+    }
+
+    /* Categories (6 col) */
+    .rep-cat-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 16px;
+      margin-bottom: 64px;
+    }
+    .rep-cat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      transition: transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease;
+    }
+    .rep-cat-card:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--border-hover);
+    }
+    .rep-cat-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--bg-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-2);
+    }
+    .rep-cat-text {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-1);
+    }
+
+    /* Export Center (4 col) */
+    .rep-export-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-bottom: 64px;
+    }
+    .rep-export-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      transition: transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease;
+    }
+    .rep-export-card:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--border-hover);
+    }
+    .rep-export-icon {
+      color: var(--primary);
+    }
+    .rep-export-text {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-1);
+    }
+
+    /* KPI Grid */
+    .rep-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-bottom: 64px;
+    }
+    .rep-kpi-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 24px;
-      box-shadow: var(--shadow-sm);
       display: flex;
       flex-direction: column;
       gap: 16px;
-      transition: transform 150ms ease, box-shadow 150ms ease;
+      transition: transform 250ms ease, box-shadow 250ms ease;
+      box-shadow: var(--shadow-sm);
     }
-    .report-card:hover {
-      transform: translateY(-2px);
+    .rep-kpi-card:hover {
+      transform: translateY(-1px);
       box-shadow: var(--shadow-md);
-      border-color: var(--primary-light);
     }
-    .report-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
+    .rep-kpi-value {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      color: var(--text-1);
+      line-height: 1;
+    }
+    .rep-kpi-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Analytics Chart Grid */
+    .rep-charts-grid {
       display: grid;
-      place-content: center;
-      font-size: 20px;
-      margin-bottom: 8px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-bottom: 64px;
     }
-    .report-list {
+    .rep-chart-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow-sm);
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      margin-top: auto;
+      transition: transform 250ms ease, box-shadow 250ms ease;
     }
-    .report-item {
+    .rep-chart-card:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+    .rep-chart-header {
+      padding: 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .rep-chart-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-1);
+    }
+    .rep-chart-meta {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-3);
+    }
+    .rep-chart-placeholder {
+      height: 220px;
+      padding: 24px;
+      display: flex;
+      align-items: flex-end;
+      gap: 16px;
+      background-image: 
+        linear-gradient(to right, var(--border-subtle) 1px, transparent 1px),
+        linear-gradient(to top, var(--border-subtle) 1px, transparent 1px);
+      background-size: 100% 40px;
+      background-position: left bottom;
+    }
+    .chart-bar {
+      flex: 1;
+      background: var(--primary-10);
+      border-top: 2px solid var(--primary);
+      border-radius: 4px 4px 0 0;
+      transition: height 0.5s ease;
+    }
+
+    /* Split Grids */
+    .rep-split-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+    }
+    .rep-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 250ms ease, box-shadow 250ms ease;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .rep-box:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+    .rep-box-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .rep-box-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-1);
+    }
+
+    /* Table Toolbar */
+    .rep-table-toolbar {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg);
+    }
+
+    /* Enterprise Table */
+    .rep-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .rep-table th {
+      text-align: left;
+      padding: 16px 24px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-2);
+    }
+    .rep-table td {
+      padding: 16px 24px;
       font-size: 13px;
-      padding: 8px;
-      border-radius: 6px;
-      transition: background 150ms ease;
+      font-weight: 500;
+      color: var(--text-1);
+      border-bottom: 1px solid var(--border-subtle);
+      transition: background 0.15s;
+    }
+    .rep-table tbody tr {
       cursor: pointer;
     }
-    .report-item:hover {
-      background: var(--bg);
-      color: var(--primary);
+    .rep-table tbody tr:hover td {
+      background: var(--bg-2);
     }
-    @media (max-width: 1024px) {
-      .report-categories { grid-template-columns: 1fr 1fr; }
+    .rep-table tbody tr:last-child td {
+      border-bottom: none;
     }
-    @media (max-width: 768px) {
-      .report-categories { grid-template-columns: 1fr; }
+
+    /* Recent Reports */
+    .rep-list {
+      display: flex;
+      flex-direction: column;
+    }
+    .rep-item {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .rep-item:last-child {
+      border-bottom: none;
+    }
+    .rep-item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .rep-item-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-1);
+    }
+    .rep-item-date {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-3);
+      margin-top: 4px;
+    }
+    .rep-item-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .rep-action-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-2);
+      color: var(--text-2);
+      border: none;
+      cursor: pointer;
+      transition: all 150ms ease;
+    }
+    .rep-action-btn:hover {
+      background: var(--border-hover);
+      color: var(--text-1);
+    }
+    .rep-action-btn.delete:hover {
+      background: var(--danger-10);
+      color: var(--danger);
+    }
+
+    /* Badges */
+    .badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+    .badge-success { background: var(--success-10); color: var(--success); }
+    .badge-warning { background: var(--warning-10); color: var(--warning); }
+    .badge-primary { background: var(--primary-10); color: var(--primary); }
+    .badge-neutral { background: var(--bg-2); color: var(--text-2); }
+
+    /* Pagination */
+    .rep-pagination {
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .rep-page-info {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-3);
+    }
+    .rep-page-controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
@@ -77,133 +409,345 @@
     <div id="sidebar-container"></div>
     <div class="shell-main">
       <div id="topbar-container"></div>
+      
       <main class="app-content">
-        
-        <div class="premium-module-layout">
+        <div class="rep-layout">
           
-          <!-- Page Header -->
-          <header class="premium-header">
+          <!-- 1. Page Header -->
+          <header class="rep-header">
             <div>
-              <h1 class="premium-header-title">Reports & Analytics</h1>
-              <p class="premium-header-desc">Business intelligence, performance metrics, and exports</p>
+              <h1 class="rep-header-title">Reports & Analytics</h1>
+              <div class="rep-header-desc">What insights can I learn from my business?</div>
             </div>
-            <div class="premium-toolbar-group">
-              <button class="btn btn-primary">Custom Report Builder</button>
+            <div class="rep-toolbar">
+              <div class="rep-search">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" placeholder="Search reports..." />
+              </div>
+              <button class="btn btn-ghost" style="background:var(--surface); border:1px solid var(--border);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                Date Range
+              </button>
+              <button class="btn btn-secondary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Export
+              </button>
+              <button class="btn btn-primary">Generate Report</button>
             </div>
           </header>
 
-          <!-- Report Categories Grid -->
-          <section class="report-categories">
+          <!-- 2. Report Categories -->
+          <div class="rep-cat-grid">
+            <div class="rep-cat-card">
+              <div class="rep-cat-icon" style="color:var(--success);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+              </div>
+              <div class="rep-cat-text">Revenue</div>
+            </div>
+            <div class="rep-cat-card">
+              <div class="rep-cat-icon" style="color:var(--primary);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+              </div>
+              <div class="rep-cat-text">Projects</div>
+            </div>
+            <div class="rep-cat-card">
+              <div class="rep-cat-icon" style="color:var(--warning);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              </div>
+              <div class="rep-cat-text">Sales</div>
+            </div>
+            <div class="rep-cat-card">
+              <div class="rep-cat-icon" style="color:var(--info);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+              </div>
+              <div class="rep-cat-text">Finance</div>
+            </div>
+            <div class="rep-cat-card">
+              <div class="rep-cat-icon" style="color:var(--danger);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              </div>
+              <div class="rep-cat-text">Productivity</div>
+            </div>
+            <div class="rep-cat-card">
+              <div class="rep-cat-icon" style="color:var(--text-1);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              </div>
+              <div class="rep-cat-text">Team</div>
+            </div>
+          </div>
+
+          <!-- 3. Executive KPI Summary -->
+          <section class="rep-kpi-grid">
+            <div class="rep-kpi-card">
+              <div class="rep-kpi-value" style="color:var(--success);">+18.4%</div>
+              <div class="rep-kpi-label">Revenue Growth</div>
+            </div>
+            <div class="rep-kpi-card">
+              <div class="rep-kpi-value" style="color:var(--primary);">94%</div>
+              <div class="rep-kpi-label">Project Success Rate</div>
+            </div>
+            <div class="rep-kpi-card">
+              <div class="rep-kpi-value" style="color:var(--info);">98.2%</div>
+              <div class="rep-kpi-label">Client Retention</div>
+            </div>
+            <div class="rep-kpi-card">
+              <div class="rep-kpi-value" style="color:var(--warning);">87%</div>
+              <div class="rep-kpi-label">Team Productivity</div>
+            </div>
+          </section>
+
+          <!-- 6. Export Center -->
+          <div class="rep-export-grid">
+            <div class="rep-export-card">
+              <svg class="rep-export-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              <div class="rep-export-text">Export PDF</div>
+            </div>
+            <div class="rep-export-card">
+              <svg class="rep-export-icon" style="color:var(--success);" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><rect x="8" y="13" width="8" height="4"></rect></svg>
+              <div class="rep-export-text">Export Excel</div>
+            </div>
+            <div class="rep-export-card">
+              <svg class="rep-export-icon" style="color:var(--warning);" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M9 15h6"></path><path d="M12 18v-6"></path></svg>
+              <div class="rep-export-text">Export CSV</div>
+            </div>
+            <div class="rep-export-card">
+              <svg class="rep-export-icon" style="color:var(--info);" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+              <div class="rep-export-text">Print Report</div>
+            </div>
+          </div>
+
+          <!-- 4. Analytics -->
+          <section class="rep-charts-grid">
             
-            <!-- Financial Reports -->
-            <div class="report-card">
-              <div class="report-icon" style="background: var(--success-50); color: var(--success);">📈</div>
-              <div>
-                <h3 style="font-weight: 800; font-size: 16px;">Financial Performance</h3>
-                <p style="font-size: 13px; color: var(--text-2); margin-top: 4px;">Revenue, expenses, and cash flow</p>
+            <div class="rep-chart-card">
+              <div class="rep-chart-header">
+                <div class="rep-chart-title">Revenue Trend</div>
+                <div class="rep-chart-meta">Last 6 Months</div>
               </div>
-              <div class="report-list">
-                <div class="report-item"><span>Profit & Loss (P&L)</span> <span>→</span></div>
-                <div class="report-item"><span>Cash Flow Statement</span> <span>→</span></div>
-                <div class="report-item"><span>Expense Breakdown</span> <span>→</span></div>
-                <div class="report-item"><span>Tax Summary</span> <span>→</span></div>
-              </div>
-            </div>
-
-            <!-- Operations & Projects -->
-            <div class="report-card">
-              <div class="report-icon" style="background: var(--primary-light); color: var(--primary);">⚙️</div>
-              <div>
-                <h3 style="font-weight: 800; font-size: 16px;">Operations & Delivery</h3>
-                <p style="font-size: 13px; color: var(--text-2); margin-top: 4px;">Project margins and timeline velocity</p>
-              </div>
-              <div class="report-list">
-                <div class="report-item"><span>Project Profitability</span> <span>→</span></div>
-                <div class="report-item"><span>Milestone Velocity</span> <span>→</span></div>
-                <div class="report-item"><span>Budget Burn Rate</span> <span>→</span></div>
-                <div class="report-item"><span>Resource Allocation</span> <span>→</span></div>
+              <div class="rep-chart-placeholder">
+                <div class="chart-bar" style="height: 30%;"></div>
+                <div class="chart-bar" style="height: 45%;"></div>
+                <div class="chart-bar" style="height: 40%;"></div>
+                <div class="chart-bar" style="height: 70%;"></div>
+                <div class="chart-bar" style="height: 85%;"></div>
+                <div class="chart-bar" style="height: 95%;"></div>
               </div>
             </div>
 
-            <!-- Team & Performance -->
-            <div class="report-card">
-              <div class="report-icon" style="background: var(--warning-50); color: var(--warning);">👥</div>
-              <div>
-                <h3 style="font-weight: 800; font-size: 16px;">Team Performance</h3>
-                <p style="font-size: 13px; color: var(--text-2); margin-top: 4px;">Productivity, attendance, and workload</p>
+            <div class="rep-chart-card">
+              <div class="rep-chart-header">
+                <div class="rep-chart-title">Project Completion</div>
+                <div class="rep-chart-meta">YTD Overview</div>
               </div>
-              <div class="report-list">
-                <div class="report-item"><span>Employee Utilization</span> <span>→</span></div>
-                <div class="report-item"><span>Time Tracking Export</span> <span>→</span></div>
-                <div class="report-item"><span>Attendance & Leave</span> <span>→</span></div>
-                <div class="report-item"><span>KPI Scorecards</span> <span>→</span></div>
+              <div class="rep-chart-placeholder">
+                <div class="chart-bar" style="height: 50%; background:var(--info-10); border-color:var(--info);"></div>
+                <div class="chart-bar" style="height: 60%; background:var(--info-10); border-color:var(--info);"></div>
+                <div class="chart-bar" style="height: 75%; background:var(--info-10); border-color:var(--info);"></div>
+                <div class="chart-bar" style="height: 90%; background:var(--info-10); border-color:var(--info);"></div>
+                <div class="chart-bar" style="height: 80%; background:var(--info-10); border-color:var(--info);"></div>
+                <div class="chart-bar" style="height: 95%; background:var(--info-10); border-color:var(--info);"></div>
+              </div>
+            </div>
+
+            <div class="rep-chart-card">
+              <div class="rep-chart-header">
+                <div class="rep-chart-title">Sales Performance</div>
+                <div class="rep-chart-meta">By Quarter</div>
+              </div>
+              <div class="rep-chart-placeholder">
+                <div class="chart-bar" style="height: 20%; background:var(--success-10); border-color:var(--success);"></div>
+                <div class="chart-bar" style="height: 45%; background:var(--success-10); border-color:var(--success);"></div>
+                <div class="chart-bar" style="height: 85%; background:var(--success-10); border-color:var(--success);"></div>
+                <div class="chart-bar" style="height: 65%; background:var(--success-10); border-color:var(--success);"></div>
+              </div>
+            </div>
+
+            <div class="rep-chart-card">
+              <div class="rep-chart-header">
+                <div class="rep-chart-title">Task Completion</div>
+                <div class="rep-chart-meta">Weekly Volume</div>
+              </div>
+              <div class="rep-chart-placeholder">
+                <div class="chart-bar" style="height: 70%; background:var(--warning-10); border-color:var(--warning);"></div>
+                <div class="chart-bar" style="height: 65%; background:var(--warning-10); border-color:var(--warning);"></div>
+                <div class="chart-bar" style="height: 85%; background:var(--warning-10); border-color:var(--warning);"></div>
+                <div class="chart-bar" style="height: 95%; background:var(--warning-10); border-color:var(--warning);"></div>
               </div>
             </div>
 
           </section>
 
-          <!-- Generated Reports Table -->
-          <section class="premium-section">
-            <div class="premium-table-container">
-              <div style="padding: 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between;">
-                <h2 style="font-size: 16px; font-weight: 800;">Recently Generated Reports</h2>
-                <div class="premium-toolbar-group">
-                  <button class="btn btn-sm btn-ghost">Filter by Date</button>
+          <!-- 5 & 7. Split Section -->
+          <section class="rep-split-grid">
+            
+            <!-- 5. Report Library -->
+            <div class="rep-box">
+              <div class="rep-box-header" style="border-bottom: none; padding-bottom: 0;">
+                <div class="rep-box-title">Report Library</div>
+              </div>
+              <div class="rep-table-toolbar" style="border-top: 1px solid var(--border); margin-top: 24px;">
+                <div class="rep-search" style="width: 300px; border-color: transparent; background: var(--bg-2);">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3)"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                  <input type="text" placeholder="Search library..." />
+                </div>
+                <div style="display:flex; gap:12px; align-items:center;">
+                  <button class="btn btn-ghost btn-sm" style="background:var(--surface); border:1px solid var(--border);">Filter</button>
+                  <button class="btn btn-ghost btn-sm" style="background:var(--surface); border:1px solid var(--border);">Sort</button>
                 </div>
               </div>
-              <table class="premium-table">
+              
+              <table class="rep-table">
                 <thead>
                   <tr>
                     <th>Report Name</th>
                     <th>Category</th>
-                    <th>Date Generated</th>
-                    <th>Requested By</th>
-                    <th>Format</th>
-                    <th>Action</th>
+                    <th>Generated By</th>
+                    <th>Last Updated</th>
+                    <th>Status</th>
+                    <th style="text-align:right;">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td>
-                      <div class="premium-table-title">Q2 2026 Financial Summary</div>
-                      <div class="premium-table-sub">Quarterly Close</div>
-                    </td>
-                    <td><span class="badge badge-success">Finance</span></td>
+                    <td style="font-weight:700;">Monthly Revenue Report</td>
+                    <td><span class="badge badge-success">Revenue</span></td>
+                    <td>System Auto</td>
+                    <td>Aug 01, 2026</td>
+                    <td><span class="badge badge-success">Ready</span></td>
+                    <td style="text-align:right;"><button class="btn btn-ghost btn-sm">View</button></td>
+                  </tr>
+                  <tr>
+                    <td style="font-weight:700;">Client Growth Report</td>
+                    <td><span class="badge badge-primary">Sales</span></td>
+                    <td>Shahim</td>
+                    <td>Jul 28, 2026</td>
+                    <td><span class="badge badge-success">Ready</span></td>
+                    <td style="text-align:right;"><button class="btn btn-ghost btn-sm">View</button></td>
+                  </tr>
+                  <tr>
+                    <td style="font-weight:700;">Project Performance Report</td>
+                    <td><span class="badge badge-info">Projects</span></td>
+                    <td>Ameen</td>
+                    <td>Jul 15, 2026</td>
+                    <td><span class="badge badge-success">Ready</span></td>
+                    <td style="text-align:right;"><button class="btn btn-ghost btn-sm">View</button></td>
+                  </tr>
+                  <tr>
+                    <td style="font-weight:700;">SEO Performance Report</td>
+                    <td><span class="badge badge-warning">Marketing</span></td>
+                    <td>Midhul</td>
+                    <td>Jul 10, 2026</td>
+                    <td><span class="badge badge-success">Ready</span></td>
+                    <td style="text-align:right;"><button class="btn btn-ghost btn-sm">View</button></td>
+                  </tr>
+                  <tr>
+                    <td style="font-weight:700;">Team Productivity Report</td>
+                    <td><span class="badge badge-neutral">Team</span></td>
+                    <td>System Auto</td>
                     <td>Jul 01, 2026</td>
-                    <td>System (Auto)</td>
-                    <td><span style="font-weight: 600; color: var(--text-2);">PDF</span></td>
-                    <td><button class="btn btn-sm btn-ghost">Download</button></td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="premium-table-title">Cabo Travels Project Audit</div>
-                      <div class="premium-table-sub">Budget vs Actual</div>
-                    </td>
-                    <td><span class="badge badge-primary">Operations</span></td>
-                    <td>Today</td>
-                    <td>Shahim</td>
-                    <td><span style="font-weight: 600; color: var(--text-2);">XLSX</span></td>
-                    <td><button class="btn btn-sm btn-ghost">Download</button></td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="premium-table-title">June Engineering Utilization</div>
-                      <div class="premium-table-sub">Time tracking analysis</div>
-                    </td>
-                    <td><span class="badge badge-warning">Team</span></td>
-                    <td>Jul 02, 2026</td>
-                    <td>Shahim</td>
-                    <td><span style="font-weight: 600; color: var(--text-2);">PDF</span></td>
-                    <td><button class="btn btn-sm btn-ghost">Download</button></td>
+                    <td><span class="badge badge-success">Ready</span></td>
+                    <td style="text-align:right;"><button class="btn btn-ghost btn-sm">View</button></td>
                   </tr>
                 </tbody>
               </table>
+              <div class="rep-pagination">
+                <div class="rep-page-info">Showing 1 to 5 of 42 reports</div>
+                <div class="rep-page-controls">
+                  <button class="btn btn-ghost btn-sm" disabled style="border:1px solid var(--border);">Prev</button>
+                  <button class="btn btn-ghost btn-sm" style="border:1px solid var(--border);">Next</button>
+                </div>
+              </div>
             </div>
+
+            <!-- 7. Recent Reports -->
+            <div class="rep-box">
+              <div class="rep-box-header">
+                <div class="rep-box-title">Recent Reports</div>
+                <button class="btn btn-ghost btn-sm" style="color:var(--primary);">View All</button>
+              </div>
+              <div class="rep-list">
+                
+                <div class="rep-item">
+                  <div class="rep-item-top">
+                    <div>
+                      <div class="rep-item-title">Monthly Revenue Report</div>
+                      <div class="rep-item-date">Generated Aug 01, 2026</div>
+                    </div>
+                  </div>
+                  <div class="rep-item-actions">
+                    <button class="rep-action-btn"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></button>
+                    <button class="rep-action-btn"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg></button>
+                    <button class="rep-action-btn delete"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+                  </div>
+                </div>
+
+                <div class="rep-item">
+                  <div class="rep-item-top">
+                    <div>
+                      <div class="rep-item-title">Client Growth Report</div>
+                      <div class="rep-item-date">Generated Jul 28, 2026</div>
+                    </div>
+                  </div>
+                  <div class="rep-item-actions">
+                    <button class="rep-action-btn"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></button>
+                    <button class="rep-action-btn"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg></button>
+                    <button class="rep-action-btn delete"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+                  </div>
+                </div>
+
+                <div class="rep-item">
+                  <div class="rep-item-top">
+                    <div>
+                      <div class="rep-item-title">Project Performance Report</div>
+                      <div class="rep-item-date">Generated Jul 15, 2026</div>
+                    </div>
+                  </div>
+                  <div class="rep-item-actions">
+                    <button class="rep-action-btn"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></button>
+                    <button class="rep-action-btn"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg></button>
+                    <button class="rep-action-btn delete"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+                  </div>
+                </div>
+
+                <div class="rep-item">
+                  <div class="rep-item-top">
+                    <div>
+                      <div class="rep-item-title">SEO Performance Report</div>
+                      <div class="rep-item-date">Generated Jul 10, 2026</div>
+                    </div>
+                  </div>
+                  <div class="rep-item-actions">
+                    <button class="rep-action-btn"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></button>
+                    <button class="rep-action-btn"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg></button>
+                    <button class="rep-action-btn delete"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+                  </div>
+                </div>
+                
+                <div class="rep-item">
+                  <div class="rep-item-top">
+                    <div>
+                      <div class="rep-item-title">Team Productivity Report</div>
+                      <div class="rep-item-date">Generated Jul 01, 2026</div>
+                    </div>
+                  </div>
+                  <div class="rep-item-actions">
+                    <button class="rep-action-btn"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></button>
+                    <button class="rep-action-btn"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg></button>
+                    <button class="rep-action-btn delete"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
           </section>
 
         </div>
-
       </main>
+
     </div>
   </div>
 
