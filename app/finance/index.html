@@ -13,61 +13,412 @@
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/modules.css" />
   <style>
-    .finance-dashboard {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 32px;
+    .fin-layout {
+      padding: 0 0 64px 0;
+      animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
-    .finance-card {
+
+    /* Page Header */
+    .fin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 48px;
+    }
+    .fin-header-title {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      color: var(--text-1);
+      margin-bottom: 8px;
+    }
+    .fin-header-desc {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-3);
+    }
+    .fin-toolbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .fin-search {
+      display: flex;
+      align-items: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      width: 240px;
+    }
+    .fin-search input {
+      border: none;
+      background: transparent;
+      outline: none;
+      width: 100%;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-1);
+      margin-left: 8px;
+    }
+    .fin-search input::placeholder {
+      color: var(--text-3);
+    }
+
+    /* Quick Actions */
+    .fin-quick-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-bottom: 64px;
+    }
+    .fin-quick-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      transition: transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease;
+    }
+    .fin-quick-card:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--border-hover);
+    }
+    .fin-quick-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--bg-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-2);
+    }
+    .fin-quick-text {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-1);
+    }
+
+    /* KPI Grid */
+    .fin-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-bottom: 64px;
+    }
+    .fin-kpi-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: transform 250ms ease, box-shadow 250ms ease;
       box-shadow: var(--shadow-sm);
     }
-    .finance-card-header {
+    .fin-kpi-card:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+    .fin-kpi-value {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      color: var(--text-1);
+      line-height: 1;
+    }
+    .fin-kpi-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Split Grids */
+    .fin-split-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+      margin-bottom: 64px;
+    }
+    
+    .fin-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 250ms ease, box-shadow 250ms ease;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .fin-box:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+    .fin-box-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .fin-box-title {
       font-size: 16px;
       font-weight: 800;
       color: var(--text-1);
-      margin-bottom: 24px;
-      display: flex;
-      justify-content: space-between;
     }
-    .cashflow-chart {
+    .fin-box-meta {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-3);
+    }
+
+    /* Cash Flow Chart */
+    .cf-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      padding: 24px;
+    }
+    .cf-metric-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .cf-metric-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-3);
+      text-transform: uppercase;
+    }
+    .cf-metric-value {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-1);
+    }
+    
+    .cf-chart-area {
+      padding: 0 24px 24px 24px;
+      height: 200px;
       display: flex;
       align-items: flex-end;
-      justify-content: space-between;
-      height: 200px;
-      padding-top: 20px;
-      border-bottom: 1px solid var(--border-subtle);
+      gap: 32px;
+      margin-top: 16px;
     }
-    .cashflow-month {
+    .cf-chart-col {
+      flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
-      flex: 1;
+      gap: 12px;
+      height: 100%;
     }
-    .bar-group {
+    .cf-bar-wrapper {
+      flex: 1;
+      width: 100%;
       display: flex;
       align-items: flex-end;
-      gap: 4px;
-      height: 100%;
-      width: 100%;
       justify-content: center;
+      gap: 6px;
+      border-bottom: 1px solid var(--border-subtle);
     }
-    .bar-revenue {
-      width: 20px;
-      background: var(--success);
+    .cf-bar {
+      width: 24px;
       border-radius: 4px 4px 0 0;
+      transition: height 1s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .bar-expense {
-      width: 20px;
-      background: var(--danger);
-      border-radius: 4px 4px 0 0;
+    .cf-bar.in { background: var(--success); }
+    .cf-bar.out { background: var(--danger); }
+    .cf-month {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-2);
     }
-    @media (max-width: 1024px) {
-      .finance-dashboard { grid-template-columns: 1fr; }
+
+    /* Expense Overview */
+    .exp-list {
+      display: flex;
+      flex-direction: column;
+    }
+    .exp-item {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .exp-item:last-child {
+      border-bottom: none;
+    }
+    .exp-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .exp-cat {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-1);
+    }
+    .exp-spent {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-1);
+    }
+    .exp-stats {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-3);
+    }
+    .exp-bar-bg {
+      height: 6px;
+      background: var(--bg-2);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .exp-bar-fill {
+      height: 100%;
+      background: var(--primary);
+      border-radius: 4px;
+    }
+
+    /* Table Toolbar */
+    .fin-table-toolbar {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg);
+    }
+
+    /* Enterprise Table */
+    .fin-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .fin-table th {
+      text-align: left;
+      padding: 16px 24px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-2);
+    }
+    .fin-table td {
+      padding: 16px 24px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-1);
+      border-bottom: 1px solid var(--border-subtle);
+      transition: background 0.15s;
+    }
+    .fin-table tbody tr {
+      cursor: pointer;
+    }
+    .fin-table tbody tr:hover td {
+      background: var(--bg-2);
+    }
+    .fin-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Pending Payments */
+    .pend-list {
+      display: flex;
+      flex-direction: column;
+    }
+    .pend-item {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .pend-item:last-child {
+      border-bottom: none;
+    }
+    .pend-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .pend-client {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-1);
+    }
+    .pend-inv {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-3);
+      margin-top: 4px;
+    }
+    .pend-amount {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-1);
+    }
+    .pend-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .pend-due {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--danger);
+    }
+
+    /* Badges */
+    .badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+    .badge-success { background: var(--success-10); color: var(--success); }
+    .badge-warning { background: var(--warning-10); color: var(--warning); }
+    .badge-danger { background: var(--danger-10); color: var(--danger); }
+    .badge-info { background: var(--info-10); color: var(--info); }
+    .badge-neutral { background: var(--bg-2); color: var(--text-2); }
+
+    /* Pagination */
+    .fin-pagination {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .fin-page-info {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-3);
+    }
+    .fin-page-controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
@@ -77,215 +428,380 @@
     <div id="sidebar-container"></div>
     <div class="shell-main">
       <div id="topbar-container"></div>
+      
       <main class="app-content">
-        
-        <div class="premium-module-layout">
+        <div class="fin-layout">
           
-          <!-- Page Header -->
-          <header class="premium-header">
+          <!-- 1. Page Header -->
+          <header class="fin-header">
             <div>
-              <h1 class="premium-header-title">Finance & Cash Flow</h1>
-              <p class="premium-header-desc">Track revenue, expenses, and overall business health</p>
+              <h1 class="fin-header-title">Finance</h1>
+              <div class="fin-header-desc">How is my business performing financially today?</div>
             </div>
-            <div class="premium-toolbar-group">
-              <button class="btn btn-primary">+ Create Invoice</button>
-              <button class="btn btn-secondary">Log Expense</button>
+            <div class="fin-toolbar">
+              <div class="fin-search">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" placeholder="Search transactions..." />
+              </div>
+              <button class="btn btn-ghost" style="background:var(--surface); border:1px solid var(--border);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                This Month
+              </button>
+              <button class="btn btn-secondary">+ Record Expense</button>
+              <button class="btn btn-primary">+ New Invoice</button>
             </div>
           </header>
 
-          <!-- Primary KPI Row -->
-          <section class="premium-kpi-grid">
-            <div class="premium-kpi-card">
-              <span class="premium-kpi-label">YTD Revenue</span>
-              <div class="premium-kpi-value" style="color: var(--success);">₹84.5L</div>
+          <!-- 7. Quick Actions -->
+          <div class="fin-quick-grid">
+            <div class="fin-quick-card">
+              <div class="fin-quick-icon" style="color:var(--primary);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              </div>
+              <div class="fin-quick-text">Create Invoice</div>
             </div>
-            <div class="premium-kpi-card">
-              <span class="premium-kpi-label">YTD Expenses</span>
-              <div class="premium-kpi-value" style="color: var(--danger);">₹32.2L</div>
+            <div class="fin-quick-card">
+              <div class="fin-quick-icon" style="color:var(--danger);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+              </div>
+              <div class="fin-quick-text">Record Expense</div>
             </div>
-            <div class="premium-kpi-card">
-              <span class="premium-kpi-label">Outstanding AR</span>
-              <div class="premium-kpi-value" style="color: var(--warning);">₹12.0L</div>
+            <div class="fin-quick-card">
+              <div class="fin-quick-icon" style="color:var(--success);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              </div>
+              <div class="fin-quick-text">Download Report</div>
             </div>
-            <div class="premium-kpi-card">
-              <span class="premium-kpi-label">Net Margin</span>
-              <div class="premium-kpi-value">62%</div>
+            <div class="fin-quick-card">
+              <div class="fin-quick-icon" style="color:var(--info);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              </div>
+              <div class="fin-quick-text">Payment History</div>
+            </div>
+          </div>
+
+          <!-- 2. KPI Cards (Max 4) -->
+          <section class="fin-kpi-grid">
+            <div class="fin-kpi-card">
+              <div class="fin-kpi-value">$142,500</div>
+              <div class="fin-kpi-label">Revenue (YTD)</div>
+            </div>
+            <div class="fin-kpi-card">
+              <div class="fin-kpi-value" style="color:var(--warning);">$18,400</div>
+              <div class="fin-kpi-label">Outstanding Invoices</div>
+            </div>
+            <div class="fin-kpi-card">
+              <div class="fin-kpi-value" style="color:var(--danger);">$45,200</div>
+              <div class="fin-kpi-label">Expenses (YTD)</div>
+            </div>
+            <div class="fin-kpi-card">
+              <div class="fin-kpi-value" style="color:var(--success);">$97,300</div>
+              <div class="fin-kpi-label">Net Profit (YTD)</div>
             </div>
           </section>
 
-          <!-- Main Dashboard Panels -->
-          <div class="finance-dashboard">
+          <!-- 3 & 6. Analytics & Overview -->
+          <section class="fin-split-grid">
             
-            <!-- Left: Cash Flow Chart -->
-            <div class="finance-card">
-              <div class="finance-card-header">
-                <span>Cash Flow (Last 6 Months)</span>
-                <div style="display: flex; gap: 12px; font-size: 12px; font-weight: 600;">
-                  <span style="color: var(--success);">■ Revenue</span>
-                  <span style="color: var(--danger);">■ Expenses</span>
+            <!-- 3. Cash Flow -->
+            <div class="fin-box">
+              <div class="fin-box-header">
+                <div class="fin-box-title">Cash Flow</div>
+                <div class="fin-box-meta">Last 6 Months</div>
+              </div>
+              <div class="cf-metrics">
+                <div class="cf-metric-item">
+                  <div class="cf-metric-label">Avg Inflow</div>
+                  <div class="cf-metric-value" style="color:var(--success);">$24,500</div>
+                </div>
+                <div class="cf-metric-item">
+                  <div class="cf-metric-label">Avg Outflow</div>
+                  <div class="cf-metric-value" style="color:var(--danger);">$7,200</div>
+                </div>
+                <div class="cf-metric-item">
+                  <div class="cf-metric-label">Net Cash</div>
+                  <div class="cf-metric-value" style="color:var(--primary);">$17,300</div>
                 </div>
               </div>
-              <div class="cashflow-chart">
-                <div class="cashflow-month">
-                  <div class="bar-group">
-                    <div class="bar-revenue" style="height: 60%;"></div>
-                    <div class="bar-expense" style="height: 40%;"></div>
+              <div class="cf-chart-area">
+                <!-- Custom CSS Chart -->
+                <div class="cf-chart-col">
+                  <div class="cf-bar-wrapper">
+                    <div class="cf-bar in" style="height: 60%;"></div>
+                    <div class="cf-bar out" style="height: 20%;"></div>
                   </div>
-                  <span style="font-size: 11px; font-weight: 700;">FEB</span>
+                  <div class="cf-month">Mar</div>
                 </div>
-                <div class="cashflow-month">
-                  <div class="bar-group">
-                    <div class="bar-revenue" style="height: 75%;"></div>
-                    <div class="bar-expense" style="height: 35%;"></div>
+                <div class="cf-chart-col">
+                  <div class="cf-bar-wrapper">
+                    <div class="cf-bar in" style="height: 75%;"></div>
+                    <div class="cf-bar out" style="height: 30%;"></div>
                   </div>
-                  <span style="font-size: 11px; font-weight: 700;">MAR</span>
+                  <div class="cf-month">Apr</div>
                 </div>
-                <div class="cashflow-month">
-                  <div class="bar-group">
-                    <div class="bar-revenue" style="height: 50%;"></div>
-                    <div class="bar-expense" style="height: 45%;"></div>
+                <div class="cf-chart-col">
+                  <div class="cf-bar-wrapper">
+                    <div class="cf-bar in" style="height: 50%;"></div>
+                    <div class="cf-bar out" style="height: 25%;"></div>
                   </div>
-                  <span style="font-size: 11px; font-weight: 700;">APR</span>
+                  <div class="cf-month">May</div>
                 </div>
-                <div class="cashflow-month">
-                  <div class="bar-group">
-                    <div class="bar-revenue" style="height: 85%;"></div>
-                    <div class="bar-expense" style="height: 40%;"></div>
+                <div class="cf-chart-col">
+                  <div class="cf-bar-wrapper">
+                    <div class="cf-bar in" style="height: 85%;"></div>
+                    <div class="cf-bar out" style="height: 35%;"></div>
                   </div>
-                  <span style="font-size: 11px; font-weight: 700;">MAY</span>
+                  <div class="cf-month">Jun</div>
                 </div>
-                <div class="cashflow-month">
-                  <div class="bar-group">
-                    <div class="bar-revenue" style="height: 95%;"></div>
-                    <div class="bar-expense" style="height: 30%;"></div>
+                <div class="cf-chart-col">
+                  <div class="cf-bar-wrapper">
+                    <div class="cf-bar in" style="height: 70%;"></div>
+                    <div class="cf-bar out" style="height: 40%;"></div>
                   </div>
-                  <span style="font-size: 11px; font-weight: 700;">JUN</span>
+                  <div class="cf-month">Jul</div>
                 </div>
-                <div class="cashflow-month">
-                  <div class="bar-group">
-                    <div class="bar-revenue" style="height: 70%;"></div>
-                    <div class="bar-expense" style="height: 50%;"></div>
+                <div class="cf-chart-col">
+                  <div class="cf-bar-wrapper">
+                    <div class="cf-bar in" style="height: 95%;"></div>
+                    <div class="cf-bar out" style="height: 30%;"></div>
                   </div>
-                  <span style="font-size: 11px; font-weight: 700;">JUL</span>
+                  <div class="cf-month">Aug</div>
                 </div>
               </div>
             </div>
 
-            <!-- Right: Budget & Accounts -->
-            <div class="finance-card">
-              <div class="finance-card-header">Operating Budget (Q3)</div>
+            <!-- 6. Expense Overview -->
+            <div class="fin-box">
+              <div class="fin-box-header">
+                <div class="fin-box-title">Expense Overview</div>
+                <div class="fin-box-meta">This Month</div>
+              </div>
+              <div class="exp-list">
+                
+                <div class="exp-item">
+                  <div class="exp-header">
+                    <div class="exp-cat">Salary & Wages</div>
+                    <div class="exp-spent">$12,000</div>
+                  </div>
+                  <div class="exp-bar-bg">
+                    <div class="exp-bar-fill" style="width: 80%;"></div>
+                  </div>
+                  <div class="exp-stats">
+                    <span>Budget: $15,000</span>
+                    <span>$3,000 left</span>
+                  </div>
+                </div>
+
+                <div class="exp-item">
+                  <div class="exp-header">
+                    <div class="exp-cat">Software Subscriptions</div>
+                    <div class="exp-spent">$1,250</div>
+                  </div>
+                  <div class="exp-bar-bg">
+                    <div class="exp-bar-fill" style="width: 62%; background:var(--warning);"></div>
+                  </div>
+                  <div class="exp-stats">
+                    <span>Budget: $2,000</span>
+                    <span>$750 left</span>
+                  </div>
+                </div>
+
+                <div class="exp-item">
+                  <div class="exp-header">
+                    <div class="exp-cat">Office Expenses</div>
+                    <div class="exp-spent">$850</div>
+                  </div>
+                  <div class="exp-bar-bg">
+                    <div class="exp-bar-fill" style="width: 42%; background:var(--info);"></div>
+                  </div>
+                  <div class="exp-stats">
+                    <span>Budget: $2,000</span>
+                    <span>$1,150 left</span>
+                  </div>
+                </div>
+
+                <div class="exp-item">
+                  <div class="exp-header">
+                    <div class="exp-cat">Marketing</div>
+                    <div class="exp-spent">$3,400</div>
+                  </div>
+                  <div class="exp-bar-bg">
+                    <div class="exp-bar-fill" style="width: 95%; background:var(--danger);"></div>
+                  </div>
+                  <div class="exp-stats">
+                    <span>Budget: $3,500</span>
+                    <span style="color:var(--danger);">$100 left</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </section>
+
+          <!-- 4 & 5. Transactions & Pending -->
+          <section class="fin-split-grid">
+            
+            <!-- 4. Recent Transactions -->
+            <div class="fin-box">
+              <div class="fin-box-header" style="border-bottom: none; padding-bottom: 0;">
+                <div class="fin-box-title">Recent Transactions</div>
+              </div>
+              <div class="fin-table-toolbar" style="border-top: 1px solid var(--border); margin-top: 24px;">
+                <div class="fin-search" style="width: 300px; border-color: transparent; background: var(--bg-2);">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3)"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                  <input type="text" placeholder="Search transactions..." />
+                </div>
+                <div style="display:flex; gap:12px; align-items:center;">
+                  <button class="btn btn-ghost btn-sm" style="background:var(--surface); border:1px solid var(--border);">Filter</button>
+                  <button class="btn btn-ghost btn-sm" style="background:var(--surface); border:1px solid var(--border);">Sort</button>
+                </div>
+              </div>
               
-              <div style="margin-bottom: 24px;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                  <span style="font-size: 13px; font-weight: 700;">Payroll</span>
-                  <span style="font-size: 12px; font-weight: 600;">₹12.5L / ₹15.0L</span>
-                </div>
-                <div style="width: 100%; height: 6px; background: var(--bg); border-radius: 4px; overflow: hidden;">
-                  <div style="width: 83%; height: 100%; background: var(--warning);"></div>
-                </div>
-              </div>
-
-              <div style="margin-bottom: 24px;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                  <span style="font-size: 13px; font-weight: 700;">Software & SaaS</span>
-                  <span style="font-size: 12px; font-weight: 600;">₹1.2L / ₹2.0L</span>
-                </div>
-                <div style="width: 100%; height: 6px; background: var(--bg); border-radius: 4px; overflow: hidden;">
-                  <div style="width: 60%; height: 100%; background: var(--primary);"></div>
-                </div>
-              </div>
-
-              <div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                  <span style="font-size: 13px; font-weight: 700;">Marketing</span>
-                  <span style="font-size: 12px; font-weight: 600;">₹4.5L / ₹5.0L</span>
-                </div>
-                <div style="width: 100%; height: 6px; background: var(--bg); border-radius: 4px; overflow: hidden;">
-                  <div style="width: 90%; height: 100%; background: var(--danger);"></div>
-                </div>
-              </div>
-
-            </div>
-
-          </div>
-
-          <!-- Invoices & Payments Table -->
-          <section class="premium-section">
-            <div class="premium-table-container">
-              <div style="padding: 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between;">
-                <h2 style="font-size: 16px; font-weight: 800;">Recent Transactions & Invoices</h2>
-                <div class="premium-toolbar-group">
-                  <select class="premium-input" style="padding: 8px 12px; font-size: 12px;">
-                    <option>All Transactions</option>
-                    <option>Invoices (Receivable)</option>
-                    <option>Expenses (Payable)</option>
-                  </select>
-                </div>
-              </div>
-              <table class="premium-table">
+              <table class="fin-table">
                 <thead>
                   <tr>
-                    <th>Ref ID</th>
-                    <th>Entity</th>
                     <th>Date</th>
-                    <th>Category</th>
+                    <th>Client / Vendor</th>
+                    <th>Description</th>
+                    <th>Type</th>
                     <th>Amount</th>
                     <th>Status</th>
+                    <th style="text-align:right;">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td>
-                      <div class="premium-table-title">INV-2026-085</div>
-                      <div class="premium-table-sub">Receivable</div>
-                    </td>
-                    <td><span style="font-weight: 700;">TechNova Global</span></td>
-                    <td>Today</td>
-                    <td>Enterprise License</td>
-                    <td><span style="font-weight: 700; color: var(--success);">+ ₹45,00,000</span></td>
-                    <td><span class="badge badge-success">Paid</span></td>
+                    <td>Aug 14, 2026</td>
+                    <td style="font-weight:700;">Cabo Travels</td>
+                    <td style="color:var(--text-2);">Invoice #1042 Paid</td>
+                    <td><span class="badge badge-success">Income</span></td>
+                    <td style="font-weight:800;">$4,500.00</td>
+                    <td><span class="badge badge-success">Completed</span></td>
+                    <td style="text-align:right;"><button class="btn btn-ghost btn-sm">View</button></td>
                   </tr>
                   <tr>
-                    <td>
-                      <div class="premium-table-title">INV-2026-086</div>
-                      <div class="premium-table-sub">Receivable</div>
-                    </td>
-                    <td><span style="font-weight: 700;">GreenLeaf Corp</span></td>
-                    <td>Jul 28, 2026</td>
-                    <td>Design Retainer</td>
-                    <td><span style="font-weight: 700; color: var(--text-1);">+ ₹1,20,000</span></td>
-                    <td><span class="badge badge-warning">Pending</span></td>
+                    <td>Aug 13, 2026</td>
+                    <td style="font-weight:700;">AWS Hosting</td>
+                    <td style="color:var(--text-2);">Monthly Server Cost</td>
+                    <td><span class="badge badge-danger">Expense</span></td>
+                    <td style="font-weight:800;">$340.00</td>
+                    <td><span class="badge badge-success">Completed</span></td>
+                    <td style="text-align:right;"><button class="btn btn-ghost btn-sm">View</button></td>
                   </tr>
                   <tr>
-                    <td>
-                      <div class="premium-table-title">EXP-2026-112</div>
-                      <div class="premium-table-sub">Payable</div>
-                    </td>
-                    <td><span style="font-weight: 700;">AWS Cloud Services</span></td>
-                    <td>Jul 25, 2026</td>
-                    <td>Server Infrastructure</td>
-                    <td><span style="font-weight: 700; color: var(--danger);">- ₹45,200</span></td>
-                    <td><span class="badge badge-success">Paid</span></td>
+                    <td>Aug 12, 2026</td>
+                    <td style="font-weight:700;">GreenLeaf</td>
+                    <td style="color:var(--text-2);">Design Retainer (Aug)</td>
+                    <td><span class="badge badge-success">Income</span></td>
+                    <td style="font-weight:800;">$2,000.00</td>
+                    <td><span class="badge badge-success">Completed</span></td>
+                    <td style="text-align:right;"><button class="btn btn-ghost btn-sm">View</button></td>
                   </tr>
                   <tr>
-                    <td>
-                      <div class="premium-table-title">INV-2026-084</div>
-                      <div class="premium-table-sub">Receivable</div>
-                    </td>
-                    <td><span style="font-weight: 700;">Cabo Travels Inc</span></td>
-                    <td>Jul 15, 2026</td>
-                    <td>Project Milestone 1</td>
-                    <td><span style="font-weight: 700; color: var(--text-1);">+ ₹6,50,000</span></td>
-                    <td><span class="badge badge-danger">Overdue</span></td>
+                    <td>Aug 10, 2026</td>
+                    <td style="font-weight:700;">Workspace Co</td>
+                    <td style="color:var(--text-2);">Office Rent</td>
+                    <td><span class="badge badge-danger">Expense</span></td>
+                    <td style="font-weight:800;">$1,800.00</td>
+                    <td><span class="badge badge-success">Completed</span></td>
+                    <td style="text-align:right;"><button class="btn btn-ghost btn-sm">View</button></td>
+                  </tr>
+                  <tr>
+                    <td>Aug 08, 2026</td>
+                    <td style="font-weight:700;">BlueWave Tech</td>
+                    <td style="color:var(--text-2);">API Integration Phase 1</td>
+                    <td><span class="badge badge-success">Income</span></td>
+                    <td style="font-weight:800;">$6,200.00</td>
+                    <td><span class="badge badge-warning">Processing</span></td>
+                    <td style="text-align:right;"><button class="btn btn-ghost btn-sm">View</button></td>
                   </tr>
                 </tbody>
               </table>
+              <div class="fin-pagination">
+                <div class="fin-page-info">Showing 1 to 5 of 24 transactions</div>
+                <div class="fin-page-controls">
+                  <button class="btn btn-ghost btn-sm" disabled style="border:1px solid var(--border);">Prev</button>
+                  <button class="btn btn-ghost btn-sm" style="border:1px solid var(--border);">Next</button>
+                </div>
+              </div>
             </div>
+
+            <!-- 5. Pending Payments -->
+            <div class="fin-box">
+              <div class="fin-box-header">
+                <div class="fin-box-title">Pending Payments</div>
+                <button class="btn btn-ghost btn-sm" style="color:var(--primary);">View All</button>
+              </div>
+              <div class="pend-list">
+                
+                <div class="pend-item">
+                  <div class="pend-top">
+                    <div>
+                      <div class="pend-client">TechNova</div>
+                      <div class="pend-inv">Invoice #1043</div>
+                    </div>
+                    <div class="pend-amount">$3,800.00</div>
+                  </div>
+                  <div class="pend-bottom">
+                    <div class="pend-due">Overdue by 2 days</div>
+                    <button class="btn btn-secondary btn-sm">Send Reminder</button>
+                  </div>
+                </div>
+
+                <div class="pend-item">
+                  <div class="pend-top">
+                    <div>
+                      <div class="pend-client">BlueWave Tech</div>
+                      <div class="pend-inv">Invoice #1044</div>
+                    </div>
+                    <div class="pend-amount">$6,200.00</div>
+                  </div>
+                  <div class="pend-bottom">
+                    <div class="pend-due" style="color:var(--warning);">Due Today</div>
+                    <button class="btn btn-ghost btn-sm" style="border:1px solid var(--border);">Send Reminder</button>
+                  </div>
+                </div>
+
+                <div class="pend-item">
+                  <div class="pend-top">
+                    <div>
+                      <div class="pend-client">Cabo Travels</div>
+                      <div class="pend-inv">Invoice #1045</div>
+                    </div>
+                    <div class="pend-amount">$1,500.00</div>
+                  </div>
+                  <div class="pend-bottom">
+                    <div class="pend-due" style="color:var(--text-3);">Due in 5 days</div>
+                    <button class="btn btn-ghost btn-sm" style="border:1px solid var(--border);">Send Reminder</button>
+                  </div>
+                </div>
+                
+                <div class="pend-item">
+                  <div class="pend-top">
+                    <div>
+                      <div class="pend-client">GreenLeaf</div>
+                      <div class="pend-inv">Invoice #1046</div>
+                    </div>
+                    <div class="pend-amount">$4,250.00</div>
+                  </div>
+                  <div class="pend-bottom">
+                    <div class="pend-due" style="color:var(--text-3);">Due in 12 days</div>
+                    <button class="btn btn-ghost btn-sm" style="border:1px solid var(--border);">Send Reminder</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
           </section>
 
         </div>
-
       </main>
+
     </div>
   </div>
 
