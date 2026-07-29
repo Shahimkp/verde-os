@@ -63,7 +63,8 @@
       'communication': 'Communication Workspace',
       'team': 'Team Management',
       'create-project': 'Create Project',
-      'ai-hub': 'VERDE Copilot'
+      'ai-hub': 'VERDE Copilot',
+      'workspace': 'Organization Workspace'
     };
 
     let activePageKey = 'dashboard';
