@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Projects Workspace · VERDE OS</title>
+  <title>Projects · VERDE OS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -12,586 +12,250 @@
   <link rel="stylesheet" href="../assets/css/layout.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/modules.css" />
+  <style>
+    .project-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 32px;
+    }
+    .project-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+    .project-card-header {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-1);
+      margin-bottom: 24px;
+    }
+    /* Simple Gantt visual */
+    .gantt-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .gantt-label {
+      width: 150px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-1);
+    }
+    .gantt-track {
+      flex: 1;
+      height: 28px;
+      background: var(--bg);
+      border-radius: 6px;
+      position: relative;
+    }
+    .gantt-bar {
+      height: 100%;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      font-size: 11px;
+      font-weight: 700;
+      color: white;
+    }
+    @media (max-width: 1024px) {
+      .project-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 
 <body>
-
   <div class="shell-container">
     <div id="sidebar-container"></div>
     <div class="shell-main">
       <div id="topbar-container"></div>
       <main class="app-content">
-
-        <div class="ceo-dashboard-wrap fade-stagger">
-
+        
+        <div class="premium-module-layout">
           
-          <!-- ==========================================
-               WORKSPACE FRAMEWORK: HEADER & ACTIONS
-               ========================================== -->
-          <header class="ws-header">
-            <div class="ws-header-top">
-              <div class="ws-title-group">
-                <div class="ws-icon-box">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                </div>
-                <div>
-                  <div class="ws-breadcrumb">Workspace / Projects</div>
-                  <h1 class="ws-title">Projects <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="cursor:pointer;color:var(--text-3);"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></h1>
-                  <p class="ws-desc">Portfolio and milestone tracking</p>
-                </div>
-              </div>
-              <div class="ws-meta-group">
-                <div class="ws-last-updated">Last Updated: Just now</div>
-                <div class="input-search" style="width:200px;background:var(--surface);">
-                  <input type="text" placeholder="Quick Search..." style="border:none;background:none;outline:none;width:100%;font-size:12px;" />
-                </div>
-              </div>
+          <!-- Page Header -->
+          <header class="premium-header">
+            <div>
+              <h1 class="premium-header-title">Projects</h1>
+              <p class="premium-header-desc">Portfolio oversight, milestones, and budget allocation</p>
             </div>
-
-            <div class="ws-action-bar">
-              <div class="ws-actions-left">
-                <button class="btn btn-sm btn-ghost">Refresh</button>
-                <button class="btn btn-sm btn-ghost">Filter</button>
-                <button class="btn btn-sm btn-ghost">Sort</button>
-              </div>
-              <div class="ws-actions-right">
-                <button class="btn btn-sm btn-secondary" onclick="document.getElementById('ws-ai-panel').classList.toggle('active')">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-                  AI Assistant
-                </button>
-                <button class="btn btn-sm btn-ghost">Import</button>
-                <button class="btn btn-sm btn-ghost">Export</button>
-                <button class="btn btn-sm btn-primary">+ New Project</button>
-              </div>
+            <div class="premium-toolbar-group">
+              <button class="btn btn-primary" onclick="window.location.href='../create-project/index.html'">+ New Project</button>
             </div>
           </header>
-<section class="kpi-grid-6">
-            <div class="kpi-card-v3">
-              <div style="display:flex;justify-content:space-between;align-items:center;">
-                <span class="kpi-title-label">Total Projects</span>
-                <div class="kpi-icon-wrap" style="background:var(--primary-light);color:var(--primary)">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-                </div>
-              </div>
-              <div class="kpi-value-lg">24 Projects</div>
-              <div class="progress-bar"><div class="progress-fill" style="width:80%;"></div></div>
-              <div class="kpi-desc"><span class="badge badge-primary">+3 This Month</span><span>Active Portfolio</span></div>
-            </div>
 
-            <div class="kpi-card-v3">
-              <div style="display:flex;justify-content:space-between;align-items:center;">
-                <span class="kpi-title-label">Active Projects</span>
-                <div class="kpi-icon-wrap" style="background:var(--info-50);color:var(--info)">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-                </div>
-              </div>
-              <div class="kpi-value-lg">8 Active</div>
-              <div class="progress-bar"><div class="progress-fill" style="width:70%;background:var(--info);"></div></div>
-              <div class="kpi-desc"><span class="badge badge-info">In Delivery</span><span>Sprint Sprint 14</span></div>
+          <!-- Primary KPI Row -->
+          <section class="premium-kpi-grid">
+            <div class="premium-kpi-card">
+              <span class="premium-kpi-label">Active Portfolio</span>
+              <div class="premium-kpi-value">8</div>
             </div>
-
-            <div class="kpi-card-v3">
-              <div style="display:flex;justify-content:space-between;align-items:center;">
-                <span class="kpi-title-label">Completed</span>
-                <div class="kpi-icon-wrap" style="background:var(--success-50);color:var(--success)">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                </div>
-              </div>
-              <div class="kpi-value-lg">14 Completed</div>
-              <div class="progress-bar"><div class="progress-fill" style="width:90%;background:var(--success);"></div></div>
-              <div class="kpi-desc"><span class="badge badge-success">100% Quality</span><span>Delivered</span></div>
+            <div class="premium-kpi-card">
+              <span class="premium-kpi-label">Delayed Projects</span>
+              <div class="premium-kpi-value" style="color: var(--danger);">2</div>
             </div>
-
-            <div class="kpi-card-v3">
-              <div style="display:flex;justify-content:space-between;align-items:center;">
-                <span class="kpi-title-label">Delayed Risk</span>
-                <div class="kpi-icon-wrap" style="background:var(--danger-50);color:var(--danger)">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
-                </div>
-              </div>
-              <div class="kpi-value-lg">2 Delayed</div>
-              <div class="progress-bar"><div class="progress-fill" style="width:30%;background:var(--danger);"></div></div>
-              <div class="kpi-desc"><span class="badge badge-danger">Action Needed</span><span>Cabo Travels</span></div>
+            <div class="premium-kpi-card">
+              <span class="premium-kpi-label">Total Allocated Budget</span>
+              <div class="premium-kpi-value">₹84.5L</div>
             </div>
-
-            <div class="kpi-card-v3">
-              <div style="display:flex;justify-content:space-between;align-items:center;">
-                <span class="kpi-title-label">Budget Used</span>
-                <div class="kpi-icon-wrap" style="background:var(--warning-50);color:var(--warning)">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                </div>
-              </div>
-              <div class="kpi-value-lg">78%</div>
-              <div class="progress-bar"><div class="progress-fill" style="width:78%;background:var(--warning);"></div></div>
-              <div class="kpi-desc"><span class="badge badge-warning">₹32.4L / ₹45L</span><span>Within budget</span></div>
-            </div>
-
-            <div class="kpi-card-v3">
-              <div style="display:flex;justify-content:space-between;align-items:center;">
-                <span class="kpi-title-label">Project Health</span>
-                <div class="kpi-icon-wrap" style="background:var(--primary-light);color:var(--primary)">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                </div>
-              </div>
-              <div class="kpi-value-lg">88%</div>
-              <div class="progress-bar"><div class="progress-fill" style="width:88%;"></div></div>
-              <div class="kpi-desc"><span class="badge badge-success">Optimal Score</span><span>Health Index</span></div>
+            <div class="premium-kpi-card">
+              <span class="premium-kpi-label">Avg. Completion</span>
+              <div class="premium-kpi-value" style="color: var(--primary);">68%</div>
             </div>
           </section>
 
-          <!-- ==========================================
-               SECTION 2: Project Overview Grid (4 Cards)
-               ========================================== -->
-          <section>
-            <div class="sec-heading" style="margin-bottom:16px;">
-              <h2 class="sec-title-text">Active Project Overview</h2>
-            </div>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:20px;">
-              <!-- Project 1 -->
-              <div class="widget-box">
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <span class="badge badge-danger">Review Due</span>
-                  <span style="font-size:11px;color:var(--text-3);font-weight:600;">Aug 15, 2026</span>
+          <!-- Grid: Timeline & Milestones -->
+          <div class="project-grid">
+            
+            <!-- Left: Gantt Timeline -->
+            <div class="project-card">
+              <div class="project-card-header">Q3 Delivery Timeline</div>
+              
+              <div class="gantt-row">
+                <div class="gantt-label">Cabo Travels Revamp</div>
+                <div class="gantt-track">
+                  <div class="gantt-bar" style="width: 72%; background: var(--primary);">72% (Review Due)</div>
                 </div>
-                <div style="font-weight:800;font-size:16px;">Cabo Travels Redesign</div>
-                <div style="font-size:12px;color:var(--text-2);">Client: Cabo Travels Inc • Manager: Shahim</div>
-                <div>
-                  <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:4px;">
-                    <span>Completion</span>
-                    <span style="color:var(--primary);">72%</span>
+              </div>
+
+              <div class="gantt-row">
+                <div class="gantt-label">MedCare Mobile App</div>
+                <div class="gantt-track">
+                  <div class="gantt-bar" style="width: 45%; background: var(--warning);">45% (Development)</div>
+                </div>
+              </div>
+
+              <div class="gantt-row">
+                <div class="gantt-label">GreenLeaf Branding</div>
+                <div class="gantt-track">
+                  <div class="gantt-bar" style="width: 85%; background: var(--success);">85% (Final Review)</div>
+                </div>
+              </div>
+              
+              <div class="gantt-row">
+                <div class="gantt-label">Vertex Data Migration</div>
+                <div class="gantt-track">
+                  <div class="gantt-bar" style="width: 15%; background: var(--primary);">15% (Planning)</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Upcoming Milestones -->
+            <div class="project-card">
+              <div class="project-card-header">Critical Milestones</div>
+              <div style="display: flex; flex-direction: column; gap: 16px;">
+                
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 16px; border-bottom: 1px solid var(--border-subtle);">
+                  <div>
+                    <div style="font-weight: 700; font-size: 13px;">Cabo: Homepage Wireframes</div>
+                    <div style="font-size: 11px; color: var(--text-3); margin-top: 4px;">Assigned to Midhul K</div>
                   </div>
-                  <div class="progress-bar"><div class="progress-fill" style="width:72%;"></div></div>
+                  <span class="badge badge-danger">Due Today</span>
                 </div>
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
-                  <div style="display:flex;align-items:center;gap:4px;">
-                    <div class="avatar avatar-sm">SH</div>
-                    <div class="avatar avatar-sm" style="background:#6366F1;color:#fff;">MK</div>
+
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 16px; border-bottom: 1px solid var(--border-subtle);">
+                  <div>
+                    <div style="font-weight: 700; font-size: 13px;">GreenLeaf: Brand Guidelines</div>
+                    <div style="font-size: 11px; color: var(--text-3); margin-top: 4px;">Assigned to Shafna F</div>
                   </div>
-                  <span style="font-weight:700;font-size:13px;color:var(--text-1);">₹18.5 Lakhs</span>
+                  <span class="badge badge-primary">Aug 05</span>
                 </div>
-              </div>
 
-              <!-- Project 2 -->
-              <div class="widget-box">
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <span class="badge badge-warning">Development</span>
-                  <span style="font-size:11px;color:var(--text-3);font-weight:600;">Sep 01, 2026</span>
-                </div>
-                <div style="font-weight:800;font-size:16px;">MedCare ERP Mobile App</div>
-                <div style="font-size:12px;color:var(--text-2);">Client: MedCare Health • Manager: Midhul K</div>
-                <div>
-                  <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:4px;">
-                    <span>Completion</span>
-                    <span style="color:var(--warning);">45%</span>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                  <div>
+                    <div style="font-weight: 700; font-size: 13px;">MedCare: API Structure</div>
+                    <div style="font-size: 11px; color: var(--text-3); margin-top: 4px;">Assigned to Shahim</div>
                   </div>
-                  <div class="progress-bar"><div class="progress-fill" style="width:45%;background:var(--warning);"></div></div>
+                  <span class="badge badge-neutral">Aug 12</span>
                 </div>
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
-                  <div style="display:flex;align-items:center;gap:4px;">
-                    <div class="avatar avatar-sm" style="background:#F59E0B;color:#fff;">MK</div>
-                    <div class="avatar avatar-sm" style="background:#EC4899;color:#fff;">SF</div>
-                  </div>
-                  <span style="font-weight:700;font-size:13px;color:var(--text-1);">₹24.0 Lakhs</span>
-                </div>
-              </div>
 
-              <!-- Project 3 -->
-              <div class="widget-box">
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <span class="badge badge-success">Final Review</span>
-                  <span style="font-size:11px;color:var(--text-3);font-weight:600;">Jul 30, 2026</span>
-                </div>
-                <div style="font-weight:800;font-size:16px;">GreenLeaf Brand Guide</div>
-                <div style="font-size:12px;color:var(--text-2);">Client: GreenLeaf Corp • Manager: Shafna F</div>
-                <div>
-                  <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:4px;">
-                    <span>Completion</span>
-                    <span style="color:var(--success);">85%</span>
-                  </div>
-                  <div class="progress-bar"><div class="progress-fill" style="width:85%;background:var(--success);"></div></div>
-                </div>
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
-                  <div style="display:flex;align-items:center;gap:4px;">
-                    <div class="avatar avatar-sm" style="background:#EC4899;color:#fff;">SF</div>
-                  </div>
-                  <span style="font-weight:700;font-size:13px;color:var(--text-1);">₹12.0 Lakhs</span>
-                </div>
               </div>
             </div>
-          </section>
 
-          <!-- ==========================================
-               SECTION 3: Project Kanban Board
-               ========================================== -->
-          <section>
-            <div class="sec-heading" style="margin-bottom:16px;">
-              <h2 class="sec-title-text">Project Kanban Execution Board</h2>
-              <span class="badge badge-neutral">5 Stages</span>
-            </div>
-            <div class="crm-kanban-board">
-              <!-- Planning -->
-              <div class="crm-kanban-col">
-                <div class="crm-col-header">
-                  <span class="crm-col-title">Planning</span>
-                  <span class="badge badge-neutral">2</span>
-                </div>
-                <div class="crm-lead-card">
-                  <span class="badge badge-primary">High</span>
-                  <div style="font-weight:700;font-size:13px;">System Architecture Doc</div>
-                  <div style="font-size:11px;color:var(--text-3);">MedCare ERP Mobile</div>
+          </div>
+
+          <!-- Main Table: Project Master Directory -->
+          <section class="premium-section">
+            <div class="premium-table-container">
+              <div style="padding: 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between;">
+                <h2 style="font-size: 16px; font-weight: 800;">Project Master Directory</h2>
+                <div class="premium-toolbar-group">
+                  <input type="text" class="premium-input" placeholder="Search projects..." style="width: 250px; padding: 8px 12px; font-size: 12px;" />
                 </div>
               </div>
-
-              <!-- In Progress -->
-              <div class="crm-kanban-col">
-                <div class="crm-col-header">
-                  <span class="crm-col-title">In Progress</span>
-                  <span class="badge badge-primary">4</span>
-                </div>
-                <div class="crm-lead-card">
-                  <span class="badge badge-danger">High Priority</span>
-                  <div style="font-weight:700;font-size:13px;">Cabo Homepage Wireframes</div>
-                  <div style="font-size:11px;color:var(--text-3);">Cabo Travels Redesign</div>
-                </div>
-              </div>
-
-              <!-- Review -->
-              <div class="crm-kanban-col">
-                <div class="crm-col-header">
-                  <span class="crm-col-title">Review</span>
-                  <span class="badge badge-warning">2</span>
-                </div>
-                <div class="crm-lead-card">
-                  <span class="badge badge-warning">Review</span>
-                  <div style="font-weight:700;font-size:13px;">GreenLeaf Brand Guidelines</div>
-                  <div style="font-size:11px;color:var(--text-3);">GreenLeaf Corp</div>
-                </div>
-              </div>
-
-              <!-- Testing -->
-              <div class="crm-kanban-col">
-                <div class="crm-col-header">
-                  <span class="crm-col-title">Testing</span>
-                  <span class="badge badge-info">1</span>
-                </div>
-                <div class="crm-lead-card">
-                  <span class="badge badge-info">QA Pass</span>
-                  <div style="font-weight:700;font-size:13px;">TechNova SEO Audit Script</div>
-                  <div style="font-size:11px;color:var(--text-3);">TechNova Global</div>
-                </div>
-              </div>
-
-              <!-- Completed -->
-              <div class="crm-kanban-col">
-                <div class="crm-col-header">
-                  <span class="crm-col-title">Completed</span>
-                  <span class="badge badge-success">8</span>
-                </div>
-                <div class="crm-lead-card">
-                  <span class="badge badge-success">Done</span>
-                  <div style="font-weight:700;font-size:13px;">VERDE OS Spec 001 Foundation</div>
-                  <div style="font-size:11px;color:var(--success-text);">Delivered</div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- ==========================================
-               SECTION 4: Project Timeline (Gantt Track)
-               ========================================== -->
-          <section class="proj-timeline-container">
-            <div class="sec-heading">
-              <h3 class="sec-title-text">Project Timeline & Milestones (Gantt View)</h3>
-              <span style="font-size:12px;color:var(--text-3);font-weight:600;">Q3 Delivery Schedule</span>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:14px;margin-top:10px;">
-              <div class="proj-timeline-row">
-                <span class="proj-timeline-label">Cabo Travels Website</span>
-                <div class="proj-timeline-bar-bg">
-                  <div class="proj-timeline-fill" style="width:72%;background:var(--primary);">72% Complete</div>
-                </div>
-              </div>
-
-              <div class="proj-timeline-row">
-                <span class="proj-timeline-label">MedCare ERP Mobile</span>
-                <div class="proj-timeline-bar-bg">
-                  <div class="proj-timeline-fill" style="width:45%;background:var(--warning);">45% Complete</div>
-                </div>
-              </div>
-
-              <div class="proj-timeline-row">
-                <span class="proj-timeline-label">GreenLeaf Brand Book</span>
-                <div class="proj-timeline-bar-bg">
-                  <div class="proj-timeline-fill" style="width:85%;background:var(--success);">85% Complete</div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- ==========================================
-               SECTION 5: Project Details Table
-               ========================================== -->
-          <section class="table-card-box">
-            <div class="sec-heading" style="margin-bottom:16px;">
-              <h2 class="sec-title-text">Project Master Directory</h2>
-              <div class="input-search" style="width:220px;">
-                <input type="text" id="proj-search-input" placeholder="Search projects…" style="border:none;background:none;outline:none;width:100%;font-size:12px;" />
-              </div>
-            </div>
-            <div class="health-table-wrap">
-              <table class="health-table">
+              <table class="premium-table">
                 <thead>
                   <tr>
-                    <th>Project</th>
+                    <th>Project Name</th>
                     <th>Client</th>
-                    <th>Manager</th>
-                    <th>Progress</th>
+                    <th>Budget Used</th>
                     <th>Status</th>
-                    <th>Budget</th>
-                    <th>Deadline</th>
-                    <th>Actions</th>
+                    <th>Team</th>
                   </tr>
                 </thead>
-                <tbody id="proj-table-tbody">
+                <tbody>
                   <tr>
-                    <td style="font-weight:700;">Cabo Travels Redesign</td>
-                    <td>Cabo Travels Inc</td>
-                    <td>Shahim (Admin)</td>
                     <td>
-                      <div style="display:flex;align-items:center;gap:8px;">
-                        <div class="progress-bar" style="width:100px;"><div class="progress-fill" style="width:72%;"></div></div>
-                        <span style="font-size:11px;font-weight:600;">72%</span>
-                      </div>
+                      <div class="premium-table-title">Cabo Travels Redesign</div>
+                      <div class="premium-table-sub">Due: Aug 15, 2026</div>
+                    </td>
+                    <td>Cabo Travels Inc</td>
+                    <td>
+                      <div style="font-weight: 700;">₹12.5L / ₹18.5L</div>
+                      <div style="width: 100px; height: 4px; background: var(--bg); margin-top: 4px; border-radius: 2px;"><div style="width: 68%; height: 100%; background: var(--warning);"></div></div>
                     </td>
                     <td><span class="badge badge-danger">Review Due</span></td>
-                    <td>₹18,50,000</td>
-                    <td>Aug 15, 2026</td>
-                    <td><button class="btn btn-sm btn-s">Review</button></td>
+                    <td>
+                      <div style="display: flex; gap: -8px;">
+                        <div class="avatar avatar-sm">SH</div>
+                        <div class="avatar avatar-sm" style="background: #6366F1; color: white;">MK</div>
+                      </div>
+                    </td>
                   </tr>
                   <tr>
-                    <td style="font-weight:700;">MedCare ERP Mobile App</td>
-                    <td>MedCare Health</td>
-                    <td>Midhul K</td>
                     <td>
-                      <div style="display:flex;align-items:center;gap:8px;">
-                        <div class="progress-bar" style="width:100px;"><div class="progress-fill" style="width:45%;background:var(--warning);"></div></div>
-                        <span style="font-size:11px;font-weight:600;">45%</span>
-                      </div>
+                      <div class="premium-table-title">MedCare ERP Mobile App</div>
+                      <div class="premium-table-sub">Due: Sep 01, 2026</div>
+                    </td>
+                    <td>MedCare Health</td>
+                    <td>
+                      <div style="font-weight: 700;">₹10.0L / ₹24.0L</div>
+                      <div style="width: 100px; height: 4px; background: var(--bg); margin-top: 4px; border-radius: 2px;"><div style="width: 42%; height: 100%; background: var(--primary);"></div></div>
                     </td>
                     <td><span class="badge badge-warning">Development</span></td>
-                    <td>₹24,00,000</td>
-                    <td>Sep 01, 2026</td>
-                    <td><button class="btn btn-sm btn-ghost">Board</button></td>
-                  </tr>
-                  <tr>
-                    <td style="font-weight:700;">GreenLeaf Brand Guide</td>
-                    <td>GreenLeaf Corp</td>
-                    <td>Shafna F</td>
                     <td>
-                      <div style="display:flex;align-items:center;gap:8px;">
-                        <div class="progress-bar" style="width:100px;"><div class="progress-fill" style="width:85%;background:var(--success);"></div></div>
-                        <span style="font-size:11px;font-weight:600;">85%</span>
+                      <div style="display: flex; gap: -8px;">
+                        <div class="avatar avatar-sm" style="background: #F59E0B; color: white;">MK</div>
+                        <div class="avatar avatar-sm" style="background: #EC4899; color: white;">SF</div>
                       </div>
                     </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="premium-table-title">GreenLeaf Brand Guide</div>
+                      <div class="premium-table-sub">Due: Jul 30, 2026</div>
+                    </td>
+                    <td>GreenLeaf Corp</td>
+                    <td>
+                      <div style="font-weight: 700;">₹11.0L / ₹12.0L</div>
+                      <div style="width: 100px; height: 4px; background: var(--bg); margin-top: 4px; border-radius: 2px;"><div style="width: 92%; height: 100%; background: var(--danger);"></div></div>
+                    </td>
                     <td><span class="badge badge-success">Final Review</span></td>
-                    <td>₹12,00,000</td>
-                    <td>Jul 30, 2026</td>
-                    <td><button class="btn btn-sm btn-p">Approve</button></td>
+                    <td>
+                      <div style="display: flex; gap: -8px;">
+                        <div class="avatar avatar-sm" style="background: #EC4899; color: white;">SF</div>
+                      </div>
+                    </td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </section>
 
-          <!-- ==========================================
-               SECTION 6: Milestones & SECTION 7: Team Allocation
-               ========================================== -->
-          <section class="grid-2-col">
-            <!-- SECTION 6: Key Milestones -->
-            <div class="widget-box">
-              <div class="sec-heading">
-                <h3 class="sec-title-text">Project Milestones</h3>
-                <span class="badge badge-primary">3 Active</span>
-              </div>
-              <div style="display:flex;flex-direction:column;gap:12px;">
-                <div style="padding:12px;background:var(--bg);border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
-                  <div>
-                    <div style="font-weight:700;font-size:13px;">Brand Strategy Delivery</div>
-                    <div style="font-size:11px;color:var(--text-3);">Responsible: Shafna F • GreenLeaf</div>
-                  </div>
-                  <span class="badge badge-success">Completed</span>
-                </div>
-
-                <div style="padding:12px;background:var(--bg);border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
-                  <div>
-                    <div style="font-weight:700;font-size:13px;">Mobile API Integration</div>
-                    <div style="font-size:11px;color:var(--text-3);">Responsible: Midhul K • MedCare</div>
-                  </div>
-                  <span class="badge badge-warning">In Progress</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- SECTION 7: Team Allocation -->
-            <div class="widget-box">
-              <div class="sec-heading">
-                <h3 class="sec-title-text">Team Allocation & Workload</h3>
-                <span class="badge badge-success">100% Active</span>
-              </div>
-              <div style="display:flex;flex-direction:column;gap:12px;">
-                <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--bg);border-radius:8px;">
-                  <div style="display:flex;align-items:center;gap:10px;">
-                    <div class="avatar avatar-sm">SH</div>
-                    <div>
-                      <div style="font-weight:700;font-size:13px;">Shahim</div>
-                      <div style="font-size:11px;color:var(--text-3);">Product Lead • 3 Projects</div>
-                    </div>
-                  </div>
-                  <span class="badge badge-primary">Optimal Workload</span>
-                </div>
-
-                <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--bg);border-radius:8px;">
-                  <div style="display:flex;align-items:center;gap:10px;">
-                    <div class="avatar avatar-sm" style="background:#F59E0B;color:#fff;">MK</div>
-                    <div>
-                      <div style="font-weight:700;font-size:13px;">Midhul K</div>
-                      <div style="font-size:11px;color:var(--text-3);">Senior Developer • 2 Projects</div>
-                    </div>
-                  </div>
-                  <span class="badge badge-success">Available</span>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- ==========================================
-               SECTION 8: Budget Tracking & SECTION 10: AI Project Insights
-               ========================================== -->
-          <section class="overview-grid">
-            <!-- SECTION 8: Budget Tracking Analytics -->
-            <div class="chart-card">
-              <div class="chart-header">
-                <div>
-                  <h3 class="chart-title">Portfolio Budget Tracking</h3>
-                  <p class="chart-subtitle">Total Budget ₹45.0L | Spent ₹32.4L | Remaining ₹12.6L</p>
-                </div>
-                <span class="badge badge-warning">Burn Rate: 12%</span>
-              </div>
-              <div style="height: 160px; width: 100%; display: flex; align-items: flex-end; justify-content: space-between; padding-top: 20px; border-bottom: 1px solid var(--border-subtle);">
-                <div style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;">
-                  <div style="width:36px;height:90%;background:var(--primary);border-radius:6px 6px 0 0;"></div>
-                  <span style="font-size:11px;font-weight:700;color:var(--primary);">Budget</span>
-                </div>
-                <div style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;">
-                  <div style="width:36px;height:72%;background:var(--warning);border-radius:6px 6px 0 0;"></div>
-                  <span style="font-size:11px;color:var(--warning-text);">Spent</span>
-                </div>
-                <div style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;">
-                  <div style="width:36px;height:28%;background:var(--success);border-radius:6px 6px 0 0;"></div>
-                  <span style="font-size:11px;color:var(--success-text);">Remaining</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- SECTION 10: AI Project Insights -->
-            <div class="widget-box" style="background:linear-gradient(135deg, #EEF2FF 0%, #F5F7FF 100%);border-color:var(--primary-border);">
-              <div style="display:flex;align-items:center;gap:12px;">
-                <div class="ai-icon-glow">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                </div>
-                <div>
-                  <h3 style="font-size:18px;font-weight:800;color:var(--primary);">VERDE AI Project Insights</h3>
-                  <p style="font-size:12px;color:var(--text-2);">Automated risk analysis & sprint recommendations</p>
-                </div>
-              </div>
-              <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;margin-top:6px;">
-                <div style="padding:10px;background:#fff;border-radius:8px;border:1px solid var(--border);">
-                  <strong>⚠️ Risk Alert:</strong> Cabo Travels wireframe sign-off overdue by 48 hours.
-                </div>
-                <div style="padding:10px;background:#fff;border-radius:8px;border:1px solid var(--border);">
-                  <strong>💡 Optimization:</strong> Reallocate 1 developer from GreenLeaf to MedCare ERP to accelerate API delivery.
-                </div>
-              </div>
-              <button class="btn btn-primary w-full" style="margin-top:8px;" onclick="alert('VERDE AI Assistant: Copilot Active.')">Open AI Assistant</button>
-            </div>
-          </section>
-
-          <!-- ==========================================
-               SECTION 9: Recent Activity & SECTION 11: Quick Actions
-               ========================================== -->
-          <section class="grid-2-col">
-            <!-- SECTION 9: Recent Activity Timeline -->
-            <div class="widget-box">
-              <div class="sec-heading">
-                <h3 class="sec-title-text">Project Activity Feed</h3>
-                <span class="badge badge-neutral">Live</span>
-              </div>
-              <div style="display:flex;flex-direction:column;gap:12px;">
-                <div style="display:flex;align-items:flex-start;gap:10px;">
-                  <div class="avatar avatar-sm" style="background:#6366F1;color:#fff;">MK</div>
-                  <div>
-                    <div style="font-size:13px;"><strong>Midhul K</strong> updated sprint task for <strong>MedCare Mobile</strong></div>
-                    <div style="font-size:11px;color:var(--text-3);">20 mins ago</div>
-                  </div>
-                </div>
-
-                <div style="display:flex;align-items:flex-start;gap:10px;">
-                  <div class="avatar avatar-sm" style="background:#EC4899;color:#fff;">SF</div>
-                  <div>
-                    <div style="font-size:13px;"><strong>Shafna F</strong> completed milestone <strong>Brand Strategy</strong></div>
-                    <div style="font-size:11px;color:var(--text-3);">1 hour ago</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- SECTION 11: Quick Actions Grid -->
-            <div class="widget-box">
-              <div class="sec-heading">
-                <h3 class="sec-title-text">Project Quick Execution Actions</h3>
-              </div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-                <button class="btn btn-primary" onclick="window.location.href='../create-project/index.html'">Create Project</button>
-                <button class="btn btn-secondary" onclick="alert('New Milestone Modal')">New Milestone</button>
-                <button class="btn btn-secondary" onclick="alert('Assign Team Modal')">Assign Team</button>
-                <button class="btn btn-secondary" onclick="alert('Generate Report')">Generate Report</button>
-              </div>
-            </div>
-          </section>
-
         </div>
-
-      
-          <!-- ==========================================
-               WORKSPACE FRAMEWORK: FOOTER & AI PANEL
-               ========================================== -->
-          <footer class="ws-footer">
-            <div style="display:flex;gap:16px;">
-              <span><strong>Last Sync:</strong> Live</span>
-              <span><strong>User:</strong> Shahim</span>
-            </div>
-            <div style="display:flex;gap:16px;">
-              <a href="#" style="color:var(--primary);text-decoration:none;">Help & Support</a>
-              <span>VERDE OS v2.0 Workspace</span>
-            </div>
-          </footer>
-
-          <aside class="ai-floating-panel" id="ws-ai-panel">
-            <div class="ai-panel-header">
-              <div style="display:flex;align-items:center;gap:8px;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-                Workspace AI Copilot
-              </div>
-              <button class="btn btn-ghost" style="padding:4px;height:auto;" onclick="document.getElementById('ws-ai-panel').classList.remove('active')">✕</button>
-            </div>
-            <div class="ai-panel-body">
-              <p>Hello! I am your AI Assistant for this workspace. I can help you analyze trends, summarize data, and automate actions.</p>
-              <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px;">
-                <button class="btn btn-sm btn-secondary" style="width:100%;justify-content:flex-start;">✨ Summarize this view</button>
-                <button class="btn btn-sm btn-secondary" style="width:100%;justify-content:flex-start;">📈 Generate Insight Report</button>
-              </div>
-            </div>
-          </aside>
 
       </main>
     </div>
@@ -604,8 +268,5 @@
   <script src="../assets/js/components.js"></script>
   <script src="../assets/js/navigation.js"></script>
   <script src="../assets/js/app.js"></script>
-  <script src="./script.js"></script>
-
 </body>
-
 </html>

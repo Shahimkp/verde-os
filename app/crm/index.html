@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CRM & Sales Workspace · VERDE OS</title>
+  <title>CRM & Sales · VERDE OS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -12,644 +12,258 @@
   <link rel="stylesheet" href="../assets/css/layout.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/modules.css" />
+  <style>
+    /* Specific styles for CRM Module */
+    .kanban-board {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+    .kanban-col {
+      background: var(--bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      min-height: 500px;
+    }
+    .kanban-col-header {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--border);
+    }
+    .kanban-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 150ms ease, box-shadow 150ms ease;
+      cursor: grab;
+    }
+    .kanban-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary-light);
+    }
+    
+    .interaction-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+    @media (max-width: 1280px) {
+      .interaction-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 
 <body>
-
   <div class="shell-container">
     <div id="sidebar-container"></div>
     <div class="shell-main">
       <div id="topbar-container"></div>
       <main class="app-content">
-
-        <div class="ceo-dashboard-wrap fade-stagger">
-
+        
+        <div class="premium-module-layout">
           
-          <!-- ==========================================
-               WORKSPACE FRAMEWORK: HEADER & ACTIONS
-               ========================================== -->
-          <header class="ws-header">
-            <div class="ws-header-top">
-              <div class="ws-title-group">
-                <div class="ws-icon-box">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                </div>
-                <div>
-                  <div class="ws-breadcrumb">Workspace / CRM & Sales</div>
-                  <h1 class="ws-title">CRM & Sales <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="cursor:pointer;color:var(--text-3);"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></h1>
-                  <p class="ws-desc">Lead tracking and pipeline intelligence</p>
-                </div>
-              </div>
-              <div class="ws-meta-group">
-                <div class="ws-last-updated">Last Updated: Just now</div>
-                <div class="input-search" style="width:200px;background:var(--surface);">
-                  <input type="text" placeholder="Quick Search..." style="border:none;background:none;outline:none;width:100%;font-size:12px;" />
-                </div>
-              </div>
+          <!-- Page Header -->
+          <header class="premium-header">
+            <div>
+              <h1 class="premium-header-title">CRM & Sales</h1>
+              <p class="premium-header-desc">Manage client relationships, deals, and pipeline</p>
             </div>
-
-            <div class="ws-action-bar">
-              <div class="ws-actions-left">
-                <button class="btn btn-sm btn-ghost">Refresh</button>
-                <button class="btn btn-sm btn-ghost">Filter</button>
-                <button class="btn btn-sm btn-ghost">Sort</button>
-              </div>
-              <div class="ws-actions-right">
-                <button class="btn btn-sm btn-secondary" onclick="document.getElementById('ws-ai-panel').classList.toggle('active')">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-                  AI Assistant
-                </button>
-                <button class="btn btn-sm btn-ghost">Import</button>
-                <button class="btn btn-sm btn-ghost">Export</button>
-                <button class="btn btn-sm btn-primary">+ New Lead</button>
-              </div>
+            <div class="premium-toolbar-group">
+              <button class="btn btn-primary">+ New Lead</button>
             </div>
           </header>
-<section class="kpi-grid-6">
-            <div class="kpi-card-v3">
-              <div style="display:flex;justify-content:space-between;align-items:center;">
-                <span class="kpi-title-label">Total Leads</span>
-                <div class="kpi-icon-wrap" style="background:var(--primary-light);color:var(--primary)">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-                </div>
-              </div>
-              <div class="kpi-value-lg">148 Leads</div>
-              <div class="progress-bar"><div class="progress-fill" style="width:75%;"></div></div>
-              <div class="kpi-desc"><span class="badge badge-primary">↑ 14% Growth</span><span>This month</span></div>
-            </div>
 
-            <div class="kpi-card-v3">
-              <div style="display:flex;justify-content:space-between;align-items:center;">
-                <span class="kpi-title-label">Qualified Leads</span>
-                <div class="kpi-icon-wrap" style="background:var(--success-50);color:var(--success)">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                </div>
-              </div>
-              <div class="kpi-value-lg">42 Qualified</div>
-              <div class="progress-bar"><div class="progress-fill" style="width:85%;background:var(--success);"></div></div>
-              <div class="kpi-desc"><span class="badge badge-success">High Intent</span><span>Ready to propose</span></div>
+          <!-- Primary KPI Row -->
+          <section class="premium-kpi-grid">
+            <div class="premium-kpi-card">
+              <span class="premium-kpi-label">Active Deals</span>
+              <div class="premium-kpi-value">24</div>
             </div>
-
-            <div class="kpi-card-v3">
-              <div style="display:flex;justify-content:space-between;align-items:center;">
-                <span class="kpi-title-label">Deals Won</span>
-                <div class="kpi-icon-wrap" style="background:var(--warning-50);color:var(--warning)">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
-                </div>
-              </div>
-              <div class="kpi-value-lg">18 Won</div>
-              <div class="progress-bar"><div class="progress-fill" style="width:90%;background:var(--warning);"></div></div>
-              <div class="kpi-desc"><span class="badge badge-warning">₹32.5L Total</span><span>Q3 Target Hit</span></div>
+            <div class="premium-kpi-card">
+              <span class="premium-kpi-label">Win Rate</span>
+              <div class="premium-kpi-value" style="color: var(--success);">68%</div>
             </div>
-
-            <div class="kpi-card-v3">
-              <div style="display:flex;justify-content:space-between;align-items:center;">
-                <span class="kpi-title-label">Pipeline Value</span>
-                <div class="kpi-icon-wrap" style="background:var(--info-50);color:var(--info)">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                </div>
-              </div>
-              <div class="kpi-value-lg">₹48.5L</div>
-              <div class="progress-bar"><div class="progress-fill" style="width:68%;background:var(--info);"></div></div>
-              <div class="kpi-desc"><span class="badge badge-info">24 Active Deals</span><span>In progress</span></div>
+            <div class="premium-kpi-card">
+              <span class="premium-kpi-label">Pipeline Value</span>
+              <div class="premium-kpi-value">₹1.2Cr</div>
             </div>
-
-            <div class="kpi-card-v3">
-              <div style="display:flex;justify-content:space-between;align-items:center;">
-                <span class="kpi-title-label">Conversion Rate</span>
-                <div class="kpi-icon-wrap" style="background:var(--primary-light);color:var(--primary)">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                </div>
-              </div>
-              <div class="kpi-value-lg">28%</div>
-              <div class="progress-bar"><div class="progress-fill" style="width:65%;"></div></div>
-              <div class="kpi-desc"><span class="badge badge-primary">↑ 4% Improvement</span><span>vs Q2</span></div>
-            </div>
-
-            <div class="kpi-card-v3">
-              <div style="display:flex;justify-content:space-between;align-items:center;">
-                <span class="kpi-title-label">Revenue Forecast</span>
-                <div class="kpi-icon-wrap" style="background:var(--success-50);color:var(--success)">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-                </div>
-              </div>
-              <div class="kpi-value-lg">₹62.0L</div>
-              <div class="progress-bar"><div class="progress-fill" style="width:82%;background:var(--success);"></div></div>
-              <div class="kpi-desc"><span class="badge badge-success">Forecast Hit</span><span>End of quarter</span></div>
+            <div class="premium-kpi-card">
+              <span class="premium-kpi-label">Avg. Deal Size</span>
+              <div class="premium-kpi-value">₹8.5L</div>
             </div>
           </section>
 
-          <!-- ==========================================
-               SECTION 2: Sales Pipeline (Kanban Board)
-               ========================================== -->
-          <section>
-            <div class="sec-heading" style="margin-bottom:16px;">
-              <h2 class="sec-title-text">Interactive Sales Pipeline Board</h2>
-              <span class="badge badge-neutral">7 Pipeline Stages</span>
+          <!-- Main Kanban Board -->
+          <section class="premium-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <h2 style="font-size: 16px; font-weight: 800;">Sales Pipeline</h2>
+              <div class="premium-toolbar-group">
+                <button class="btn btn-sm btn-ghost">List View</button>
+                <button class="btn btn-sm btn-ghost" style="background: var(--bg);">Kanban View</button>
+              </div>
             </div>
 
-            <div class="crm-kanban-board">
-              <!-- Col 1: New Lead -->
-              <div class="crm-kanban-col">
-                <div class="crm-col-header">
-                  <span class="crm-col-title">New Lead</span>
+            <div class="kanban-board">
+              
+              <!-- Column 1: Discovery -->
+              <div class="kanban-col">
+                <div class="kanban-col-header">
+                  <span>Discovery</span>
                   <span class="badge badge-neutral">3</span>
                 </div>
-                <div class="crm-lead-card">
-                  <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <span style="font-size:11px;font-weight:700;color:var(--text-3);">NEXUS AI</span>
-                    <span class="badge badge-primary">₹3.2L</span>
+                <div class="kanban-card">
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span class="badge badge-neutral">New</span>
+                    <span style="font-size: 11px; font-weight: 700;">₹12.0L</span>
                   </div>
-                  <div style="font-weight:700;font-size:14px;">Nexus Software Retainer</div>
-                  <div style="font-size:12px;color:var(--text-2);">Contact: Alex Turner</div>
-                  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
-                    <div class="avatar avatar-sm" style="background:#6366F1;color:#fff;">AT</div>
-                    <span style="font-size:11px;color:var(--text-3);">Due Aug 04</span>
+                  <div style="font-weight: 700; font-size: 14px; margin-bottom: 4px;">Starlight Hotels</div>
+                  <div style="font-size: 11px; color: var(--text-3);">Initial Consultation Request</div>
+                </div>
+                <div class="kanban-card">
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span class="badge badge-primary">Warm</span>
+                    <span style="font-size: 11px; font-weight: 700;">₹5.5L</span>
+                  </div>
+                  <div style="font-weight: 700; font-size: 14px; margin-bottom: 4px;">Nexus Dynamics</div>
+                  <div style="font-size: 11px; color: var(--text-3);">E-commerce Platform</div>
+                </div>
+              </div>
+
+              <!-- Column 2: Proposal -->
+              <div class="kanban-col">
+                <div class="kanban-col-header">
+                  <span>Proposal Sent</span>
+                  <span class="badge badge-primary">2</span>
+                </div>
+                <div class="kanban-card">
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span class="badge badge-warning">Waiting</span>
+                    <span style="font-size: 11px; font-weight: 700;">₹24.0L</span>
+                  </div>
+                  <div style="font-weight: 700; font-size: 14px; margin-bottom: 4px;">Apex Financial</div>
+                  <div style="font-size: 11px; color: var(--text-3);">Banking Solutions Portal</div>
+                  <div style="margin-top: 12px; font-size: 11px; color: var(--text-3); display: flex; align-items: center; gap: 4px;">
+                    <span>📅</span> Follow up on Aug 02
                   </div>
                 </div>
               </div>
 
-              <!-- Col 2: Contacted -->
-              <div class="crm-kanban-col">
-                <div class="crm-col-header">
-                  <span class="crm-col-title">Contacted</span>
-                  <span class="badge badge-neutral">2</span>
+              <!-- Column 3: Negotiation -->
+              <div class="kanban-col">
+                <div class="kanban-col-header">
+                  <span>Negotiation</span>
+                  <span class="badge badge-warning">1</span>
                 </div>
-                <div class="crm-lead-card">
-                  <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <span style="font-size:11px;font-weight:700;color:var(--text-3);">APEX HEALTH</span>
-                    <span class="badge badge-warning">₹5.0L</span>
+                <div class="kanban-card" style="border-color: var(--warning);">
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span class="badge badge-danger">Hot</span>
+                    <span style="font-size: 11px; font-weight: 700; color: var(--warning);">₹18.5L</span>
                   </div>
-                  <div style="font-weight:700;font-size:14px;">Apex Telemedicine ERP</div>
-                  <div style="font-size:12px;color:var(--text-2);">Contact: Dr. Sarah Lin</div>
-                  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
-                    <div class="avatar avatar-sm" style="background:#EC4899;color:#fff;">SL</div>
-                    <span style="font-size:11px;color:var(--text-3);">Due Aug 02</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Col 3: Qualified -->
-              <div class="crm-kanban-col">
-                <div class="crm-col-header">
-                  <span class="crm-col-title">Qualified</span>
-                  <span class="badge badge-primary">4</span>
-                </div>
-                <div class="crm-lead-card">
-                  <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <span style="font-size:11px;font-weight:700;color:var(--text-3);">BLUEWAVE TECH</span>
-                    <span class="badge badge-success">₹4.5L</span>
-                  </div>
-                  <div style="font-weight:700;font-size:14px;">BlueWave Cloud Platform</div>
-                  <div style="font-size:12px;color:var(--text-2);">Contact: Shafna F</div>
-                  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
-                    <div class="avatar avatar-sm" style="background:var(--primary);color:#fff;">SF</div>
-                    <span style="font-size:11px;color:var(--text-3);">Due Jul 30</span>
+                  <div style="font-weight: 700; font-size: 14px; margin-bottom: 4px;">BlueWave Logistics</div>
+                  <div style="font-size: 11px; color: var(--text-3);">Shipping & Freight Dashboard</div>
+                  <div style="margin-top: 12px; font-size: 11px; color: var(--text-3); display: flex; align-items: center; gap: 4px;">
+                    <span>📅</span> Contract Review Today
                   </div>
                 </div>
               </div>
 
-              <!-- Col 4: Proposal -->
-              <div class="crm-kanban-col">
-                <div class="crm-col-header">
-                  <span class="crm-col-title">Proposal</span>
-                  <span class="badge badge-warning">2</span>
+              <!-- Column 4: Closed Won -->
+              <div class="kanban-col">
+                <div class="kanban-col-header" style="border-bottom-color: var(--success);">
+                  <span>Closed Won</span>
+                  <span class="badge badge-success">4</span>
                 </div>
-                <div class="crm-lead-card">
-                  <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <span style="font-size:11px;font-weight:700;color:var(--text-3);">CABO TRAVELS</span>
-                    <span class="badge badge-danger">₹8.5L</span>
+                <div class="kanban-card">
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span class="badge badge-success">Won</span>
+                    <span style="font-size: 11px; font-weight: 700; color: var(--success);">₹45.0L</span>
                   </div>
-                  <div style="font-weight:700;font-size:14px;">Cabo Global Redesign</div>
-                  <div style="font-size:12px;color:var(--text-2);">Contact: Carlos M</div>
-                  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
-                    <div class="avatar avatar-sm">SH</div>
-                    <span style="font-size:11px;color:var(--text-3);">Due Jul 29</span>
+                  <div style="font-weight: 700; font-size: 14px; margin-bottom: 4px;">TechNova Global</div>
+                  <div style="font-size: 11px; color: var(--text-3);">Enterprise Software Suite</div>
+                </div>
+                <div class="kanban-card">
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span class="badge badge-success">Won</span>
+                    <span style="font-size: 11px; font-weight: 700; color: var(--success);">₹12.0L</span>
                   </div>
+                  <div style="font-weight: 700; font-size: 14px; margin-bottom: 4px;">GreenLeaf Corp</div>
+                  <div style="font-size: 11px; color: var(--text-3);">Brand Guidelines</div>
                 </div>
               </div>
 
-              <!-- Col 5: Negotiation -->
-              <div class="crm-kanban-col">
-                <div class="crm-col-header">
-                  <span class="crm-col-title">Negotiation</span>
-                  <span class="badge badge-danger">1</span>
-                </div>
-                <div class="crm-lead-card">
-                  <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <span style="font-size:11px;font-weight:700;color:var(--text-3);">MEDCARE HEALTH</span>
-                    <span class="badge badge-primary">₹12.0L</span>
-                  </div>
-                  <div style="font-weight:700;font-size:14px;">MedCare Mobile App</div>
-                  <div style="font-size:12px;color:var(--text-2);">Contact: Midhul K</div>
-                  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
-                    <div class="avatar avatar-sm" style="background:#F59E0B;color:#fff;">MK</div>
-                    <span style="font-size:11px;color:var(--text-3);">Due Aug 01</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Col 6: Won -->
-              <div class="crm-kanban-col">
-                <div class="crm-col-header">
-                  <span class="crm-col-title">Won</span>
-                  <span class="badge badge-success">5</span>
-                </div>
-                <div class="crm-lead-card">
-                  <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <span style="font-size:11px;font-weight:700;color:var(--text-3);">GREENLEAF CORP</span>
-                    <span class="badge badge-success">₹1.2L</span>
-                  </div>
-                  <div style="font-weight:700;font-size:14px;">GreenLeaf Brand Identity</div>
-                  <div style="font-size:12px;color:var(--text-2);">Signed Contract</div>
-                  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
-                    <div class="avatar avatar-sm" style="background:#10B981;color:#fff;">GL</div>
-                    <span style="font-size:11px;color:var(--success-text);">Closed</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Col 7: Lost -->
-              <div class="crm-kanban-col">
-                <div class="crm-col-header">
-                  <span class="crm-col-title">Lost</span>
-                  <span class="badge badge-neutral">1</span>
-                </div>
-                <div class="crm-lead-card" style="opacity:0.7;">
-                  <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <span style="font-size:11px;font-weight:700;color:var(--text-3);">VORTEX LOGISTICS</span>
-                    <span class="badge badge-neutral">₹2.0L</span>
-                  </div>
-                  <div style="font-weight:700;font-size:14px;">Fleet Tracker API</div>
-                  <div style="font-size:12px;color:var(--text-3);">Budget Constraints</div>
-                </div>
-              </div>
             </div>
           </section>
 
-          <!-- ==========================================
-               SECTION 3: Recent Leads Table & SECTION 4: Lead Profile Preview
-               ========================================== -->
-          <section class="grid-main-side">
-            <!-- SECTION 3: Recent Leads Table -->
-            <div class="table-card-box">
-              <div class="sec-heading" style="margin-bottom:16px;">
-                <h2 class="sec-title-text">Recent Leads Directory</h2>
-                <div class="topbar-search" style="width:220px;">
-                  <input type="text" id="crm-search-input" placeholder="Search leads…" style="border:none;background:none;outline:none;width:100%;font-size:12px;" />
-                </div>
+          <!-- Bottom Grid: Follow-ups & Interactions -->
+          <div class="interaction-grid">
+            
+            <!-- Follow-ups -->
+            <div class="premium-table-container">
+              <div style="padding: 24px; border-bottom: 1px solid var(--border);">
+                <h2 style="font-size: 16px; font-weight: 800;">Critical Follow-ups</h2>
               </div>
-              <div class="health-table-wrap">
-                <table class="health-table">
-                  <thead>
-                    <tr>
-                      <th>Lead Name</th>
-                      <th>Company</th>
-                      <th>Email</th>
-                      <th>Status</th>
-                      <th>Assigned To</th>
-                      <th>Deal Value</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody id="crm-leads-tbody">
-                    <tr>
-                      <td style="font-weight:700;">Alex Turner</td>
-                      <td>Nexus Software</td>
-                      <td>alex@nexus.io</td>
-                      <td><span class="badge badge-primary">New Lead</span></td>
-                      <td>Shahim</td>
-                      <td>₹3,20,000</td>
-                      <td><button class="btn btn-sm btn-s">View</button></td>
-                    </tr>
-                    <tr>
-                      <td style="font-weight:700;">Dr. Sarah Lin</td>
-                      <td>Apex Health</td>
-                      <td>sarah@apexhealth.org</td>
-                      <td><span class="badge badge-warning">Contacted</span></td>
-                      <td>Shafna F</td>
-                      <td>₹5,00,000</td>
-                      <td><button class="btn btn-sm btn-s">View</button></td>
-                    </tr>
-                    <tr>
-                      <td style="font-weight:700;">Carlos Mendez</td>
-                      <td>Cabo Travels</td>
-                      <td>carlos@cabotravels.com</td>
-                      <td><span class="badge badge-danger">Proposal Sent</span></td>
-                      <td>Midhul K</td>
-                      <td>₹8,50,000</td>
-                      <td><button class="btn btn-sm btn-p">Pitch</button></td>
-                    </tr>
-                    <tr>
-                      <td style="font-weight:700;">Rohan Varma</td>
-                      <td>BlueWave Tech</td>
-                      <td>rohan@bluewave.in</td>
-                      <td><span class="badge badge-success">Qualified</span></td>
-                      <td>Rahan N</td>
-                      <td>₹4,50,000</td>
-                      <td><button class="btn btn-sm btn-s">View</button></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+              <table class="premium-table">
+                <tbody>
+                  <tr>
+                    <td>
+                      <div class="premium-table-title">Send Contract</div>
+                      <div class="premium-table-sub">BlueWave Logistics</div>
+                    </td>
+                    <td style="text-align: right;"><span class="badge badge-danger">Due Today</span></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="premium-table-title">Proposal Review Call</div>
+                      <div class="premium-table-sub">Apex Financial • 2:00 PM</div>
+                    </td>
+                    <td style="text-align: right;"><span class="badge badge-warning">Tomorrow</span></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
 
-            <!-- SECTION 4: Lead Profile Preview -->
-            <div class="widget-box">
-              <div class="sec-heading">
-                <h3 class="sec-title-text">Lead Profile Preview</h3>
-                <span class="badge badge-primary">Selected</span>
+            <!-- Recent Interactions -->
+            <div class="premium-table-container">
+              <div style="padding: 24px; border-bottom: 1px solid var(--border);">
+                <h2 style="font-size: 16px; font-weight: 800;">Recent Client Interactions</h2>
               </div>
-              <div style="display:flex;align-items:center;gap:14px;padding-bottom:14px;border-bottom:1px solid var(--border-subtle);">
-                <div class="avatar avatar-lg" style="background:var(--primary);color:#fff;font-size:18px;">BW</div>
-                <div>
-                  <div style="font-weight:800;font-size:16px;">BlueWave Tech</div>
-                  <div style="font-size:12px;color:var(--text-3);">Rohan Varma • CEO</div>
-                </div>
-              </div>
-              <div style="display:flex;flex-direction:column;gap:10px;font-size:12px;">
-                <div><strong>Email:</strong> rohan@bluewave.in</div>
-                <div><strong>Phone:</strong> +91 98470 12345</div>
-                <div><strong>Deal Size:</strong> ₹4.5 Lakhs (Enterprise Cloud)</div>
-                <div><strong>Lead Source:</strong> Inbound Website Form</div>
-                <div style="margin-top:6px;padding:10px;background:var(--bg);border-radius:6px;color:var(--text-2);">
-                  "Looking to migrate 42 on-premise servers to VERDE OS cloud architecture before Q4."
-                </div>
-              </div>
-              <button class="btn btn-primary w-full" style="margin-top:6px;">Schedule Pitch Meeting</button>
-            </div>
-          </section>
-
-          <!-- ==========================================
-               SECTION 5: Revenue Forecast & SECTION 9: Sales Leaderboard
-               ========================================== -->
-          <section class="overview-grid">
-            <!-- SECTION 5: Revenue Forecast Analytics -->
-            <div class="chart-card">
-              <div class="chart-header">
-                <div>
-                  <h3 class="chart-title">Sales Revenue Forecast (Q3 2026)</h3>
-                  <p class="chart-subtitle">Quarterly pipeline conversion target vs predicted actuals</p>
-                </div>
-                <span class="badge badge-success">Target: ₹50.0L</span>
-              </div>
-              <div style="height: 180px; width: 100%; display: flex; align-items: flex-end; justify-content: space-between; padding-top: 20px; border-bottom: 1px solid var(--border-subtle);">
-                <div style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;">
-                  <div style="width:32px;height:55%;background:var(--primary-light);border-radius:6px 6px 0 0;"></div>
-                  <span style="font-size:11px;color:var(--text-3);">Target</span>
-                </div>
-                <div style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;">
-                  <div style="width:32px;height:85%;background:var(--primary);border-radius:6px 6px 0 0;"></div>
-                  <span style="font-size:11px;font-weight:700;color:var(--primary);">Forecast</span>
-                </div>
-                <div style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;">
-                  <div style="width:32px;height:40%;background:var(--success-50);border-radius:6px 6px 0 0;"></div>
-                  <span style="font-size:11px;color:var(--success-text);">Closed</span>
-                </div>
-              </div>
+              <table class="premium-table">
+                <tbody>
+                  <tr>
+                    <td>
+                      <div class="premium-table-title">Email: Requirements Gathering</div>
+                      <div class="premium-table-sub">Starlight Hotels • Sent by Shafna F</div>
+                    </td>
+                    <td style="text-align: right;"><span style="font-weight: 700; font-size: 12px; color: var(--primary);">2h ago</span></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="premium-table-title">Meeting: Project Kickoff</div>
+                      <div class="premium-table-sub">TechNova Global • Attended by Shahim</div>
+                    </td>
+                    <td style="text-align: right;"><span style="font-weight: 700; font-size: 12px; color: var(--primary);">Yesterday</span></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
 
-            <!-- SECTION 9: Top Sales Representatives -->
-            <div class="widget-box">
-              <div class="sec-heading">
-                <h3 class="sec-title-text">Top Sales Representatives</h3>
-                <span class="badge badge-warning">Q3 Leaderboard</span>
-              </div>
-              <div class="leaderboard-list">
-                <div class="leaderboard-item">
-                  <div style="display:flex;align-items:center;gap:12px;">
-                    <div class="avatar avatar-sm" style="background:#EC4899;color:#fff;">SF</div>
-                    <div>
-                      <div style="font-weight:700;font-size:13px;">Shafna F</div>
-                      <div style="font-size:11px;color:var(--text-3);">6 Deals Closed</div>
-                    </div>
-                  </div>
-                  <span class="badge badge-success">₹18.5L 🏆</span>
-                </div>
-
-                <div class="leaderboard-item">
-                  <div style="display:flex;align-items:center;gap:12px;">
-                    <div class="avatar avatar-sm" style="background:#F59E0B;color:#fff;">MK</div>
-                    <div>
-                      <div style="font-weight:700;font-size:13px;">Midhul K</div>
-                      <div style="font-size:11px;color:var(--text-3);">5 Deals Closed</div>
-                    </div>
-                  </div>
-                  <span class="badge badge-primary">₹14.0L</span>
-                </div>
-
-                <div class="leaderboard-item">
-                  <div style="display:flex;align-items:center;gap:12px;">
-                    <div class="avatar avatar-sm" style="background:#6366F1;color:#fff;">RN</div>
-                    <div>
-                      <div style="font-weight:700;font-size:13px;">Rahan N</div>
-                      <div style="font-size:11px;color:var(--text-3);">4 Deals Closed</div>
-                    </div>
-                  </div>
-                  <span class="badge badge-neutral">₹10.2L</span>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- ==========================================
-               SECTION 6: Activity Timeline & SECTION 8: Upcoming Meetings
-               ========================================== -->
-          <section class="grid-2-col">
-            <!-- SECTION 6: CRM Activity Timeline -->
-            <div class="widget-box">
-              <div class="sec-heading">
-                <h3 class="sec-title-text">Live Sales Activity Timeline</h3>
-                <span class="badge badge-neutral">Real-Time</span>
-              </div>
-              <div style="display:flex;flex-direction:column;gap:14px;">
-                <div style="display:flex;align-items:flex-start;gap:12px;">
-                  <div class="avatar avatar-sm" style="background:var(--success);color:#fff;">✓</div>
-                  <div>
-                    <div style="font-size:13px;color:var(--text-1);"><strong>Call Completed:</strong> Shafna F spoke with <strong>BlueWave Tech</strong></div>
-                    <div style="font-size:11px;color:var(--text-3);margin-top:2px;">15 mins ago • Phone Pitch</div>
-                  </div>
-                </div>
-
-                <div style="display:flex;align-items:flex-start;gap:12px;">
-                  <div class="avatar avatar-sm" style="background:var(--primary);color:#fff;">✉</div>
-                  <div>
-                    <div style="font-size:13px;color:var(--text-1);"><strong>Proposal Sent:</strong> Midhul K sent proposal to <strong>MedCare Health</strong></div>
-                    <div style="font-size:11px;color:var(--text-3);margin-top:2px;">40 mins ago • Email</div>
-                  </div>
-                </div>
-
-                <div style="display:flex;align-items:flex-start;gap:12px;">
-                  <div class="avatar avatar-sm" style="background:var(--warning);color:#fff;">₹</div>
-                  <div>
-                    <div style="font-size:13px;color:var(--text-1);"><strong>Invoice Paid:</strong> ₹85,000 received from <strong>GreenLeaf Corp</strong></div>
-                    <div style="font-size:11px;color:var(--text-3);margin-top:2px;">2 hours ago • Billing</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- SECTION 8: Upcoming Sales Meetings -->
-            <div class="widget-box">
-              <div class="sec-heading">
-                <h3 class="sec-title-text">Upcoming Client Pitch Meetings</h3>
-                <span class="badge badge-primary">Today</span>
-              </div>
-              <div style="display:flex;flex-direction:column;gap:12px;">
-                <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--bg);border-radius:8px;">
-                  <div>
-                    <div style="font-size:13px;font-weight:700;">BlueWave Cloud Pitch</div>
-                    <div style="font-size:11px;color:var(--text-3);">02:00 PM • Shafna F & Rohan V</div>
-                  </div>
-                  <button class="btn btn-sm btn-primary">Join Room</button>
-                </div>
-
-                <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--bg);border-radius:8px;">
-                  <div>
-                    <div style="font-size:13px;font-weight:700;">Nexus AI Requirements</div>
-                    <div style="font-size:11px;color:var(--text-3);">04:30 PM • Shahim & Alex T</div>
-                  </div>
-                  <button class="btn btn-sm btn-secondary">Join Room</button>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- ==========================================
-               SECTION 7: Quick Actions (6 CRM Actions)
-               ========================================== -->
-          <section>
-            <div class="sec-heading" style="margin-bottom:16px;">
-              <h2 class="sec-title-text">CRM Quick Execution Actions</h2>
-            </div>
-            <div class="quick-actions-6">
-              <div class="act-card act-card-primary" onclick="alert('New Lead Modal')">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                <span style="font-weight:700;font-size:13px;">New Lead</span>
-              </div>
-
-              <div class="act-card" onclick="alert('Schedule Call Triggered')">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                <span style="font-weight:700;font-size:13px;">Schedule Call</span>
-              </div>
-
-              <div class="act-card" onclick="alert('Proposal Generator Triggered')">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                <span style="font-weight:700;font-size:13px;">Send Proposal</span>
-              </div>
-
-              <div class="act-card" onclick="window.location.href='../finance/index.html'">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-                <span style="font-weight:700;font-size:13px;">Generate Invoice</span>
-              </div>
-
-              <div class="act-card" onclick="window.location.href='../tasks/index.html'">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-                <span style="font-weight:700;font-size:13px;">Assign Task</span>
-              </div>
-
-              <div class="act-card" onclick="alert('Email Client Modal')">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                <span style="font-weight:700;font-size:13px;">Email Client</span>
-              </div>
-            </div>
-          </section>
-
-          <!-- ==========================================
-               SECTION 10: Recent Companies Grid
-               ========================================== -->
-          <section>
-            <div class="sec-heading" style="margin-bottom:16px;">
-              <h2 class="sec-title-text">Recent Enterprise Client Companies</h2>
-            </div>
-            <div class="companies-grid">
-              <div class="company-card">
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <div class="avatar avatar-md" style="background:var(--primary-light);color:var(--primary);font-weight:800;">CT</div>
-                  <span class="badge badge-success">Active</span>
-                </div>
-                <div style="font-weight:800;font-size:15px;">Cabo Travels Inc</div>
-                <div style="font-size:12px;color:var(--text-3);">Hospitality & Tourism</div>
-                <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-top:4px;">
-                  <span>Revenue: <strong>₹18.5L</strong></span>
-                  <span>Owner: <strong>Shahim</strong></span>
-                </div>
-              </div>
-
-              <div class="company-card">
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <div class="avatar avatar-md" style="background:var(--warning-50);color:var(--warning-text);font-weight:800;">MH</div>
-                  <span class="badge badge-primary">Enterprise</span>
-                </div>
-                <div style="font-weight:800;font-size:15px;">MedCare Health</div>
-                <div style="font-size:12px;color:var(--text-3);">Healthcare & Pharma</div>
-                <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-top:4px;">
-                  <span>Revenue: <strong>₹24.0L</strong></span>
-                  <span>Owner: <strong>Midhul K</strong></span>
-                </div>
-              </div>
-
-              <div class="company-card">
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <div class="avatar avatar-md" style="background:var(--success-50);color:var(--success-text);font-weight:800;">GL</div>
-                  <span class="badge badge-success">Active</span>
-                </div>
-                <div style="font-weight:800;font-size:15px;">GreenLeaf Organics</div>
-                <div style="font-size:12px;color:var(--text-3);">Retail & Consumer</div>
-                <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-top:4px;">
-                  <span>Revenue: <strong>₹12.0L</strong></span>
-                  <span>Owner: <strong>Shafna F</strong></span>
-                </div>
-              </div>
-
-              <div class="company-card">
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <div class="avatar avatar-md" style="background:var(--info-50);color:var(--info-text);font-weight:800;">TN</div>
-                  <span class="badge badge-info">Growth</span>
-                </div>
-                <div style="font-weight:800;font-size:15px;">TechNova Global</div>
-                <div style="font-size:12px;color:var(--text-3);">Information Tech</div>
-                <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-top:4px;">
-                  <span>Revenue: <strong>₹15.2L</strong></span>
-                  <span>Owner: <strong>Rahan N</strong></span>
-                </div>
-              </div>
-            </div>
-          </section>
+          </div>
 
         </div>
-
-      
-          <!-- ==========================================
-               WORKSPACE FRAMEWORK: FOOTER & AI PANEL
-               ========================================== -->
-          <footer class="ws-footer">
-            <div style="display:flex;gap:16px;">
-              <span><strong>Last Sync:</strong> Live</span>
-              <span><strong>User:</strong> Shahim</span>
-            </div>
-            <div style="display:flex;gap:16px;">
-              <a href="#" style="color:var(--primary);text-decoration:none;">Help & Support</a>
-              <span>VERDE OS v2.0 Workspace</span>
-            </div>
-          </footer>
-
-          <aside class="ai-floating-panel" id="ws-ai-panel">
-            <div class="ai-panel-header">
-              <div style="display:flex;align-items:center;gap:8px;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-                Workspace AI Copilot
-              </div>
-              <button class="btn btn-ghost" style="padding:4px;height:auto;" onclick="document.getElementById('ws-ai-panel').classList.remove('active')">✕</button>
-            </div>
-            <div class="ai-panel-body">
-              <p>Hello! I am your AI Assistant for this workspace. I can help you analyze trends, summarize data, and automate actions.</p>
-              <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px;">
-                <button class="btn btn-sm btn-secondary" style="width:100%;justify-content:flex-start;">✨ Summarize this view</button>
-                <button class="btn btn-sm btn-secondary" style="width:100%;justify-content:flex-start;">📈 Generate Insight Report</button>
-              </div>
-            </div>
-          </aside>
 
       </main>
     </div>
@@ -662,8 +276,5 @@
   <script src="../assets/js/components.js"></script>
   <script src="../assets/js/navigation.js"></script>
   <script src="../assets/js/app.js"></script>
-  <script src="./script.js"></script>
-
 </body>
-
 </html>

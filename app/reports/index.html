@@ -1,223 +1,218 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Reports & Analytics · VERDE OS</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="../assets/css/global.css"/>
-  <link rel="stylesheet" href="../assets/css/layout.css"/>
-  <link rel="stylesheet" href="../assets/css/components.css"/>
-  <link rel="stylesheet" href="../assets/css/modules.css"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reports · VERDE OS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/global.css" />
+  <link rel="stylesheet" href="../assets/css/layout.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/modules.css" />
+  <style>
+    .report-categories {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .report-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: transform 150ms ease, box-shadow 150ms ease;
+    }
+    .report-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary-light);
+    }
+    .report-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: grid;
+      place-content: center;
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .report-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: auto;
+    }
+    .report-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      padding: 8px;
+      border-radius: 6px;
+      transition: background 150ms ease;
+      cursor: pointer;
+    }
+    .report-item:hover {
+      background: var(--bg);
+      color: var(--primary);
+    }
+    @media (max-width: 1024px) {
+      .report-categories { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      .report-categories { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
+
 <body>
-
-<div class="shell-container">
-  <div id="sidebar-container"></div>
-  <div class="shell-main">
-    <div id="topbar-container"></div>
-    <main class="app-content">
-
-      <!-- MAIN CONTENT -->
-      <div class="module-view">
+  <div class="shell-container">
+    <div id="sidebar-container"></div>
+    <div class="shell-main">
+      <div id="topbar-container"></div>
+      <main class="app-content">
         
-        <div class="module-page-header">
-          <div class="view-title" id="topNavTitle">Executive Overview</div>
-          <div class="top-actions">
-            <select class="filter-select" id="dateFilter" onchange="triggerUpdate()">
-              <option value="today">Today</option>
-              <option value="week">This Week</option>
-              <option value="month" selected>This Month</option>
-              <option value="quarter">This Quarter</option>
-              <option value="year">This Year</option>
-            </select>
-            <button class="btn btn-s">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              Export PDF
-            </button>
-            <button class="btn btn-p">Pin to Board</button>
-          </div>
-        </div>
+        <div class="premium-module-layout">
+          
+          <!-- Page Header -->
+          <header class="premium-header">
+            <div>
+              <h1 class="premium-header-title">Reports & Analytics</h1>
+              <p class="premium-header-desc">Business intelligence, performance metrics, and exports</p>
+            </div>
+            <div class="premium-toolbar-group">
+              <button class="btn btn-primary">Custom Report Builder</button>
+            </div>
+          </header>
 
-        <!-- ROUTE: EXECUTIVE OVERVIEW -->
-        <div id="route-exec" class="route active">
-          <div class="grid-4">
-            <div class="widget">
-              <div class="w-head"><div class="w-title">Total Revenue</div><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3)"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-              <div class="w-val">$<span class="counter" data-target="142500">0</span> <span class="w-trend trend-up">↑ 12.5%</span></div>
-            </div>
-            <div class="widget">
-              <div class="w-head"><div class="w-title">Net Profit</div><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3)"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg></div>
-              <div class="w-val">$<span class="counter" data-target="38400">0</span> <span class="w-trend trend-up">↑ 4.2%</span></div>
-            </div>
-            <div class="widget">
-              <div class="w-head"><div class="w-title">Active Projects</div><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3)"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
-              <div class="w-val"><span class="counter" data-target="14">0</span></div>
-            </div>
-            <div class="widget">
-              <div class="w-head"><div class="w-title">Task Completion</div><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3)"><polyline points="20 6 9 17 4 12"/></svg></div>
-              <div class="w-val"><span class="counter" data-target="94">0</span>% <span class="w-trend trend-up">↑ 2.1%</span></div>
-            </div>
-          </div>
-
-          <div class="grid-2">
-            <div class="widget">
-              <div class="w-head"><div class="w-title">Revenue Growth (6 Mo)</div></div>
-              <div class="chart-container" id="chart-exec-rev"></div>
-            </div>
-            <div class="widget">
-              <div class="w-head"><div class="w-title">Pipeline vs Closed Won</div></div>
-              <div class="chart-container" id="chart-exec-pipeline"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ROUTE: SALES REPORTS -->
-        <div id="route-sales" class="route">
-          <div class="grid-3">
-            <div class="widget">
-              <div class="w-head"><div class="w-title">Conversion Funnel</div></div>
-              <div class="progress-wrap"><div class="p-label"><span>Leads Generated</span><span>142</span></div><div class="p-track"><div class="p-fill" style="width:0%" data-width="100%"></div></div></div>
-              <div class="progress-wrap"><div class="p-label"><span>Proposals Sent</span><span>86</span></div><div class="p-track"><div class="p-fill" style="width:0%" data-width="60%"></div></div></div>
-              <div class="progress-wrap"><div class="p-label"><span>Negotiation</span><span>42</span></div><div class="p-track"><div class="p-fill" style="width:0%" data-width="30%"></div></div></div>
-              <div class="progress-wrap"><div class="p-label"><span>Closed Won</span><span>28</span></div><div class="p-track"><div class="p-fill" style="width:0%; background:var(--success)" data-width="20%"></div></div></div>
-            </div>
+          <!-- Report Categories Grid -->
+          <section class="report-categories">
             
-            <div class="widget" style="grid-column: span 2;">
-              <div class="w-head"><div class="w-title">Revenue by Salesperson</div></div>
-              <div class="chart-container" id="chart-sales"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ROUTE: PROJECT REPORTS -->
-        <div id="route-projects" class="route">
-          <div class="grid-3">
-            <div class="widget">
-              <div class="w-head"><div class="w-title">Project Health</div></div>
-              <div style="display:flex; justify-content:space-around; align-items:center; height:100%;">
-                <div style="text-align:center;"><div style="font-size:32px;font-weight:800;color:var(--success)">12</div><div style="font-size:12px;color:var(--text-2);font-weight:600">On Track</div></div>
-                <div style="text-align:center;"><div style="font-size:32px;font-weight:800;color:var(--warning)">2</div><div style="font-size:12px;color:var(--text-2);font-weight:600">At Risk</div></div>
-                <div style="text-align:center;"><div style="font-size:32px;font-weight:800;color:var(--danger)">0</div><div style="font-size:12px;color:var(--text-2);font-weight:600">Delayed</div></div>
+            <!-- Financial Reports -->
+            <div class="report-card">
+              <div class="report-icon" style="background: var(--success-50); color: var(--success);">📈</div>
+              <div>
+                <h3 style="font-weight: 800; font-size: 16px;">Financial Performance</h3>
+                <p style="font-size: 13px; color: var(--text-2); margin-top: 4px;">Revenue, expenses, and cash flow</p>
+              </div>
+              <div class="report-list">
+                <div class="report-item"><span>Profit & Loss (P&L)</span> <span>→</span></div>
+                <div class="report-item"><span>Cash Flow Statement</span> <span>→</span></div>
+                <div class="report-item"><span>Expense Breakdown</span> <span>→</span></div>
+                <div class="report-item"><span>Tax Summary</span> <span>→</span></div>
               </div>
             </div>
-            <div class="widget" style="grid-column: span 2;">
-              <div class="w-head"><div class="w-title">Delivery Success Rate</div></div>
-              <div class="chart-container" id="chart-proj"></div>
-            </div>
-          </div>
-          
-          <div class="widget">
-            <div class="w-head"><div class="w-title">Active Projects Milestone Progress</div></div>
-            <table class="data-table">
-              <thead><tr><th>Project</th><th>Manager</th><th>Progress</th><th>Status</th></tr></thead>
-              <tbody>
-                <tr><td><strong>Nova ERP</strong></td><td><span class="dt-avatar">SJ</span> Sarah J.</td><td style="width:40%"><div class="p-track"><div class="p-fill" style="width:65%"></div></div></td><td><span style="color:var(--success);font-weight:700;font-size:12px;">On Track</span></td></tr>
-                <tr><td><strong>GreenLeaf Site</strong></td><td><span class="dt-avatar">MD</span> Mark D.</td><td style="width:40%"><div class="p-track"><div class="p-fill" style="width:30%"></div></div></td><td><span style="color:var(--warning);font-weight:700;font-size:12px;">At Risk</span></td></tr>
-                <tr><td><strong>Echo App</strong></td><td><span class="dt-avatar">AR</span> Anna R.</td><td style="width:40%"><div class="p-track"><div class="p-fill" style="width:90%"></div></div></td><td><span style="color:var(--success);font-weight:700;font-size:12px;">On Track</span></td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
 
-        <!-- ROUTE: TEAM PERFORMANCE -->
-        <div id="route-team" class="route">
-          <div class="grid-2">
-            <div class="widget">
-              <div class="w-head"><div class="w-title">Department Workload (Hours)</div></div>
-              <div class="chart-container" id="chart-team-dept"></div>
+            <!-- Operations & Projects -->
+            <div class="report-card">
+              <div class="report-icon" style="background: var(--primary-light); color: var(--primary);">⚙️</div>
+              <div>
+                <h3 style="font-weight: 800; font-size: 16px;">Operations & Delivery</h3>
+                <p style="font-size: 13px; color: var(--text-2); margin-top: 4px;">Project margins and timeline velocity</p>
+              </div>
+              <div class="report-list">
+                <div class="report-item"><span>Project Profitability</span> <span>→</span></div>
+                <div class="report-item"><span>Milestone Velocity</span> <span>→</span></div>
+                <div class="report-item"><span>Budget Burn Rate</span> <span>→</span></div>
+                <div class="report-item"><span>Resource Allocation</span> <span>→</span></div>
+              </div>
             </div>
-            <div class="widget">
-              <div class="w-head"><div class="w-title">Top Performers (Task Velocity)</div></div>
-              <table class="data-table">
-                <thead><tr><th>Employee</th><th>Tasks Done</th><th>Efficiency</th></tr></thead>
+
+            <!-- Team & Performance -->
+            <div class="report-card">
+              <div class="report-icon" style="background: var(--warning-50); color: var(--warning);">👥</div>
+              <div>
+                <h3 style="font-weight: 800; font-size: 16px;">Team Performance</h3>
+                <p style="font-size: 13px; color: var(--text-2); margin-top: 4px;">Productivity, attendance, and workload</p>
+              </div>
+              <div class="report-list">
+                <div class="report-item"><span>Employee Utilization</span> <span>→</span></div>
+                <div class="report-item"><span>Time Tracking Export</span> <span>→</span></div>
+                <div class="report-item"><span>Attendance & Leave</span> <span>→</span></div>
+                <div class="report-item"><span>KPI Scorecards</span> <span>→</span></div>
+              </div>
+            </div>
+
+          </section>
+
+          <!-- Generated Reports Table -->
+          <section class="premium-section">
+            <div class="premium-table-container">
+              <div style="padding: 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between;">
+                <h2 style="font-size: 16px; font-weight: 800;">Recently Generated Reports</h2>
+                <div class="premium-toolbar-group">
+                  <button class="btn btn-sm btn-ghost">Filter by Date</button>
+                </div>
+              </div>
+              <table class="premium-table">
+                <thead>
+                  <tr>
+                    <th>Report Name</th>
+                    <th>Category</th>
+                    <th>Date Generated</th>
+                    <th>Requested By</th>
+                    <th>Format</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
                 <tbody>
-                  <tr><td><span class="dt-avatar">MD</span> Mark D.</td><td>42</td><td><span style="color:var(--success);font-weight:700">98%</span></td></tr>
-                  <tr><td><span class="dt-avatar">AR</span> Anna R.</td><td>38</td><td><span style="color:var(--success);font-weight:700">96%</span></td></tr>
-                  <tr><td><span class="dt-avatar">SJ</span> Sarah J.</td><td>35</td><td><span style="color:var(--success);font-weight:700">94%</span></td></tr>
+                  <tr>
+                    <td>
+                      <div class="premium-table-title">Q2 2026 Financial Summary</div>
+                      <div class="premium-table-sub">Quarterly Close</div>
+                    </td>
+                    <td><span class="badge badge-success">Finance</span></td>
+                    <td>Jul 01, 2026</td>
+                    <td>System (Auto)</td>
+                    <td><span style="font-weight: 600; color: var(--text-2);">PDF</span></td>
+                    <td><button class="btn btn-sm btn-ghost">Download</button></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="premium-table-title">Cabo Travels Project Audit</div>
+                      <div class="premium-table-sub">Budget vs Actual</div>
+                    </td>
+                    <td><span class="badge badge-primary">Operations</span></td>
+                    <td>Today</td>
+                    <td>Shahim</td>
+                    <td><span style="font-weight: 600; color: var(--text-2);">XLSX</span></td>
+                    <td><button class="btn btn-sm btn-ghost">Download</button></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="premium-table-title">June Engineering Utilization</div>
+                      <div class="premium-table-sub">Time tracking analysis</div>
+                    </td>
+                    <td><span class="badge badge-warning">Team</span></td>
+                    <td>Jul 02, 2026</td>
+                    <td>Shahim</td>
+                    <td><span style="font-weight: 600; color: var(--text-2);">PDF</span></td>
+                    <td><button class="btn btn-sm btn-ghost">Download</button></td>
+                  </tr>
                 </tbody>
               </table>
             </div>
-          </div>
+          </section>
+
         </div>
 
-        <!-- ROUTE: FINANCE -->
-        <div id="route-finance" class="route">
-          <div class="grid-4">
-            <div class="widget">
-              <div class="w-head"><div class="w-title">Cash Flow</div></div>
-              <div class="w-val">$<span class="counter" data-target="86400">0</span></div>
-            </div>
-            <div class="widget">
-              <div class="w-head"><div class="w-title">Outstanding</div></div>
-              <div class="w-val" style="color:var(--danger)">$<span class="counter" data-target="15200">0</span></div>
-            </div>
-            <div class="widget">
-              <div class="w-head"><div class="w-title">Profit Margin</div></div>
-              <div class="w-val"><span class="counter" data-target="32">0</span>%</div>
-            </div>
-            <div class="widget">
-              <div class="w-head"><div class="w-title">Avg Invoice Time</div></div>
-              <div class="w-val"><span class="counter" data-target="14">0</span> Days</div>
-            </div>
-          </div>
-          <div class="widget">
-            <div class="w-head"><div class="w-title">Revenue vs Expenses (YTD)</div></div>
-            <div class="chart-container" id="chart-fin"></div>
-          </div>
-        </div>
-
-        <!-- ROUTE: CLIENT -->
-        <div id="route-client" class="route">
-          <div class="grid-2">
-            <div class="widget">
-              <div class="w-head"><div class="w-title">Top Clients by Revenue</div></div>
-              <div class="chart-container" id="chart-client"></div>
-            </div>
-            <div class="widget">
-              <div class="w-head"><div class="w-title">Client Retention & Churn</div></div>
-              <div style="display:flex; flex-direction:column; justify-content:center; height:100%; gap:24px;">
-                <div class="progress-wrap" style="margin:0"><div class="p-label"><span>Retention Rate</span><span style="color:var(--success)">94%</span></div><div class="p-track"><div class="p-fill" style="width:0%; background:var(--success)" data-width="94%"></div></div></div>
-                <div class="progress-wrap" style="margin:0"><div class="p-label"><span>Churn Rate</span><span style="color:var(--danger)">6%</span></div><div class="p-track"><div class="p-fill" style="width:0%; background:var(--danger)" data-width="6%"></div></div></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ROUTE: PRODUCTIVITY -->
-        <div id="route-productivity" class="route">
-          <div class="widget">
-            <div class="w-head"><div class="w-title">Company Task Velocity (Completed Tasks / Week)</div></div>
-            <div class="chart-container" id="chart-prod"></div>
-          </div>
-        </div>
-
-        <!-- ROUTE: CUSTOM -->
-        <div id="route-custom" class="route">
-          <div class="empty-state">
-            <div class="empty-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></div>
-            <div class="empty-title">Custom Report Builder</div>
-            <div class="empty-desc">Create personalized dashboards by dragging and dropping metrics, charts, and tables from across the entire VERDE OS ecosystem.</div>
-            <button class="btn btn-p">Create New Report</button>
-          </div>
-        </div>
-
-      </div>
-
-    </main>
+      </main>
+    </div>
   </div>
-</div>
 
-<div id="statusbar-container"></div>
-<div id="overlays-container"></div>
+  <div id="statusbar-container"></div>
+  <div id="overlays-container"></div>
 
-<script src="../assets/js/session.js"></script>
-<script src="../assets/js/components.js"></script>
-<script src="../assets/js/navigation.js"></script>
-<script src="../assets/js/app.js"></script>
-<script src="./script.js"></script>
-
+  <script src="../assets/js/session.js"></script>
+  <script src="../assets/js/components.js"></script>
+  <script src="../assets/js/navigation.js"></script>
+  <script src="../assets/js/app.js"></script>
 </body>
 </html>

@@ -1,552 +1,105 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Create Project · VERDE OS</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="../assets/css/global.css"/>
-  <link rel="stylesheet" href="../assets/css/layout.css"/>
-  <link rel="stylesheet" href="../assets/css/components.css"/>
-  <link rel="stylesheet" href="../assets/css/modules.css"/>
-</head>
-<body>
-
-<div class="shell-container">
-  <div id="sidebar-container"></div>
-  <div class="shell-main">
-    <div id="topbar-container"></div>
-    <main class="app-content">
-
-
-  <header class="wizard-nav">
-    <div class="nav-left">
-      <button class="btn btn-ghost" style="padding-left:0">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2">
-          <line x1="18" y1="6" x2="6" y2="18" />
-          <line x1="6" y1="6" x2="18" y2="18" />
-        </svg>
-        Cancel
-      </button>
-    </div>
-
-    <div class="nav-center">
-      <div class="stepper" id="stepper">
-        <!-- Generated via JS -->
-      </div>
-    </div>
-
-    <div class="nav-right">
-      <button class="btn btn-s" id="btnBack" style="display:none" onclick="prevStep()">Back</button>
-      <button class="btn btn-p" id="btnNext" onclick="nextStep()">Continue</button>
-      <button class="btn btn-p" id="btnLaunch" style="display:none" onclick="launchProject()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2">
-          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-        </svg>
-        Launch Project
-      </button>
-    </div>
-  </div>
-
-  <main class="wizard-main">
-    <div class="wizard-container" id="wizardContainer">
-
-      <!-- STEP 1: PROJECT DETAILS -->
-      <div class="step-content active" id="step-1">
-        <div class="step-header">
-          <h1 class="step-title">Project Details</h1>
-          <p class="step-desc">Enter the core information to initiate the project workspace.</p>
-        </div>
-        <div class="form-grid">
-          <div class="form-group full" id="fg-name">
-            <label class="form-label">Project Name <span>*</span></label>
-            <input type="text" class="form-input" id="inpName" placeholder="e.g. GreenLeaf E-Commerce" />
-            <div class="form-error-msg">Project name is required</div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Client Name <span>*</span></label>
-            <input type="text" class="form-input" id="inpClient" placeholder="e.g. GreenLeaf Organics" />
-            <div class="form-error-msg">Client name is required</div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Primary Contact</label>
-            <input type="text" class="form-input" placeholder="Name or Email" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Priority</label>
-            <select class="form-input">
-              <option>Normal</option>
-              <option>High</option>
-              <option>Urgent</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Expected Delivery Date <span>*</span></label>
-            <input type="date" class="form-input" id="inpDate" />
-            <div class="form-error-msg">Please select a valid future date</div>
-          </div>
-          <div class="form-group full">
-            <label class="form-label">Short Description</label>
-            <textarea class="form-input" placeholder="Briefly describe the goals of this project..."></textarea>
-          </div>
-        </div>
-      </div>
-
-      <!-- STEP 2: PROJECT TEMPLATE -->
-      <div class="step-content" id="step-2">
-        <div class="step-header">
-          <h1 class="step-title">Select Template</h1>
-          <p class="step-desc">Choose a service template. AI will automatically generate the execution plan.</p>
-        </div>
-        <div class="template-grid">
-          <div class="t-card active" onclick="selectTemplate(this)">
-            <div class="t-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                <line x1="3" y1="9" x2="21" y2="9" />
-                <line x1="9" y1="21" x2="9" y2="9" />
-              </svg></div>
-            <div class="t-title">Website Development</div>
-            <div class="t-desc">Full-stack web applications, landing pages, and E-Commerce.</div>
-            <div class="t-meta"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor">
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 6 12 12 16 14" />
-              </svg> 4-8 Weeks</div>
-          </div>
-          <div class="t-card" onclick="selectTemplate(this)">
-            <div class="t-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor">
-                <path
-                  d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-                <line x1="12" y1="22.08" x2="12" y2="12" />
-              </svg></div>
-            <div class="t-title">ERP Development</div>
-            <div class="t-desc">Custom enterprise resource planning and internal tooling.</div>
-            <div class="t-meta"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor">
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 6 12 12 16 14" />
-              </svg> 3-6 Months</div>
-          </div>
-          <div class="t-card" onclick="selectTemplate(this)">
-            <div class="t-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor">
-                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-              </svg></div>
-            <div class="t-title">Brand Development</div>
-            <div class="t-desc">Logos, brand guidelines, and complete visual identities.</div>
-            <div class="t-meta"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor">
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 6 12 12 16 14" />
-              </svg> 2-4 Weeks</div>
-          </div>
-          <div class="t-card" onclick="selectTemplate(this)">
-            <div class="t-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor">
-                <line x1="18" y1="20" x2="18" y2="10" />
-                <line x1="12" y1="20" x2="12" y2="4" />
-                <line x1="6" y1="20" x2="6" y2="14" />
-              </svg></div>
-            <div class="t-title">SEO & Marketing</div>
-            <div class="t-desc">Search optimization, ad campaigns, and content strategy.</div>
-            <div class="t-meta"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor">
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 6 12 12 16 14" />
-              </svg> Monthly Retainer</div>
-          </div>
-          <div class="t-card" onclick="selectTemplate(this)">
-            <div class="t-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor">
-                <polygon points="23 7 16 12 23 17 23 7" />
-                <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
-              </svg></div>
-            <div class="t-title">Video Production</div>
-            <div class="t-desc">Corporate videos, commercials, and social media shorts.</div>
-            <div class="t-meta"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor">
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 6 12 12 16 14" />
-              </svg> 1-3 Weeks</div>
-          </div>
-          <div class="t-card" onclick="selectTemplate(this)">
-            <div class="t-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor">
-                <path
-                  d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                <polyline points="7.5 4.21 12 6.81 16.5 4.21" />
-                <polyline points="7.5 19.79 12 17.19 16.5 19.79" />
-                <polyline points="2.27 16.21 12 10.59 21.73 16.21" />
-                <polyline points="12 22.08 12 12" />
-              </svg></div>
-            <div class="t-title">AI / ML Solution</div>
-            <div class="t-desc">Custom LLM integrations and automated workflows.</div>
-            <div class="t-meta"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor">
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 6 12 12 16 14" />
-              </svg> 4-12 Weeks</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- STEP 3: EXECUTION PLAN -->
-      <div class="step-content" id="step-3">
-        <div class="step-header">
-          <h1 class="step-title">Execution Plan</h1>
-          <p class="step-desc">AI has generated the ideal milestones for <strong>Website Development</strong>. You can
-            reorder or modify them.</p>
-        </div>
-        <div class="plan-list">
-          <div class="plan-item">
-            <div class="p-grip"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <circle cx="9" cy="5" r="1" />
-                <circle cx="9" cy="12" r="1" />
-                <circle cx="9" cy="19" r="1" />
-                <circle cx="15" cy="5" r="1" />
-                <circle cx="15" cy="12" r="1" />
-                <circle cx="15" cy="19" r="1" />
-              </svg></div>
-            <div class="p-content">
-              <span class="p-title">1. Discovery & Planning</span>
-              <div class="p-actions">
-                <button class="p-btn"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                  </svg></button>
-                <button class="p-btn"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="3 6 5 6 21 6" />
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                  </svg></button>
-              </div>
-            </div>
-          </div>
-          <div class="plan-item">
-            <div class="p-grip"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <circle cx="9" cy="5" r="1" />
-                <circle cx="9" cy="12" r="1" />
-                <circle cx="9" cy="19" r="1" />
-                <circle cx="15" cy="5" r="1" />
-                <circle cx="15" cy="12" r="1" />
-                <circle cx="15" cy="19" r="1" />
-              </svg></div>
-            <div class="p-content">
-              <span class="p-title">2. UI/UX Design</span>
-              <div class="p-actions">
-                <button class="p-btn"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                  </svg></button>
-                <button class="p-btn"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="3 6 5 6 21 6" />
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                  </svg></button>
-              </div>
-            </div>
-          </div>
-          <div class="plan-item">
-            <div class="p-grip"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <circle cx="9" cy="5" r="1" />
-                <circle cx="9" cy="12" r="1" />
-                <circle cx="9" cy="19" r="1" />
-                <circle cx="15" cy="5" r="1" />
-                <circle cx="15" cy="12" r="1" />
-                <circle cx="15" cy="19" r="1" />
-              </svg></div>
-            <div class="p-content">
-              <span class="p-title">3. Frontend & Backend Development</span>
-              <div class="p-actions">
-                <button class="p-btn"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                  </svg></button>
-                <button class="p-btn"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="3 6 5 6 21 6" />
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                  </svg></button>
-              </div>
-            </div>
-          </div>
-          <div class="plan-item">
-            <div class="p-grip"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <circle cx="9" cy="5" r="1" />
-                <circle cx="9" cy="12" r="1" />
-                <circle cx="9" cy="19" r="1" />
-                <circle cx="15" cy="5" r="1" />
-                <circle cx="15" cy="12" r="1" />
-                <circle cx="15" cy="19" r="1" />
-              </svg></div>
-            <div class="p-content">
-              <span class="p-title">4. QA Testing & Revisions</span>
-              <div class="p-actions">
-                <button class="p-btn"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                  </svg></button>
-                <button class="p-btn"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="3 6 5 6 21 6" />
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                  </svg></button>
-              </div>
-            </div>
-          </div>
-          <div class="plan-item">
-            <div class="p-grip"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <circle cx="9" cy="5" r="1" />
-                <circle cx="9" cy="12" r="1" />
-                <circle cx="9" cy="19" r="1" />
-                <circle cx="15" cy="5" r="1" />
-                <circle cx="15" cy="12" r="1" />
-                <circle cx="15" cy="19" r="1" />
-              </svg></div>
-            <div class="p-content">
-              <span class="p-title">5. Deployment & Delivery</span>
-              <div class="p-actions">
-                <button class="p-btn"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                  </svg></button>
-                <button class="p-btn"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="3 6 5 6 21 6" />
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                  </svg></button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <button class="add-milestone">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2">
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
-          Add Milestone
-        </button>
-      </div>
-
-      <!-- STEP 4: TEAM ASSIGNMENT -->
-      <div class="step-content" id="step-4">
-        <div class="step-header" style="display:flex; justify-content:space-between; align-items:flex-start;">
-          <div style="text-align:left;">
-            <h1 class="step-title" style="margin-bottom:8px;">Team Assignment</h1>
-            <p class="step-desc">Select the project owner and assign the execution team based on capacity.</p>
-          </div>
-          <button class="btn btn-s" onclick="document.getElementById('modal-add-member').classList.add('active')">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Add Team Member
-          </button>
-        </div>
-
-        <div class="team-roles">
-          <div class="tr-group">
-            <div class="tr-label">Project Owner <span
-                style="font-weight:500;color:var(--text-3);text-transform:none">(Required)</span></div>
-            <div class="tr-grid">
-              <div class="tm-card active" onclick="toggleCard(this)">
-                <div class="tm-av" style="background:var(--text-1)">SH</div>
-                <div class="tm-info">
-                  <div class="tm-name">Shahim</div>
-                  <div class="tm-role">Managing Director</div>
-                  <div class="tm-load">
-                    <div class="tm-load-bar" style="width:40%"></div>
-                  </div>
-                </div>
-              </div>
-              <div class="tm-card" onclick="toggleCard(this)">
-                <div class="tm-av" style="background:#059669">MJ</div>
-                <div class="tm-info">
-                  <div class="tm-name">Minhaj</div>
-                  <div class="tm-role">Operations Lead</div>
-                  <div class="tm-load">
-                    <div class="tm-load-bar" style="width:75%;background:var(--warning)"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="tr-group">
-            <div class="tr-label">Execution Team</div>
-            <div class="tr-grid">
-              <div class="tm-card active" onclick="toggleCard(this)">
-                <div class="tm-av" style="background:#6366F1">MK</div>
-                <div class="tm-info">
-                  <div class="tm-name">Midhul</div>
-                  <div class="tm-role">Lead Developer</div>
-                  <div class="tm-load">
-                    <div class="tm-load-bar" style="width:60%"></div>
-                  </div>
-                </div>
-              </div>
-              <div class="tm-card active" onclick="toggleCard(this)">
-                <div class="tm-av" style="background:#EC4899">SF</div>
-                <div class="tm-info">
-                  <div class="tm-name">Shafna</div>
-                  <div class="tm-role">UI/UX Designer</div>
-                  <div class="tm-load">
-                    <div class="tm-load-bar" style="width:30%"></div>
-                  </div>
-                </div>
-              </div>
-              <div class="tm-card" onclick="toggleCard(this)">
-                <div class="tm-av" style="background:#8B5CF6">AS</div>
-                <div class="tm-info">
-                  <div class="tm-name">Ashiq</div>
-                  <div class="tm-role">SEO Specialist</div>
-                  <div class="tm-load">
-                    <div class="tm-load-bar" style="width:90%;background:var(--danger)"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- STEP 5: REVIEW & LAUNCH -->
-      <div class="step-content" id="step-5">
-        <div class="step-header">
-          <h1 class="step-title">Review & Launch</h1>
-          <p class="step-desc">Verify the generated project details before creating the workspace.</p>
-        </div>
-
-        <div class="review-box">
-          <div class="rv-grid">
-            <div class="rv-group">
-              <span class="rv-label">Project Name</span>
-              <span class="rv-val" id="revName">GreenLeaf E-Commerce</span>
-            </div>
-            <div class="rv-group">
-              <span class="rv-label">Client</span>
-              <span class="rv-val" id="revClient">GreenLeaf Organics</span>
-            </div>
-            <div class="rv-group">
-              <span class="rv-label">Service Type</span>
-              <span class="rv-val">Website Development</span>
-            </div>
-            <div class="rv-group">
-              <span class="rv-label">Expected Delivery</span>
-              <span class="rv-val" id="revDate">Oct 15, 2026</span>
-            </div>
-          </div>
-
-          <div class="rv-divider"></div>
-
-          <div class="rv-grid" style="margin-bottom:0">
-            <div class="rv-group">
-              <span class="rv-label">Assigned Team</span>
-              <ul class="rv-list">
-                <li>Shahim (Owner)</li>
-                <li>Midhul (Development)</li>
-                <li>Shafna (Design)</li>
-              </ul>
-            </div>
-            <div class="rv-group">
-              <span class="rv-label">Execution Plan</span>
-              <ul class="rv-list">
-                <li>5 Milestones</li>
-                <li>24 Automated Tasks</li>
-                <li>Kickoff Event Scheduled</li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="ai-badge">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-            </svg>
-            Workspace Code: VER-2026-001 will be automatically provisioned.
-          </div>
-        </div>
-      </div>
-
-      <!-- SUCCESS OVERLAY -->
-      <div class="success-overlay" id="successOverlay">
-        <div id="loadingState">
-          <div class="loading-spinner"></div>
-          <h2 class="sc-title" style="opacity:1;transform:none;font-size:20px;color:var(--text-2)">Provisioning
-            Workspace...</h2>
-        </div>
-
-        <div id="successState" style="display:none;flex-direction:column;align-items:center">
-          <div class="sc-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-          </div>
-          <h1 class="sc-title">Project VER-2026-001 Created</h1>
-          <p class="sc-desc">The workspace has been generated. Milestones, task groups, and folder structures are ready.
-            The team has been notified.</p>
-          <div class="sc-actions">
-            <button class="btn btn-p" onclick="window.location.reload()">Go to Project Workspace</button>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </main>
-
-  <!-- MODAL: ADD MEMBER -->
-  <div class="modal-overlay" id="modal-add-member">
-    <div class="modal-content">
-      <div class="modal-head">
-        <h2 class="modal-title">New Employee</h2>
-        <button class="modal-close" onclick="document.getElementById('modal-add-member').classList.remove('active')"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-      </div>
-      <div class="modal-body form-grid">
-        <div class="form-group full"><label class="form-label">Full Name <span>*</span></label><input type="text" id="ne-name" class="form-input" placeholder="e.g. Jane Doe"/></div>
-        <div class="form-group"><label class="form-label">Email</label><input type="email" id="ne-email" class="form-input" placeholder="e.g. jane@verdelabs.com"/></div>
-        <div class="form-group"><label class="form-label">Phone Number</label><input type="text" id="ne-phone" class="form-input" placeholder="e.g. +1 555 0192"/></div>
-        <div class="form-group"><label class="form-label">Department <span>*</span></label><input type="text" id="ne-dept" class="form-input" placeholder="e.g. Design"/></div>
-        <div class="form-group"><label class="form-label">Role <span>*</span></label><input type="text" id="ne-role" class="form-input" placeholder="e.g. Senior Designer"/></div>
-        <div class="form-group full"><label class="form-label">Skills (Optional)</label><input type="text" id="ne-skills" class="form-input" placeholder="e.g. Figma, React, User Research"/></div>
-        <div class="form-group full"><label class="form-label">Employment Status</label><select id="ne-status" class="form-input"><option>Active</option><option>On Leave</option><option>Inactive</option></select></div>
-      </div>
-      <div class="modal-foot">
-        <button class="btn btn-s" onclick="document.getElementById('modal-add-member').classList.remove('active')">Cancel</button>
-        <button class="btn btn-p" onclick="saveNewMember()">Save Member</button>
-      </div>
-    </div>
-  </div>
-
-  
-
-    </main>
-  </div>
-</div>
-
-<div id="statusbar-container"></div>
-<div id="overlays-container"></div>
-
-<script src="../assets/js/session.js"></script>
-<script src="../assets/js/components.js"></script>
-<script src="../assets/js/navigation.js"></script>
-<script src="../assets/js/app.js"></script>
-<script src="./script.js"></script>
-
-</body>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Project · VERDE OS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/global.css" />
+  <link rel="stylesheet" href="../assets/css/layout.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/modules.css" />
+</head>
+
+<body>
+  <div class="shell-container">
+    <div id="sidebar-container"></div>
+    <div class="shell-main">
+      <div id="topbar-container"></div>
+      <main class="app-content">
+        
+        <div class="premium-module-layout" style="max-width: 800px; margin: 0 auto;">
+          
+          <!-- Page Header -->
+          <header class="premium-header">
+            <div>
+              <h1 class="premium-header-title">Create Project</h1>
+              <p class="premium-header-desc">Initiate a new project and allocate resources</p>
+            </div>
+            <div class="premium-toolbar-group">
+              <button class="btn btn-ghost" onclick="window.history.back()">Cancel</button>
+            </div>
+          </header>
+
+          <!-- Main Content: Form -->
+          <section class="premium-section">
+            <div class="premium-table-container" style="padding: 32px;">
+              
+              <div class="premium-form-group">
+                <label class="premium-label">Project Name</label>
+                <input type="text" class="premium-input" placeholder="e.g. Website Redesign 2026" />
+              </div>
+
+              <div class="premium-form-group">
+                <label class="premium-label">Client</label>
+                <select class="premium-input">
+                  <option disabled selected>Select a client...</option>
+                  <option>Cabo Travels Inc</option>
+                  <option>MedCare Health</option>
+                  <option>GreenLeaf Corp</option>
+                </select>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                <div class="premium-form-group">
+                  <label class="premium-label">Start Date</label>
+                  <input type="date" class="premium-input" />
+                </div>
+                <div class="premium-form-group">
+                  <label class="premium-label">Deadline</label>
+                  <input type="date" class="premium-input" />
+                </div>
+              </div>
+
+              <div class="premium-form-group">
+                <label class="premium-label">Project Budget (₹)</label>
+                <input type="number" class="premium-input" placeholder="0.00" />
+              </div>
+
+              <div class="premium-form-group">
+                <label class="premium-label">Project Manager</label>
+                <select class="premium-input">
+                  <option disabled selected>Select a manager...</option>
+                  <option>Shahim</option>
+                  <option>Midhul K</option>
+                  <option>Shafna F</option>
+                </select>
+              </div>
+
+              <div class="premium-form-actions">
+                <button class="btn btn-ghost" onclick="window.history.back()">Discard</button>
+                <button class="btn btn-primary" onclick="window.location.href='../projects/index.html'">Create Project</button>
+              </div>
+
+            </div>
+          </section>
+
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <div id="statusbar-container"></div>
+  <div id="overlays-container"></div>
+
+  <script src="../assets/js/session.js"></script>
+  <script src="../assets/js/components.js"></script>
+  <script src="../assets/js/navigation.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script src="./script.js"></script>
+</body>
 </html>

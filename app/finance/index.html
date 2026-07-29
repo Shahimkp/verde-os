@@ -1,245 +1,300 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Finance Center · VERDE OS</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="../assets/css/global.css"/>
-  <link rel="stylesheet" href="../assets/css/layout.css"/>
-  <link rel="stylesheet" href="../assets/css/components.css"/>
-  <link rel="stylesheet" href="../assets/css/modules.css"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finance · VERDE OS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/global.css" />
+  <link rel="stylesheet" href="../assets/css/layout.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/modules.css" />
+  <style>
+    .finance-dashboard {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 32px;
+    }
+    .finance-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+    .finance-card-header {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-1);
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .cashflow-chart {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      height: 200px;
+      padding-top: 20px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .cashflow-month {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+    .bar-group {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 100%;
+      width: 100%;
+      justify-content: center;
+    }
+    .bar-revenue {
+      width: 20px;
+      background: var(--success);
+      border-radius: 4px 4px 0 0;
+    }
+    .bar-expense {
+      width: 20px;
+      background: var(--danger);
+      border-radius: 4px 4px 0 0;
+    }
+    @media (max-width: 1024px) {
+      .finance-dashboard { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
+
 <body>
-
-<div class="shell-container">
-  <div id="sidebar-container"></div>
-  <div class="shell-main">
-    <div id="topbar-container"></div>
-    <main class="app-content">
-
-      <div class="module-view">
+  <div class="shell-container">
+    <div id="sidebar-container"></div>
+    <div class="shell-main">
+      <div id="topbar-container"></div>
+      <main class="app-content">
         
-        <div class="module-page-header">
-          <div class="view-title" id="topNavTitle">Finance Dashboard</div>
-          <div class="top-actions" id="topNavActions">
-            <button class="btn btn-s">Download Report</button>
-            <button class="btn btn-p" onclick="openModal('modal-new-invoice')">+ Generate Invoice</button>
-          </div>
-        </div>
-
-        <!-- ROUTE: DASHBOARD -->
-        <div id="route-dashboard" class="route active">
-          <div class="grid-4">
-            <div class="metric-card">
-              <div class="mc-label">Revenue (MTD)</div>
-              <div class="mc-val amt-green" id="dash-rev">$0</div>
-            </div>
-            <div class="metric-card">
-              <div class="mc-label">Expenses (MTD)</div>
-              <div class="mc-val amt-red" id="dash-exp">$0</div>
-            </div>
-            <div class="metric-card">
-              <div class="mc-label">Net Profit (MTD)</div>
-              <div class="mc-val" id="dash-profit">$0</div>
-            </div>
-            <div class="metric-card">
-              <div class="mc-label">Outstanding Payments <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--warning)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
-              <div class="mc-val" id="dash-out">$0</div>
-            </div>
-          </div>
-
-          <div class="table-container">
-            <div class="table-header">
-              <div style="font-size:15px; font-weight:700;">Recent Transactions</div>
-              <button class="btn btn-ghost" style="padding:0; font-size:12px;">View All</button>
-            </div>
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Description</th>
-                  <th>Type</th>
-                  <th>Amount</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="dash-tx-table">
-                <!-- JS -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- ROUTE: QUOTATIONS -->
-        <div id="route-quotations" class="route">
-          <div class="table-container">
-            <div class="table-header">
-              <div style="font-size:15px; font-weight:700;">Quotations</div>
-              <button class="btn btn-p" style="padding:6px 12px; font-size:12px;">+ Create Quote</button>
-            </div>
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Quote #</th>
-                  <th>Client</th>
-                  <th>Project Detail</th>
-                  <th>Value</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="quotations-table">
-                <!-- JS -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- ROUTE: INVOICES -->
-        <div id="route-invoices" class="route">
-          <div class="table-container">
-            <div class="table-header">
-              <div style="font-size:15px; font-weight:700;">Invoices</div>
-              <button class="btn btn-p" style="padding:6px 12px; font-size:12px;" onclick="openModal('modal-new-invoice')">+ Generate Invoice</button>
-            </div>
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Invoice #</th>
-                  <th>Client</th>
-                  <th>Due Date</th>
-                  <th>Total Amount</th>
-                  <th>Pending</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="invoices-table">
-                <!-- JS -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- ROUTE: EXPENSES -->
-        <div id="route-expenses" class="route">
-          <div class="table-container">
-            <div class="table-header">
-              <div style="font-size:15px; font-weight:700;">Company Expenses</div>
-              <button class="btn btn-p" style="padding:6px 12px; font-size:12px;" onclick="openModal('modal-new-exp')">+ Record Expense</button>
-            </div>
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Vendor / Desc</th>
-                  <th>Category</th>
-                  <th>Method</th>
-                  <th>Amount</th>
-                </tr>
-              </thead>
-              <tbody id="exp-table">
-                <!-- JS -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- ROUTE: ANALYTICS -->
-        <div id="route-analytics" class="route">
-          <div class="chart-container" style="margin-bottom:32px;">
-            <div class="chart-title">Revenue Growth (Last 6 Months)</div>
-            <div class="bar-chart" id="chart-rev">
-              <!-- Rendered via JS -->
-            </div>
-          </div>
+        <div class="premium-module-layout">
           
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px;">
-            <div class="chart-container">
-              <div class="chart-title">Profit Margin Trend</div>
-              <div class="bar-chart" id="chart-profit">
-                <!-- Rendered via JS -->
+          <!-- Page Header -->
+          <header class="premium-header">
+            <div>
+              <h1 class="premium-header-title">Finance & Cash Flow</h1>
+              <p class="premium-header-desc">Track revenue, expenses, and overall business health</p>
+            </div>
+            <div class="premium-toolbar-group">
+              <button class="btn btn-primary">+ Create Invoice</button>
+              <button class="btn btn-secondary">Log Expense</button>
+            </div>
+          </header>
+
+          <!-- Primary KPI Row -->
+          <section class="premium-kpi-grid">
+            <div class="premium-kpi-card">
+              <span class="premium-kpi-label">YTD Revenue</span>
+              <div class="premium-kpi-value" style="color: var(--success);">₹84.5L</div>
+            </div>
+            <div class="premium-kpi-card">
+              <span class="premium-kpi-label">YTD Expenses</span>
+              <div class="premium-kpi-value" style="color: var(--danger);">₹32.2L</div>
+            </div>
+            <div class="premium-kpi-card">
+              <span class="premium-kpi-label">Outstanding AR</span>
+              <div class="premium-kpi-value" style="color: var(--warning);">₹12.0L</div>
+            </div>
+            <div class="premium-kpi-card">
+              <span class="premium-kpi-label">Net Margin</span>
+              <div class="premium-kpi-value">62%</div>
+            </div>
+          </section>
+
+          <!-- Main Dashboard Panels -->
+          <div class="finance-dashboard">
+            
+            <!-- Left: Cash Flow Chart -->
+            <div class="finance-card">
+              <div class="finance-card-header">
+                <span>Cash Flow (Last 6 Months)</span>
+                <div style="display: flex; gap: 12px; font-size: 12px; font-weight: 600;">
+                  <span style="color: var(--success);">■ Revenue</span>
+                  <span style="color: var(--danger);">■ Expenses</span>
+                </div>
+              </div>
+              <div class="cashflow-chart">
+                <div class="cashflow-month">
+                  <div class="bar-group">
+                    <div class="bar-revenue" style="height: 60%;"></div>
+                    <div class="bar-expense" style="height: 40%;"></div>
+                  </div>
+                  <span style="font-size: 11px; font-weight: 700;">FEB</span>
+                </div>
+                <div class="cashflow-month">
+                  <div class="bar-group">
+                    <div class="bar-revenue" style="height: 75%;"></div>
+                    <div class="bar-expense" style="height: 35%;"></div>
+                  </div>
+                  <span style="font-size: 11px; font-weight: 700;">MAR</span>
+                </div>
+                <div class="cashflow-month">
+                  <div class="bar-group">
+                    <div class="bar-revenue" style="height: 50%;"></div>
+                    <div class="bar-expense" style="height: 45%;"></div>
+                  </div>
+                  <span style="font-size: 11px; font-weight: 700;">APR</span>
+                </div>
+                <div class="cashflow-month">
+                  <div class="bar-group">
+                    <div class="bar-revenue" style="height: 85%;"></div>
+                    <div class="bar-expense" style="height: 40%;"></div>
+                  </div>
+                  <span style="font-size: 11px; font-weight: 700;">MAY</span>
+                </div>
+                <div class="cashflow-month">
+                  <div class="bar-group">
+                    <div class="bar-revenue" style="height: 95%;"></div>
+                    <div class="bar-expense" style="height: 30%;"></div>
+                  </div>
+                  <span style="font-size: 11px; font-weight: 700;">JUN</span>
+                </div>
+                <div class="cashflow-month">
+                  <div class="bar-group">
+                    <div class="bar-revenue" style="height: 70%;"></div>
+                    <div class="bar-expense" style="height: 50%;"></div>
+                  </div>
+                  <span style="font-size: 11px; font-weight: 700;">JUL</span>
+                </div>
               </div>
             </div>
-            <div class="chart-container">
-              <div class="chart-title">Expenses Breakdown</div>
-              <div class="bar-chart" id="chart-exp">
-                <!-- Rendered via JS -->
+
+            <!-- Right: Budget & Accounts -->
+            <div class="finance-card">
+              <div class="finance-card-header">Operating Budget (Q3)</div>
+              
+              <div style="margin-bottom: 24px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                  <span style="font-size: 13px; font-weight: 700;">Payroll</span>
+                  <span style="font-size: 12px; font-weight: 600;">₹12.5L / ₹15.0L</span>
+                </div>
+                <div style="width: 100%; height: 6px; background: var(--bg); border-radius: 4px; overflow: hidden;">
+                  <div style="width: 83%; height: 100%; background: var(--warning);"></div>
+                </div>
               </div>
+
+              <div style="margin-bottom: 24px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                  <span style="font-size: 13px; font-weight: 700;">Software & SaaS</span>
+                  <span style="font-size: 12px; font-weight: 600;">₹1.2L / ₹2.0L</span>
+                </div>
+                <div style="width: 100%; height: 6px; background: var(--bg); border-radius: 4px; overflow: hidden;">
+                  <div style="width: 60%; height: 100%; background: var(--primary);"></div>
+                </div>
+              </div>
+
+              <div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                  <span style="font-size: 13px; font-weight: 700;">Marketing</span>
+                  <span style="font-size: 12px; font-weight: 600;">₹4.5L / ₹5.0L</span>
+                </div>
+                <div style="width: 100%; height: 6px; background: var(--bg); border-radius: 4px; overflow: hidden;">
+                  <div style="width: 90%; height: 100%; background: var(--danger);"></div>
+                </div>
+              </div>
+
             </div>
+
           </div>
+
+          <!-- Invoices & Payments Table -->
+          <section class="premium-section">
+            <div class="premium-table-container">
+              <div style="padding: 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between;">
+                <h2 style="font-size: 16px; font-weight: 800;">Recent Transactions & Invoices</h2>
+                <div class="premium-toolbar-group">
+                  <select class="premium-input" style="padding: 8px 12px; font-size: 12px;">
+                    <option>All Transactions</option>
+                    <option>Invoices (Receivable)</option>
+                    <option>Expenses (Payable)</option>
+                  </select>
+                </div>
+              </div>
+              <table class="premium-table">
+                <thead>
+                  <tr>
+                    <th>Ref ID</th>
+                    <th>Entity</th>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <div class="premium-table-title">INV-2026-085</div>
+                      <div class="premium-table-sub">Receivable</div>
+                    </td>
+                    <td><span style="font-weight: 700;">TechNova Global</span></td>
+                    <td>Today</td>
+                    <td>Enterprise License</td>
+                    <td><span style="font-weight: 700; color: var(--success);">+ ₹45,00,000</span></td>
+                    <td><span class="badge badge-success">Paid</span></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="premium-table-title">INV-2026-086</div>
+                      <div class="premium-table-sub">Receivable</div>
+                    </td>
+                    <td><span style="font-weight: 700;">GreenLeaf Corp</span></td>
+                    <td>Jul 28, 2026</td>
+                    <td>Design Retainer</td>
+                    <td><span style="font-weight: 700; color: var(--text-1);">+ ₹1,20,000</span></td>
+                    <td><span class="badge badge-warning">Pending</span></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="premium-table-title">EXP-2026-112</div>
+                      <div class="premium-table-sub">Payable</div>
+                    </td>
+                    <td><span style="font-weight: 700;">AWS Cloud Services</span></td>
+                    <td>Jul 25, 2026</td>
+                    <td>Server Infrastructure</td>
+                    <td><span style="font-weight: 700; color: var(--danger);">- ₹45,200</span></td>
+                    <td><span class="badge badge-success">Paid</span></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="premium-table-title">INV-2026-084</div>
+                      <div class="premium-table-sub">Receivable</div>
+                    </td>
+                    <td><span style="font-weight: 700;">Cabo Travels Inc</span></td>
+                    <td>Jul 15, 2026</td>
+                    <td>Project Milestone 1</td>
+                    <td><span style="font-weight: 700; color: var(--text-1);">+ ₹6,50,000</span></td>
+                    <td><span class="badge badge-danger">Overdue</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
         </div>
 
-      </div>
-
-    </main>
-  </div>
-</div>
-
-<!-- MODAL: NEW INVOICE -->
-<div class="modal-overlay" id="modal-new-invoice">
-  <div class="modal-content">
-    <div class="modal-head">
-      <h2 class="modal-title">Generate Invoice</h2>
-      <button class="modal-close" onclick="closeModal('modal-new-invoice')"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>
-    <div class="modal-body form-grid">
-      <div class="form-group fg-full"><label class="form-label">Client</label>
-        <select class="form-input" id="ni-client">
-          <option>Nova Corp</option><option>Echo Systems</option><option>Pinnacle Health</option>
-        </select>
-      </div>
-      <div class="form-group fg-full"><label class="form-label">Project / Description</label><input type="text" id="ni-desc" class="form-input" placeholder="e.g. Website Final Payment"/></div>
-      <div class="form-group"><label class="form-label">Amount ($)</label><input type="number" id="ni-amt" class="form-input" placeholder="e.g. 5000"/></div>
-      <div class="form-group"><label class="form-label">Due Date</label><input type="date" id="ni-date" class="form-input"/></div>
-    </div>
-    <div class="modal-foot">
-      <button class="btn btn-s" onclick="closeModal('modal-new-invoice')">Cancel</button>
-      <button class="btn btn-p" onclick="createInvoice()">Generate & Send</button>
+      </main>
     </div>
   </div>
-</div>
 
-<!-- MODAL: RECORD EXPENSE -->
-<div class="modal-overlay" id="modal-new-exp">
-  <div class="modal-content">
-    <div class="modal-head">
-      <h2 class="modal-title">Record Expense</h2>
-      <button class="modal-close" onclick="closeModal('modal-new-exp')"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>
-    <div class="modal-body form-grid">
-      <div class="form-group fg-full"><label class="form-label">Vendor / Description</label><input type="text" id="ne-vendor" class="form-input" placeholder="e.g. Figma Subscription"/></div>
-      <div class="form-group"><label class="form-label">Category</label>
-        <select class="form-input" id="ne-cat">
-          <option>Software</option><option>Marketing</option><option>Salary</option><option>Office</option>
-        </select>
-      </div>
-      <div class="form-group"><label class="form-label">Amount ($)</label><input type="number" id="ne-amt" class="form-input" placeholder="e.g. 144"/></div>
-      <div class="form-group"><label class="form-label">Date</label><input type="date" id="ne-date" class="form-input"/></div>
-      <div class="form-group"><label class="form-label">Method</label>
-        <select class="form-input" id="ne-method">
-          <option>Corporate Card</option><option>Bank Transfer</option>
-        </select>
-      </div>
-    </div>
-    <div class="modal-foot">
-      <button class="btn btn-s" onclick="closeModal('modal-new-exp')">Cancel</button>
-      <button class="btn btn-p" onclick="recordExpense()">Record Expense</button>
-    </div>
-  </div>
-</div>
+  <div id="statusbar-container"></div>
+  <div id="overlays-container"></div>
 
-<div id="statusbar-container"></div>
-<div id="overlays-container"></div>
-
-<script src="../assets/js/session.js"></script>
-<script src="../assets/js/components.js"></script>
-<script src="../assets/js/navigation.js"></script>
-<script src="../assets/js/app.js"></script>
-<script src="./script.js"></script>
-
+  <script src="../assets/js/session.js"></script>
+  <script src="../assets/js/components.js"></script>
+  <script src="../assets/js/navigation.js"></script>
+  <script src="../assets/js/app.js"></script>
 </body>
 </html>
