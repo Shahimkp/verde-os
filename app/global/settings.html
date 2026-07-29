@@ -13,63 +13,350 @@
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/modules.css" />
   <style>
-    .settings-section-title {
-      font-size: 20px;
-      font-weight: 800;
+    .set-layout {
+      padding: 0 0 64px 0;
+      animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Page Header */
+    .set-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 48px;
+    }
+    .set-header-title {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
       color: var(--text-1);
       margin-bottom: 8px;
     }
-    .settings-section-desc {
-      font-size: 13px;
+    .set-header-desc {
+      font-size: 14px;
+      font-weight: 500;
       color: var(--text-3);
-      margin-bottom: 32px;
     }
-    .integration-grid {
+    .set-toolbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .set-search {
+      display: flex;
+      align-items: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      width: 240px;
+    }
+    .set-search input {
+      border: none;
+      background: transparent;
+      outline: none;
+      width: 100%;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-1);
+      margin-left: 8px;
+    }
+    .set-search input::placeholder {
+      color: var(--text-3);
+    }
+
+    /* Core Layouts */
+    .set-section {
+      margin-bottom: 64px;
+    }
+    .set-section-header {
+      margin-bottom: 24px;
+    }
+    .set-section-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-1);
+    }
+    
+    .set-half-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 64px;
+    }
+
+    /* Generic Box */
+    .set-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      transition: transform 250ms ease, box-shadow 250ms ease;
+      overflow: hidden;
+    }
+    .set-box:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+    .set-box-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .set-box-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-1);
+    }
+
+    /* 2. Profile Settings */
+    .set-profile-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 64px;
+      display: flex;
+      gap: 32px;
+      transition: transform 250ms ease, box-shadow 250ms ease;
+    }
+    .set-profile-card:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+    .set-profile-avatar {
+      width: 120px;
+      height: 120px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+    .set-profile-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .set-profile-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 24px;
+    }
+    .set-profile-name {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--text-1);
+      letter-spacing: -0.5px;
+    }
+    .set-profile-job {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--primary);
+      margin-top: 4px;
+    }
+    .set-profile-details {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .set-profile-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-2);
+    }
+    .set-profile-icon {
+      color: var(--text-3);
+    }
+
+    /* 4. Notifications Grid */
+    .set-notif-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 24px;
+      margin-bottom: 64px;
     }
-    .integration-card {
+    .set-notif-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 16px;
+      padding: 24px;
       display: flex;
-      align-items: center;
-      gap: 16px;
-      transition: all 150ms ease;
+      align-items: flex-start;
+      justify-content: space-between;
+      box-shadow: var(--shadow-sm);
+      transition: transform 250ms ease, box-shadow 250ms ease;
     }
-    .integration-card:hover {
-      border-color: var(--primary-light);
+    .set-notif-card:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+    .set-notif-info {
+      flex: 1;
+    }
+    .set-notif-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-1);
+      margin-bottom: 4px;
+    }
+    .set-notif-desc {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-3);
+    }
+
+    /* Toggle Switch */
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: var(--border);
+      transition: .2s;
+      border-radius: 24px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .2s;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    input:checked + .slider {
+      background-color: var(--primary);
+    }
+    input:checked + .slider:before {
+      transform: translateX(16px);
+    }
+
+    /* Lists (Account, Appearance, Language, Privacy) */
+    .set-list {
+      display: flex;
+      flex-direction: column;
+    }
+    .set-list-item {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 150ms ease;
+      cursor: pointer;
+    }
+    .set-list-item:hover {
       background: var(--bg);
     }
-    .theme-selector {
+    .set-list-item:last-child {
+      border-bottom: none;
+    }
+    .set-list-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-1);
+    }
+    .set-list-title.danger {
+      color: var(--danger);
+    }
+    .set-list-sub {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-3);
+      margin-top: 4px;
+    }
+    .set-list-value {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-2);
       display: flex;
-      gap: 24px;
+      align-items: center;
+      gap: 8px;
     }
-    .theme-option {
-      width: 150px;
-      border: 2px solid var(--border);
-      border-radius: 12px;
-      padding: 16px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 150ms ease;
+
+    /* 8. Connected Devices Table */
+    .set-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
     }
-    .theme-option:hover {
-      border-color: var(--primary-light);
+    .set-table th {
+      padding: 16px 24px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-2);
     }
-    .theme-option.active {
-      border-color: var(--primary);
-      background: var(--primary-light);
+    .set-table td {
+      padding: 16px 24px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-2);
+      border-bottom: 1px solid var(--border-subtle);
     }
-    @media (max-width: 1024px) {
-      .integration-grid { grid-template-columns: 1fr 1fr; }
+    .set-table tr:last-child td {
+      border-bottom: none;
     }
-    @media (max-width: 768px) {
-      .integration-grid { grid-template-columns: 1fr; }
-      .theme-selector { flex-direction: column; }
-      .theme-option { width: 100%; }
+    .set-table tr:hover td {
+      background: var(--bg);
+    }
+    .set-device-name {
+      font-weight: 700;
+      color: var(--text-1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Badges */
+    .badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+    .badge-success { background: var(--success-10); color: var(--success); }
+    .badge-warning { background: var(--warning-10); color: var(--warning); }
+    .badge-danger { background: var(--danger-10); color: var(--danger); }
+    .badge-primary { background: var(--primary-10); color: var(--primary); }
+    .badge-neutral { background: var(--bg-2); color: var(--text-2); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
@@ -79,162 +366,406 @@
     <div id="sidebar-container"></div>
     <div class="shell-main">
       <div id="topbar-container"></div>
+      
       <main class="app-content">
-        
-        <div class="premium-module-layout" style="max-width: 900px; margin: 0 auto;">
+        <div class="set-layout">
           
-          <!-- Page Header -->
-          <header class="premium-header">
+          <!-- 1. Page Header -->
+          <header class="set-header">
             <div>
-              <h1 class="premium-header-title">Workspace Settings</h1>
-              <p class="premium-header-desc">Manage VERDE LABS configurations, integrations, and security</p>
+              <h1 class="set-header-title">Settings</h1>
+              <div class="set-header-desc">How do I manage my account and application preferences?</div>
             </div>
-            <div class="premium-toolbar-group">
-              <button class="btn btn-primary" onclick="alert('Settings saved successfully.')">Save All Changes</button>
+            <div class="set-toolbar">
+              <div class="set-search">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" placeholder="Search settings..." />
+              </div>
             </div>
           </header>
 
-          <!-- Section 1: Workspace -->
-          <section class="premium-section" style="margin-bottom: 64px;">
-            <h2 class="settings-section-title">General Workspace</h2>
-            <p class="settings-section-desc">Global branding and foundational settings for your instance.</p>
-            
-            <div class="premium-table-container" style="padding: 32px;">
-              <div class="premium-form-group">
-                <label class="premium-label">Organization Name</label>
-                <input type="text" class="premium-input" value="VERDE LABS" />
-              </div>
-
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
-                <div class="premium-form-group">
-                  <label class="premium-label">Timezone</label>
-                  <select class="premium-input">
-                    <option>Asia/Kolkata (IST)</option>
-                    <option>America/New_York (EST)</option>
-                    <option>Europe/London (GMT)</option>
-                  </select>
+          <!-- 2. Profile Settings -->
+          <div class="set-profile-card">
+            <div class="set-profile-avatar">S</div>
+            <div class="set-profile-content">
+              <div class="set-profile-header">
+                <div>
+                  <div class="set-profile-name">Shahim KP</div>
+                  <div class="set-profile-job">Chief Executive Officer</div>
                 </div>
-                <div class="premium-form-group">
-                  <label class="premium-label">Default Currency</label>
-                  <select class="premium-input">
-                    <option>INR (₹)</option>
-                    <option>USD ($)</option>
-                    <option>EUR (€)</option>
-                  </select>
+                <button class="btn btn-secondary btn-sm">Edit Profile</button>
+              </div>
+              <div class="set-profile-details">
+                <div class="set-profile-item">
+                  <svg class="set-profile-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                  shahim@verdelabs.co
+                </div>
+                <div class="set-profile-item">
+                  <svg class="set-profile-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                  +1 (555) 019-2026
                 </div>
               </div>
             </div>
-          </section>
+          </div>
 
-          <!-- Section 2: Permissions & Security -->
-          <section class="premium-section" style="margin-bottom: 64px;">
-            <h2 class="settings-section-title">Security & Permissions</h2>
-            <p class="settings-section-desc">Manage access control and authentication protocols.</p>
+          <!-- 3 & 5. Split Section -->
+          <section class="set-half-grid">
             
-            <div class="premium-table-container" style="padding: 32px;">
-              <div class="premium-form-group">
-                <label class="premium-label">Two-Factor Authentication (2FA)</label>
-                <select class="premium-input">
-                  <option>Enforced for all users</option>
-                  <option>Optional for employees, Enforced for Admins</option>
-                  <option>Disabled</option>
-                </select>
-                <div style="font-size: 11px; color: var(--text-3); margin-top: 8px;">Forcing 2FA will immediately log out all users without it configured.</div>
+            <!-- 3. Account & Security -->
+            <div class="set-box">
+              <div class="set-box-header">
+                <div class="set-box-title">Account & Security</div>
               </div>
+              <div class="set-list">
+                
+                <div class="set-list-item">
+                  <div>
+                    <div class="set-list-title">Change Password</div>
+                    <div class="set-list-sub">Update your authentication credentials</div>
+                  </div>
+                  <div class="set-list-value">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </div>
+                </div>
 
-              <div class="premium-form-group">
-                <label class="premium-label">Session Timeout</label>
-                <select class="premium-input">
-                  <option>24 Hours</option>
-                  <option>7 Days</option>
-                  <option>30 Days</option>
-                </select>
+                <div class="set-list-item">
+                  <div>
+                    <div class="set-list-title">Two-Factor Authentication</div>
+                    <div class="set-list-sub">Add an extra layer of security to your account</div>
+                  </div>
+                  <div class="set-list-value" style="color:var(--success);">
+                    Enabled
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </div>
+                </div>
+
+                <div class="set-list-item">
+                  <div>
+                    <div class="set-list-title">Active Login Sessions</div>
+                    <div class="set-list-sub">Manage devices logged into your account</div>
+                  </div>
+                  <div class="set-list-value">
+                    3 Devices
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </div>
+                </div>
+
+                <div class="set-list-item">
+                  <div>
+                    <div class="set-list-title">Recovery Email</div>
+                    <div class="set-list-sub">Fallback email for account recovery</div>
+                  </div>
+                  <div class="set-list-value">
+                    s.kp@verdelabs.co
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </div>
+                </div>
+
               </div>
             </div>
+
+            <!-- 5. Appearance -->
+            <div class="set-box">
+              <div class="set-box-header">
+                <div class="set-box-title">Appearance</div>
+              </div>
+              <div class="set-list">
+                
+                <div class="set-list-item">
+                  <div>
+                    <div class="set-list-title">Theme</div>
+                    <div class="set-list-sub">Select your interface color scheme</div>
+                  </div>
+                  <div class="set-list-value">
+                    System Default
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </div>
+                </div>
+
+                <div class="set-list-item">
+                  <div>
+                    <div class="set-list-title">Font Size</div>
+                    <div class="set-list-sub">Adjust text scale across VERDE OS</div>
+                  </div>
+                  <div class="set-list-value">
+                    Medium (Default)
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </div>
+                </div>
+
+                <div class="set-list-item">
+                  <div>
+                    <div class="set-list-title">Compact Mode</div>
+                    <div class="set-list-sub">Reduce padding and spacing in lists</div>
+                  </div>
+                  <div class="set-list-value">
+                    <label class="toggle-switch">
+                      <input type="checkbox">
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+                
+                <div class="set-list-item">
+                  <div>
+                    <div class="set-list-title">Accent Color</div>
+                    <div class="set-list-sub">Customize primary brand highlights</div>
+                  </div>
+                  <div class="set-list-value">
+                    <span style="width:16px;height:16px;background:var(--primary);border-radius:50%;display:inline-block;margin-right:8px;"></span>
+                    VERDE Green
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
           </section>
 
-          <!-- Section 3: Integrations -->
-          <section class="premium-section" style="margin-bottom: 64px;">
-            <h2 class="settings-section-title">Integrations</h2>
-            <p class="settings-section-desc">Connect VERDE OS to your external toolchain.</p>
-            
-            <div class="integration-grid">
+          <!-- 4. Notifications -->
+          <section class="set-section">
+            <div class="set-section-header">
+              <h2 class="set-section-title">Notifications</h2>
+            </div>
+            <div class="set-notif-grid">
               
-              <div class="integration-card">
-                <div class="avatar avatar-sm" style="background: #E11D48; color: white;">S</div>
-                <div style="flex: 1;">
-                  <div style="font-weight: 700; font-size: 13px;">Stripe</div>
-                  <div style="font-size: 11px; color: var(--success); font-weight: 600;">Connected</div>
+              <div class="set-notif-card">
+                <div class="set-notif-info">
+                  <div class="set-notif-title">Email Notifications</div>
+                  <div class="set-notif-desc">Receive daily summaries and critical alerts via email</div>
                 </div>
-                <button class="btn btn-sm btn-ghost">Manage</button>
+                <label class="toggle-switch">
+                  <input type="checkbox" checked>
+                  <span class="slider"></span>
+                </label>
               </div>
 
-              <div class="integration-card">
-                <div class="avatar avatar-sm" style="background: #2563EB; color: white;">G</div>
-                <div style="flex: 1;">
-                  <div style="font-weight: 700; font-size: 13px;">Google Auth</div>
-                  <div style="font-size: 11px; color: var(--text-3);">Not Configured</div>
+              <div class="set-notif-card">
+                <div class="set-notif-info">
+                  <div class="set-notif-title">Push Notifications</div>
+                  <div class="set-notif-desc">Real-time alerts on your desktop and mobile devices</div>
                 </div>
-                <button class="btn btn-sm btn-ghost">Connect</button>
+                <label class="toggle-switch">
+                  <input type="checkbox" checked>
+                  <span class="slider"></span>
+                </label>
               </div>
 
-              <div class="integration-card">
-                <div class="avatar avatar-sm" style="background: #059669; color: white;">A</div>
-                <div style="flex: 1;">
-                  <div style="font-weight: 700; font-size: 13px;">AWS S3</div>
-                  <div style="font-size: 11px; color: var(--success); font-weight: 600;">Connected</div>
+              <div class="set-notif-card">
+                <div class="set-notif-info">
+                  <div class="set-notif-title">Task Alerts</div>
+                  <div class="set-notif-desc">Updates when you are assigned or mentioned in a task</div>
                 </div>
-                <button class="btn btn-sm btn-ghost">Manage</button>
+                <label class="toggle-switch">
+                  <input type="checkbox" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="set-notif-card">
+                <div class="set-notif-info">
+                  <div class="set-notif-title">Meeting Reminders</div>
+                  <div class="set-notif-desc">Get notified 15 minutes before scheduled meetings</div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="set-notif-card">
+                <div class="set-notif-info">
+                  <div class="set-notif-title">Marketing Updates</div>
+                  <div class="set-notif-desc">Product announcements and promotional offers</div>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox">
+                  <span class="slider"></span>
+                </label>
               </div>
 
             </div>
           </section>
 
-          <!-- Section 4: Appearance -->
-          <section class="premium-section">
-            <h2 class="settings-section-title">Appearance</h2>
-            <p class="settings-section-desc">Customize the visual theme of your workspace.</p>
+          <!-- 6 & 7. Split Section (Language & Privacy) -->
+          <section class="set-half-grid">
             
-            <div class="premium-table-container" style="padding: 32px;">
-              <div class="premium-form-group">
-                <label class="premium-label">Global Theme</label>
-                <div class="theme-selector">
-                  
-                  <div class="theme-option active">
-                    <div style="height: 60px; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 12px; display: flex; overflow: hidden;">
-                      <div style="width: 25%; background: #f9fafb; border-right: 1px solid #e5e7eb;"></div>
-                      <div style="flex: 1; padding: 8px;">
-                        <div style="width: 100%; height: 8px; background: #e5e7eb; border-radius: 4px; margin-bottom: 4px;"></div>
-                        <div style="width: 60%; height: 8px; background: #e5e7eb; border-radius: 4px;"></div>
-                      </div>
-                    </div>
-                    <div style="font-weight: 700; font-size: 13px;">Light Mode</div>
-                  </div>
-
-                  <div class="theme-option">
-                    <div style="height: 60px; background: #111827; border: 1px solid #374151; border-radius: 8px; margin-bottom: 12px; display: flex; overflow: hidden;">
-                      <div style="width: 25%; background: #1f2937; border-right: 1px solid #374151;"></div>
-                      <div style="flex: 1; padding: 8px;">
-                        <div style="width: 100%; height: 8px; background: #374151; border-radius: 4px; margin-bottom: 4px;"></div>
-                        <div style="width: 60%; height: 8px; background: #374151; border-radius: 4px;"></div>
-                      </div>
-                    </div>
-                    <div style="font-weight: 700; font-size: 13px;">Dark Mode</div>
-                  </div>
-
-                  <div class="theme-option">
-                    <div style="height: 60px; background: linear-gradient(135deg, #f9fafb 50%, #111827 50%); border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 12px;"></div>
-                    <div style="font-weight: 700; font-size: 13px;">System Sync</div>
-                  </div>
-
-                </div>
+            <!-- 6. Language & Region -->
+            <div class="set-box">
+              <div class="set-box-header">
+                <div class="set-box-title">Language & Region</div>
               </div>
+              <div class="set-list">
+                
+                <div class="set-list-item">
+                  <div>
+                    <div class="set-list-title">Language</div>
+                    <div class="set-list-sub">Your personal display language</div>
+                  </div>
+                  <div class="set-list-value">
+                    English (US)
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </div>
+                </div>
+
+                <div class="set-list-item">
+                  <div>
+                    <div class="set-list-title">Time Zone</div>
+                    <div class="set-list-sub">Local time zone for events and tasks</div>
+                  </div>
+                  <div class="set-list-value">
+                    UTC-08:00 (Pacific)
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </div>
+                </div>
+
+                <div class="set-list-item">
+                  <div>
+                    <div class="set-list-title">Date Format</div>
+                    <div class="set-list-sub">How dates appear in your UI</div>
+                  </div>
+                  <div class="set-list-value">
+                    MMM DD, YYYY
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </div>
+                </div>
+
+                <div class="set-list-item">
+                  <div>
+                    <div class="set-list-title">Currency</div>
+                    <div class="set-list-sub">Preferred currency for financial data</div>
+                  </div>
+                  <div class="set-list-value">
+                    USD ($)
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- 7. Privacy -->
+            <div class="set-box">
+              <div class="set-box-header">
+                <div class="set-box-title">Privacy & Data</div>
+              </div>
+              <div class="set-list">
+                
+                <div class="set-list-item">
+                  <div>
+                    <div class="set-list-title">Privacy Preferences</div>
+                    <div class="set-list-sub">Manage data sharing and telemetry</div>
+                  </div>
+                  <div class="set-list-value">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </div>
+                </div>
+
+                <div class="set-list-item">
+                  <div>
+                    <div class="set-list-title">Download My Data</div>
+                    <div class="set-list-sub">Request an archive of your personal information</div>
+                  </div>
+                  <div class="set-list-value">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </div>
+                </div>
+
+                <div class="set-list-item">
+                  <div>
+                    <div class="set-list-title">Export Account</div>
+                    <div class="set-list-sub">Transfer your data to another workspace</div>
+                  </div>
+                  <div class="set-list-value">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </div>
+                </div>
+                
+                <div class="set-list-item">
+                  <div>
+                    <div class="set-list-title danger">Delete Account</div>
+                    <div class="set-list-sub">Permanently remove your account and data</div>
+                  </div>
+                  <div class="set-list-value">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </section>
+
+          <!-- 8. Connected Devices -->
+          <section class="set-section">
+            <div class="set-box">
+              <div class="set-box-header">
+                <div class="set-box-title">Connected Devices</div>
+                <button class="btn btn-secondary btn-sm">Sign Out All Other Devices</button>
+              </div>
+              <table class="set-table">
+                <thead>
+                  <tr>
+                    <th>Device</th>
+                    <th>Browser</th>
+                    <th>Location</th>
+                    <th>Last Active</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <div class="set-device-name">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3);"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                        MacBook Pro 16"
+                      </div>
+                    </td>
+                    <td>Chrome 118.0</td>
+                    <td>San Francisco, CA</td>
+                    <td>Just now</td>
+                    <td><span class="badge badge-success">Active Now</span></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="set-device-name">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3);"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                        iPhone 15 Pro
+                      </div>
+                    </td>
+                    <td>Safari Mobile</td>
+                    <td>San Francisco, CA</td>
+                    <td>2 hours ago</td>
+                    <td><span class="badge badge-neutral">Offline</span></td>
+                    <td><button class="btn btn-ghost btn-sm" style="color:var(--danger); padding:0;">Logout</button></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="set-device-name">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3);"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                        Windows Desktop
+                      </div>
+                    </td>
+                    <td>Edge 117.0</td>
+                    <td>New York, NY</td>
+                    <td>Oct 12, 2026</td>
+                    <td><span class="badge badge-neutral">Offline</span></td>
+                    <td><button class="btn btn-ghost btn-sm" style="color:var(--danger); padding:0;">Logout</button></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </section>
 
         </div>
-
       </main>
+
     </div>
   </div>
 
