@@ -154,8 +154,8 @@
                   <h2 class="mc-section-title">Company Health</h2>
                   <a href="#" class="mc-section-link">All Metrics →</a>
                 </div>
-                <div class="mc-health-grid">
-                  <div class="mc-health-card mc-health-card-large">
+                <div class="mc-health-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+                  <div class="mc-health-card">
                     <div class="mc-health-top">
                       <div class="mc-health-icon" style="background:var(--success-50);color:var(--success);">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
@@ -183,7 +183,7 @@
                     </div>
                     <div>
                       <div class="mc-health-value">8</div>
-                      <div class="mc-health-label">Active Projects</div>
+                      <div class="mc-health-label">Projects</div>
                     </div>
                   </div>
                   <div class="mc-health-card">
@@ -198,7 +198,19 @@
                     </div>
                     <div>
                       <div class="mc-health-value">24</div>
-                      <div class="mc-health-label">Active Clients</div>
+                      <div class="mc-health-label">Clients</div>
+                    </div>
+                  </div>
+                  <div class="mc-health-card">
+                    <div class="mc-health-top">
+                      <div class="mc-health-icon" style="background:var(--danger-50);color:var(--danger);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                      </div>
+                      <span class="badge badge-danger" style="font-size:10px;padding:2px 6px;">3 Due</span>
+                    </div>
+                    <div>
+                      <div class="mc-health-value">12</div>
+                      <div class="mc-health-label">Invoices</div>
                     </div>
                   </div>
                 </div>
@@ -425,30 +437,46 @@
               <div class="mc-performance-grid">
                 <div class="mc-perf-card">
                   <div class="mc-perf-avatar" style="background:var(--primary);">SH</div>
-                  <div>
-                    <div class="mc-perf-name">Shahim</div>
-                    <div class="mc-perf-role">CEO · Admin</div>
+                  <div style="flex: 1;">
+                    <div class="mc-perf-name" style="margin-bottom: 4px;">Shahim</div>
+                    <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-3);">
+                      <span>6.5h</span>
+                      <span>8 tasks</span>
+                      <span style="color: var(--success); font-weight: 700;">94%</span>
+                    </div>
                   </div>
                 </div>
                 <div class="mc-perf-card">
                   <div class="mc-perf-avatar" style="background:#6366F1;">MK</div>
-                  <div>
-                    <div class="mc-perf-name">Midhul K</div>
-                    <div class="mc-perf-role">Design Lead</div>
+                  <div style="flex: 1;">
+                    <div class="mc-perf-name" style="margin-bottom: 4px;">Midhul K</div>
+                    <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-3);">
+                      <span>7.2h</span>
+                      <span>12 tasks</span>
+                      <span style="color: var(--success); font-weight: 700;">98%</span>
+                    </div>
                   </div>
                 </div>
                 <div class="mc-perf-card">
                   <div class="mc-perf-avatar" style="background:#EC4899;">SF</div>
-                  <div>
-                    <div class="mc-perf-name">Shafna F</div>
-                    <div class="mc-perf-role">Sales Manager</div>
+                  <div style="flex: 1;">
+                    <div class="mc-perf-name" style="margin-bottom: 4px;">Shafna F</div>
+                    <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-3);">
+                      <span>5.0h</span>
+                      <span>4 tasks</span>
+                      <span style="color: var(--warning); font-weight: 700;">85%</span>
+                    </div>
                   </div>
                 </div>
                 <div class="mc-perf-card">
                   <div class="mc-perf-avatar" style="background:#F59E0B;">RN</div>
-                  <div>
-                    <div class="mc-perf-name">Rahan N</div>
-                    <div class="mc-perf-role">Marketing Lead</div>
+                  <div style="flex: 1;">
+                    <div class="mc-perf-name" style="margin-bottom: 4px;">Rahan N</div>
+                    <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-3);">
+                      <span>6.8h</span>
+                      <span>6 tasks</span>
+                      <span style="color: var(--success); font-weight: 700;">92%</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -573,43 +601,7 @@
           </aside>
         </div> <!-- /mc-dashboard-layout -->
 
-        <!-- ==========================================
-             WORKSPACE FRAMEWORK: FOOTER & AI PANEL
-             ========================================== -->
-        <footer class="ws-footer" style="margin-top:64px;">
-          <div style="display:flex;gap:16px;">
-            <span><strong>Last Sync:</strong> Live</span>
-            <span><strong>User:</strong> Shahim</span>
-          </div>
-          <div style="display:flex;gap:16px;">
-            <a href="#" style="color:var(--primary);text-decoration:none;">Help & Support</a>
-            <span>VERDE OS v2.0 Workspace</span>
-          </div>
-        </footer>
-
-        <aside class="ai-floating-panel" id="ws-ai-panel">
-          <div class="ai-panel-header">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-              </svg>
-              Workspace AI Copilot
-            </div>
-            <button class="btn btn-ghost" style="padding:4px;height:auto;"
-              onclick="document.getElementById('ws-ai-panel').classList.remove('active')">✕</button>
-          </div>
-          <div class="ai-panel-body">
-            <p>Hello! I am your AI Assistant for this workspace. I can help you analyze trends, summarize data, and
-              automate actions.</p>
-            <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px;">
-              <button class="btn btn-sm btn-secondary" style="width:100%;justify-content:flex-start;">✨ Summarize this
-                view</button>
-              <button class="btn btn-sm btn-secondary" style="width:100%;justify-content:flex-start;">📈 Generate
-                Insight Report</button>
-            </div>
-          </div>
-        </aside>
+        <!-- Footer and AI Panel removed per reference requirements -->
 
       </main>
     </div>
