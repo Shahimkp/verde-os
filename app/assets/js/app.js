@@ -1,16 +1,21 @@
 /* ==========================================================================
    VERDE OS — APPLICATION ENTRY POINT & ORCHESTRATOR
-   Initializes Components, Navigation & Session Management
+   Initializes State, Components, Services, Navigation & Permissions
    ========================================================================== */
 
 (function () {
   'use strict';
 
   window.VERDE_APP = {
-    version: '1.0.0',
+    version: '2.0.0-REST-READY',
     name: 'VERDE OS Shared Framework Orchestrator',
-    
+
     init: function () {
+      // 0. Initialize Global App State Store
+      if (window.VerdeState && typeof window.VerdeState.init === 'function') {
+        window.VerdeState.init();
+      }
+
       // 1. Render Layout Components into placeholder IDs
       if (window.VERDE_COMPONENTS && typeof window.VERDE_COMPONENTS.render === 'function') {
         window.VERDE_COMPONENTS.render();
@@ -36,4 +41,3 @@
     window.VERDE_APP.init();
   }
 })();
-

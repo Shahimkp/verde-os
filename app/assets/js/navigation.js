@@ -60,7 +60,6 @@
       'crm': 'CRM & Sales Workspace',
       'finance': 'Finance Workspace',
       'reports': 'Reports & Analytics',
-      'communication': 'Communication Workspace',
       'team': 'Team Management',
       'create-project': 'Create Project',
       'ai-hub': 'VERDE Copilot',

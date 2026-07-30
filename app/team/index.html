@@ -493,7 +493,7 @@
               <button class="btn btn-ghost" style="background:var(--surface); border:1px solid var(--border);">
                 Status
               </button>
-              <button class="btn btn-primary">+ Add Employee</button>
+              <button class="btn btn-primary" onclick="alert('Add employee dialog coming soon.')">+ Add Employee</button>
             </div>
           </header>
 
@@ -539,7 +539,7 @@
                     <div class="team-wl-fill" style="width: 100%; background:var(--danger);"></div>
                   </div>
                 </div>
-                <button class="btn btn-ghost btn-sm team-dir-action" style="border:1px solid var(--border);">View
+                <button class="btn btn-ghost btn-sm team-dir-action" style="border:1px solid var(--border);" onclick="alert('Profile details coming soon.')">View
                   Profile</button>
               </div>
 
@@ -558,7 +558,7 @@
                     <div class="team-wl-fill" style="width: 85%; background:var(--warning);"></div>
                   </div>
                 </div>
-                <button class="btn btn-ghost btn-sm team-dir-action" style="border:1px solid var(--border);">View
+                <button class="btn btn-ghost btn-sm team-dir-action" style="border:1px solid var(--border);" onclick="alert('Profile details coming soon.')">View
                   Profile</button>
               </div>
 
@@ -577,7 +577,7 @@
                     <div class="team-wl-fill" style="width: 60%; background:var(--primary);"></div>
                   </div>
                 </div>
-                <button class="btn btn-ghost btn-sm team-dir-action" style="border:1px solid var(--border);">View
+                <button class="btn btn-ghost btn-sm team-dir-action" style="border:1px solid var(--border);" onclick="alert('Profile details coming soon.')">View
                   Profile</button>
               </div>
 
@@ -596,10 +596,37 @@
                     <div class="team-wl-fill" style="width: 45%; background:var(--success);"></div>
                   </div>
                 </div>
-                <button class="btn btn-ghost btn-sm team-dir-action" style="border:1px solid var(--border);">View
+                <button class="btn btn-ghost btn-sm team-dir-action" style="border:1px solid var(--border);" onclick="alert('Profile details coming soon.')">View
                   Profile</button>
               </div>
 
+            </div>
+
+            <!-- UX States (Hidden by default) -->
+            <div style="display:none;" class="empty-state">
+              <div class="empty-state-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              </div>
+              <div class="empty-state-title">No Team Members Found</div>
+              <div class="empty-state-desc">You don't have any team members matching your search.</div>
+              <button class="btn btn-primary" style="margin-top:16px;">Invite Member</button>
+            </div>
+
+            <div style="display:none; margin-top:24px; gap:24px;" class="team-grid">
+              <div class="skeleton-card" style="height:250px;"></div>
+              <div class="skeleton-card" style="height:250px;"></div>
+              <div class="skeleton-card" style="height:250px;"></div>
+              <div class="skeleton-card" style="height:250px;"></div>
+            </div>
+
+            <div style="display:none; margin-top:24px;" class="alert alert-danger">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              <span>Failed to fetch team directory. Please try again.</span>
+            </div>
+
+            <div style="display:none; margin-top:24px;" class="alert alert-success">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+              <span>Team member successfully invited.</span>
             </div>
           </section>
 
@@ -689,7 +716,7 @@
                 </div>
               </div>
 
-              <table class="team-table">
+              <table class="table-enterprise">
                 <thead>
                   <tr>
                     <th>Employee</th>
@@ -708,11 +735,11 @@
                         <span style="font-weight:700;">Shahim</span>
                       </div>
                     </td>
-                    <td><span style="color:var(--success); font-weight:700;">Present</span></td>
+                    <td><span class="badge badge-success">Present</span></td>
                     <td style="color:var(--text-2);">08:30 AM</td>
                     <td style="color:var(--text-2);">--</td>
                     <td style="font-weight:700;">4h 15m</td>
-                    <td><button class="btn btn-sm btn-ghost">View</button></td>
+                    <td><button class="btn btn-sm btn-ghost" onclick="alert('Review details coming soon.')">View</button></td>
                   </tr>
                   <tr>
                     <td>
@@ -723,11 +750,11 @@
                         <span style="font-weight:700;">Midhul</span>
                       </div>
                     </td>
-                    <td><span style="color:var(--success); font-weight:700;">Present</span></td>
+                    <td><span class="badge badge-success">Present</span></td>
                     <td style="color:var(--text-2);">09:00 AM</td>
                     <td style="color:var(--text-2);">--</td>
                     <td style="font-weight:700;">3h 45m</td>
-                    <td><button class="btn btn-sm btn-ghost">View</button></td>
+                    <td><button class="btn btn-sm btn-ghost" onclick="alert('Review details coming soon.')">View</button></td>
                   </tr>
                   <tr>
                     <td>
@@ -738,11 +765,11 @@
                         <span style="font-weight:700;">Ameen</span>
                       </div>
                     </td>
-                    <td><span style="color:var(--success); font-weight:700;">Present (WFH)</span></td>
+                    <td><span class="badge badge-success">Present (WFH)</span></td>
                     <td style="color:var(--text-2);">09:15 AM</td>
                     <td style="color:var(--text-2);">--</td>
                     <td style="font-weight:700;">3h 30m</td>
-                    <td><button class="btn btn-sm btn-ghost">View</button></td>
+                    <td><button class="btn btn-sm btn-ghost" onclick="alert('Review details coming soon.')">View</button></td>
                   </tr>
                   <tr>
                     <td>
@@ -753,14 +780,21 @@
                         <span style="font-weight:700;">Nihal</span>
                       </div>
                     </td>
-                    <td><span style="color:var(--warning); font-weight:700;">On Leave</span></td>
+                    <td><span class="badge badge-warning">On Leave</span></td>
                     <td style="color:var(--text-3);">--</td>
                     <td style="color:var(--text-3);">--</td>
                     <td style="font-weight:700; color:var(--text-3);">0h 0m</td>
-                    <td><button class="btn btn-sm btn-ghost">View</button></td>
+                    <td><button class="btn btn-sm btn-ghost" onclick="alert('Review details coming soon.')">View</button></td>
                   </tr>
                 </tbody>
               </table>
+              <div style="display:flex; justify-content:space-between; align-items:center; padding-top:16px;">
+                <div style="color:var(--text-3); font-size:0.875rem;">Showing 1 to 4 of 42 employees</div>
+                <div style="display:flex; gap:8px;">
+                  <button class="btn btn-ghost btn-sm" disabled style="border:1px solid var(--border);">Prev</button>
+                  <button class="btn btn-ghost btn-sm" style="border:1px solid var(--border);">Next</button>
+                </div>
+              </div>
             </div>
           </section>
 
@@ -784,8 +818,8 @@
                     </div>
                   </div>
                   <div style="display:flex; gap:8px;">
-                    <button class="btn btn-sm btn-primary">Approve</button>
-                    <button class="btn btn-sm btn-ghost" style="border:1px solid var(--border);">Reject</button>
+                    <button class="btn btn-sm btn-primary" onclick="alert('Request approved.')">Approve</button>
+                    <button class="btn btn-sm btn-ghost" style="border:1px solid var(--border);" onclick="alert('Request rejected.')">Reject</button>
                   </div>
                 </div>
 
@@ -800,8 +834,8 @@
                     </div>
                   </div>
                   <div style="display:flex; gap:8px;">
-                    <button class="btn btn-sm btn-primary">Approve</button>
-                    <button class="btn btn-sm btn-ghost" style="border:1px solid var(--border);">Reject</button>
+                    <button class="btn btn-sm btn-primary" onclick="alert('Request approved.')">Approve</button>
+                    <button class="btn btn-sm btn-ghost" style="border:1px solid var(--border);" onclick="alert('Request rejected.')">Reject</button>
                   </div>
                 </div>
 
@@ -929,6 +963,13 @@
   <div id="statusbar-container"></div>
   <div id="overlays-container"></div>
 
+  <script src="../assets/js/models.js"></script>
+  <script src="../assets/js/mock-data.js"></script>
+  <script src="../assets/js/state.js"></script>
+  <script src="../assets/js/permissions.js"></script>
+  <script src="../assets/js/toast.js"></script>
+  <script src="../assets/js/modal.js"></script>
+  <script src="../assets/js/services.js"></script>
   <script src="../assets/js/session.js"></script>
   <script src="../assets/js/components.js"></script>
   <script src="../assets/js/navigation.js"></script>

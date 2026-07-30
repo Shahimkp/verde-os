@@ -632,7 +632,7 @@
                 <div class="ws-dept-bottom">
                   <div>
                     <div class="ws-dept-head-label">Department Head</div>
-                    <div class="ws-dept-head-name">Sarah Jenkins</div>
+                    <div class="ws-dept-head-name">Ameen</div>
                   </div>
                 </div>
               </div>
@@ -648,7 +648,7 @@
                 <div class="ws-dept-bottom">
                   <div>
                     <div class="ws-dept-head-label">Department Head</div>
-                    <div class="ws-dept-head-name">Michael Chen</div>
+                    <div class="ws-dept-head-name">Nihal</div>
                   </div>
                 </div>
               </div>
@@ -754,6 +754,31 @@
                 <button class="btn btn-primary btn-sm">Connect</button>
               </div>
 
+            </div>
+
+            <!-- UX States (Hidden by default) -->
+            <div style="display:none;" class="empty-state">
+              <div class="empty-state-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+              </div>
+              <div class="empty-state-title">No Integrations Configured</div>
+              <div class="empty-state-desc">Connect external apps to streamline your workspace workflows.</div>
+              <button class="btn btn-primary" style="margin-top:16px;">Browse App Directory</button>
+            </div>
+
+            <div style="display:none; margin-top:24px; gap:24px;" class="ws-int-grid">
+              <div class="skeleton-card" style="height:64px; min-height:64px;"></div>
+              <div class="skeleton-card" style="height:64px; min-height:64px;"></div>
+            </div>
+
+            <div style="display:none; margin-top:24px;" class="alert alert-danger">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              <span>Failed to fetch integration status. Please try again.</span>
+            </div>
+
+            <div style="display:none; margin-top:24px;" class="alert alert-success">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+              <span>Integration successfully connected.</span>
             </div>
           </section>
 
@@ -918,6 +943,13 @@
   <div id="statusbar-container"></div>
   <div id="overlays-container"></div>
 
+  <script src="../assets/js/models.js"></script>
+  <script src="../assets/js/mock-data.js"></script>
+  <script src="../assets/js/state.js"></script>
+  <script src="../assets/js/permissions.js"></script>
+  <script src="../assets/js/toast.js"></script>
+  <script src="../assets/js/modal.js"></script>
+  <script src="../assets/js/services.js"></script>
   <script src="../assets/js/session.js"></script>
   <script src="../assets/js/components.js"></script>
   <script src="../assets/js/navigation.js"></script>

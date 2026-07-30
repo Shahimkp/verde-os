@@ -1,176 +1,215 @@
-// --- WIZARD LOGIC ---
-    const steps = [
-      { id: 1, name: 'Project Details' },
-      { id: 2, name: 'Project Type' },
-      { id: 3, name: 'Execution Plan' },
-      { id: 4, name: 'Team Assignment' },
-      { id: 5, name: 'Review & Launch' }
-    ];
+/* ==========================================================================
+   VERDE OS — 5-STEP CREATE PROJECT WIZARD CONTROLLER
+   Restored Onboarding Stepper, Card Selections & REST Launch Integration
+   ========================================================================== */
 
-    let currentStep = 1;
-    const totalSteps = steps.length;
+(function () {
+  'use strict';
 
-    function renderStepper() {
-      const container = document.getElementById('stepper');
-      container.innerHTML = '';
+  var steps = [
+    { id: 1, name: 'Project Details' },
+    { id: 2, name: 'Project Type' },
+    { id: 3, name: 'Execution Plan' },
+    { id: 4, name: 'Team Assignment' },
+    { id: 5, name: 'Review & Launch' }
+  ];
 
-      steps.forEach((step, index) => {
-        const isDone = step.id < currentStep;
-        const isActive = step.id === currentStep;
-        let cls = 'step-item';
-        if (isDone) cls += ' done';
-        if (isActive) cls += ' active';
+  var currentStep = 1;
+  var totalSteps = steps.length;
 
-        container.innerHTML += `
-      <div class="${cls}">
-        <div class="step-num">${isDone ? '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' : step.id}</div>
-        <span>${step.name}</span>
-      </div>
-    `;
+  var selectedType = 'Website Development';
+  var selectedOwner = 'Shahim';
+  var selectedTeam = ['SH', 'MI'];
 
-        if (index < totalSteps - 1) {
-          container.innerHTML += `<div class="step-div"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>`;
-        }
-      });
+  // Render Stepper Header
+  function renderStepper() {
+    var container = document.getElementById('stepper');
+    if (!container) return;
+    container.innerHTML = '';
 
-      // Buttons
-      document.getElementById('btnBack').style.display = currentStep > 1 ? 'inline-flex' : 'none';
-      if (currentStep === totalSteps) {
-        document.getElementById('btnNext').style.display = 'none';
-        document.getElementById('btnLaunch').style.display = 'inline-flex';
-        populateReview();
-      } else {
-        document.getElementById('btnNext').style.display = 'inline-flex';
-        document.getElementById('btnLaunch').style.display = 'none';
+    steps.forEach(function (step, index) {
+      var isDone = step.id < currentStep;
+      var isActive = step.id === currentStep;
+      var cls = 'step-item';
+      if (isDone) cls += ' done';
+      if (isActive) cls += ' active';
+
+      var numContent = isDone
+        ? '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>'
+        : step.id;
+
+      container.innerHTML +=
+        '<div class="' + cls + '" onclick="goToStep(' + step.id + ')">' +
+          '<div class="step-num">' + numContent + '</div>' +
+          '<span>' + step.name + '</span>' +
+        '</div>';
+
+      if (index < totalSteps - 1) {
+        container.innerHTML += '<div class="step-div"></div>';
       }
-
-      // Content
-      document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
-      document.getElementById(`step-${currentStep}`).classList.add('active');
-    }
-
-    function validateStep1() {
-      let valid = true;
-      const name = document.getElementById('inpName');
-      const client = document.getElementById('inpClient');
-      const date = document.getElementById('inpDate');
-
-      if (!name.value.trim()) { name.parentElement.classList.add('has-error', 'error'); name.classList.add('error'); valid = false; }
-      else { name.parentElement.classList.remove('has-error'); name.classList.remove('error'); }
-
-      if (!client.value.trim()) { client.parentElement.classList.add('has-error'); client.classList.add('error'); valid = false; }
-      else { client.parentElement.classList.remove('has-error'); client.classList.remove('error'); }
-
-      if (!date.value) { date.parentElement.classList.add('has-error'); date.classList.add('error'); valid = false; }
-      else { date.parentElement.classList.remove('has-error'); date.classList.remove('error'); }
-
-      return valid;
-    }
-
-    function nextStep() {
-      if (currentStep === 1 && !validateStep1()) return;
-      if (currentStep < totalSteps) {
-        currentStep++;
-        renderStepper();
-      }
-    }
-
-    function prevStep() {
-      if (currentStep > 1) {
-        currentStep--;
-        renderStepper();
-      }
-    }
-
-    function selectTemplate(element) {
-      document.querySelectorAll('.t-card').forEach(el => el.classList.remove('active'));
-      element.classList.add('active');
-    }
-
-    function toggleCard(element) {
-      element.classList.toggle('active');
-    }
-
-    function populateReview() {
-      document.getElementById('revName').textContent = document.getElementById('inpName').value || 'GreenLeaf E-Commerce';
-      document.getElementById('revClient').textContent = document.getElementById('inpClient').value || 'GreenLeaf Organics';
-      document.getElementById('revDate').textContent = document.getElementById('inpDate').value || 'Oct 15, 2026';
-    }
-
-    function launchProject() {
-      const overlay = document.getElementById('successOverlay');
-      overlay.classList.add('active');
-
-      // Simulate API / Loading
-      setTimeout(() => {
-        document.getElementById('loadingState').style.display = 'none';
-        const successState = document.getElementById('successState');
-        successState.style.display = 'flex';
-        // Trigger browser reflow to run animation
-        void successState.offsetWidth;
-      }, 1500);
-    }
-
-    // Init
-    renderStepper();
-
-    // Remove error styling on input
-    document.querySelectorAll('.form-input').forEach(inp => {
-      inp.addEventListener('input', function () {
-        this.classList.remove('error');
-        if (this.parentElement.classList.contains('has-error')) {
-          this.parentElement.classList.remove('has-error');
-        }
-      });
     });
 
-    // --- ADD MEMBER LOGIC ---
-    let mockEmployeeDB = [];
+    // Control Buttons
+    var btnBack = document.getElementById('btnBack');
+    var btnNext = document.getElementById('btnNext');
+    var btnLaunch = document.getElementById('btnLaunch');
 
-    function saveNewMember() {
-      const nameInp = document.getElementById('ne-name');
-      const deptInp = document.getElementById('ne-dept');
-      const roleInp = document.getElementById('ne-role');
-      
-      const name = nameInp.value.trim();
-      const dept = deptInp.value.trim();
-      const role = roleInp.value.trim();
-
-      // Validation
-      let valid = true;
-      [nameInp, deptInp, roleInp].forEach(inp => {
-        if(!inp.value.trim()) { inp.classList.add('error'); valid = false; }
-        else { inp.classList.remove('error'); }
-      });
-      if(!valid) return;
-
-      const newEmp = { id: 'emp_' + Date.now(), name, role, dept };
-      mockEmployeeDB.push(newEmp);
-
-      // Create new card HTML based exactly on the existing cards
-      const initials = name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
-      const cardHTML = `
-        <div class="tm-card" onclick="toggleCard(this)">
-          <div class="tm-av" style="background:var(--primary)">${initials}</div>
-          <div class="tm-info">
-            <div class="tm-name">${name}</div>
-            <div class="tm-role">${role} · ${dept}</div>
-            <div class="tm-load">
-              <div class="tm-load-bar" style="width: 0%; background: var(--success)"></div>
-            </div>
-          </div>
-        </div>
-      `;
-
-      const grids = document.querySelectorAll('.tr-grid');
-      if (grids.length >= 2) {
-        // Append to Owner list
-        grids[0].insertAdjacentHTML('beforeend', cardHTML);
-        // Append to Execution Team list
-        grids[1].insertAdjacentHTML('beforeend', cardHTML);
-      }
-
-      // Reset modal
-      ['ne-name','ne-email','ne-phone','ne-dept','ne-role','ne-skills'].forEach(id => document.getElementById(id).value = '');
-      document.getElementById('modal-add-member').classList.remove('active');
+    if (btnBack) btnBack.style.visibility = currentStep > 1 ? 'visible' : 'hidden';
+    
+    if (currentStep === totalSteps) {
+      if (btnNext) btnNext.style.display = 'none';
+      if (btnLaunch) btnLaunch.style.display = 'inline-flex';
+      populateReview();
+    } else {
+      if (btnNext) btnNext.style.display = 'inline-flex';
+      if (btnLaunch) btnLaunch.style.display = 'none';
     }
+
+    // Toggle Active Step Panel
+    document.querySelectorAll('.step-content').forEach(function (el) {
+      el.classList.remove('active');
+    });
+    var activePanel = document.getElementById('step-' + currentStep);
+    if (activePanel) activePanel.classList.add('active');
+  }
+
+  // Validation before proceeding
+  function validateStep1() {
+    var name = document.getElementById('inpName');
+    var client = document.getElementById('inpClient');
+    var date = document.getElementById('inpDate');
+    var valid = true;
+
+    if (name && !name.value.trim()) {
+      name.style.borderColor = 'var(--danger)';
+      valid = false;
+    } else if (name) {
+      name.style.borderColor = 'var(--border)';
+    }
+
+    if (client && !client.value) {
+      client.style.borderColor = 'var(--danger)';
+      valid = false;
+    } else if (client) {
+      client.style.borderColor = 'var(--border)';
+    }
+
+    if (date && !date.value) {
+      date.style.borderColor = 'var(--danger)';
+      valid = false;
+    } else if (date) {
+      date.style.borderColor = 'var(--border)';
+    }
+
+    if (!valid && window.VerdeToast) {
+      window.VerdeToast.error('Please fill in all required fields.');
+    }
+
+    return valid;
+  }
+
+  window.nextStep = function () {
+    if (currentStep === 1 && !validateStep1()) return;
+    if (currentStep < totalSteps) {
+      currentStep++;
+      renderStepper();
+    }
+  };
+
+  window.prevStep = function () {
+    if (currentStep > 1) {
+      currentStep--;
+      renderStepper();
+    }
+  };
+
+  window.goToStep = function (stepId) {
+    if (stepId < currentStep || (stepId === currentStep + 1 && validateStep1())) {
+      currentStep = stepId;
+      renderStepper();
+    }
+  };
+
+  // Step 2 Template Card Selection
+  window.selectTemplate = function (element) {
+    document.querySelectorAll('.t-card').forEach(function (el) { el.classList.remove('active'); });
+    element.classList.add('active');
+    selectedType = element.getAttribute('data-type') || 'Website Development';
+  };
+
+  // Step 4 Owner Selection
+  window.selectOwner = function (element) {
+    document.querySelectorAll('.tr-grid:first-of-type .tm-card').forEach(function (el) { el.classList.remove('active'); });
+    element.classList.add('active');
+    selectedOwner = element.getAttribute('data-owner') || 'Shahim';
+  };
+
+  // Step 4 Team Member Selection
+  window.toggleTeamMember = function (element) {
+    element.classList.toggle('active');
+  };
+
+  // Step 5 Review Population
+  function populateReview() {
+    var elName = document.getElementById('inpName');
+    var elClient = document.getElementById('inpClient');
+    var elDate = document.getElementById('inpDate');
+    var elBudget = document.getElementById('inpBudget');
+
+    if (document.getElementById('revName')) document.getElementById('revName').textContent = elName ? elName.value || 'Cabo Travels Website' : 'Cabo Travels Website';
+    if (document.getElementById('revClient')) document.getElementById('revClient').textContent = elClient ? elClient.value || 'Cabo Travels' : 'Cabo Travels';
+    if (document.getElementById('revService')) document.getElementById('revService').textContent = selectedType;
+    if (document.getElementById('revDate')) document.getElementById('revDate').textContent = elDate ? elDate.value || 'Aug 30, 2026' : 'Aug 30, 2026';
+    if (document.getElementById('revOwner')) document.getElementById('revOwner').textContent = selectedOwner;
+    
+    if (document.getElementById('revBudget')) {
+      var b = parseFloat(elBudget ? elBudget.value || 25000 : 25000).toLocaleString('en-US', { minimumFractionDigits: 2 });
+      document.getElementById('revBudget').textContent = '$' + b;
+    }
+  }
+
+  // Save Draft
+  window.saveDraftWizard = function () {
+    if (window.VerdeToast) window.VerdeToast.info('Project draft saved.');
+  };
+
+  // Launch Project
+  window.launchProject = function () {
+    var btn = document.getElementById('btnLaunch');
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Launching...';
+    }
+
+    var payload = {
+      name: document.getElementById('inpName') ? document.getElementById('inpName').value : 'New Project',
+      client: document.getElementById('inpClient') ? document.getElementById('inpClient').value : 'Cabo Travels',
+      category: selectedType,
+      dueDate: document.getElementById('inpDate') ? document.getElementById('inpDate').value : '2026-08-30',
+      budget: parseFloat(document.getElementById('inpBudget') ? document.getElementById('inpBudget').value : 25000),
+      pm: selectedOwner
+    };
+
+    if (window.VerdeServices && window.VerdeServices.Projects) {
+      window.VerdeServices.Projects.createProject(payload).then(function (res) {
+        if (window.VerdeToast) window.VerdeToast.success('Project "' + res.name + '" created successfully!');
+        setTimeout(function () {
+          window.location.href = '../projects/index.html';
+        }, 1200);
+      });
+    } else {
+      if (window.VerdeToast) window.VerdeToast.success('Project created successfully!');
+      setTimeout(function () {
+        window.location.href = '../projects/index.html';
+      }, 1200);
+    }
+  };
+
+  // Init
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderStepper);
+  } else {
+    renderStepper();
+  }
+
+})();

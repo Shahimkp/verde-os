@@ -584,3 +584,131 @@
     display: flex;
   }
 }
+
+/* ==========================================================================
+   GLOBAL RESPONSIVENESS SYSTEM (Desktop, Laptop, Tablet, Mobile)
+   ========================================================================== */
+
+/* 1. TABLE SCROLLING & OVERFLOW CONTROL */
+.table-container,
+.table-enterprise-wrap,
+.task-table-container,
+.crm-table-container,
+.fin-table-container,
+.rep-table-container,
+.ws-table-container,
+.mkt-table-container,
+.team-table-container {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-enterprise, table {
+  min-width: 600px;
+}
+
+/* 2. LAPTOP BREAKPOINT (<= 1280px) */
+@media (max-width: 1280px) {
+  .proj-kpi-grid,
+  .crm-kcard-grid,
+  .team-kpi-grid,
+  .fin-kpi-grid,
+  .ws-kpi-grid,
+  .mkt-kpi-grid,
+  .mc-kpi-grid,
+  .rep-kpi-grid,
+  .team-alloc-grid,
+  .milestones-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .proj-grid,
+  .ws-dept-grid,
+  .ws-int-grid,
+  .team-dir-grid,
+  .mkt-social-grid,
+  .perf-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 3. TABLET BREAKPOINT (<= 1024px) */
+@media (max-width: 1024px) {
+  .app-content,
+  .content-wrap {
+    padding: 20px;
+  }
+
+  .proj-half-grid,
+  .crm-grid-half,
+  .rep-half-grid,
+  .fin-half-grid,
+  .ws-half-grid,
+  .mkt-grid-2-1,
+  .mc-grid-half,
+  .ds-component-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .crm-kanban-board {
+    padding-bottom: 16px;
+  }
+}
+
+/* 4. MOBILE BREAKPOINT (<= 768px) */
+@media (max-width: 768px) {
+  .app-content,
+  .content-wrap {
+    padding: 16px;
+  }
+
+  .proj-kpi-grid,
+  .crm-kcard-grid,
+  .team-kpi-grid,
+  .fin-kpi-grid,
+  .ws-kpi-grid,
+  .mkt-kpi-grid,
+  .mc-kpi-grid,
+  .rep-kpi-grid,
+  .team-alloc-grid,
+  .milestones-grid,
+  .proj-grid,
+  .ws-dept-grid,
+  .ws-int-grid,
+  .team-dir-grid,
+  .mkt-social-grid,
+  .perf-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card, .surface-card, .proj-card, .crm-lead-card, .crm-kcard, .mc-card,
+  .fin-box, .rep-box, .ws-box, .mkt-box, .team-dir-card, .perf-card {
+    padding: 16px;
+  }
+
+  .mkt-campaign-item,
+  .task-item,
+  .rep-item,
+  .pend-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+
+/* 5. SMALL MOBILE BREAKPOINT (<= 480px) */
+@media (max-width: 480px) {
+  .app-content,
+  .content-wrap {
+    padding: 12px;
+  }
+
+  .btn-lg {
+    height: 40px;
+    padding: 0 16px;
+    font-size: 0.875rem;
+  }
+}

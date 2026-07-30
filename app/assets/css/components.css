@@ -303,3 +303,101 @@
 
 .empty-state-title { font-size: 16px; font-weight: 700; color: var(--text-1); }
 .empty-state-desc { font-size: 13px; color: var(--text-3); max-width: 320px; }
+
+/* ==========================================================================
+   10. GLOBAL SUBTLE MICRO-INTERACTIONS & ELEVATIONS (200–250ms TRANSITIONS)
+   ========================================================================== */
+
+/* Cards & Elevated Containers */
+.card, .surface-card, .proj-card, .crm-lead-card, .crm-kcard, .mc-card,
+.fin-box, .rep-box, .ws-box, .mkt-box, .team-dir-card, .perf-card,
+.mc-project-card, .proj-kpi-card, .team-kpi-card, .ws-kpi-card, .mkt-kpi-card,
+.mkt-social-item, .ws-dept-card, .ws-int-card, .task-card, .my-card,
+.cf-chart-area, .ai-card, .ds-card {
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 220ms cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 220ms ease;
+}
+
+.card:hover, .surface-card:hover, .proj-card:hover, .crm-lead-card:hover,
+.crm-kcard:hover, .mc-card:hover, .fin-box:hover, .rep-box:hover, .ws-box:hover,
+.mkt-box:hover, .team-dir-card:hover, .perf-card:hover, .mc-project-card:hover,
+.proj-kpi-card:hover, .team-kpi-card:hover, .ws-kpi-card:hover, .mkt-kpi-card:hover,
+.mkt-social-item:hover, .ws-dept-card:hover, .ws-int-card:hover, .task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px -4px rgba(15, 23, 42, 0.06), 0 4px 8px -2px rgba(15, 23, 42, 0.03);
+  border-color: var(--border-hover, #CBD5E1);
+}
+
+/* Buttons */
+.btn, .ds-btn {
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 220ms ease,
+              border-color 220ms ease,
+              color 220ms ease;
+}
+
+.btn:hover, .ds-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 138, 0.08);
+}
+
+.btn:active, .ds-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn:focus-visible, button:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring, 0 0 0 3px rgba(0, 0, 138, 0.15));
+}
+
+/* Inputs & Dropdowns Focus & Hover States */
+.form-input, .form-select, .form-textarea, .form-date,
+input[type="text"], input[type="search"], input[type="password"], input[type="email"], select, textarea {
+  transition: border-color 200ms ease, box-shadow 200ms ease, background-color 200ms ease;
+}
+
+.form-input:hover, .form-select:hover, .form-textarea:hover, .form-date:hover,
+input[type="text"]:hover, input[type="search"]:hover, select:hover, textarea:hover {
+  border-color: var(--border-hover, #CBD5E1);
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus, .form-date:focus,
+input[type="text"]:focus, input[type="search"]:focus, select:focus, textarea:focus {
+  border-color: var(--primary, #00008A);
+  box-shadow: 0 0 0 3px rgba(0, 0, 138, 0.12);
+  outline: none;
+}
+
+/* Tables & Row Transitions */
+.table-enterprise tbody tr, table tbody tr {
+  transition: background-color 200ms ease, border-color 200ms ease;
+}
+
+.table-enterprise tbody tr:hover, table tbody tr:hover {
+  background-color: var(--bg-subtle, #F1F4F9);
+}
+
+/* Sidebar Links & Switcher Transitions */
+.sidebar-item, .nav-item, .sidebar-workspace-switcher, .sidebar-collapse-btn {
+  transition: background-color 200ms ease, color 200ms ease, transform 200ms ease, border-color 200ms ease;
+}
+
+.sidebar-item:hover, .nav-item:hover {
+  background-color: var(--bg-subtle, #F1F4F9);
+  color: var(--text-1);
+  transform: translateX(2px);
+}
+
+.sidebar-workspace-switcher:hover {
+  background-color: var(--bg-subtle, #F1F4F9);
+  transform: translateY(-1px);
+}
+
+/* Smooth Fade & Dropdown Popup Effects */
+.dropdown-menu, .select-dropdown, .menu-popup, .modal-overlay, .modal-content {
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+

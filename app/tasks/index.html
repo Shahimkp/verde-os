@@ -411,7 +411,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
                 Sort
               </button>
-              <button class="btn btn-primary">+ New Task</button>
+              <button class="btn btn-primary" onclick="alert('Create task dialog coming soon.')">+ New Task</button>
             </div>
           </header>
 
@@ -495,7 +495,7 @@
                     <input type="checkbox" class="focus-check" />
                     <div>
                       <div class="task-item-text">Deploy Landing Page</div>
-                      <div class="task-item-sub">TechNova Dashboard • 30m</div>
+                      <div class="task-item-sub">Vertex Systems API • 30m</div>
                     </div>
                   </div>
                   <span class="badge badge-medium">Medium</span>
@@ -567,7 +567,7 @@
                     </div>
                     <div>
                       <div class="task-item-text">Review Approved</div>
-                      <div class="task-item-sub">Sarah approved Cabo Homepage</div>
+                      <div class="task-item-sub">Ameen approved Cabo Homepage</div>
                     </div>
                   </div>
                 </div>
@@ -633,7 +633,7 @@
                       <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                       0/4
                     </div>
-                    <div class="task-avatar" style="background:var(--success);">AK</div>
+                    <div class="task-avatar" style="background:var(--success);">NH</div>
                   </div>
                 </div>
               </div>
@@ -668,7 +668,7 @@
               <div class="task-card">
                 <div>
                   <div class="task-card-title">Deploy Landing Page</div>
-                  <div class="task-card-project">TechNova Dashboard</div>
+                  <div class="task-card-project">Vertex Systems API</div>
                 </div>
                 <div><span class="badge badge-medium">Medium</span></div>
                 <div class="task-card-meta">
@@ -678,7 +678,7 @@
                       <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                       4h
                     </div>
-                    <div class="task-avatar" style="background:var(--warning);">JD</div>
+                    <div class="task-avatar" style="background:var(--warning);">MI</div>
                   </div>
                 </div>
               </div>
@@ -701,7 +701,7 @@
                 <div class="task-card-meta">
                   <div style="color:var(--danger);">Yesterday</div>
                   <div style="display:flex; gap:12px; align-items:center;">
-                    <div class="task-avatar" style="background:var(--text-3);">SM</div>
+                    <div class="task-avatar" style="background:var(--text-3);">AM</div>
                   </div>
                 </div>
               </div>
@@ -741,14 +741,9 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                 <input type="text" placeholder="Filter tasks by name or project..." />
               </div>
-              <div style="display:flex; gap:12px; align-items:center; font-size:12px; font-weight:600; color:var(--text-2);">
-                <span>1 - 6 of 24</span>
-                <button class="btn btn-sm btn-ghost" disabled>&lt;</button>
-                <button class="btn btn-sm btn-ghost">&gt;</button>
-              </div>
             </div>
             
-            <table class="task-table">
+            <table class="table-enterprise">
               <thead>
                 <tr>
                   <th>Task</th>
@@ -768,16 +763,16 @@
                   <td><div class="task-avatar" style="width:20px; height:20px; font-size:8px;">SH</div></td>
                   <td style="color:var(--danger); font-weight:700;">Today</td>
                   <td><span class="badge badge-low" style="background:var(--border); color:var(--text-2);">To Do</span></td>
-                  <td><button class="btn btn-sm btn-ghost">Edit</button></td>
+                  <td><button class="btn btn-sm btn-ghost" onclick="alert('Edit task dialog coming soon.')">Edit</button></td>
                 </tr>
                 <tr>
                   <td style="font-weight:700;">Approve Invoice #INV-204</td>
                   <td style="color:var(--text-2);">Finance</td>
                   <td><span class="badge badge-high">High</span></td>
-                  <td><div class="task-avatar" style="width:20px; height:20px; font-size:8px; background:var(--text-3);">SM</div></td>
+                  <td><div class="task-avatar" style="width:20px; height:20px; font-size:8px; background:var(--text-3);">AM</div></td>
                   <td style="color:var(--danger); font-weight:700;">Yesterday</td>
                   <td><span class="badge badge-low" style="background:var(--warning-10); color:var(--warning);">Review</span></td>
-                  <td><button class="btn btn-sm btn-ghost">Edit</button></td>
+                  <td><button class="btn btn-sm btn-ghost" onclick="alert('Edit task dialog coming soon.')">Edit</button></td>
                 </tr>
                 <tr>
                   <td style="font-weight:700;">Finalize Proposal</td>
@@ -786,25 +781,25 @@
                   <td><div class="task-avatar" style="width:20px; height:20px; font-size:8px;">SH</div></td>
                   <td style="color:var(--text-1); font-weight:700;">Today</td>
                   <td><span class="badge badge-low" style="background:var(--primary-10); color:var(--primary);">In Progress</span></td>
-                  <td><button class="btn btn-sm btn-ghost">Edit</button></td>
+                  <td><button class="btn btn-sm btn-ghost" onclick="alert('Edit task dialog coming soon.')">Edit</button></td>
                 </tr>
                 <tr>
                   <td style="font-weight:700;">Client Meeting Preparation</td>
                   <td style="color:var(--text-2);">GreenLeaf Branding</td>
                   <td><span class="badge badge-medium">Medium</span></td>
-                  <td><div class="task-avatar" style="width:20px; height:20px; font-size:8px; background:var(--success);">AK</div></td>
+                  <td><div class="task-avatar" style="width:20px; height:20px; font-size:8px; background:var(--success);">NH</div></td>
                   <td style="color:var(--text-2);">Tomorrow</td>
                   <td><span class="badge badge-low" style="background:var(--border); color:var(--text-2);">To Do</span></td>
-                  <td><button class="btn btn-sm btn-ghost">Edit</button></td>
+                  <td><button class="btn btn-sm btn-ghost" onclick="alert('Edit task dialog coming soon.')">Edit</button></td>
                 </tr>
                 <tr>
                   <td style="font-weight:700;">Deploy Landing Page</td>
-                  <td style="color:var(--text-2);">TechNova Dashboard</td>
+                  <td style="color:var(--text-2);">Vertex Systems API</td>
                   <td><span class="badge badge-medium">Medium</span></td>
-                  <td><div class="task-avatar" style="width:20px; height:20px; font-size:8px; background:var(--warning);">JD</div></td>
+                  <td><div class="task-avatar" style="width:20px; height:20px; font-size:8px; background:var(--warning);">MI</div></td>
                   <td style="color:var(--text-1); font-weight:700;">Today</td>
                   <td><span class="badge badge-low" style="background:var(--primary-10); color:var(--primary);">In Progress</span></td>
-                  <td><button class="btn btn-sm btn-ghost">Edit</button></td>
+                  <td><button class="btn btn-sm btn-ghost" onclick="alert('Edit task dialog coming soon.')">Edit</button></td>
                 </tr>
                 <tr>
                   <td style="font-weight:700; text-decoration:line-through; color:var(--text-3);">Database Schema Review</td>
@@ -813,10 +808,39 @@
                   <td><div class="task-avatar" style="width:20px; height:20px; font-size:8px;">SH</div></td>
                   <td style="color:var(--text-3);">Today</td>
                   <td><span class="badge badge-low" style="background:var(--success-10); color:var(--success);">Completed</span></td>
-                  <td><button class="btn btn-sm btn-ghost">Edit</button></td>
+                  <td><button class="btn btn-sm btn-ghost" onclick="alert('Edit task dialog coming soon.')">Edit</button></td>
                 </tr>
               </tbody>
             </table>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding-top:16px;">
+              <div style="color:var(--text-3); font-size:0.875rem;">Showing 1 - 6 of 24</div>
+              <div style="display:flex; gap:8px;">
+                <button class="btn btn-ghost btn-sm" disabled style="border:1px solid var(--border);">Prev</button>
+                <button class="btn btn-ghost btn-sm" style="border:1px solid var(--border);">Next</button>
+              </div>
+            </div>
+
+            <!-- UX States (Hidden by default) -->
+            <div style="display:none;" class="empty-state">
+              <div class="empty-state-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              </div>
+              <div class="empty-state-title">No Tasks Found</div>
+              <div class="empty-state-desc">You're all caught up! Create a new task to get started.</div>
+              <button class="btn btn-primary" style="margin-top:16px;">+ New Task</button>
+            </div>
+
+            <div style="display:none; margin-top:24px;" class="skeleton-table"></div>
+
+            <div style="display:none; margin-top:24px;" class="alert alert-danger">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              <span>Failed to load tasks. Please try again.</span>
+            </div>
+
+            <div style="display:none; margin-top:24px;" class="alert alert-success">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+              <span>Task successfully updated.</span>
+            </div>
           </div>
 
         </div>
@@ -828,6 +852,13 @@
   <div id="statusbar-container"></div>
   <div id="overlays-container"></div>
 
+  <script src="../assets/js/models.js"></script>
+  <script src="../assets/js/mock-data.js"></script>
+  <script src="../assets/js/state.js"></script>
+  <script src="../assets/js/permissions.js"></script>
+  <script src="../assets/js/toast.js"></script>
+  <script src="../assets/js/modal.js"></script>
+  <script src="../assets/js/services.js"></script>
   <script src="../assets/js/session.js"></script>
   <script src="../assets/js/components.js"></script>
   <script src="../assets/js/navigation.js"></script>

@@ -504,7 +504,7 @@
                   </svg>
                 </button>
               </div>
-              <button class="btn btn-primary">+ New Project</button>
+              <button class="btn btn-primary" onclick="window.location.href='../create-project/index.html'">+ New Project</button>
             </div>
           </header>
 
@@ -554,7 +554,7 @@
                   <div>Aug 30, 2026</div>
                   <div class="proj-avatars">
                     <div class="proj-avatar">SH</div>
-                    <div class="proj-avatar" style="background:var(--warning);">JD</div>
+                    <div class="proj-avatar" style="background:var(--warning);">MI</div>
                   </div>
                   <div class="proj-actions">
                     <button class="btn btn-sm btn-ghost" style="border:1px solid var(--border);">View</button>
@@ -583,7 +583,7 @@
                 <div class="proj-card-meta">
                   <div>Sep 15, 2026</div>
                   <div class="proj-avatars">
-                    <div class="proj-avatar" style="background:var(--success);">AK</div>
+                    <div class="proj-avatar" style="background:var(--success);">NH</div>
                   </div>
                   <div class="proj-actions">
                     <button class="btn btn-sm btn-ghost" style="border:1px solid var(--border);">View</button>
@@ -613,7 +613,7 @@
                   <div style="color:var(--warning);">Aug 05, 2026</div>
                   <div class="proj-avatars">
                     <div class="proj-avatar">SH</div>
-                    <div class="proj-avatar" style="background:var(--success);">AK</div>
+                    <div class="proj-avatar" style="background:var(--success);">NH</div>
                     <div class="proj-avatar" style="background:var(--text-3);">+2</div>
                   </div>
                   <div class="proj-actions">
@@ -626,8 +626,8 @@
               <div class="proj-card" onclick="openProject()">
                 <div class="proj-card-header">
                   <div>
-                    <div class="proj-card-title">TechNova Dashboard</div>
-                    <div class="proj-card-client">TechNova</div>
+                    <div class="proj-card-title">Vertex Systems API</div>
+                    <div class="proj-card-client">Vertex Systems</div>
                   </div>
                   <span class="proj-badge badge-completed">Completed</span>
                 </div>
@@ -643,7 +643,7 @@
                 <div class="proj-card-meta">
                   <div>Jul 25, 2026</div>
                   <div class="proj-avatars">
-                    <div class="proj-avatar" style="background:var(--warning);">JD</div>
+                    <div class="proj-avatar" style="background:var(--warning);">MI</div>
                   </div>
                   <div class="proj-actions">
                     <button class="btn btn-sm btn-ghost" style="border:1px solid var(--border);">View</button>
@@ -651,6 +651,32 @@
                 </div>
               </div>
 
+            </div>
+
+            <!-- UX States (Hidden by default) -->
+            <div style="display:none;" class="empty-state">
+              <div class="empty-state-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+              </div>
+              <div class="empty-state-title">No Projects Found</div>
+              <div class="empty-state-desc">Get started by creating a new project or assigning clients.</div>
+              <button class="btn btn-primary" style="margin-top:16px;" onclick="window.location.href='../create-project/index.html'">+ New Project</button>
+            </div>
+
+            <div style="display:none; margin-top:24px; gap:24px;" class="proj-grid">
+              <div class="skeleton-card"></div>
+              <div class="skeleton-card"></div>
+              <div class="skeleton-card"></div>
+            </div>
+
+            <div style="display:none; margin-top:24px;" class="alert alert-danger">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              <span>Failed to load projects. Please try again.</span>
+            </div>
+
+            <div style="display:none; margin-top:24px;" class="alert alert-success">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+              <span>Project successfully archived.</span>
             </div>
           </section>
 
@@ -757,7 +783,7 @@
                         <polyline points="22 4 12 14.01 9 11.01"></polyline>
                       </svg>
                     </div>
-                    <div class="proj-item-text" style="font-size:12px;">Client Approved: User flows (TechNova)</div>
+                    <div class="proj-item-text" style="font-size:12px;">Client Approved: User flows (Vertex Systems)</div>
                   </div>
                 </div>
 
@@ -885,6 +911,13 @@
   <div id="statusbar-container"></div>
   <div id="overlays-container"></div>
 
+  <script src="../assets/js/models.js"></script>
+  <script src="../assets/js/mock-data.js"></script>
+  <script src="../assets/js/state.js"></script>
+  <script src="../assets/js/permissions.js"></script>
+  <script src="../assets/js/toast.js"></script>
+  <script src="../assets/js/modal.js"></script>
+  <script src="../assets/js/services.js"></script>
   <script src="../assets/js/session.js"></script>
   <script src="../assets/js/components.js"></script>
   <script src="../assets/js/navigation.js"></script>
