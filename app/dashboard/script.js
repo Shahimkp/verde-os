@@ -89,18 +89,6 @@
     }
   }
 
-  // ── Sidebar Active State (preserve existing behavior) ──
-  function initSidebarActive() {
-    document.querySelectorAll('.s-link, .sidebar-item, .nav-item').forEach(function (link) {
-      link.addEventListener('click', function () {
-        document.querySelectorAll('.s-link, .sidebar-item, .nav-item').forEach(function (l) {
-          l.classList.remove('active');
-        });
-        this.classList.add('active');
-      });
-    });
-  }
-
   // ── Initialize Everything ──
   function init() {
     updateGreeting();
@@ -109,7 +97,6 @@
     updateTopbarDate();
     updateFooterTime();
     initTaskTabs();
-    initSidebarActive();
 
     // Update clock every second
     setInterval(updateClock, 1000);

@@ -137,13 +137,6 @@
     selectedType = element.getAttribute('data-type') || 'Website Development';
   };
 
-  // Step 4 Owner Selection
-  window.selectOwner = function (element) {
-    document.querySelectorAll('.tr-grid:first-of-type .tm-card').forEach(function (el) { el.classList.remove('active'); });
-    element.classList.add('active');
-    selectedOwner = element.getAttribute('data-owner') || 'Shahim';
-  };
-
   // Step 4 Team Member Selection
   window.toggleTeamMember = function (element) {
     element.classList.toggle('active');
@@ -160,8 +153,16 @@
     if (document.getElementById('revClient')) document.getElementById('revClient').textContent = elClient ? elClient.value || 'Cabo Travels' : 'Cabo Travels';
     if (document.getElementById('revService')) document.getElementById('revService').textContent = selectedType;
     if (document.getElementById('revDate')) document.getElementById('revDate').textContent = elDate ? elDate.value || 'Aug 30, 2026' : 'Aug 30, 2026';
-    if (document.getElementById('revOwner')) document.getElementById('revOwner').textContent = selectedOwner;
     
+    if (document.getElementById('revTeam')) {
+      var selectedNames = [];
+      document.querySelectorAll('.tm-card.active').forEach(function (card) {
+        var name = card.getAttribute('data-name');
+        if (name) selectedNames.push(name);
+      });
+      document.getElementById('revTeam').textContent = selectedNames.length ? selectedNames.join(', ') : 'None assigned';
+    }
+
     if (document.getElementById('revBudget')) {
       var b = parseFloat(elBudget ? elBudget.value || 25000 : 25000).toLocaleString('en-US', { minimumFractionDigits: 2 });
       document.getElementById('revBudget').textContent = '$' + b;
@@ -170,7 +171,29 @@
 
   // Save Draft
   window.saveDraftWizard = function () {
-    if (window.VerdeToast) window.VerdeToast.info('Project draft saved.');
+    var payload = {
+      name: document.getElementById('inpName') ? (document.getElementById('inpName').value.trim() || 'Draft Project') : 'Draft Project',
+      client: document.getElementById('inpClient') ? document.getElementById('inpClient').value : 'Cabo Travels',
+      category: selectedType,
+      dueDate: document.getElementById('inpDate') ? document.getElementById('inpDate').value : '',
+      budget: parseFloat(document.getElementById('inpBudget') ? document.getElementById('inpBudget').value : 0),
+      team: ['SH'],
+      isDraft: true
+    };
+
+    if (window.VerdeServices && window.VerdeServices.Projects) {
+      window.VerdeServices.Projects.saveDraft(payload).then(function (res) {
+        if (window.VerdeToast) window.VerdeToast.info('Project draft "' + res.name + '" saved to storage.');
+        setTimeout(function () {
+          window.location.href = '../projects/index.html';
+        }, 1000);
+      });
+    } else {
+      if (window.VerdeToast) window.VerdeToast.info('Project draft saved.');
+      setTimeout(function () {
+        window.location.href = '../projects/index.html';
+      }, 1000);
+    }
   };
 
   // Launch Project
@@ -187,7 +210,7 @@
       category: selectedType,
       dueDate: document.getElementById('inpDate') ? document.getElementById('inpDate').value : '2026-08-30',
       budget: parseFloat(document.getElementById('inpBudget') ? document.getElementById('inpBudget').value : 25000),
-      pm: selectedOwner
+      team: ['SH', 'MI']
     };
 
     if (window.VerdeServices && window.VerdeServices.Projects) {

@@ -530,7 +530,7 @@
 
           <!-- 3. Projects Grid -->
           <section class="proj-section">
-            <div class="proj-grid">
+            <div class="proj-grid" id="proj-grid-container">
 
               <!-- Project 1 -->
               <div class="proj-card" onclick="openProject()">
@@ -846,8 +846,8 @@
   <div class="proj-panel" id="projPanel">
     <div class="proj-panel-header">
       <div>
-        <div class="proj-panel-title">Cabo Travels Website</div>
-        <div class="proj-card-client">Cabo Travels</div>
+        <div class="proj-panel-title" id="drawer-proj-title">Cabo Travels Website</div>
+        <div class="proj-card-client" id="drawer-proj-client">Cabo Travels</div>
       </div>
       <button class="btn btn-ghost" onclick="closeProject()" style="padding:8px;">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -873,34 +873,32 @@
           <div
             style="font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; margin-bottom:8px;">
             Description</div>
-          <div style="font-size:14px; font-weight:500; color:var(--text-2); line-height:1.6;">Full redesign and
-            development of the Cabo Travels corporate website, including a booking portal integration and custom CMS
-            setup.</div>
+          <div style="font-size:14px; font-weight:500; color:var(--text-2); line-height:1.6;" id="drawer-proj-desc">Full redesign and development of Cabo Travels website.</div>
         </div>
 
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
           <div class="proj-box" style="padding:20px; transition:none; cursor:default;">
             <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Status</div>
-            <div style="font-size:14px; font-weight:700; color:var(--success); margin-top:4px;">On Track</div>
+            <div style="font-size:14px; font-weight:700; color:var(--success); margin-top:4px;" id="drawer-proj-status">Active</div>
           </div>
           <div class="proj-box" style="padding:20px; transition:none; cursor:default;">
             <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Due Date</div>
-            <div style="font-size:14px; font-weight:700; color:var(--text-1); margin-top:4px;">Aug 30, 2026</div>
+            <div style="font-size:14px; font-weight:700; color:var(--text-1); margin-top:4px;" id="drawer-proj-date">Aug 30, 2026</div>
           </div>
         </div>
 
         <div class="proj-box" style="padding:24px; transition:none; cursor:default;">
           <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
             <span style="font-size:14px; font-weight:800; color:var(--text-1);">Progress Overview</span>
-            <span style="font-size:14px; font-weight:800; color:var(--text-1);">65%</span>
+            <span style="font-size:14px; font-weight:800; color:var(--text-1);" id="drawer-proj-progress-pct">65%</span>
           </div>
           <div class="proj-progress" style="height:8px; border-radius:8px;">
-            <div class="proj-progress-bar" style="width:65%; border-radius:8px;"></div>
+            <div class="proj-progress-bar" id="drawer-proj-progress-bar" style="width:65%; border-radius:8px;"></div>
           </div>
           <div
             style="display:flex; justify-content:space-between; margin-top:16px; font-size:13px; font-weight:600; color:var(--text-2);">
-            <div>12 Tasks Completed</div>
-            <div>8 Tasks Remaining</div>
+            <div id="drawer-proj-budget">Est. Budget: $45,000.00</div>
+            <div id="drawer-proj-team">Team: SH, MI</div>
           </div>
         </div>
 
@@ -923,13 +921,106 @@
   <script src="../assets/js/navigation.js"></script>
   <script src="../assets/js/app.js"></script>
   <script>
-    function openProject() {
-      document.getElementById('projPanel').classList.add('active');
-      document.getElementById('projOverlay').classList.add('active');
+    function openProjectDetails(id) {
+      if (window.VerdeServices && window.VerdeServices.Projects) {
+        window.VerdeServices.Projects.getProjectById(id).then(function (proj) {
+          if (!proj) return;
+          if (document.getElementById('drawer-proj-title')) document.getElementById('drawer-proj-title').textContent = proj.name || 'Project Details';
+          if (document.getElementById('drawer-proj-client')) document.getElementById('drawer-proj-client').textContent = proj.client || 'Client';
+          if (document.getElementById('drawer-proj-desc')) document.getElementById('drawer-proj-desc').textContent = proj.notes || proj.deliverables || (proj.category + ' project for ' + proj.client);
+          if (document.getElementById('drawer-proj-status')) document.getElementById('drawer-proj-status').textContent = proj.status || 'Active';
+          if (document.getElementById('drawer-proj-date')) document.getElementById('drawer-proj-date').textContent = proj.dueDate || 'Aug 30, 2026';
+          
+          var pct = proj.progress || 0;
+          if (document.getElementById('drawer-proj-progress-pct')) document.getElementById('drawer-proj-progress-pct').textContent = pct + '%';
+          if (document.getElementById('drawer-proj-progress-bar')) document.getElementById('drawer-proj-progress-bar').style.width = pct + '%';
+          
+          var b = parseFloat(proj.budget || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
+          if (document.getElementById('drawer-proj-budget')) document.getElementById('drawer-proj-budget').textContent = 'Est. Budget: $' + b;
+          if (document.getElementById('drawer-proj-team')) document.getElementById('drawer-proj-team').textContent = 'Team: ' + (proj.team ? proj.team.join(', ') : 'SH, MI');
+
+          document.getElementById('projPanel').classList.add('active');
+          document.getElementById('projOverlay').classList.add('active');
+        });
+      } else {
+        document.getElementById('projPanel').classList.add('active');
+        document.getElementById('projOverlay').classList.add('active');
+      }
     }
+
     function closeProject() {
       document.getElementById('projPanel').classList.remove('active');
       document.getElementById('projOverlay').classList.remove('active');
+    }
+
+    function renderProjectsList() {
+      if (!window.VerdeServices || !window.VerdeServices.Projects) return;
+
+      window.VerdeServices.Projects.getProjects().then(function (projects) {
+        var container = document.getElementById('proj-grid-container');
+        if (!container || !projects) return;
+
+        // Render Cards
+        container.innerHTML = '';
+        projects.forEach(function (p) {
+          var badgeClass = 'badge-active';
+          if (p.status === 'Completed') badgeClass = 'badge-completed';
+          if (p.status === 'At Risk') badgeClass = 'badge-risk';
+          if (p.status === 'Draft' || p.isDraft) badgeClass = 'badge-neutral';
+
+          var progress = p.progress || 0;
+          var teamHtml = (p.team || ['SH']).map(function (m, idx) {
+            var bg = idx === 1 ? 'background:var(--success);' : (idx === 2 ? 'background:var(--warning);' : '');
+            return '<div class="proj-avatar" style="' + bg + '">' + m + '</div>';
+          }).join('');
+
+          var cardHtml = 
+            '<div class="proj-card" onclick="openProjectDetails(\'' + p.id + '\')">' +
+              '<div class="proj-card-header">' +
+                '<div>' +
+                  '<div class="proj-card-title">' + p.name + '</div>' +
+                  '<div class="proj-card-client">' + p.client + '</div>' +
+                '</div>' +
+                '<span class="proj-badge ' + badgeClass + '">' + p.status + '</span>' +
+              '</div>' +
+              '<div class="proj-progress-wrap">' +
+                '<div class="proj-progress-label">' +
+                  '<span>Progress</span>' +
+                  '<span>' + progress + '%</span>' +
+                '</div>' +
+                '<div class="proj-progress">' +
+                  '<div class="proj-progress-bar" style="width: ' + progress + '%;"></div>' +
+                '</div>' +
+              '</div>' +
+              '<div class="proj-card-meta">' +
+                '<div>' + (p.dueDate || 'Aug 30, 2026') + '</div>' +
+                '<div class="proj-avatars">' + teamHtml + '</div>' +
+                '<div class="proj-actions">' +
+                  '<button class="btn btn-sm btn-ghost" style="border:1px solid var(--border);" onclick="event.stopPropagation(); openProjectDetails(\'' + p.id + '\');">View</button>' +
+                '</div>' +
+              '</div>' +
+            '</div>';
+
+          container.innerHTML += cardHtml;
+        });
+
+        // Update KPIs dynamically
+        var kpis = document.querySelectorAll('.proj-kpi-value');
+        if (kpis && kpis.length >= 4) {
+          var active = projects.filter(function (p) { return p.status === 'Active'; }).length;
+          var completed = projects.filter(function (p) { return p.status === 'Completed'; }).length;
+          var atRisk = projects.filter(function (p) { return p.status === 'At Risk'; }).length;
+          kpis[0].textContent = active;
+          kpis[1].textContent = completed;
+          kpis[2].textContent = atRisk;
+        }
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', renderProjectsList);
+    } else {
+      renderProjectsList();
     }
   </script>
 </body>

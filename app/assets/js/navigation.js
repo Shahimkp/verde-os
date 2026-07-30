@@ -177,16 +177,172 @@
         if (shellContainer) shellContainer.classList.remove('sidebar-open');
       }
     });
+
+    // 5.5 Reveal layout only after everything is fully injected
+    requestAnimationFrame(function () {
+      const appContent = document.querySelector('.app-content');
+      if (appContent) {
+        appContent.classList.add('layout-ready');
+      }
+    });
+
+    // 6. SPA (PJAX) Router
+    if (!window.__verdeRouterInitialized) {
+      document.addEventListener('click', function (e) {
+        // Find closest anchor tag
+        let target = e.target;
+        while (target && target.tagName !== 'A') {
+          target = target.parentNode;
+        }
+        if (!target) return;
+
+        const rawHref = target.getAttribute('href');
+        if (!rawHref || rawHref.startsWith('mailto') || rawHref.startsWith('#')) {
+          return;
+        }
+        
+        if (target.getAttribute('target') === '_blank') {
+          return;
+        }
+
+        if (target.origin !== window.location.origin) {
+          return;
+        }
+
+        const href = target.href; // fully resolved absolute URL
+        if (href.includes('#') && href.split('#')[0] === window.location.href.split('#')[0]) {
+          return; // same page hash link
+        }
+
+        e.preventDefault();
+        navigateTo(href);
+      });
+
+      window.addEventListener('popstate', function () {
+        navigateTo(location.pathname, true);
+      });
+
+      function navigateTo(url, isPopState = false) {
+        if (window.VERDE_APP && typeof window.VERDE_APP.clearIntervals === 'function') {
+          window.VERDE_APP.clearIntervals();
+        }
+
+        closeAllDropdowns();
+        if (shellContainer) shellContainer.classList.remove('sidebar-open');
+
+        const mainContent = document.querySelector('.app-content');
+        if (mainContent) {
+          mainContent.style.minHeight = 'calc(100vh - 80px)'; // prevent layout collapse
+          mainContent.classList.add('fade-out');
+        }
+
+        fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newMain = doc.querySelector('.app-content');
+            
+            if (newMain && mainContent) {
+              // 1. Identify Module-Specific CSS in fetched document
+              const newLinks = Array.from(doc.querySelectorAll('link[rel="stylesheet"]'))
+                .filter(link => !link.href.includes('/assets/css/'));
+              
+              let cssPromises = [];
+              
+              newLinks.forEach(link => {
+                // Only inject if it doesn't already exist
+                if (!document.querySelector('link[href="' + link.getAttribute('href') + '"]')) {
+                  const p = new Promise(resolve => {
+                    const newLink = document.createElement('link');
+                    newLink.rel = 'stylesheet';
+                    newLink.href = link.getAttribute('href');
+                    newLink.className = 'pjax-module-style';
+                    newLink.onload = resolve;
+                    newLink.onerror = resolve; // proceed even on error
+                    document.head.appendChild(newLink);
+                  });
+                  cssPromises.push(p);
+                }
+              });
+
+              // 2. Wait for Fade-Out (150ms) AND new CSS to load
+              const fadePromise = new Promise(resolve => setTimeout(resolve, 150));
+              
+              Promise.all([...cssPromises, fadePromise]).then(() => {
+                // 3. Swap DOM
+                mainContent.innerHTML = newMain.innerHTML;
+                document.title = doc.title;
+                
+                if (!isPopState) {
+                  history.pushState(null, '', url);
+                }
+
+                initIntegratedNavigation();
+
+                // Scroll to top
+                window.scrollTo(0, 0);
+                if (document.querySelector('.shell-main')) {
+                  document.querySelector('.shell-main').scrollTo(0, 0);
+                }
+
+                // 4. Cleanup old CSS (remove styles that are module-specific but not in the new document)
+                const currentModuleLinks = Array.from(document.querySelectorAll('link[rel="stylesheet"]'))
+                  .filter(l => !l.href.includes('/assets/css/'));
+                
+                const newHrefs = newLinks.map(l => l.getAttribute('href'));
+                
+                currentModuleLinks.forEach(l => {
+                  const hrefAttr = l.getAttribute('href');
+                  if (hrefAttr && !newHrefs.includes(hrefAttr)) {
+                    l.parentNode.removeChild(l);
+                  }
+                });
+
+                // 5. Cleanup old module scripts
+                document.querySelectorAll('script.pjax-module-script').forEach(s => s.parentNode.removeChild(s));
+
+                // 6. Execute new module scripts
+                const scripts = Array.from(doc.querySelectorAll('script'))
+                  .filter(s => !s.src || !s.src.includes('/assets/js/'));
+                
+                scripts.forEach(s => {
+                  const newScript = document.createElement('script');
+                  newScript.className = 'pjax-module-script';
+                  if (s.src) {
+                    newScript.src = s.getAttribute('src'); // Use exact relative path
+                  } else {
+                    newScript.textContent = s.textContent;
+                  }
+                  document.body.appendChild(newScript);
+                });
+
+                // 7. Fade In
+                mainContent.classList.remove('fade-out');
+                mainContent.classList.add('fade-in');
+                setTimeout(() => {
+                  mainContent.classList.remove('fade-in');
+                  mainContent.style.minHeight = ''; // reset constraint
+                }, 150);
+              });
+            } else {
+              window.location.href = url;
+            }
+          })
+          .catch(err => {
+            console.error('Navigation failed', err);
+            window.location.href = url;
+          });
+      }
+      window.__verdeRouterInitialized = true;
+    }
   }
 
   window.VERDE_NAVIGATION = {
     init: initIntegratedNavigation
   };
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initIntegratedNavigation);
-  } else {
-    initIntegratedNavigation();
-  }
+  // Execute immediately to inject layout before first paint!
+  initIntegratedNavigation();
 })();
 

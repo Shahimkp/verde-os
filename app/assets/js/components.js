@@ -297,16 +297,13 @@
       const statusbarContainer = document.getElementById('statusbar-container');
       const overlaysContainer = document.getElementById('overlays-container');
 
-      if (sidebarContainer) sidebarContainer.innerHTML = SIDEBAR_HTML;
-      if (topbarContainer) topbarContainer.innerHTML = TOPBAR_HTML;
-      if (statusbarContainer) statusbarContainer.innerHTML = STATUSBAR_HTML;
-      if (overlaysContainer) overlaysContainer.innerHTML = OVERLAYS_HTML;
+      if (sidebarContainer && !sidebarContainer.innerHTML.trim()) sidebarContainer.innerHTML = SIDEBAR_HTML;
+      if (topbarContainer && !topbarContainer.innerHTML.trim()) topbarContainer.innerHTML = TOPBAR_HTML;
+      if (statusbarContainer && !statusbarContainer.innerHTML.trim()) statusbarContainer.innerHTML = STATUSBAR_HTML;
+      if (overlaysContainer && !overlaysContainer.innerHTML.trim()) overlaysContainer.innerHTML = OVERLAYS_HTML;
     }
   };
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', window.VERDE_COMPONENTS.render);
-  } else {
-    window.VERDE_COMPONENTS.render();
-  }
+  // Execute immediately to inject layout before first paint!
+  window.VERDE_COMPONENTS.render();
 })();

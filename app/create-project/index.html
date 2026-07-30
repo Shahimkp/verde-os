@@ -438,59 +438,43 @@
           <div class="step-content" id="step-4">
             <div class="wiz-card">
               <div class="wiz-card-title">Step 4: Team Assignment</div>
-              <div class="wiz-card-subtitle">Select project owner and allocate active team members</div>
+              <div class="wiz-card-subtitle">Allocate execution team members to the project</div>
 
-              <!-- Section: Project Owner -->
-              <div class="tr-section-title">Project Owner</div>
+              <!-- Execution Team (Single Full-Width Section) -->
               <div class="tr-grid">
-                <div class="tm-card active" onclick="selectOwner(this)" data-owner="Shahim">
+                <div class="tm-card active" onclick="toggleTeamMember(this)" data-member="SH" data-name="Shahim">
                   <div class="tm-av" style="background:var(--primary);">SH</div>
                   <div class="tm-info">
                     <div class="tm-name">Shahim</div>
-                    <div class="tm-role">CEO · Executive</div>
+                    <div class="tm-role">CEO · Executive Lead</div>
+                    <div class="tm-workload" style="font-size:11px; color:var(--text-3); margin-top:2px;">Workload: 100% (4 Active Projects)</div>
                   </div>
                 </div>
-                <div class="tm-card" onclick="selectOwner(this)" data-owner="Midhul">
+
+                <div class="tm-card active" onclick="toggleTeamMember(this)" data-member="MI" data-name="Midhul">
                   <div class="tm-av" style="background:var(--success);">MI</div>
                   <div class="tm-info">
                     <div class="tm-name">Midhul</div>
-                    <div class="tm-role">Full Stack Lead · Engineering</div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Section: Execution Team -->
-              <div class="tr-section-title">Execution Team</div>
-              <div class="tr-grid">
-                <div class="tm-card active" onclick="toggleTeamMember(this)" data-member="SH">
-                  <div class="tm-av" style="background:var(--primary);">SH</div>
-                  <div class="tm-info">
-                    <div class="tm-name">Shahim</div>
-                    <div class="tm-role">Architecture</div>
+                    <div class="tm-role">Full Stack Developer</div>
+                    <div class="tm-workload" style="font-size:11px; color:var(--text-3); margin-top:2px;">Workload: 85% (3 Active Projects)</div>
                   </div>
                 </div>
 
-                <div class="tm-card active" onclick="toggleTeamMember(this)" data-member="MI">
-                  <div class="tm-av" style="background:var(--success);">MI</div>
-                  <div class="tm-info">
-                    <div class="tm-name">Midhul</div>
-                    <div class="tm-role">Full Stack</div>
-                  </div>
-                </div>
-
-                <div class="tm-card" onclick="toggleTeamMember(this)" data-member="AM">
+                <div class="tm-card" onclick="toggleTeamMember(this)" data-member="AM" data-name="Ameen">
                   <div class="tm-av" style="background:var(--warning);">AM</div>
                   <div class="tm-info">
                     <div class="tm-name">Ameen</div>
-                    <div class="tm-role">UI/UX Design</div>
+                    <div class="tm-role">UI/UX Designer</div>
+                    <div class="tm-workload" style="font-size:11px; color:var(--text-3); margin-top:2px;">Workload: 60% (2 Active Projects)</div>
                   </div>
                 </div>
 
-                <div class="tm-card" onclick="toggleTeamMember(this)" data-member="NH">
+                <div class="tm-card" onclick="toggleTeamMember(this)" data-member="NH" data-name="Nihal">
                   <div class="tm-av" style="background:var(--text-3);">NH</div>
                   <div class="tm-info">
                     <div class="tm-name">Nihal</div>
-                    <div class="tm-role">Marketing</div>
+                    <div class="tm-role">Marketing Executive</div>
+                    <div class="tm-workload" style="font-size:11px; color:var(--text-3); margin-top:2px;">Workload: 45% (1 Active Project)</div>
                   </div>
                 </div>
               </div>
@@ -530,8 +514,8 @@
                 </div>
 
                 <div style="display:flex; justify-content:space-between;">
-                  <span style="color:var(--text-3); font-weight:500;">Project Owner:</span>
-                  <strong style="color:var(--text-1);" id="revOwner">Shahim</strong>
+                  <span style="color:var(--text-3); font-weight:500;">Assigned Team:</span>
+                  <strong style="color:var(--text-1);" id="revTeam">Shahim, Midhul</strong>
                 </div>
               </div>
             </div>

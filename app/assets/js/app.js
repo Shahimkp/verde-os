@@ -9,8 +9,25 @@
   window.VERDE_APP = {
     version: '2.0.0-REST-READY',
     name: 'VERDE OS Shared Framework Orchestrator',
+    intervals: [],
+
+    clearIntervals: function() {
+      this.intervals.forEach(clearInterval);
+      this.intervals = [];
+    },
 
     init: function () {
+      // Wrapper for setInterval to track and clear them on SPA navigation
+      if (!window.__verdeIntervalWrapped) {
+        const originalSetInterval = window.setInterval;
+        window.setInterval = function (fn, delay) {
+          const id = originalSetInterval(fn, delay);
+          window.VERDE_APP.intervals.push(id);
+          return id;
+        };
+        window.__verdeIntervalWrapped = true;
+      }
+
       // 0. Initialize Global App State Store
       if (window.VerdeState && typeof window.VerdeState.init === 'function') {
         window.VerdeState.init();
