@@ -167,7 +167,7 @@
                       <span class="badge badge-success">~12%</span>
                     </div>
                     <div>
-                      <div class="mc-health-value">₹12.4L</div>
+                      <div class="mc-health-value" id="dashboard-kpi-revenue">₹12.4L</div>
                       <div class="mc-health-label">Revenue</div>
                     </div>
                   </div>
@@ -182,7 +182,7 @@
                       <span class="badge badge-primary" style="font-size:10px;padding:2px 6px;">+2</span>
                     </div>
                     <div>
-                      <div class="mc-health-value">8</div>
+                      <div class="mc-health-value" id="dashboard-kpi-projects">8</div>
                       <div class="mc-health-label">Projects</div>
                     </div>
                   </div>
@@ -197,7 +197,7 @@
                       </div>
                     </div>
                     <div>
-                      <div class="mc-health-value">24</div>
+                      <div class="mc-health-value" id="dashboard-kpi-clients">24</div>
                       <div class="mc-health-label">Clients</div>
                     </div>
                   </div>
@@ -229,7 +229,7 @@
                 <h2 class="mc-section-title">Active Projects</h2>
                 <a href="../projects/index.html" class="mc-section-link">View All →</a>
               </div>
-              <div class="mc-projects-list">
+              <div class="mc-projects-list" id="dashboard-active-projects">
                 <div class="mc-project-card">
                   <div>
                     <div class="mc-project-title">Cabo Travels Website</div>
@@ -250,64 +250,7 @@
                     <span class="badge badge-warning">Review</span>
                   </div>
                 </div>
-                <div class="mc-project-card">
-                  <div>
-                    <div class="mc-project-title">BlueWave CRM Portal</div>
-                    <div class="mc-project-client">BlueWave Tech</div>
-                  </div>
-                  <div class="mc-project-meta">
-                    <span style="color:var(--warning);font-weight:700;">45%</span>
-                    <span style="color:var(--text-3);">Due Sep 01</span>
-                  </div>
-                  <div class="mc-project-bar">
-                    <div class="mc-project-bar-fill" style="width:45%;background:var(--warning);"></div>
-                  </div>
-                  <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <div class="mc-avatars">
-                      <div class="mc-avatar">SH</div>
-                      <div class="mc-avatar">NH</div>
-                    </div>
-                    <span class="badge badge-primary">In Progress</span>
-                  </div>
-                </div>
-                <div class="mc-project-card">
-                  <div>
-                    <div class="mc-project-title">GreenLeaf Brand Guide</div>
-                    <div class="mc-project-client">GreenLeaf Corp</div>
-                  </div>
-                  <div class="mc-project-meta">
-                    <span style="color:var(--success);font-weight:700;">85%</span>
-                    <span style="color:var(--text-3);">Due Jul 30</span>
-                  </div>
-                  <div class="mc-project-bar">
-                    <div class="mc-project-bar-fill" style="width:85%;background:var(--success);"></div>
-                  </div>
-                  <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <div class="mc-avatars">
-                      <div class="mc-avatar" style="background:var(--success-50);color:var(--success);">AM</div>
-                    </div>
-                    <span class="badge badge-success">On Track</span>
-                  </div>
-                </div>
-                <div class="mc-project-card">
-                  <div>
-                    <div class="mc-project-title">Vertex Systems SEO</div>
-                    <div class="mc-project-client">Vertex Systems</div>
-                  </div>
-                  <div class="mc-project-meta">
-                    <span style="color:var(--primary);font-weight:700;">60%</span>
-                    <span style="color:var(--text-3);">Due Aug 20</span>
-                  </div>
-                  <div class="mc-project-bar">
-                    <div class="mc-project-bar-fill" style="width:60%;"></div>
-                  </div>
-                  <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <div class="mc-avatars">
-                      <div class="mc-avatar">NH</div>
-                    </div>
-                    <span class="badge badge-primary">In Progress</span>
-                  </div>
-                </div>
+                <!-- Other cards will be overwritten by JS -->
               </div>
             </section>
 
@@ -318,7 +261,7 @@
                   <h2 class="mc-section-title">Team Activity</h2>
                   <a href="../projects/index.html" class="mc-section-link">View All →</a>
                 </div>
-                <div class="mc-card mc-activity-feed">
+                <div class="mc-card mc-activity-feed" id="dashboard-recent-activity">
                   <div class="mc-activity-item">
                     <div class="mc-avatar" style="width:32px;height:32px;font-size:11px;background:#6366F1;color:#fff;">
                       MI</div>

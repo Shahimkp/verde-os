@@ -470,16 +470,40 @@
                   <circle cx="11" cy="11" r="8"></circle>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
-                <input type="text" placeholder="Search projects..." />
+                <input type="text" id="proj-search-input" placeholder="Search projects..." />
               </div>
-              <button class="btn btn-ghost" style="background:var(--surface); border:1px solid var(--border);">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                  style="margin-right:6px;">
-                  <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-                </svg>
-                Filters
-              </button>
+              <div style="position:relative;">
+                <button class="btn btn-ghost" id="proj-filter-btn" style="background:var(--surface); border:1px solid var(--border);">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    style="margin-right:6px;">
+                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                  </svg>
+                  Filters
+                </button>
+                <div id="proj-filter-menu" style="display:none; position:absolute; top:100%; right:0; margin-top:8px; background:var(--surface); border:1px solid var(--border); border-radius:8px; box-shadow:var(--shadow-md); z-index:100; min-width:180px; padding:8px;">
+                  <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase; margin:8px 8px 4px 8px;">Status</div>
+                  <div class="dropdown-item" onclick="setProjFilter('status', 'Planning')">Planning</div>
+                  <div class="dropdown-item" onclick="setProjFilter('status', 'In Progress')">In Progress</div>
+                  <div class="dropdown-item" onclick="setProjFilter('status', 'Review')">Review</div>
+                  <div class="dropdown-item" onclick="setProjFilter('status', 'Completed')">Completed</div>
+                  <div class="dropdown-item" onclick="setProjFilter('status', 'Archived')">Archived</div>
+                  
+                  <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase; margin:8px 8px 4px 8px;">Priority</div>
+                  <div class="dropdown-item" onclick="setProjFilter('priority', 'Critical')">Critical</div>
+                  <div class="dropdown-item" onclick="setProjFilter('priority', 'High')">High</div>
+                  <div class="dropdown-item" onclick="setProjFilter('priority', 'Medium')">Medium</div>
+                  <div class="dropdown-item" onclick="setProjFilter('priority', 'Low')">Low</div>
+                  
+                  <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase; margin:8px 8px 4px 8px;">Service Type</div>
+                  <div class="dropdown-item" onclick="setProjFilter('category', 'Website Development')">Website Development</div>
+                  <div class="dropdown-item" onclick="setProjFilter('category', 'Brand Development')">Brand Development</div>
+                  <div class="dropdown-item" onclick="setProjFilter('category', 'ERP Development')">ERP Development</div>
+                  
+                  <div style="border-top:1px solid var(--border); margin:8px 0;"></div>
+                  <div class="dropdown-item" onclick="setProjFilter(null, null)" style="color:var(--danger); font-weight:600;">Clear Filters</div>
+                </div>
+              </div>
               <div class="btn-group"
                 style="display:flex; border:1px solid var(--border); border-radius:8px; background:var(--surface); padding:4px;">
                 <button class="btn btn-sm btn-ghost"
@@ -510,147 +534,28 @@
 
           <!-- 2. KPI Cards (Max 4) -->
           <section class="proj-kpi-grid">
-            <div class="proj-kpi-card">
-              <div class="proj-kpi-value">14</div>
+            <div class="proj-kpi-card" onclick="setProjFilter(null, null)" style="cursor:pointer;">
+              <div class="proj-kpi-value" id="kpi-total">0</div>
               <div class="proj-kpi-label">Active Projects</div>
             </div>
-            <div class="proj-kpi-card">
-              <div class="proj-kpi-value">8</div>
+            <div class="proj-kpi-card" onclick="setProjFilter('status', 'Completed')" style="cursor:pointer;">
+              <div class="proj-kpi-value" id="kpi-completed">0</div>
               <div class="proj-kpi-label">Completed</div>
             </div>
-            <div class="proj-kpi-card">
-              <div class="proj-kpi-value" style="color:var(--danger);">2</div>
-              <div class="proj-kpi-label">At Risk</div>
+            <div class="proj-kpi-card" onclick="setProjFilter('status', 'Review')" style="cursor:pointer;">
+              <div class="proj-kpi-value" id="kpi-risk" style="color:var(--warning);">0</div>
+              <div class="proj-kpi-label">Review</div>
             </div>
-            <div class="proj-kpi-card">
-              <div class="proj-kpi-value" style="color:var(--primary);">3</div>
-              <div class="proj-kpi-label">Due This Week</div>
+            <div class="proj-kpi-card" onclick="setProjFilter('status', 'In Progress')" style="cursor:pointer;">
+              <div class="proj-kpi-value" id="kpi-active" style="color:var(--primary);">0</div>
+              <div class="proj-kpi-label">In Progress</div>
             </div>
           </section>
 
           <!-- 3. Projects Grid -->
           <section class="proj-section">
             <div class="proj-grid" id="proj-grid-container">
-
-              <!-- Project 1 -->
-              <div class="proj-card" onclick="openProject()">
-                <div class="proj-card-header">
-                  <div>
-                    <div class="proj-card-title">Cabo Travels Website</div>
-                    <div class="proj-card-client">Cabo Travels</div>
-                  </div>
-                  <span class="proj-badge badge-active">Active</span>
-                </div>
-                <div class="proj-progress-wrap">
-                  <div class="proj-progress-label">
-                    <span>Progress</span>
-                    <span>65%</span>
-                  </div>
-                  <div class="proj-progress">
-                    <div class="proj-progress-bar" style="width: 65%;"></div>
-                  </div>
-                </div>
-                <div class="proj-card-meta">
-                  <div>Aug 30, 2026</div>
-                  <div class="proj-avatars">
-                    <div class="proj-avatar">SH</div>
-                    <div class="proj-avatar" style="background:var(--warning);">MI</div>
-                  </div>
-                  <div class="proj-actions">
-                    <button class="btn btn-sm btn-ghost" style="border:1px solid var(--border);">View</button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Project 2 -->
-              <div class="proj-card" onclick="openProject()">
-                <div class="proj-card-header">
-                  <div>
-                    <div class="proj-card-title">GreenLeaf Branding</div>
-                    <div class="proj-card-client">GreenLeaf</div>
-                  </div>
-                  <span class="proj-badge badge-active">Active</span>
-                </div>
-                <div class="proj-progress-wrap">
-                  <div class="proj-progress-label">
-                    <span>Progress</span>
-                    <span>30%</span>
-                  </div>
-                  <div class="proj-progress">
-                    <div class="proj-progress-bar" style="width: 30%;"></div>
-                  </div>
-                </div>
-                <div class="proj-card-meta">
-                  <div>Sep 15, 2026</div>
-                  <div class="proj-avatars">
-                    <div class="proj-avatar" style="background:var(--success);">NH</div>
-                  </div>
-                  <div class="proj-actions">
-                    <button class="btn btn-sm btn-ghost" style="border:1px solid var(--border);">View</button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Project 3 -->
-              <div class="proj-card" onclick="openProject()" style="border-color:var(--warning-30);">
-                <div class="proj-card-header">
-                  <div>
-                    <div class="proj-card-title">BlueWave CRM Portal</div>
-                    <div class="proj-card-client">BlueWave Tech</div>
-                  </div>
-                  <span class="proj-badge badge-risk">At Risk</span>
-                </div>
-                <div class="proj-progress-wrap">
-                  <div class="proj-progress-label">
-                    <span>Progress</span>
-                    <span style="color:var(--warning);">85%</span>
-                  </div>
-                  <div class="proj-progress">
-                    <div class="proj-progress-bar" style="width: 85%; background:var(--warning);"></div>
-                  </div>
-                </div>
-                <div class="proj-card-meta">
-                  <div style="color:var(--warning);">Aug 05, 2026</div>
-                  <div class="proj-avatars">
-                    <div class="proj-avatar">SH</div>
-                    <div class="proj-avatar" style="background:var(--success);">NH</div>
-                    <div class="proj-avatar" style="background:var(--text-3);">+2</div>
-                  </div>
-                  <div class="proj-actions">
-                    <button class="btn btn-sm btn-ghost" style="border:1px solid var(--border);">View</button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Project 4 -->
-              <div class="proj-card" onclick="openProject()">
-                <div class="proj-card-header">
-                  <div>
-                    <div class="proj-card-title">Vertex Systems API</div>
-                    <div class="proj-card-client">Vertex Systems</div>
-                  </div>
-                  <span class="proj-badge badge-completed">Completed</span>
-                </div>
-                <div class="proj-progress-wrap">
-                  <div class="proj-progress-label">
-                    <span>Progress</span>
-                    <span style="color:var(--success);">100%</span>
-                  </div>
-                  <div class="proj-progress">
-                    <div class="proj-progress-bar" style="width: 100%; background:var(--success);"></div>
-                  </div>
-                </div>
-                <div class="proj-card-meta">
-                  <div>Jul 25, 2026</div>
-                  <div class="proj-avatars">
-                    <div class="proj-avatar" style="background:var(--warning);">MI</div>
-                  </div>
-                  <div class="proj-actions">
-                    <button class="btn btn-sm btn-ghost" style="border:1px solid var(--border);">View</button>
-                  </div>
-                </div>
-              </div>
-
+              <!-- Dynamic Project Cards -->
             </div>
 
             <!-- UX States (Hidden by default) -->
@@ -845,45 +750,69 @@
   <div class="proj-panel-overlay" id="projOverlay" onclick="closeProject()"></div>
   <div class="proj-panel" id="projPanel">
     <div class="proj-panel-header">
-      <div>
-        <div class="proj-panel-title" id="drawer-proj-title">Cabo Travels Website</div>
-        <div class="proj-card-client" id="drawer-proj-client">Cabo Travels</div>
+      <div style="flex: 1;">
+        <div class="proj-panel-title">
+          <span id="drawer-proj-title">Project Name</span>
+          <input type="text" id="edit-proj-title" class="input" style="display:none; font-size:18px; font-weight:800; padding:4px 8px; width:100%;" />
+        </div>
+        <div class="proj-card-client">
+          <span id="drawer-proj-client">Client</span>
+          <input type="text" id="edit-proj-client" class="input" style="display:none; font-size:13px; font-weight:600; padding:4px 8px; width:100%; margin-top:4px;" />
+        </div>
       </div>
-      <button class="btn btn-ghost" onclick="closeProject()" style="padding:8px;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button class="btn btn-sm btn-ghost" id="drawer-edit-btn" onclick="toggleProjectEditMode()" style="border:1px solid var(--border);">Edit</button>
+        <button class="btn btn-sm btn-ghost" id="drawer-save-btn" onclick="saveProjectEdits()" style="display:none; border:1px solid var(--primary); background:var(--primary); color:white;">Save</button>
+        <button class="btn btn-sm btn-ghost" onclick="archiveCurrentProject()" style="border:1px solid var(--border);" title="Archive Project">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="21 8 21 21 3 21 3 8"></polyline><rect x="1" y="3" width="22" height="5"></rect><line x1="10" y1="12" x2="14" y2="12"></line></svg>
+        </button>
+        <button class="btn btn-sm btn-ghost" onclick="deleteCurrentProject()" style="border:1px solid var(--danger-10); color:var(--danger);" title="Delete Project">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+        </button>
+        <button class="btn btn-ghost" onclick="closeProject()" style="padding:8px; margin-left:8px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>    <div class="proj-panel-tabs">
+      <div class="proj-tab active" id="tab-overview" onclick="switchProjTab('overview')">Overview</div>
+      <div class="proj-tab" id="tab-milestones" onclick="switchProjTab('milestones')">Milestones</div>
+      <div class="proj-tab" id="tab-files" onclick="switchProjTab('files')">Files</div>
+      <div class="proj-tab" id="tab-timeline" onclick="switchProjTab('timeline')">Timeline</div>
+      <div class="proj-tab" id="tab-team" onclick="switchProjTab('team')">Team Members</div>
+      <div class="proj-tab" id="tab-notes" onclick="switchProjTab('notes')">Notes</div>
     </div>
-    <div class="proj-panel-tabs">
-      <div class="proj-tab active">Overview</div>
-      <div class="proj-tab">Tasks</div>
-      <div class="proj-tab">Files</div>
-      <div class="proj-tab">Timeline</div>
-      <div class="proj-tab">Team Members</div>
-      <div class="proj-tab">Budget</div>
-      <div class="proj-tab">Notes</div>
-    </div>
-    <div class="proj-panel-body">
-      <div style="display:flex; flex-direction:column; gap:32px;">
-
+    <div class="proj-panel-body" style="position:relative;">
+      
+      <!-- Overview Tab -->
+      <div id="view-overview" style="display:flex; flex-direction:column; gap:32px;">
         <div>
           <div
             style="font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; margin-bottom:8px;">
             Description</div>
           <div style="font-size:14px; font-weight:500; color:var(--text-2); line-height:1.6;" id="drawer-proj-desc">Full redesign and development of Cabo Travels website.</div>
+          <textarea id="edit-proj-desc" class="input" style="display:none; font-size:14px; font-weight:500; width:100%; min-height:80px; resize:vertical;"></textarea>
         </div>
 
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
           <div class="proj-box" style="padding:20px; transition:none; cursor:default;">
             <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Status</div>
             <div style="font-size:14px; font-weight:700; color:var(--success); margin-top:4px;" id="drawer-proj-status">Active</div>
+            <select id="edit-proj-status" class="input" style="display:none; margin-top:4px; width:100%;">
+              <option value="Planning">Planning</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Review">Review</option>
+              <option value="Completed">Completed</option>
+              <option value="Archived">Archived</option>
+            </select>
           </div>
           <div class="proj-box" style="padding:20px; transition:none; cursor:default;">
             <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Due Date</div>
             <div style="font-size:14px; font-weight:700; color:var(--text-1); margin-top:4px;" id="drawer-proj-date">Aug 30, 2026</div>
+            <input type="date" id="edit-proj-date" class="input" style="display:none; margin-top:4px; width:100%;" />
           </div>
         </div>
 
@@ -892,7 +821,8 @@
             <span style="font-size:14px; font-weight:800; color:var(--text-1);">Progress Overview</span>
             <span style="font-size:14px; font-weight:800; color:var(--text-1);" id="drawer-proj-progress-pct">65%</span>
           </div>
-          <div class="proj-progress" style="height:8px; border-radius:8px;">
+          <div style="font-size:12px; color:var(--text-3); margin-bottom:8px;" id="drawer-proj-tasks-summary">0 / 0 Tasks Completed</div>
+          <div class="proj-progress" style="height:8px; border-radius:8px;" id="drawer-proj-progress-wrap">
             <div class="proj-progress-bar" id="drawer-proj-progress-bar" style="width:65%; border-radius:8px;"></div>
           </div>
           <div
@@ -900,8 +830,72 @@
             <div id="drawer-proj-budget">Est. Budget: $45,000.00</div>
             <div id="drawer-proj-team">Team: SH, MI</div>
           </div>
+          <div id="edit-proj-budget-wrap" style="display:none; margin-top:12px;">
+            <label style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Budget</label>
+            <input type="number" id="edit-proj-budget" class="input" style="width:100%; margin-top:4px;" />
+          </div>
         </div>
+      </div>
 
+      <!-- Milestones Tab -->
+      <div id="view-milestones" style="display:none; flex-direction:column; gap:24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="font-size:14px; font-weight:800;">Milestones</div>
+          <button class="btn btn-sm" onclick="showAddMilestoneForm()">Add Milestone</button>
+        </div>
+        <div id="add-milestone-form" style="display:none; padding:16px; border:1px solid var(--border); border-radius:8px; background:var(--bg-2);">
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <input type="text" id="ms-title" class="input" placeholder="Milestone Title" />
+            <textarea id="ms-desc" class="input" placeholder="Description" style="min-height:60px; resize:vertical;"></textarea>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <input type="text" id="ms-assignee" class="input" placeholder="Assignee (e.g. SH)" />
+              <input type="date" id="ms-date" class="input" />
+            </div>
+            <div style="display:flex; gap:8px; justify-content:flex-end;">
+              <button class="btn btn-sm btn-ghost" onclick="hideAddMilestoneForm()">Cancel</button>
+              <button class="btn btn-sm btn-primary" onclick="submitMilestone()">Save</button>
+            </div>
+          </div>
+        </div>
+        <div id="drawer-milestones-list" style="display:flex; flex-direction:column; gap:12px;"></div>
+      </div>
+
+      <!-- Files Tab -->
+      <div id="view-files" style="display:none; flex-direction:column; gap:24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="font-size:14px; font-weight:800;">Project Files</div>
+          <button class="btn btn-sm" onclick="document.getElementById('mock-file-upload').click()">Upload File</button>
+          <input type="file" id="mock-file-upload" style="display:none;" onchange="handleMockFileUpload(event)" />
+        </div>
+        <div id="drawer-files-list" style="display:flex; flex-direction:column; gap:12px;"></div>
+      </div>
+
+      <!-- Timeline Tab -->
+      <div id="view-timeline" style="display:none; flex-direction:column; gap:24px;">
+        <div style="font-size:14px; font-weight:800;">Activity Timeline</div>
+        <div id="drawer-timeline-list" style="display:flex; flex-direction:column; gap:16px; position:relative; padding-left:16px; border-left:2px solid var(--border);"></div>
+      </div>
+
+      <!-- Team Members Tab -->
+      <div id="view-team" style="display:none; flex-direction:column; gap:24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="font-size:14px; font-weight:800;">Team Assignment</div>
+        </div>
+        <div id="drawer-team-list" style="display:flex; flex-direction:column; gap:12px;"></div>
+      </div>
+
+      <!-- Notes Tab -->
+      <div id="view-notes" style="display:none; flex-direction:column; gap:24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="font-size:14px; font-weight:800;">Internal Notes</div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <textarea id="new-note-text" class="input" placeholder="Write a note..." style="min-height:80px; resize:vertical;"></textarea>
+          <div style="display:flex; justify-content:flex-end;">
+            <button class="btn btn-sm btn-primary" onclick="submitNote()">Add Note</button>
+          </div>
+        </div>
+        <div id="drawer-notes-list" style="display:flex; flex-direction:column; gap:16px; margin-top:16px;"></div>
       </div>
     </div>
   </div>
@@ -920,109 +914,7 @@
   <script src="../assets/js/components.js"></script>
   <script src="../assets/js/navigation.js"></script>
   <script src="../assets/js/app.js"></script>
-  <script>
-    function openProjectDetails(id) {
-      if (window.VerdeServices && window.VerdeServices.Projects) {
-        window.VerdeServices.Projects.getProjectById(id).then(function (proj) {
-          if (!proj) return;
-          if (document.getElementById('drawer-proj-title')) document.getElementById('drawer-proj-title').textContent = proj.name || 'Project Details';
-          if (document.getElementById('drawer-proj-client')) document.getElementById('drawer-proj-client').textContent = proj.client || 'Client';
-          if (document.getElementById('drawer-proj-desc')) document.getElementById('drawer-proj-desc').textContent = proj.notes || proj.deliverables || (proj.category + ' project for ' + proj.client);
-          if (document.getElementById('drawer-proj-status')) document.getElementById('drawer-proj-status').textContent = proj.status || 'Active';
-          if (document.getElementById('drawer-proj-date')) document.getElementById('drawer-proj-date').textContent = proj.dueDate || 'Aug 30, 2026';
-          
-          var pct = proj.progress || 0;
-          if (document.getElementById('drawer-proj-progress-pct')) document.getElementById('drawer-proj-progress-pct').textContent = pct + '%';
-          if (document.getElementById('drawer-proj-progress-bar')) document.getElementById('drawer-proj-progress-bar').style.width = pct + '%';
-          
-          var b = parseFloat(proj.budget || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
-          if (document.getElementById('drawer-proj-budget')) document.getElementById('drawer-proj-budget').textContent = 'Est. Budget: $' + b;
-          if (document.getElementById('drawer-proj-team')) document.getElementById('drawer-proj-team').textContent = 'Team: ' + (proj.team ? proj.team.join(', ') : 'SH, MI');
-
-          document.getElementById('projPanel').classList.add('active');
-          document.getElementById('projOverlay').classList.add('active');
-        });
-      } else {
-        document.getElementById('projPanel').classList.add('active');
-        document.getElementById('projOverlay').classList.add('active');
-      }
-    }
-
-    function closeProject() {
-      document.getElementById('projPanel').classList.remove('active');
-      document.getElementById('projOverlay').classList.remove('active');
-    }
-
-    function renderProjectsList() {
-      if (!window.VerdeServices || !window.VerdeServices.Projects) return;
-
-      window.VerdeServices.Projects.getProjects().then(function (projects) {
-        var container = document.getElementById('proj-grid-container');
-        if (!container || !projects) return;
-
-        // Render Cards
-        container.innerHTML = '';
-        projects.forEach(function (p) {
-          var badgeClass = 'badge-active';
-          if (p.status === 'Completed') badgeClass = 'badge-completed';
-          if (p.status === 'At Risk') badgeClass = 'badge-risk';
-          if (p.status === 'Draft' || p.isDraft) badgeClass = 'badge-neutral';
-
-          var progress = p.progress || 0;
-          var teamHtml = (p.team || ['SH']).map(function (m, idx) {
-            var bg = idx === 1 ? 'background:var(--success);' : (idx === 2 ? 'background:var(--warning);' : '');
-            return '<div class="proj-avatar" style="' + bg + '">' + m + '</div>';
-          }).join('');
-
-          var cardHtml = 
-            '<div class="proj-card" onclick="openProjectDetails(\'' + p.id + '\')">' +
-              '<div class="proj-card-header">' +
-                '<div>' +
-                  '<div class="proj-card-title">' + p.name + '</div>' +
-                  '<div class="proj-card-client">' + p.client + '</div>' +
-                '</div>' +
-                '<span class="proj-badge ' + badgeClass + '">' + p.status + '</span>' +
-              '</div>' +
-              '<div class="proj-progress-wrap">' +
-                '<div class="proj-progress-label">' +
-                  '<span>Progress</span>' +
-                  '<span>' + progress + '%</span>' +
-                '</div>' +
-                '<div class="proj-progress">' +
-                  '<div class="proj-progress-bar" style="width: ' + progress + '%;"></div>' +
-                '</div>' +
-              '</div>' +
-              '<div class="proj-card-meta">' +
-                '<div>' + (p.dueDate || 'Aug 30, 2026') + '</div>' +
-                '<div class="proj-avatars">' + teamHtml + '</div>' +
-                '<div class="proj-actions">' +
-                  '<button class="btn btn-sm btn-ghost" style="border:1px solid var(--border);" onclick="event.stopPropagation(); openProjectDetails(\'' + p.id + '\');">View</button>' +
-                '</div>' +
-              '</div>' +
-            '</div>';
-
-          container.innerHTML += cardHtml;
-        });
-
-        // Update KPIs dynamically
-        var kpis = document.querySelectorAll('.proj-kpi-value');
-        if (kpis && kpis.length >= 4) {
-          var active = projects.filter(function (p) { return p.status === 'Active'; }).length;
-          var completed = projects.filter(function (p) { return p.status === 'Completed'; }).length;
-          var atRisk = projects.filter(function (p) { return p.status === 'At Risk'; }).length;
-          kpis[0].textContent = active;
-          kpis[1].textContent = completed;
-          kpis[2].textContent = atRisk;
-        }
-      });
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', renderProjectsList);
-    } else {
-      renderProjectsList();
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
 
 </html>

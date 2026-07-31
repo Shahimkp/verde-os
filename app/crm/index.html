@@ -88,21 +88,20 @@
     }
 
     .crm-kpi-card {
-      background: var(--bg);
-      border: 1px solid var(--border-subtle);
+      background: var(--surface);
+      border: 1px solid var(--border);
       border-radius: 16px;
       padding: 24px;
-      box-shadow: var(--shadow-sm);
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      transition: transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 250ms ease, transform 250ms ease, border-color 250ms ease;
     }
 
     .crm-kpi-card:hover {
-      transform: translateY(-1px);
       box-shadow: var(--shadow-md);
-      border-color: var(--border);
+      transform: translateY(-1px);
     }
 
     .crm-kpi-value {
@@ -167,13 +166,43 @@
 
     .crm-kanban-col {
       flex: 0 0 320px;
-      background: var(--bg-2);
-      border: 1px solid var(--border-subtle);
+      background: var(--surface);
+      border: 1px solid var(--border);
       border-radius: 16px;
       padding: 16px;
       display: flex;
       flex-direction: column;
       gap: 16px;
+      box-shadow: var(--shadow-sm);
+      height: 700px;
+      max-height: calc(100vh - 220px);
+    }
+
+    .crm-kanban-cards-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+      min-height: 0;
+      padding-right: 4px;
+      padding-bottom: 8px;
+    }
+
+    /* Custom thin scrollbar for pipeline columns */
+    .crm-kanban-cards-container::-webkit-scrollbar {
+      width: 6px;
+    }
+    .crm-kanban-cards-container::-webkit-scrollbar-track {
+      background: #F1F5F9;
+      border-radius: 8px;
+    }
+    .crm-kanban-cards-container::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 8px;
+    }
+    .crm-kanban-cards-container::-webkit-scrollbar-thumb:hover {
+      background: var(--primary-hover, #000080);
     }
 
     .crm-kanban-col-header {
@@ -190,7 +219,7 @@
     }
 
     .crm-kanban-card {
-      background: var(--bg);
+      background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 20px;
@@ -200,9 +229,8 @@
     }
 
     .crm-kanban-card:hover {
-      transform: translateY(-1px);
       box-shadow: var(--shadow-md);
-      border-color: var(--primary-30);
+      transform: translateY(-1px);
     }
 
     .crm-kcard-header {
@@ -261,8 +289,8 @@
 
     /* Enterprise Table */
     .crm-table-container {
-      background: var(--bg);
-      border: 1px solid var(--border-subtle);
+      background: var(--surface);
+      border: 1px solid var(--border);
       border-radius: 16px;
       box-shadow: var(--shadow-sm);
       overflow: hidden;
@@ -338,8 +366,93 @@
     }
 
     .badge-closed {
-      background: var(--text-3);
-      color: #fff;
+      background: var(--bg-3);
+      color: var(--text-2);
+    }
+
+    /* Custom VERDE OS Select */
+    .verde-custom-select {
+      position: relative;
+      width: 140px;
+    }
+    
+    .verde-select-trigger {
+      width: 100%;
+      height: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm, 8px);
+      padding: 0 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-2);
+      cursor: pointer;
+      transition: border-color 200ms ease, box-shadow 200ms ease, background-color 200ms ease;
+    }
+    
+    .verde-select-trigger:hover {
+      background-color: var(--bg);
+      color: var(--text-1);
+    }
+    
+    .verde-select-trigger:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: var(--focus-ring, 0 0 0 3px rgba(0, 0, 138, 0.15));
+    }
+    
+    .verde-select-menu {
+      position: absolute;
+      top: calc(100% + 4px);
+      right: 0;
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm, 8px);
+      box-shadow: var(--shadow-floating, 0 4px 24px rgba(15, 23, 42, 0.08));
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-4px);
+      transition: opacity 150ms ease, transform 150ms ease, visibility 150ms ease;
+      z-index: 100;
+      padding: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .verde-custom-select.open .verde-select-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    
+    .verde-custom-select.open .verde-select-icon {
+      transform: rotate(180deg);
+    }
+    
+    .verde-select-option {
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-2);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 200ms ease, color 200ms ease;
+    }
+    
+    .verde-select-option:hover {
+      background: var(--bg-subtle, #F1F4F9);
+      color: var(--text-1);
+    }
+    
+    .verde-select-option.selected {
+      background: rgba(0, 0, 138, 0.08); /* Primary color at 8% opacity */
+      color: var(--primary);
+      font-weight: 600;
     }
 
     /* Half Grid for Meetings & Activity */
@@ -438,7 +551,7 @@
                   <circle cx="11" cy="11" r="8"></circle>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
-                <input type="text" placeholder="Search..." />
+                <input type="text" id="crm-global-search" placeholder="Search Leads and Clients..." />
               </div>
               <button class="btn btn-ghost" style="background:var(--bg); border:1px solid var(--border);">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
@@ -450,8 +563,9 @@
               </button>
 
               <!-- Quick Actions -->
-              <button class="btn btn-primary" onclick="alert('Lead creation coming soon.')">+ New Lead</button>
-              <button class="btn btn-primary" style="background:var(--text-1); color:var(--bg);" onclick="alert('Client creation coming soon.')">+ New Client</button>
+              <button class="btn btn-primary" onclick="window.showCreateLeadModal()">+ New Lead</button>
+              <button class="btn btn-primary" style="background:var(--text-1); color:var(--bg);"
+                onclick="window.showCreateClientModal()">+ New Client</button>
               <button class="btn btn-ghost" style="background:var(--bg); border:1px solid var(--border);">Schedule
                 Meeting</button>
               <button class="btn btn-ghost" style="background:var(--bg); border:1px solid var(--border);">Create
@@ -483,267 +597,152 @@
             </div>
           </section>
 
-          <!-- 3. Sales Pipeline (Horizontal Kanban) -->
-          <section class="crm-section">
-            <div class="crm-section-header">
+          <!-- Tabs Navigation -->
+          <div class="crm-tabs" style="display:flex; gap:24px; border-bottom:1px solid var(--border); margin-bottom:32px;">
+            <button class="crm-tab active" data-target="tab-leads" style="padding:12px 0; border-bottom:2px solid var(--primary); font-weight:800; color:var(--text-1); background:transparent; border-top:none; border-left:none; border-right:none; cursor:pointer;">Leads</button>
+            <button class="crm-tab" data-target="tab-clients" style="padding:12px 0; border-bottom:2px solid transparent; font-weight:600; color:var(--text-3); background:transparent; border-top:none; border-left:none; border-right:none; cursor:pointer; transition:color 0.2s;">Clients</button>
+            <button class="crm-tab" data-target="tab-meetings" style="padding:12px 0; border-bottom:2px solid transparent; font-weight:600; color:var(--text-3); background:transparent; border-top:none; border-left:none; border-right:none; cursor:pointer; transition:color 0.2s;">Meetings</button>
+            <button class="crm-tab" data-target="tab-proposals" style="padding:12px 0; border-bottom:2px solid transparent; font-weight:600; color:var(--text-3); background:transparent; border-top:none; border-left:none; border-right:none; cursor:pointer; transition:color 0.2s;">Proposals</button>
+            <button class="crm-tab" data-target="tab-activity" style="padding:12px 0; border-bottom:2px solid transparent; font-weight:600; color:var(--text-3); background:transparent; border-top:none; border-left:none; border-right:none; cursor:pointer; transition:color 0.2s;">Activity</button>
+          </div>
+
+          <!-- Tab Content: Leads -->
+          <div id="tab-leads" class="crm-tab-content" style="display:block;">
+            <!-- 3. Sales Pipeline (Horizontal Kanban) -->
+            <section class="crm-section">
+            <div class="crm-section-header" style="display:flex; justify-content:space-between; align-items:center;">
               <h2 class="crm-section-title">Sales Pipeline</h2>
+              <div class="verde-custom-select" id="custom-lead-filter">
+                <input type="hidden" id="crm-lead-status-filter" value="active" />
+                <button type="button" class="verde-select-trigger" onclick="this.parentElement.classList.toggle('open')">
+                  <span class="verde-select-value">Active Leads</span>
+                  <svg class="verde-select-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3); transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+                <div class="verde-select-menu">
+                  <div class="verde-select-option selected" data-value="active" onclick="window.selectCustomOption(this, 'Active Leads')">Active Leads</div>
+                  <div class="verde-select-option" data-value="archived" onclick="window.selectCustomOption(this, 'Archived Leads')">Archived Leads</div>
+                </div>
+              </div>
             </div>
 
-            <div class="crm-kanban">
-
+            <div class="crm-kanban" id="crm-kanban-board">
               <!-- Stage 1: New Lead -->
-              <div class="crm-kanban-col">
+              <div class="crm-kanban-col" data-stage="New Lead">
                 <div class="crm-kanban-col-header">
                   <span>New Lead</span>
-                  <span class="badge badge-neutral">2</span>
+                  <span class="badge badge-neutral" id="count-new-lead">0</span>
                 </div>
-
-                <div class="crm-kanban-card">
-                  <div class="crm-kcard-header">
-                    <div>
-                      <div class="crm-kcard-client">Sarah Jenkins</div>
-                      <div class="crm-kcard-company">Vertex Systems</div>
-                    </div>
-                    <div class="crm-kcard-value">₹8.5L</div>
-                  </div>
-                  <div class="crm-kcard-meta">
-                    <div style="display:flex; align-items:center; gap:6px;">
-                      <div class="crm-avatar">SH</div> Shahim
-                    </div>
-                    <span style="color:var(--warning);">Call Today</span>
-                  </div>
-                </div>
-
-                <div class="crm-kanban-card">
-                  <div class="crm-kcard-header">
-                    <div>
-                      <div class="crm-kcard-client">David Chen</div>
-                      <div class="crm-kcard-company">Vertex Systems</div>
-                    </div>
-                    <div class="crm-kcard-value">₹12.0L</div>
-                  </div>
-                  <div class="crm-kcard-meta">
-                    <div style="display:flex; align-items:center; gap:6px;">
-                      <div class="crm-avatar" style="background:var(--success);">AK</div> Nihal
-                    </div>
-                    <span>Email Tomorrow</span>
-                  </div>
-                </div>
+                <div class="crm-kanban-cards-container" id="kanban-New Lead"
+                  ></div>
               </div>
 
               <!-- Stage 2: Qualified -->
-              <div class="crm-kanban-col">
+              <div class="crm-kanban-col" data-stage="Qualified">
                 <div class="crm-kanban-col-header">
                   <span>Qualified</span>
-                  <span class="badge badge-neutral">1</span>
+                  <span class="badge badge-neutral" id="count-qualified">0</span>
                 </div>
-                <div class="crm-kanban-card">
-                  <div class="crm-kcard-header">
-                    <div>
-                      <div class="crm-kcard-client">Marcus Thorne</div>
-                      <div class="crm-kcard-company">GreenLeaf</div>
-                    </div>
-                    <div class="crm-kcard-value">₹24.0L</div>
-                  </div>
-                  <div class="crm-kcard-meta">
-                    <div style="display:flex; align-items:center; gap:6px;">
-                      <div class="crm-avatar">SH</div> Shahim
-                    </div>
-                    <span>Meeting Scheduled</span>
-                  </div>
-                </div>
+                <div class="crm-kanban-cards-container" id="kanban-Qualified"
+                  ></div>
               </div>
 
-              <!-- Stage 3: Proposal -->
-              <div class="crm-kanban-col">
+              <!-- Stage 3: Proposal Sent -->
+              <div class="crm-kanban-col" data-stage="Proposal Sent">
                 <div class="crm-kanban-col-header">
-                  <span>Proposal</span>
-                  <span class="badge badge-neutral">1</span>
+                  <span>Proposal Sent</span>
+                  <span class="badge badge-neutral" id="count-proposal-sent">0</span>
                 </div>
-                <div class="crm-kanban-card">
-                  <div class="crm-kcard-header">
-                    <div>
-                      <div class="crm-kcard-client">Elena Rodriguez</div>
-                      <div class="crm-kcard-company">Cabo Travels</div>
-                    </div>
-                    <div class="crm-kcard-value">₹15.5L</div>
-                  </div>
-                  <div class="crm-kcard-meta">
-                    <div style="display:flex; align-items:center; gap:6px;">
-                      <div class="crm-avatar" style="background:var(--warning);">JD</div> Midhul
-                    </div>
-                    <span style="color:var(--danger);">Awaiting Reply</span>
-                  </div>
-                </div>
+                <div class="crm-kanban-cards-container" id="kanban-Proposal Sent"
+                  ></div>
               </div>
 
               <!-- Stage 4: Negotiation -->
-              <div class="crm-kanban-col">
+              <div class="crm-kanban-col" data-stage="Negotiation">
                 <div class="crm-kanban-col-header" style="border-bottom-color:var(--warning);">
                   <span>Negotiation</span>
-                  <span class="badge badge-neutral">1</span>
+                  <span class="badge badge-neutral" id="count-negotiation">0</span>
                 </div>
-                <div class="crm-kanban-card" style="border-color:var(--warning-30);">
-                  <div class="crm-kcard-header">
-                    <div>
-                      <div class="crm-kcard-client">Michael Chang</div>
-                      <div class="crm-kcard-company">BlueWave Tech</div>
-                    </div>
-                    <div class="crm-kcard-value">₹32.0L</div>
-                  </div>
-                  <div class="crm-kcard-meta">
-                    <div style="display:flex; align-items:center; gap:6px;">
-                      <div class="crm-avatar">SH</div> Shahim
-                    </div>
-                    <span style="color:var(--warning);">Contract Review</span>
-                  </div>
-                </div>
+                <div class="crm-kanban-cards-container" id="kanban-Negotiation"
+                  ></div>
               </div>
 
               <!-- Stage 5: Won -->
-              <div class="crm-kanban-col">
+              <div class="crm-kanban-col" data-stage="Won">
                 <div class="crm-kanban-col-header" style="border-bottom-color:var(--success);">
                   <span>Won</span>
-                  <span class="badge badge-success">3</span>
+                  <span class="badge badge-success" id="count-won">0</span>
                 </div>
-                <div class="crm-kanban-card">
-                  <div class="crm-kcard-header">
-                    <div>
-                      <div class="crm-kcard-client">Priya Sharma</div>
-                      <div class="crm-kcard-company">Vertex Systems</div>
-                    </div>
-                    <div class="crm-kcard-value" style="color:var(--success); background:var(--success-10);">₹45.0L
-                    </div>
-                  </div>
-                  <div class="crm-kcard-meta">
-                    <div style="display:flex; align-items:center; gap:6px;">
-                      <div class="crm-avatar">SH</div> Shahim
-                    </div>
-                    <span style="color:var(--success);">Closed</span>
-                  </div>
-                </div>
+                <div class="crm-kanban-cards-container" id="kanban-Won"
+                  ></div>
               </div>
 
               <!-- Stage 6: Lost -->
-              <div class="crm-kanban-col">
+              <div class="crm-kanban-col" data-stage="Lost">
                 <div class="crm-kanban-col-header" style="border-bottom-color:var(--danger);">
                   <span>Lost</span>
-                  <span class="badge badge-neutral">0</span>
+                  <span class="badge badge-neutral" id="count-lost">0</span>
                 </div>
-                <div style="text-align:center; padding:32px 0; color:var(--text-3); font-size:12px; font-weight:600;">
-                  No deals lost recently
-                </div>
+                <div class="crm-kanban-cards-container" id="kanban-Lost"
+                  ></div>
               </div>
-
             </div>
           </section>
+          </div>
 
-          <!-- 4. Client Directory -->
-          <section class="crm-section">
-            <div class="crm-section-header">
-              <h2 class="crm-section-title">Client Directory</h2>
-            </div>
+          <!-- Tab Content: Clients -->
+          <div id="tab-clients" class="crm-tab-content" style="display:none;">
+            <!-- 4. Client Directory -->
+            <section class="crm-section">
+              <div class="crm-section-header">
+                <h2 class="crm-section-title">Client Directory</h2>
+              </div>
 
             <div class="crm-table-container">
               <div class="crm-table-toolbar" style="display:flex; justify-content:space-between; margin-bottom:16px;">
-                <div class="crm-search" style="width: 300px; border-color: transparent; background: var(--bg-2); display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:8px;">
+                <div class="crm-search"
+                  style="width: 300px; border-color: transparent; background: var(--bg-2); display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:8px;">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                     style="color:var(--text-3)">
                     <circle cx="11" cy="11" r="8"></circle>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                   </svg>
-                  <input type="text" placeholder="Filter clients..." style="border:none; background:transparent; outline:none; width:100%;" />
+                  <input type="text" id="crm-client-search" placeholder="Filter clients..."
+                    style="border:none; background:transparent; outline:none; width:100%;" />
                 </div>
                 <div style="display:flex; gap:12px; align-items:center;">
-                  <button class="btn btn-ghost btn-sm" style="background:var(--surface); border:1px solid var(--border);">Filter</button>
-                  <button class="btn btn-ghost btn-sm" style="background:var(--surface); border:1px solid var(--border);">Sort</button>
+                  <div class="verde-custom-select" id="custom-client-filter">
+                    <input type="hidden" id="crm-client-status-filter" value="active" />
+                    <button type="button" class="verde-select-trigger" onclick="this.parentElement.classList.toggle('open')">
+                      <span class="verde-select-value">Active Clients</span>
+                      <svg class="verde-select-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3); transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div class="verde-select-menu">
+                      <div class="verde-select-option selected" data-value="active" onclick="window.selectCustomOption(this, 'Active Clients')">Active Clients</div>
+                      <div class="verde-select-option" data-value="archived" onclick="window.selectCustomOption(this, 'Archived Clients')">Archived Clients</div>
+                    </div>
+                  </div>
+                  <button class="btn btn-ghost btn-sm"
+                    style="background:var(--surface); border:1px solid var(--border);">Filter</button>
+                  <button class="btn btn-ghost btn-sm"
+                    style="background:var(--surface); border:1px solid var(--border);">Sort</button>
                 </div>
               </div>
 
               <table class="table-enterprise">
                 <thead>
                   <tr>
-                    <th>Client</th>
-                    <th>Company</th>
+                    <th>Client & Contact</th>
+                    <th>Company / Industry</th>
+                    <th>Revenue / Projects</th>
                     <th>Status</th>
-                    <th>Last Contact</th>
-                    <th>Projects</th>
+                    <th>Last Activity</th>
                     <th>Assigned To</th>
                     <th style="text-align:right;">Actions</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <div>Elena Rodriguez</div>
-                      <div class="td-sub">elena@cabotravels.com</div>
-                    </td>
-                    <td>Cabo Travels</td>
-                    <td><span class="badge-status badge-active">Active</span></td>
-                    <td>Today, 10:30 AM</td>
-                    <td>2 Active</td>
-                    <td>Shahim</td>
-                    <td style="text-align:right;">
-                      <button class="btn btn-sm btn-ghost" onclick="alert('Review details coming soon.')">View</button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div>Marcus Thorne</div>
-                      <div class="td-sub">m.thorne@greenleaf.io</div>
-                    </td>
-                    <td>GreenLeaf</td>
-                    <td><span class="badge-status badge-pending">Onboarding</span></td>
-                    <td>Yesterday</td>
-                    <td>1 Active</td>
-                    <td>Shahim</td>
-                    <td style="text-align:right;">
-                      <button class="btn btn-sm btn-ghost" onclick="alert('Review details coming soon.')">View</button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div>Michael Chang</div>
-                      <div class="td-sub">michael@bluewave.com</div>
-                    </td>
-                    <td>BlueWave Tech</td>
-                    <td><span class="badge-status badge-pending">Negotiation</span></td>
-                    <td>Aug 14, 2026</td>
-                    <td>0 Active</td>
-                    <td>Midhul</td>
-                    <td style="text-align:right;">
-                      <button class="btn btn-sm btn-ghost" onclick="alert('Review details coming soon.')">View</button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div>Sarah Jenkins</div>
-                      <div class="td-sub">sarah.j@vertex.net</div>
-                    </td>
-                    <td>Vertex Systems</td>
-                    <td><span class="badge-status badge-active">Active</span></td>
-                    <td>Aug 12, 2026</td>
-                    <td>3 Active</td>
-                    <td>Shahim</td>
-                    <td style="text-align:right;">
-                      <button class="btn btn-sm btn-ghost" onclick="alert('Review details coming soon.')">View</button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div>David Chen</div>
-                      <div class="td-sub">d.chen@vertex.net</div>
-                    </td>
-                    <td>Vertex Systems</td>
-                    <td><span class="badge-status badge-closed">Inactive</span></td>
-                    <td>Jul 30, 2026</td>
-                    <td>1 Completed</td>
-                    <td>Nihal</td>
-                    <td style="text-align:right;">
-                      <button class="btn btn-sm btn-ghost" onclick="alert('Review details coming soon.')">View</button>
-                    </td>
-                  </tr>
+                <tbody id="clients-table-body">
+                  <!-- Dynamic rows will be rendered here -->
                 </tbody>
               </table>
               <div style="display:flex; justify-content:space-between; align-items:center; padding-top:16px;">
@@ -753,204 +752,225 @@
                   <button class="btn btn-ghost btn-sm" style="border:1px solid var(--border);">Next</button>
                 </div>
               </div>
-              </div>
+            </div>
 
-              <!-- UX States (Hidden by default) -->
-              <div style="display:none;" class="empty-state">
-                <div class="empty-state-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            <!-- UX States (Hidden by default) -->
+            <div style="display:none;" class="empty-state">
+              <div class="empty-state-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </div>
+              <div class="empty-state-title">No Clients Found</div>
+              <div class="empty-state-desc">You don't have any clients matching the current filters.</div>
+              <button class="btn btn-primary" style="margin-top:16px;">+ Add Client</button>
+            </div>
+
+            <div style="display:none; margin-top:24px;" class="skeleton-table"></div>
+
+            <div style="display:none; margin-top:24px;" class="alert alert-danger">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              <span>Failed to load clients. Please try again.</span>
+            </div>
+
+            <div style="display:none; margin-top:24px;" class="alert alert-success">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+              <span>Client data successfully exported.</span>
+            </div>
+        </div>
+        </section>
+
+        <!-- 5 & 6. Meetings & Recent Activity -->
+        <div class="crm-grid-half">
+
+          <!-- 5. Today's Meetings -->
+          <section class="crm-section" style="margin-bottom:0;">
+            <div class="crm-section-header">
+              <h2 class="crm-section-title">Today's Meetings</h2>
+            </div>
+            <div class="crm-table-container">
+              <div class="crm-table-toolbar" style="display:flex; justify-content:space-between; margin-bottom:16px;">
+                <div class="crm-search"
+                  style="width: 100%; max-width: 200px; border-color: transparent; background: var(--bg-2); display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:8px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    style="color:var(--text-3)">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                  <input type="text" placeholder="Search..."
+                    style="border:none; background:transparent; outline:none; width:100%;" />
                 </div>
-                <div class="empty-state-title">No Clients Found</div>
-                <div class="empty-state-desc">You don't have any clients matching the current filters.</div>
-                <button class="btn btn-primary" style="margin-top:16px;">+ Add Client</button>
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <button class="btn btn-ghost btn-sm"
+                    style="background:var(--surface); border:1px solid var(--border);">Filter</button>
+                  <button class="btn btn-ghost btn-sm"
+                    style="background:var(--surface); border:1px solid var(--border);">Sort</button>
+                </div>
               </div>
-
-              <div style="display:none; margin-top:24px;" class="skeleton-table"></div>
-
-              <div style="display:none; margin-top:24px;" class="alert alert-danger">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-                <span>Failed to load clients. Please try again.</span>
-              </div>
-
-              <div style="display:none; margin-top:24px;" class="alert alert-success">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                <span>Client data successfully exported.</span>
+              <table class="table-enterprise">
+                <thead>
+                  <tr>
+                    <th>Client</th>
+                    <th>Time</th>
+                    <th>Purpose</th>
+                    <th style="text-align:right;">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Elena Rodriguez</td>
+                    <td>10:00 AM</td>
+                    <td>Design Review</td>
+                    <td style="text-align:right;"><span class="badge-status badge-closed">Completed</span></td>
+                  </tr>
+                  <tr>
+                    <td>Marcus Thorne</td>
+                    <td>2:00 PM</td>
+                    <td>Project Kickoff</td>
+                    <td style="text-align:right;"><span class="badge-status badge-active">Upcoming</span></td>
+                  </tr>
+                  <tr>
+                    <td>Sarah Jenkins</td>
+                    <td>4:30 PM</td>
+                    <td>Quarterly Sync</td>
+                    <td style="text-align:right;"><span class="badge-status badge-active">Upcoming</span></td>
+                  </tr>
+                </tbody>
+              </table>
+              <div style="display:flex; justify-content:space-between; align-items:center; padding-top:16px;">
+                <div style="color:var(--text-3); font-size:0.875rem;">Showing 1 - 3 of 3</div>
+                <div style="display:flex; gap:8px;">
+                  <button class="btn btn-ghost btn-sm" disabled style="border:1px solid var(--border);">Prev</button>
+                  <button class="btn btn-ghost btn-sm" disabled style="border:1px solid var(--border);">Next</button>
+                </div>
               </div>
             </div>
           </section>
 
-          <!-- 5 & 6. Meetings & Recent Activity -->
-          <div class="crm-grid-half">
+          <!-- 6. Recent Activity -->
+          <section class="crm-section" style="margin-bottom:0;">
+            <div class="crm-section-header">
+              <h2 class="crm-section-title">Recent Activity</h2>
+            </div>
+            <div class="crm-table-container crm-activity-list">
 
-            <!-- 5. Today's Meetings -->
-            <section class="crm-section" style="margin-bottom:0;">
-              <div class="crm-section-header">
-                <h2 class="crm-section-title">Today's Meetings</h2>
-              </div>
-              <div class="crm-table-container">
-                <div class="crm-table-toolbar" style="display:flex; justify-content:space-between; margin-bottom:16px;">
-                  <div class="crm-search" style="width: 100%; max-width: 200px; border-color: transparent; background: var(--bg-2); display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:8px;">
+              <div class="crm-activity-item">
+                <div class="crm-activity-content">
+                  <div class="crm-activity-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                      style="color:var(--text-3)">
-                      <circle cx="11" cy="11" r="8"></circle>
-                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                      stroke="currentColor" stroke-width="2">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                      <polyline points="14 2 14 8 20 8"></polyline>
+                      <line x1="16" y1="13" x2="8" y2="13"></line>
+                      <line x1="16" y1="17" x2="8" y2="17"></line>
+                      <polyline points="10 9 9 9 8 9"></polyline>
                     </svg>
-                    <input type="text" placeholder="Search..." style="border:none; background:transparent; outline:none; width:100%;" />
                   </div>
-                  <div style="display:flex; gap:8px; align-items:center;">
-                    <button class="btn btn-ghost btn-sm" style="background:var(--surface); border:1px solid var(--border);">Filter</button>
-                    <button class="btn btn-ghost btn-sm" style="background:var(--surface); border:1px solid var(--border);">Sort</button>
-                  </div>
+                  <div class="crm-activity-text">Proposal Sent to Cabo Travels</div>
                 </div>
-                <table class="table-enterprise">
-                  <thead>
-                    <tr>
-                      <th>Client</th>
-                      <th>Time</th>
-                      <th>Purpose</th>
-                      <th style="text-align:right;">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Elena Rodriguez</td>
-                      <td>10:00 AM</td>
-                      <td>Design Review</td>
-                      <td style="text-align:right;"><span class="badge-status badge-closed">Completed</span></td>
-                    </tr>
-                    <tr>
-                      <td>Marcus Thorne</td>
-                      <td>2:00 PM</td>
-                      <td>Project Kickoff</td>
-                      <td style="text-align:right;"><span class="badge-status badge-active">Upcoming</span></td>
-                    </tr>
-                    <tr>
-                      <td>Sarah Jenkins</td>
-                      <td>4:30 PM</td>
-                      <td>Quarterly Sync</td>
-                      <td style="text-align:right;"><span class="badge-status badge-active">Upcoming</span></td>
-                    </tr>
-                  </tbody>
-                </table>
-                <div style="display:flex; justify-content:space-between; align-items:center; padding-top:16px;">
-                  <div style="color:var(--text-3); font-size:0.875rem;">Showing 1 - 3 of 3</div>
-                  <div style="display:flex; gap:8px;">
-                    <button class="btn btn-ghost btn-sm" disabled style="border:1px solid var(--border);">Prev</button>
-                    <button class="btn btn-ghost btn-sm" disabled style="border:1px solid var(--border);">Next</button>
-                  </div>
-                </div>
+                <div class="crm-activity-time">10:45 AM</div>
               </div>
-            </section>
 
-            <!-- 6. Recent Activity -->
-            <section class="crm-section" style="margin-bottom:0;">
-              <div class="crm-section-header">
-                <h2 class="crm-section-title">Recent Activity</h2>
+              <div class="crm-activity-item">
+                <div class="crm-activity-content">
+                  <div class="crm-activity-icon" style="color:var(--success);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                      <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                      <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                    </svg>
+                  </div>
+                  <div class="crm-activity-text">Deal Won: Vertex Systems Software Suite</div>
+                </div>
+                <div class="crm-activity-time">Yesterday</div>
               </div>
-              <div class="crm-table-container crm-activity-list">
 
-                <div class="crm-activity-item">
-                  <div class="crm-activity-content">
-                    <div class="crm-activity-icon">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="16" y1="13" x2="8" y2="13"></line>
-                        <line x1="16" y1="17" x2="8" y2="17"></line>
-                        <polyline points="10 9 9 9 8 9"></polyline>
-                      </svg>
-                    </div>
-                    <div class="crm-activity-text">Proposal Sent to Cabo Travels</div>
+              <div class="crm-activity-item">
+                <div class="crm-activity-content">
+                  <div class="crm-activity-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
                   </div>
-                  <div class="crm-activity-time">10:45 AM</div>
+                  <div class="crm-activity-text">Meeting Completed: BlueWave Tech</div>
                 </div>
-
-                <div class="crm-activity-item">
-                  <div class="crm-activity-content">
-                    <div class="crm-activity-icon" style="color:var(--success);">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
-                        <line x1="9" y1="9" x2="9.01" y2="9"></line>
-                        <line x1="15" y1="9" x2="15.01" y2="9"></line>
-                      </svg>
-                    </div>
-                    <div class="crm-activity-text">Deal Won: Vertex Systems Software Suite</div>
-                  </div>
-                  <div class="crm-activity-time">Yesterday</div>
-                </div>
-
-                <div class="crm-activity-item">
-                  <div class="crm-activity-content">
-                    <div class="crm-activity-icon">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                        <line x1="3" y1="10" x2="21" y2="10"></line>
-                      </svg>
-                    </div>
-                    <div class="crm-activity-text">Meeting Completed: BlueWave Tech</div>
-                  </div>
-                  <div class="crm-activity-time">Aug 14</div>
-                </div>
-
-                <div class="crm-activity-item">
-                  <div class="crm-activity-content">
-                    <div class="crm-activity-icon" style="color:var(--primary);">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="9" cy="7" r="4"></circle>
-                        <line x1="19" y1="8" x2="19" y2="14"></line>
-                        <line x1="22" y1="11" x2="16" y2="11"></line>
-                      </svg>
-                    </div>
-                    <div class="crm-activity-text">New Client Added: GreenLeaf</div>
-                  </div>
-                  <div class="crm-activity-time">Aug 12</div>
-                </div>
-
-                <div class="crm-activity-item">
-                  <div class="crm-activity-content">
-                    <div class="crm-activity-icon" style="color:var(--primary);">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                      </svg>
-                    </div>
-                    <div class="crm-activity-text">Lead Created: Vertex Systems</div>
-                  </div>
-                  <div class="crm-activity-time">Jul 30</div>
-                </div>
-
-                <div class="crm-activity-item">
-                  <div class="crm-activity-content">
-                    <div class="crm-activity-icon">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                      </svg>
-                    </div>
-                    <div class="crm-activity-text">Email Sent to Sarah Jenkins</div>
-                  </div>
-                  <div class="crm-activity-time">Jul 28</div>
-                </div>
-
+                <div class="crm-activity-time">Aug 14</div>
               </div>
-            </section>
 
+              <div class="crm-activity-item">
+                <div class="crm-activity-content">
+                  <div class="crm-activity-icon" style="color:var(--primary);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="9" cy="7" r="4"></circle>
+                      <line x1="19" y1="8" x2="19" y2="14"></line>
+                      <line x1="22" y1="11" x2="16" y2="11"></line>
+                    </svg>
+                  </div>
+                  <div class="crm-activity-text">New Client Added: GreenLeaf</div>
+                </div>
+                <div class="crm-activity-time">Aug 12</div>
+              </div>
+
+              <div class="crm-activity-item">
+                <div class="crm-activity-content">
+                  <div class="crm-activity-icon" style="color:var(--primary);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                  </div>
+                  <div class="crm-activity-text">Lead Created: Vertex Systems</div>
+                </div>
+                <div class="crm-activity-time">Jul 30</div>
+              </div>
+
+              <div class="crm-activity-item">
+                <div class="crm-activity-content">
+                  <div class="crm-activity-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                  </div>
+                  <div class="crm-activity-text">Email Sent to Sarah Jenkins</div>
+                </div>
+                <div class="crm-activity-time">Jul 28</div>
+              </div>
+
+            </div>
+            </div>
+          </section>
           </div>
 
         </div>
-      </main>
 
     </div>
+    </main>
+
+  </div>
   </div>
 
   <div id="statusbar-container"></div>
@@ -967,6 +987,7 @@
   <script src="../assets/js/components.js"></script>
   <script src="../assets/js/navigation.js"></script>
   <script src="../assets/js/app.js"></script>
+  <script src="./script.js?v=6"></script>
 </body>
 
 </html>

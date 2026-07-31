@@ -212,13 +212,28 @@
       budget: parseFloat(document.getElementById('inpBudget') ? document.getElementById('inpBudget').value : 25000),
       team: ['SH', 'MI']
     };
+    if (currentClientId) payload.clientId = currentClientId;
 
     if (window.VerdeServices && window.VerdeServices.Projects) {
       window.VerdeServices.Projects.createProject(payload).then(function (res) {
-        if (window.VerdeToast) window.VerdeToast.success('Project "' + res.name + '" created successfully!');
-        setTimeout(function () {
-          window.location.href = '../projects/index.html';
-        }, 1200);
+        if (currentClientId && window.VerdeServices.Crm) {
+          window.VerdeServices.Crm.getClientById(currentClientId).then(function(clientData) {
+             if (clientData) {
+               var acts = clientData.activities || [];
+               acts.push({ id: 'ACT-' + Date.now(), action: 'Project Created', details: res.name, user: window.VerdeMockData ? window.VerdeMockData.user.name : 'System', date: new Date().toISOString() });
+               window.VerdeServices.Crm.updateClient(currentClientId, { activities: acts }).then(function() {
+                 if (window.VerdeToast) window.VerdeToast.success('Project "' + res.name + '" created successfully!');
+                 setTimeout(function () { window.location.href = '../projects/index.html'; }, 1200);
+               });
+             } else {
+               if (window.VerdeToast) window.VerdeToast.success('Project "' + res.name + '" created successfully!');
+               setTimeout(function () { window.location.href = '../projects/index.html'; }, 1200);
+             }
+          });
+        } else {
+          if (window.VerdeToast) window.VerdeToast.success('Project "' + res.name + '" created successfully!');
+          setTimeout(function () { window.location.href = '../projects/index.html'; }, 1200);
+        }
       });
     } else {
       if (window.VerdeToast) window.VerdeToast.success('Project created successfully!');
@@ -228,11 +243,27 @@
     }
   };
 
+  var currentClientId = null;
+
   // Init
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', renderStepper);
-  } else {
+  function initWizard() {
+    var prefillStr = sessionStorage.getItem('verde_prefill_project');
+    if (prefillStr) {
+      try {
+        var prefill = JSON.parse(prefillStr);
+        var elClient = document.getElementById('inpClient');
+        if (elClient) elClient.value = prefill.company || prefill.client || '';
+        if (prefill.clientId) currentClientId = prefill.clientId;
+        sessionStorage.removeItem('verde_prefill_project');
+      } catch (e) {}
+    }
     renderStepper();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initWizard);
+  } else {
+    initWizard();
   }
 
 })();
