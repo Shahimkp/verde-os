@@ -7,7 +7,8 @@
   <title>Tasks · VERDE OS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="../assets/css/global.css" />
   <link rel="stylesheet" href="../assets/css/layout.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
@@ -25,6 +26,7 @@
       align-items: flex-end;
       margin-bottom: 48px;
     }
+
     .task-header-title {
       font-size: 28px;
       font-weight: 900;
@@ -32,16 +34,19 @@
       color: var(--text-1);
       margin-bottom: 8px;
     }
+
     .task-header-desc {
       font-size: 14px;
       font-weight: 500;
       color: var(--text-3);
     }
+
     .task-toolbar {
       display: flex;
       gap: 12px;
       align-items: center;
     }
+
     .task-search {
       display: flex;
       align-items: center;
@@ -51,6 +56,7 @@
       padding: 8px 12px;
       width: 240px;
     }
+
     .task-search input {
       border: none;
       background: transparent;
@@ -61,6 +67,7 @@
       color: var(--text-1);
       margin-left: 8px;
     }
+
     .task-search input::placeholder {
       color: var(--text-3);
     }
@@ -72,6 +79,7 @@
       gap: 24px;
       margin-bottom: 48px;
     }
+
     .task-kpi-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -83,10 +91,12 @@
       transition: transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease;
       box-shadow: var(--shadow-sm);
     }
+
     .task-kpi-card:hover {
       transform: translateY(-1px);
       box-shadow: var(--shadow-md);
     }
+
     .task-kpi-value {
       font-size: 32px;
       font-weight: 800;
@@ -94,8 +104,19 @@
       color: var(--text-1);
       line-height: 1;
     }
-    .v-table td { padding:16px 24px; font-size:13px; font-weight:600; color:var(--text-1); border-bottom:1px solid var(--border-subtle); }
-    .v-table tr:last-child td { border-bottom:none; }
+
+    .v-table td {
+      padding: 16px 24px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-1);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .v-table tr:last-child td {
+      border-bottom: none;
+    }
+
     .task-kpi-label {
       font-size: 12px;
       font-weight: 700;
@@ -111,7 +132,7 @@
       gap: 24px;
       margin-bottom: 64px;
     }
-    
+
     /* Box Container */
     .task-box {
       background: var(--surface);
@@ -120,10 +141,12 @@
       box-shadow: var(--shadow-sm);
       transition: transform 250ms ease, box-shadow 250ms ease;
     }
+
     .task-box:hover {
       transform: translateY(-1px);
       box-shadow: var(--shadow-md);
     }
+
     .task-box-header {
       padding: 16px 24px;
       border-bottom: 1px solid var(--border);
@@ -131,20 +154,24 @@
       justify-content: space-between;
       align-items: center;
     }
+
     .task-box-title {
       font-size: 14px;
       font-weight: 800;
       color: var(--text-1);
     }
+
     .task-box-meta {
       font-size: 12px;
       font-weight: 600;
       color: var(--text-3);
     }
+
     .task-list {
       display: flex;
       flex-direction: column;
     }
+
     .task-list-item {
       display: flex;
       align-items: center;
@@ -152,14 +179,17 @@
       padding: 16px 24px;
       border-bottom: 1px solid var(--border-subtle);
     }
+
     .task-list-item:last-child {
       border-bottom: none;
     }
+
     .task-list-content {
       display: flex;
       align-items: center;
       gap: 16px;
     }
+
     .task-icon {
       width: 32px;
       height: 32px;
@@ -170,11 +200,13 @@
       justify-content: center;
       color: var(--text-2);
     }
+
     .task-item-text {
       font-size: 13px;
       font-weight: 700;
       color: var(--text-1);
     }
+
     .task-item-sub {
       font-size: 12px;
       font-weight: 500;
@@ -193,8 +225,17 @@
       place-content: center;
       transition: all 150ms ease;
     }
-    .focus-check:checked { border-color: var(--primary); background: var(--primary); }
-    .focus-check:checked::before { transform: scale(1); box-shadow: inset 1em 1em white; }
+
+    .focus-check:checked {
+      border-color: var(--primary);
+      background: var(--primary);
+    }
+
+    .focus-check:checked::before {
+      transform: scale(1);
+      box-shadow: inset 1em 1em white;
+    }
+
     .focus-check::before {
       content: "";
       width: 10px;
@@ -213,6 +254,7 @@
       align-items: center;
       margin-bottom: 24px;
     }
+
     .section-title {
       font-size: 18px;
       font-weight: 800;
@@ -228,10 +270,23 @@
       padding-bottom: 16px;
       margin-bottom: 64px;
     }
-    .task-board::-webkit-scrollbar { height: 8px; }
-    .task-board::-webkit-scrollbar-track { background: transparent; }
-    .task-board::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-    .task-board::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
+
+    .task-board::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .task-board::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .task-board::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+
+    .task-board::-webkit-scrollbar-thumb:hover {
+      background: var(--text-3);
+    }
 
     .task-col {
       flex: 0 0 320px;
@@ -242,6 +297,7 @@
       flex-direction: column;
       gap: 16px;
     }
+
     .task-col-header {
       display: flex;
       justify-content: space-between;
@@ -253,6 +309,7 @@
       letter-spacing: 0.5px;
       padding: 0 4px;
     }
+
     .task-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -265,23 +322,26 @@
       flex-direction: column;
       gap: 12px;
     }
+
     .task-card:hover {
       transform: translateY(-1px);
       box-shadow: var(--shadow-md);
       border-color: var(--border-hover);
     }
+
     .task-card-title {
       font-size: 14px;
       font-weight: 700;
       color: var(--text-1);
       line-height: 1.4;
     }
+
     .task-card-project {
       font-size: 12px;
       font-weight: 600;
       color: var(--text-3);
     }
-    
+
     .badge {
       font-size: 11px;
       font-weight: 700;
@@ -289,10 +349,26 @@
       border-radius: 6px;
       display: inline-block;
     }
-    .badge-critical { background: var(--danger-10); color: var(--danger); }
-    .badge-high { background: var(--warning-10); color: var(--warning); }
-    .badge-medium { background: var(--primary-10); color: var(--primary); }
-    .badge-low { background: var(--text-3); color: #fff; }
+
+    .badge-critical {
+      background: var(--danger-10);
+      color: var(--danger);
+    }
+
+    .badge-high {
+      background: var(--warning-10);
+      color: var(--warning);
+    }
+
+    .badge-medium {
+      background: var(--primary-10);
+      color: var(--primary);
+    }
+
+    .badge-low {
+      background: var(--text-3);
+      color: #fff;
+    }
 
     .task-card-meta {
       display: flex;
@@ -305,6 +381,7 @@
       padding-top: 12px;
       margin-top: 4px;
     }
+
     .task-avatar {
       width: 24px;
       height: 24px;
@@ -317,6 +394,7 @@
       font-size: 9px;
       font-weight: 800;
     }
+
     .task-progress {
       display: flex;
       align-items: center;
@@ -325,7 +403,10 @@
       font-weight: 700;
       color: var(--text-3);
     }
-    .task-progress svg { color: var(--primary); }
+
+    .task-progress svg {
+      color: var(--primary);
+    }
 
     /* Task List (Table) */
     .task-table-container {
@@ -336,6 +417,7 @@
       overflow: hidden;
       transition: transform 250ms ease, box-shadow 250ms ease;
     }
+
     .task-table-toolbar {
       padding: 16px 24px;
       border-bottom: 1px solid var(--border);
@@ -344,10 +426,12 @@
       align-items: center;
       background: var(--bg);
     }
+
     .task-table {
       width: 100%;
       border-collapse: collapse;
     }
+
     .task-table th {
       text-align: left;
       padding: 16px 24px;
@@ -359,6 +443,7 @@
       border-bottom: 1px solid var(--border);
       background: var(--bg-2);
     }
+
     .task-table td {
       padding: 16px 24px;
       font-size: 13px;
@@ -367,17 +452,26 @@
       border-bottom: 1px solid var(--border-subtle);
       transition: background 0.15s;
     }
+
     .task-table tbody tr:hover td {
       background: var(--bg-2);
       cursor: pointer;
     }
+
     .task-table tbody tr:last-child td {
       border-bottom: none;
     }
 
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   </style>
 </head>
@@ -387,10 +481,10 @@
     <div id="sidebar-container"></div>
     <div class="shell-main">
       <div id="topbar-container"></div>
-      
+
       <main class="app-content">
         <div class="tasks-layout">
-          
+
           <!-- 1. Page Header -->
           <header class="task-header">
             <div>
@@ -399,22 +493,37 @@
             </div>
             <div class="task-toolbar">
               <div class="task-search">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  style="color:var(--text-3)">
                   <circle cx="11" cy="11" r="8"></circle>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
                 <input type="text" id="tasks-global-search" placeholder="Search tasks..." />
               </div>
-              <button class="btn btn-ghost" id="btn-toggle-filters" style="background:var(--surface); border:1px solid var(--border);">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+              <button class="btn btn-ghost" id="btn-toggle-filters"
+                style="background:var(--surface); border:1px solid var(--border);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  style="margin-right:6px;">
+                  <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                </svg>
                 Filters
               </button>
               <div style="position:relative;">
-                <button class="btn btn-ghost" onclick="document.getElementById('export-menu').classList.toggle('active')" style="background:var(--surface); border:1px solid var(--border);">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <button class="btn btn-ghost"
+                  onclick="document.getElementById('export-menu').classList.toggle('active')"
+                  style="background:var(--surface); border:1px solid var(--border);">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    style="margin-right:6px;">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
                   Export
                 </button>
-                <div id="export-menu" class="dropdown-menu" style="right:0; top:100%; margin-top:8px; width:160px; z-index:100;">
+                <div id="export-menu" class="dropdown-menu"
+                  style="right:0; top:100%; margin-top:8px; width:160px; z-index:100;">
                   <div class="dropdown-item" id="btn-export-csv">Export to CSV</div>
                   <div class="dropdown-item" id="btn-export-json">Export to JSON</div>
                 </div>
@@ -422,39 +531,69 @@
               <button class="btn btn-primary" id="btn-create-task">+ New Task</button>
             </div>
           </header>
-          
+
           <!-- Advanced Filters Panel -->
-          <div id="advanced-filters-panel" style="display:none; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:24px; margin-bottom:48px; box-shadow:var(--shadow-sm);">
+          <div id="advanced-filters-panel"
+            style="display:none; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:24px; margin-bottom:48px; box-shadow:var(--shadow-sm);">
             <div style="display:grid; grid-template-columns:repeat(5, 1fr); gap:16px;">
               <div class="form-group">
-                <label class="form-label" style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--text-3);">Employee</label>
-                <select class="form-select adv-filter" id="filter-employee" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:6px; font-size:13px;"><option value="All">All</option></select>
-              </div>
-              <div class="form-group">
-                <label class="form-label" style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--text-3);">Project</label>
-                <select class="form-select adv-filter" id="filter-project" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:6px; font-size:13px;"><option value="All">All</option></select>
-              </div>
-              <div class="form-group">
-                <label class="form-label" style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--text-3);">Priority</label>
-                <select class="form-select adv-filter" id="filter-priority" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:6px; font-size:13px;">
-                  <option value="All">All</option><option value="Critical">Critical</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option>
+                <label class="form-label"
+                  style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--text-3);">Employee</label>
+                <select class="form-select adv-filter" id="filter-employee"
+                  style="width:100%; padding:8px; border:1px solid var(--border); border-radius:6px; font-size:13px;">
+                  <option value="All">All</option>
                 </select>
               </div>
               <div class="form-group">
-                <label class="form-label" style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--text-3);">Status</label>
-                <select class="form-select adv-filter" id="filter-status" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:6px; font-size:13px;">
-                  <option value="All">All</option><option value="Backlog">Backlog</option><option value="To Do">To Do</option><option value="In Progress">In Progress</option><option value="Review">Review</option><option value="Completed">Completed</option>
+                <label class="form-label"
+                  style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--text-3);">Project</label>
+                <select class="form-select adv-filter" id="filter-project"
+                  style="width:100%; padding:8px; border:1px solid var(--border); border-radius:6px; font-size:13px;">
+                  <option value="All">All</option>
                 </select>
               </div>
               <div class="form-group">
-                <label class="form-label" style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--text-3);">Recurrence</label>
-                <select class="form-select adv-filter" id="filter-recurrence" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:6px; font-size:13px;">
-                  <option value="All">All</option><option value="Daily">Daily</option><option value="Weekly">Weekly</option><option value="Monthly">Monthly</option><option value="Yearly">Yearly</option><option value="None">None</option>
+                <label class="form-label"
+                  style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--text-3);">Priority</label>
+                <select class="form-select adv-filter" id="filter-priority"
+                  style="width:100%; padding:8px; border:1px solid var(--border); border-radius:6px; font-size:13px;">
+                  <option value="All">All</option>
+                  <option value="Critical">Critical</option>
+                  <option value="High">High</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Low">Low</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label"
+                  style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--text-3);">Status</label>
+                <select class="form-select adv-filter" id="filter-status"
+                  style="width:100%; padding:8px; border:1px solid var(--border); border-radius:6px; font-size:13px;">
+                  <option value="All">All</option>
+                  <option value="Backlog">Backlog</option>
+                  <option value="To Do">To Do</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Review">Review</option>
+                  <option value="Completed">Completed</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label"
+                  style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--text-3);">Recurrence</label>
+                <select class="form-select adv-filter" id="filter-recurrence"
+                  style="width:100%; padding:8px; border:1px solid var(--border); border-radius:6px; font-size:13px;">
+                  <option value="All">All</option>
+                  <option value="Daily">Daily</option>
+                  <option value="Weekly">Weekly</option>
+                  <option value="Monthly">Monthly</option>
+                  <option value="Yearly">Yearly</option>
+                  <option value="None">None</option>
                 </select>
               </div>
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:24px;">
-              <label style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--text-1); cursor:pointer;">
+              <label
+                style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--text-1); cursor:pointer;">
                 <input type="checkbox" id="filter-blocked" class="adv-filter-check" /> Show only Blocked tasks
               </label>
               <button class="btn btn-ghost" id="btn-clear-filters" style="font-size:12px;">Clear Filters</button>
@@ -463,36 +602,58 @@
 
           <!-- 2. KPI Cards (Max 6) -->
           <section class="task-kpi-grid" id="tasks-kpi-grid">
-            <div class="task-kpi-card"><div class="task-kpi-value" id="kpi-total">0</div><div class="task-kpi-label">Total Tasks</div></div>
-            <div class="task-kpi-card"><div class="task-kpi-value" id="kpi-completed" style="color:var(--success);">0</div><div class="task-kpi-label">Completed Tasks</div></div>
-            <div class="task-kpi-card"><div class="task-kpi-value" id="kpi-progress">0</div><div class="task-kpi-label">In Progress</div></div>
-            <div class="task-kpi-card"><div class="task-kpi-value" id="kpi-overdue" style="color:var(--danger);">0</div><div class="task-kpi-label">Overdue</div></div>
-            <div class="task-kpi-card"><div class="task-kpi-value" id="kpi-blocked" style="color:var(--warning);">0</div><div class="task-kpi-label">Blocked</div></div>
-            <div class="task-kpi-card"><div class="task-kpi-value" id="kpi-high" style="color:var(--primary);">0</div><div class="task-kpi-label">High Priority</div></div>
+            <div class="task-kpi-card">
+              <div class="task-kpi-value" id="kpi-total">0</div>
+              <div class="task-kpi-label">Total Tasks</div>
+            </div>
+            <div class="task-kpi-card">
+              <div class="task-kpi-value" id="kpi-completed" style="color:var(--success);">0</div>
+              <div class="task-kpi-label">Completed Tasks</div>
+            </div>
+            <div class="task-kpi-card">
+              <div class="task-kpi-value" id="kpi-progress">0</div>
+              <div class="task-kpi-label">In Progress</div>
+            </div>
+            <div class="task-kpi-card">
+              <div class="task-kpi-value" id="kpi-overdue" style="color:var(--danger);">0</div>
+              <div class="task-kpi-label">Overdue</div>
+            </div>
+            <div class="task-kpi-card">
+              <div class="task-kpi-value" id="kpi-blocked" style="color:var(--warning);">0</div>
+              <div class="task-kpi-label">Blocked</div>
+            </div>
+            <div class="task-kpi-card">
+              <div class="task-kpi-value" id="kpi-high" style="color:var(--primary);">0</div>
+              <div class="task-kpi-label">High Priority</div>
+            </div>
           </section>
-          
+
           <!-- Task Charts (CSS Based) -->
           <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px; margin-bottom:48px;">
-             <!-- Tasks by Status -->
-             <div class="task-box" style="padding:24px;">
-               <div style="font-size:14px; font-weight:800; color:var(--text-1); margin-bottom:16px;">Tasks by Status</div>
-               <div id="chart-status" style="display:flex; flex-direction:column; gap:12px;"></div>
-             </div>
-             <!-- Tasks by Priority -->
-             <div class="task-box" style="padding:24px;">
-               <div style="font-size:14px; font-weight:800; color:var(--text-1); margin-bottom:16px;">Tasks by Priority</div>
-               <div id="chart-priority" style="display:flex; flex-direction:column; gap:12px;"></div>
-             </div>
-             <!-- Tasks by Project -->
-             <div class="task-box" style="padding:24px;">
-               <div style="font-size:14px; font-weight:800; color:var(--text-1); margin-bottom:16px;">Tasks by Project</div>
-               <div id="chart-project" style="display:flex; flex-direction:column; gap:12px; max-height:200px; overflow-y:auto;"></div>
-             </div>
+            <!-- Tasks by Status -->
+            <div class="task-box" style="padding:24px;">
+              <div style="font-size:14px; font-weight:800; color:var(--text-1); margin-bottom:16px;">Tasks by Status
+              </div>
+              <div id="chart-status" style="display:flex; flex-direction:column; gap:12px;"></div>
+            </div>
+            <!-- Tasks by Priority -->
+            <div class="task-box" style="padding:24px;">
+              <div style="font-size:14px; font-weight:800; color:var(--text-1); margin-bottom:16px;">Tasks by Priority
+              </div>
+              <div id="chart-priority" style="display:flex; flex-direction:column; gap:12px;"></div>
+            </div>
+            <!-- Tasks by Project -->
+            <div class="task-box" style="padding:24px;">
+              <div style="font-size:14px; font-weight:800; color:var(--text-1); margin-bottom:16px;">Tasks by Project
+              </div>
+              <div id="chart-project"
+                style="display:flex; flex-direction:column; gap:12px; max-height:200px; overflow-y:auto;"></div>
+            </div>
           </div>
 
           <!-- 5 & 6. Focus & Activity (Side by side for premium minimal feel) -->
           <section class="task-half-grid">
-            
+
             <!-- 5. My Focus Today -->
             <div class="task-box">
               <div class="task-box-header">
@@ -500,7 +661,7 @@
                 <div class="task-box-meta">AI Suggested • 4h 30m est.</div>
               </div>
               <div class="task-list">
-                
+
                 <div class="task-list-item">
                   <div class="task-list-content">
                     <input type="checkbox" class="focus-check" />
@@ -566,11 +727,14 @@
                 <div class="task-box-meta">Last 24 Hours</div>
               </div>
               <div class="task-list">
-                
+
                 <div class="task-list-item">
                   <div class="task-list-content">
                     <div class="task-icon" style="color:var(--success);">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
                     </div>
                     <div>
                       <div class="task-item-text">Task Completed</div>
@@ -582,7 +746,13 @@
                 <div class="task-list-item">
                   <div class="task-list-content">
                     <div class="task-icon" style="color:var(--primary);">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <line x1="19" y1="8" x2="19" y2="14"></line>
+                        <line x1="22" y1="11" x2="16" y2="11"></line>
+                      </svg>
                     </div>
                     <div>
                       <div class="task-item-text">Task Assigned</div>
@@ -594,7 +764,12 @@
                 <div class="task-list-item">
                   <div class="task-list-content">
                     <div class="task-icon">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <path
+                          d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z">
+                        </path>
+                      </svg>
                     </div>
                     <div>
                       <div class="task-item-text">Comment Added</div>
@@ -606,7 +781,11 @@
                 <div class="task-list-item">
                   <div class="task-list-content">
                     <div class="task-icon" style="color:var(--warning);">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                      </svg>
                     </div>
                     <div>
                       <div class="task-item-text">Due Date Updated</div>
@@ -618,7 +797,11 @@
                 <div class="task-list-item">
                   <div class="task-list-content">
                     <div class="task-icon" style="color:var(--success);">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                      </svg>
                     </div>
                     <div>
                       <div class="task-item-text">Review Approved</div>
@@ -626,11 +809,14 @@
                     </div>
                   </div>
                 </div>
-                
+
                 <div class="task-list-item">
                   <div class="task-list-content">
                     <div class="task-icon" style="color:var(--success);">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
                     </div>
                     <div>
                       <div class="task-item-text">Task Completed</div>
@@ -654,20 +840,34 @@
               <table style="width:100%; text-align:left; border-collapse:collapse; min-width:800px;" class="v-table">
                 <thead>
                   <tr style="border-bottom:1px solid var(--border-subtle); background:var(--bg-2);">
-                    <th style="padding:12px 24px; font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Employee</th>
-                    <th style="padding:12px 24px; font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Assigned</th>
-                    <th style="padding:12px 24px; font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Completed</th>
-                    <th style="padding:12px 24px; font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Active</th>
-                    <th style="padding:12px 24px; font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Overdue</th>
-                    <th style="padding:12px 24px; font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Est Hours</th>
-                    <th style="padding:12px 24px; font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Completion Rate</th>
+                    <th
+                      style="padding:12px 24px; font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">
+                      Employee</th>
+                    <th
+                      style="padding:12px 24px; font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">
+                      Assigned</th>
+                    <th
+                      style="padding:12px 24px; font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">
+                      Completed</th>
+                    <th
+                      style="padding:12px 24px; font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">
+                      Active</th>
+                    <th
+                      style="padding:12px 24px; font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">
+                      Overdue</th>
+                    <th
+                      style="padding:12px 24px; font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">
+                      Est Hours</th>
+                    <th
+                      style="padding:12px 24px; font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">
+                      Completion Rate</th>
                   </tr>
                 </thead>
                 <tbody id="table-workload-body"></tbody>
               </table>
             </div>
           </div>
-          
+
           <!-- Project Task Summary -->
           <div class="task-box" style="margin-bottom:64px;">
             <div class="task-box-header">
@@ -678,13 +878,27 @@
               <table style="width:100%; text-align:left; border-collapse:collapse; min-width:800px;" class="v-table">
                 <thead>
                   <tr style="border-bottom:1px solid var(--border-subtle); background:var(--bg-2);">
-                    <th style="padding:12px 24px; font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Project</th>
-                    <th style="padding:12px 24px; font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Total Tasks</th>
-                    <th style="padding:12px 24px; font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Completed</th>
-                    <th style="padding:12px 24px; font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Pending</th>
-                    <th style="padding:12px 24px; font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Team Members</th>
-                    <th style="padding:12px 24px; font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Est Hours</th>
-                    <th style="padding:12px 24px; font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Progress</th>
+                    <th
+                      style="padding:12px 24px; font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">
+                      Project</th>
+                    <th
+                      style="padding:12px 24px; font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">
+                      Total Tasks</th>
+                    <th
+                      style="padding:12px 24px; font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">
+                      Completed</th>
+                    <th
+                      style="padding:12px 24px; font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">
+                      Pending</th>
+                    <th
+                      style="padding:12px 24px; font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">
+                      Team Members</th>
+                    <th
+                      style="padding:12px 24px; font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">
+                      Est Hours</th>
+                    <th
+                      style="padding:12px 24px; font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">
+                      Progress</th>
                   </tr>
                 </thead>
                 <tbody id="table-project-summary-body"></tbody>
@@ -700,7 +914,7 @@
             <!-- Kanban board columns rendered dynamically -->
           </section>
 
-          
+
 
         </div>
       </main>
@@ -708,12 +922,19 @@
     </div>
   </div>
 
-  
+
   <!-- Task Side Drawer -->
-  <div class="drawer" id="task-drawer" style="display:none; position:fixed; top:0; right:0; width:400px; height:100vh; background:var(--surface); box-shadow:var(--shadow-lg); z-index:1000; overflow-y:auto; transition: transform 0.3s ease; transform: translateX(100%);">
-    <div style="padding:24px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; background:var(--bg-2); position:sticky; top:0; z-index:10;">
+  <div class="drawer" id="task-drawer"
+    style="display:none; position:fixed; top:0; right:0; width:400px; height:100vh; background:var(--surface); box-shadow:var(--shadow-lg); z-index:1000; overflow-y:auto; transition: transform 0.3s ease; transform: translateX(100%);">
+    <div
+      style="padding:24px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; background:var(--bg-2); position:sticky; top:0; z-index:10;">
       <h3 style="font-size:18px; font-weight:800; color:var(--text-1);">Task Details</h3>
-      <button class="btn btn-ghost" id="btn-close-task-drawer" style="padding:6px; border-radius:50%; background:var(--bg); border:1px solid var(--border);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+      <button class="btn btn-ghost" id="btn-close-task-drawer"
+        style="padding:6px; border-radius:50%; background:var(--bg); border:1px solid var(--border);"><svg width="16"
+          height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg></button>
     </div>
     <div style="padding:24px;" id="task-drawer-content">
       <!-- Dynamic Content -->
@@ -721,40 +942,64 @@
   </div>
 
   <!-- Create Task Modal -->
-  <div class="modal-backdrop" id="create-task-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:2000; align-items:center; justify-content:center; backdrop-filter:blur(4px);">
-    <div class="modal-container" style="background:var(--surface); width:750px; max-width:95vw; height:90vh; max-height:90vh; border-radius:16px; box-shadow:var(--shadow-xl); animation:fadeUp 0.3s ease; display:flex; flex-direction:column; overflow:hidden;">
-      
+  <div class="modal-backdrop" id="create-task-modal"
+    style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:2000; align-items:center; justify-content:center; backdrop-filter:blur(4px);">
+    <div class="modal-container"
+      style="background:var(--surface); width:750px; max-width:95vw; height:90vh; max-height:90vh; border-radius:16px; box-shadow:var(--shadow-xl); animation:fadeUp 0.3s ease; display:flex; flex-direction:column; overflow:hidden;">
+
       <!-- Sticky Header -->
-      <div style="padding:24px 32px; border-bottom:1px solid var(--border); background:var(--surface); display:flex; justify-content:space-between; align-items:center; flex-shrink:0; z-index:10;">
-        <h3 style="font-size:20px; font-weight:800; color:var(--text-1); margin:0;" id="task-modal-title">Create Task</h3>
-        <button class="btn btn-ghost" onclick="document.getElementById('create-task-modal').style.display='none'" style="padding:6px; border-radius:50%; background:var(--bg); border:1px solid var(--border);">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      <div
+        style="padding:24px 32px; border-bottom:1px solid var(--border); background:var(--surface); display:flex; justify-content:space-between; align-items:center; flex-shrink:0; z-index:10;">
+        <h3 style="font-size:20px; font-weight:800; color:var(--text-1); margin:0;" id="task-modal-title">Create Task
+        </h3>
+        <button class="btn btn-ghost" onclick="document.getElementById('create-task-modal').style.display='none'"
+          style="padding:6px; border-radius:50%; background:var(--bg); border:1px solid var(--border);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
         </button>
       </div>
-      
+
       <!-- Scrollable Form Body -->
       <div style="padding:32px; overflow-y:auto; flex:1;">
-        
+
         <div class="form-group" style="margin-bottom:24px;">
-          <label class="form-label" style="font-weight:700; font-size:12px; color:var(--text-3); text-transform:uppercase;">Task Title</label>
-          <input type="text" class="form-input" id="inpTaskTitle" placeholder="Enter task title..." style="width:100%; border:1px solid var(--border); border-radius:8px; padding:12px 16px; outline:none; transition:border-color 0.2s;" />
+          <label class="form-label"
+            style="font-weight:700; font-size:12px; color:var(--text-3); text-transform:uppercase;">Task Title</label>
+          <input type="text" class="form-input" id="inpTaskTitle" placeholder="Enter task title..."
+            style="width:100%; border:1px solid var(--border); border-radius:8px; padding:12px 16px; outline:none; transition:border-color 0.2s;" />
         </div>
 
         <div class="form-group" style="margin-bottom:24px;">
-          <label class="form-label" style="font-weight:700; font-size:12px; color:var(--text-3); text-transform:uppercase;">Description</label>
-          <textarea class="form-input" id="inpTaskDesc" rows="4" placeholder="Enter task description..." style="width:100%; border:1px solid var(--border); border-radius:8px; padding:12px 16px; outline:none; transition:border-color 0.2s; resize:vertical;"></textarea>
+          <label class="form-label"
+            style="font-weight:700; font-size:12px; color:var(--text-3); text-transform:uppercase;">Description</label>
+          <textarea class="form-input" id="inpTaskDesc" rows="4" placeholder="Enter task description..."
+            style="width:100%; border:1px solid var(--border); border-radius:8px; padding:12px 16px; outline:none; transition:border-color 0.2s; resize:vertical;"></textarea>
         </div>
-        
+
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px;">
           <div class="form-group">
-            <label class="form-label" style="font-weight:700; font-size:12px; color:var(--text-3); text-transform:uppercase;">Project</label>
-            <select class="form-select" id="selTaskProject" style="width:100%; border:1px solid var(--border); border-radius:8px; padding:12px 16px; outline:none; background:var(--bg) url('data:image/svg+xml;utf8,<svg fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M19 9l-7 7-7-7\"></path></svg>') no-repeat right 16px center; background-size:14px; appearance:none;">
+            <label class="form-label"
+              style="font-weight:700; font-size:12px; color:var(--text-3); text-transform:uppercase;">Project</label>
+            <select class="form-select" id="selTaskProject"
+              style="width:100%; border:1px solid var(--border); border-radius:8px; padding:12px 16px; outline:none; background:var(--bg) url('data:image/svg+xml;utf8,<svg fill=\"
+              none\" stroke=\"currentColor\" stroke-width=\"2\" viewBox=\"0 0 24 24\"
+              xmlns=\"http://www.w3.org/2000/svg\">
+              <path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M19 9l-7 7-7-7\"></path></svg>') no-repeat
+              right 16px center; background-size:14px; appearance:none;">
               <option value="">Select Project...</option>
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label" style="font-weight:700; font-size:12px; color:var(--text-3); text-transform:uppercase;">Assignee</label>
-            <select class="form-select" id="selTaskAssignee" style="width:100%; border:1px solid var(--border); border-radius:8px; padding:12px 16px; outline:none; background:var(--bg) url('data:image/svg+xml;utf8,<svg fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M19 9l-7 7-7-7\"></path></svg>') no-repeat right 16px center; background-size:14px; appearance:none;">
+            <label class="form-label"
+              style="font-weight:700; font-size:12px; color:var(--text-3); text-transform:uppercase;">Assignee</label>
+            <select class="form-select" id="selTaskAssignee"
+              style="width:100%; border:1px solid var(--border); border-radius:8px; padding:12px 16px; outline:none; background:var(--bg) url('data:image/svg+xml;utf8,<svg fill=\"
+              none\" stroke=\"currentColor\" stroke-width=\"2\" viewBox=\"0 0 24 24\"
+              xmlns=\"http://www.w3.org/2000/svg\">
+              <path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M19 9l-7 7-7-7\"></path></svg>') no-repeat
+              right 16px center; background-size:14px; appearance:none;">
               <option value="Unassigned">Unassigned</option>
             </select>
           </div>
@@ -762,8 +1007,14 @@
 
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px;">
           <div class="form-group">
-            <label class="form-label" style="font-weight:700; font-size:12px; color:var(--text-3); text-transform:uppercase;">Status</label>
-            <select class="form-select" id="selTaskStatus" style="width:100%; border:1px solid var(--border); border-radius:8px; padding:12px 16px; outline:none; background:var(--bg) url('data:image/svg+xml;utf8,<svg fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M19 9l-7 7-7-7\"></path></svg>') no-repeat right 16px center; background-size:14px; appearance:none;">
+            <label class="form-label"
+              style="font-weight:700; font-size:12px; color:var(--text-3); text-transform:uppercase;">Status</label>
+            <select class="form-select" id="selTaskStatus"
+              style="width:100%; border:1px solid var(--border); border-radius:8px; padding:12px 16px; outline:none; background:var(--bg) url('data:image/svg+xml;utf8,<svg fill=\"
+              none\" stroke=\"currentColor\" stroke-width=\"2\" viewBox=\"0 0 24 24\"
+              xmlns=\"http://www.w3.org/2000/svg\">
+              <path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M19 9l-7 7-7-7\"></path></svg>') no-repeat
+              right 16px center; background-size:14px; appearance:none;">
               <option value="Backlog">Backlog</option>
               <option value="To Do">To Do</option>
               <option value="In Progress">In Progress</option>
@@ -773,8 +1024,14 @@
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label" style="font-weight:700; font-size:12px; color:var(--text-3); text-transform:uppercase;">Priority</label>
-            <select class="form-select" id="selTaskPriority" style="width:100%; border:1px solid var(--border); border-radius:8px; padding:12px 16px; outline:none; background:var(--bg) url('data:image/svg+xml;utf8,<svg fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M19 9l-7 7-7-7\"></path></svg>') no-repeat right 16px center; background-size:14px; appearance:none;">
+            <label class="form-label"
+              style="font-weight:700; font-size:12px; color:var(--text-3); text-transform:uppercase;">Priority</label>
+            <select class="form-select" id="selTaskPriority"
+              style="width:100%; border:1px solid var(--border); border-radius:8px; padding:12px 16px; outline:none; background:var(--bg) url('data:image/svg+xml;utf8,<svg fill=\"
+              none\" stroke=\"currentColor\" stroke-width=\"2\" viewBox=\"0 0 24 24\"
+              xmlns=\"http://www.w3.org/2000/svg\">
+              <path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M19 9l-7 7-7-7\"></path></svg>') no-repeat
+              right 16px center; background-size:14px; appearance:none;">
               <option value="Low">Low</option>
               <option value="Medium">Medium</option>
               <option value="High">High</option>
@@ -785,18 +1042,25 @@
 
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px;">
           <div class="form-group">
-            <label class="form-label" style="font-weight:700; font-size:12px; color:var(--text-3); text-transform:uppercase;">Due Date</label>
-            <input type="date" class="form-input" id="inpTaskDate" style="width:100%; border:1px solid var(--border); border-radius:8px; padding:12px 16px; outline:none;" />
+            <label class="form-label"
+              style="font-weight:700; font-size:12px; color:var(--text-3); text-transform:uppercase;">Due Date</label>
+            <input type="date" class="form-input" id="inpTaskDate"
+              style="width:100%; border:1px solid var(--border); border-radius:8px; padding:12px 16px; outline:none;" />
           </div>
           <div class="form-group">
-            <label class="form-label" style="font-weight:700; font-size:12px; color:var(--text-3); text-transform:uppercase;">Est. Hours</label>
-            <input type="number" class="form-input" id="inpTaskHours" value="0" style="width:100%; border:1px solid var(--border); border-radius:8px; padding:12px 16px; outline:none;" />
+            <label class="form-label"
+              style="font-weight:700; font-size:12px; color:var(--text-3); text-transform:uppercase;">Est. Hours</label>
+            <input type="number" class="form-input" id="inpTaskHours" value="0"
+              style="width:100%; border:1px solid var(--border); border-radius:8px; padding:12px 16px; outline:none;" />
           </div>
         </div>
-        
+
         <div class="form-group" style="margin-bottom:24px;">
-          <label class="form-label" style="font-weight:700; font-size:12px; color:var(--text-3); text-transform:uppercase;">Blocked By (Dependencies)</label>
-          <select multiple class="form-select" id="selTaskDependencies" style="width:100%; border:1px solid var(--border); border-radius:8px; padding:12px 16px; outline:none; background:var(--bg); min-height:80px;">
+          <label class="form-label"
+            style="font-weight:700; font-size:12px; color:var(--text-3); text-transform:uppercase;">Blocked By
+            (Dependencies)</label>
+          <select multiple class="form-select" id="selTaskDependencies"
+            style="width:100%; border:1px solid var(--border); border-radius:8px; padding:12px 16px; outline:none; background:var(--bg); min-height:80px;">
             <!-- Options populated dynamically -->
           </select>
           <div style="font-size:11px; color:var(--text-3); margin-top:6px;">Hold Ctrl/Cmd to select multiple</div>
@@ -804,8 +1068,14 @@
 
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:16px;">
           <div class="form-group">
-            <label class="form-label" style="font-weight:700; font-size:12px; color:var(--text-3); text-transform:uppercase;">Recurrence</label>
-            <select class="form-select" id="selTaskRecurrence" style="width:100%; border:1px solid var(--border); border-radius:8px; padding:12px 16px; outline:none; background:var(--bg) url('data:image/svg+xml;utf8,<svg fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M19 9l-7 7-7-7\"></path></svg>') no-repeat right 16px center; background-size:14px; appearance:none;">
+            <label class="form-label"
+              style="font-weight:700; font-size:12px; color:var(--text-3); text-transform:uppercase;">Recurrence</label>
+            <select class="form-select" id="selTaskRecurrence"
+              style="width:100%; border:1px solid var(--border); border-radius:8px; padding:12px 16px; outline:none; background:var(--bg) url('data:image/svg+xml;utf8,<svg fill=\"
+              none\" stroke=\"currentColor\" stroke-width=\"2\" viewBox=\"0 0 24 24\"
+              xmlns=\"http://www.w3.org/2000/svg\">
+              <path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M19 9l-7 7-7-7\"></path></svg>') no-repeat
+              right 16px center; background-size:14px; appearance:none;">
               <option value="None">None</option>
               <option value="Daily">Daily</option>
               <option value="Weekly">Weekly</option>
@@ -814,19 +1084,26 @@
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label" style="font-weight:700; font-size:12px; color:var(--text-3); text-transform:uppercase;">Reminder</label>
-            <select class="form-select" id="selTaskReminder" style="width:100%; border:1px solid var(--border); border-radius:8px; padding:12px 16px; outline:none; background:var(--bg) url('data:image/svg+xml;utf8,<svg fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M19 9l-7 7-7-7\"></path></svg>') no-repeat right 16px center; background-size:14px; appearance:none;">
+            <label class="form-label"
+              style="font-weight:700; font-size:12px; color:var(--text-3); text-transform:uppercase;">Reminder</label>
+            <select class="form-select" id="selTaskReminder"
+              style="width:100%; border:1px solid var(--border); border-radius:8px; padding:12px 16px; outline:none; background:var(--bg) url('data:image/svg+xml;utf8,<svg fill=\"
+              none\" stroke=\"currentColor\" stroke-width=\"2\" viewBox=\"0 0 24 24\"
+              xmlns=\"http://www.w3.org/2000/svg\">
+              <path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M19 9l-7 7-7-7\"></path></svg>') no-repeat
+              right 16px center; background-size:14px; appearance:none;">
               <option value="None">None</option>
               <option value="Due Today">Due Today</option>
               <option value="Tomorrow">Tomorrow</option>
             </select>
           </div>
         </div>
-      
+
       </div>
 
       <!-- Sticky Footer -->
-      <div style="padding:24px 32px; border-top:1px solid var(--border); background:var(--surface); display:flex; justify-content:flex-end; gap:12px; flex-shrink:0; z-index:10;">
+      <div
+        style="padding:24px 32px; border-top:1px solid var(--border); background:var(--surface); display:flex; justify-content:flex-end; gap:12px; flex-shrink:0; z-index:10;">
         <button class="btn btn-ghost" id="btn-cancel-task" style="border:1px solid var(--border);">Cancel</button>
         <button class="btn btn-primary" id="btn-save-task">Save Task</button>
       </div>
@@ -850,4 +1127,5 @@
   <script src="../assets/js/app.js"></script>
   <script src="script.js"></script>
 </body>
+
 </html>
