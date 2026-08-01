@@ -16,7 +16,7 @@ window.closeModal = function (modalId) {
 
 window.navigate = navigate;
 
-function formatMoney(num) { return '$' + num.toLocaleString(); }
+function formatMoney(num) { return '₹' + num.toLocaleString('en-IN'); }
 
 let state = {
   invoices: [

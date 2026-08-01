@@ -68,7 +68,7 @@ function renderBarChart(containerId, dataArray, labels, color, isCurrency=false)
   
   container.innerHTML = dataArray.map((val, i) => {
     const height = (val / max) * 100;
-    const displayVal = isCurrency ? `$${val.toLocaleString()}` : val.toLocaleString();
+    const displayVal = isCurrency ? `₹${val.toLocaleString('en-IN')}` : val.toLocaleString('en-IN');
     return `
       <div class="bar-col">
         <div class="bar" style="height:0%; background:var(--${color})" data-height="${height}%">
@@ -93,10 +93,10 @@ function renderMultiBarChart(containerId, dataArray1, dataArray2, labels) {
     return `
       <div class="bar-col" style="flex-direction:row; align-items:flex-end; gap:4px; padding-bottom:0;">
         <div class="bar" style="height:0%; background:var(--primary); width:16px;" data-height="${h1}%">
-          <div class="bar-tooltip">$${val1.toLocaleString()}</div>
+          <div class="bar-tooltip">₹${val1.toLocaleString('en-IN')}</div>
         </div>
         <div class="bar" style="height:0%; background:var(--danger); width:16px;" data-height="${h2}%">
-          <div class="bar-tooltip">$${val2.toLocaleString()}</div>
+          <div class="bar-tooltip">₹${val2.toLocaleString('en-IN')}</div>
         </div>
         <div class="bar-label" style="bottom:-32px; left:50%; transform:translateX(-50%)">${labels[i]}</div>
       </div>
@@ -120,10 +120,10 @@ function animateCounters() {
     const updateCount = () => {
       count += inc;
       if (count < target) {
-        counter.innerText = Math.ceil(count).toLocaleString();
+        counter.innerText = Math.ceil(count).toLocaleString('en-IN');
         requestAnimationFrame(updateCount);
       } else {
-        counter.innerText = target.toLocaleString();
+        counter.innerText = target.toLocaleString('en-IN');
       }
     };
     updateCount();

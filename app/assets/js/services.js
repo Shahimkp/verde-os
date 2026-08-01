@@ -311,7 +311,7 @@
           client: projectData.client || 'Internal',
           category: projectData.category || 'Web Development',
           priority: projectData.priority || 'Medium',
-          status: projectData.isDraft ? 'Draft' : (projectData.status || 'Planning'),
+          status: projectData.isDraft ? 'Draft' : (projectData.status || 'Active'),
           startDate: projectData.startDate || now.split('T')[0],
           dueDate: projectData.dueDate || '',
           budget: parseFloat(projectData.budget || 0),
@@ -547,17 +547,248 @@
       }
     },
 
-    // 4. TASKS SERVICE (GET/POST/PUT /api/v1/tasks)
+    // 4. TASKS SERVICE (LOCAL STORAGE BACKED REST TARGET: /api/v1/tasks)
     Tasks: {
-      getTasks: function () {
-        return mockAsyncResponse(window.VerdeMockData ? window.VerdeMockData.tasks : []);
+      STORAGE_KEY: 'verde_os_tasks',
+
+      _getStorage: function () {
+        var raw = localStorage.getItem(this.STORAGE_KEY);
+        if (!raw) {
+          var now = new Date().toISOString();
+          var initialSeed = [
+            { id: 'TSK-1001', title: 'Design landing page', description: 'Create high-fidelity mockups for Cabo Travels.', projectId: 'PRJ-001', assigneeId: 'SH', status: 'In Progress', priority: 'High', dueDate: '2026-08-05', estimatedHours: 12, tags: ['Design', 'UI'], attachmentsCount: 2, commentsCount: 5, timeline: [{ id: 'ACT-1', action: 'Task Created', details: 'Initialized task.', date: now, user: 'Shahim' }], subtasks: [{id: 'ST-1', title: 'Initial setup', completed: true}, {id: 'ST-2', title: 'Review specs', completed: false}], comments: [{id: 'CMT-1', authorId: 'MI', text: 'Looking forward to this!', createdAt: new Date().toISOString()}], attachments: [{id: 'ATT-1', name: 'specs.pdf', size: '2.4 MB', createdAt: new Date().toISOString()}], createdAt: now, updatedAt: now },
+            { id: 'TSK-1002', title: 'Implement login flow', description: 'Develop authentication using JWT.', projectId: 'PRJ-003', assigneeId: 'NH', status: 'To Do', priority: 'Critical', dueDate: '2026-08-10', estimatedHours: 8, tags: ['Backend', 'Auth'], attachmentsCount: 0, commentsCount: 1, timeline: [{ id: 'ACT-2', action: 'Task Created', details: 'Initialized task.', date: now, user: 'Shahim' }], subtasks: [{id: 'ST-1', title: 'Initial setup', completed: true}, {id: 'ST-2', title: 'Review specs', completed: false}], comments: [{id: 'CMT-1', authorId: 'MI', text: 'Looking forward to this!', createdAt: new Date().toISOString()}], attachments: [{id: 'ATT-1', name: 'specs.pdf', size: '2.4 MB', createdAt: new Date().toISOString()}], createdAt: now, updatedAt: now },
+            { id: 'TSK-1003', title: 'Setup CI/CD pipeline', description: 'Configure GitHub Actions.', projectId: 'PRJ-004', assigneeId: 'MI', status: 'Completed', priority: 'Medium', dueDate: '2026-07-20', estimatedHours: 4, tags: ['DevOps'], attachmentsCount: 0, commentsCount: 0, timeline: [{ id: 'ACT-3', action: 'Task Created', details: 'Initialized task.', date: now, user: 'Shahim' }], subtasks: [{id: 'ST-1', title: 'Initial setup', completed: true}, {id: 'ST-2', title: 'Review specs', completed: false}], comments: [{id: 'CMT-1', authorId: 'MI', text: 'Looking forward to this!', createdAt: new Date().toISOString()}], attachments: [{id: 'ATT-1', name: 'specs.pdf', size: '2.4 MB', createdAt: new Date().toISOString()}], createdAt: now, updatedAt: now }
+          ];
+          localStorage.setItem(this.STORAGE_KEY, JSON.stringify(initialSeed));
+          return initialSeed;
+        }
+        try { return JSON.parse(raw); } catch (e) { return []; }
       },
-      createTask: function (taskData) {
-        var newTask = window.VerdeModels ? window.VerdeModels.Task(taskData) : taskData;
+
+      _saveStorage: function (list) {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(list));
+      },
+
+      getTasks: function (options) {
+        options = options || {};
+        var list = this._getStorage();
+        var filtered = list.filter(function (t) {
+          if (t.isDeleted) return false;
+          if (t.status === 'Archived' && !options.includeArchived) return false;
+          return true;
+        });
+        var sorted = filtered.sort(function (a, b) {
+          var tA = new Date(a.createdAt || 0).getTime();
+          var tB = new Date(b.createdAt || 0).getTime();
+          return tB - tA;
+        });
+        return mockAsyncResponse(sorted);
+      },
+
+      getTaskById: function (id) {
+        var list = this._getStorage();
+        var match = list.filter(function (t) { return t.id === id && !t.isDeleted; })[0];
+        return mockAsyncResponse(match || null);
+      },
+
+      createTask: function (data) {
+        var list = this._getStorage();
+        var now = new Date().toISOString();
+        var newTask = {
+          id: data.id || ('TSK-' + Math.floor(1000 + Math.random() * 9000)),
+          title: data.title || 'Untitled Task',
+          description: data.description || '',
+          projectId: data.projectId || null,
+          assigneeId: data.assigneeId || 'Unassigned',
+          status: data.status || 'To Do',
+          priority: data.priority || 'Medium',
+          dueDate: data.dueDate || '',
+          estimatedHours: parseFloat(data.estimatedHours || 0),
+          tags: data.tags || [],
+          attachmentsCount: 0,
+          commentsCount: 0,
+          timeline: [{ id: 'ACT-' + Date.now(), action: 'Task Created', details: 'Task initialized.', date: now, user: 'Shahim' }],
+          subtasks: [],
+          comments: [],
+          attachments: [],
+          createdAt: now,
+          updatedAt: now
+        };
+        list.unshift(newTask);
+        this._saveStorage(list);
         return mockAsyncResponse(newTask);
       },
-      updateTaskStatus: function (taskId, status) {
-        return mockAsyncResponse({ id: taskId, status: status, success: true });
+
+      updateTask: function (id, data) {
+        var list = this._getStorage();
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].id === id) {
+            var statusChanged = data.status && data.status !== list[i].status;
+            var priorityChanged = data.priority && data.priority !== list[i].priority;
+            
+            for (var k in data) {
+              if (data.hasOwnProperty(k)) list[i][k] = data[k];
+            }
+            
+            list[i].timeline = list[i].timeline || [];
+            var now = new Date().toISOString();
+            if (statusChanged) {
+              list[i].timeline.unshift({ id: 'ACT-' + Date.now(), action: 'Status Changed', details: 'Status changed to ' + data.status, date: now, user: 'Shahim' });
+            }
+            if (priorityChanged) {
+              list[i].timeline.unshift({ id: 'ACT-' + Date.now() + 1, action: 'Priority Changed', details: 'Priority changed to ' + data.priority, date: now, user: 'Shahim' });
+            }
+            
+            list[i].updatedAt = now;
+            this._saveStorage(list);
+            return mockAsyncResponse(list[i]);
+          }
+        }
+        return mockAsyncResponse(null);
+      },
+
+      
+      addSubtask: function(taskId, title) {
+        var list = this._getStorage();
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].id === taskId) {
+            list[i].subtasks = list[i].subtasks || [];
+            var newSub = { id: 'ST-' + Date.now(), title: title, completed: false, createdAt: new Date().toISOString() };
+            list[i].subtasks.push(newSub);
+            list[i].timeline = list[i].timeline || [];
+            list[i].timeline.unshift({ id: 'ACT-' + Date.now(), action: 'Subtask Added', details: 'Added: ' + title, date: new Date().toISOString(), user: 'Shahim' });
+            list[i].updatedAt = new Date().toISOString();
+            this._saveStorage(list);
+            return mockAsyncResponse(list[i]);
+          }
+        }
+        return mockAsyncResponse(null);
+      },
+      
+      toggleSubtask: function(taskId, subtaskId, completed) {
+        var list = this._getStorage();
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].id === taskId) {
+            list[i].subtasks = list[i].subtasks || [];
+            for (var j = 0; j < list[i].subtasks.length; j++) {
+              if (list[i].subtasks[j].id === subtaskId) {
+                list[i].subtasks[j].completed = completed;
+                list[i].timeline = list[i].timeline || [];
+                var statusStr = completed ? 'Completed' : 'Unchecked';
+                list[i].timeline.unshift({ id: 'ACT-' + Date.now(), action: 'Subtask ' + statusStr, details: list[i].subtasks[j].title, date: new Date().toISOString(), user: 'Shahim' });
+                break;
+              }
+            }
+            list[i].updatedAt = new Date().toISOString();
+            this._saveStorage(list);
+            return mockAsyncResponse(list[i]);
+          }
+        }
+        return mockAsyncResponse(null);
+      },
+
+      deleteSubtask: function(taskId, subtaskId) {
+        var list = this._getStorage();
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].id === taskId) {
+            list[i].subtasks = list[i].subtasks || [];
+            list[i].subtasks = list[i].subtasks.filter(st => st.id !== subtaskId);
+            list[i].updatedAt = new Date().toISOString();
+            this._saveStorage(list);
+            return mockAsyncResponse(list[i]);
+          }
+        }
+        return mockAsyncResponse(null);
+      },
+
+      addComment: function(taskId, authorId, text) {
+        var list = this._getStorage();
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].id === taskId) {
+            list[i].comments = list[i].comments || [];
+            var newComment = { id: 'CMT-' + Date.now(), authorId: authorId, text: text, createdAt: new Date().toISOString() };
+            list[i].comments.push(newComment);
+            list[i].commentsCount = list[i].comments.length;
+            list[i].timeline = list[i].timeline || [];
+            list[i].timeline.unshift({ id: 'ACT-' + Date.now(), action: 'Comment Added', details: 'By ' + authorId, date: new Date().toISOString(), user: authorId });
+            list[i].updatedAt = new Date().toISOString();
+            this._saveStorage(list);
+            return mockAsyncResponse(list[i]);
+          }
+        }
+        return mockAsyncResponse(null);
+      },
+
+      deleteComment: function(taskId, commentId) {
+        var list = this._getStorage();
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].id === taskId) {
+            list[i].comments = list[i].comments || [];
+            list[i].comments = list[i].comments.filter(c => c.id !== commentId);
+            list[i].commentsCount = list[i].comments.length;
+            list[i].timeline = list[i].timeline || [];
+            list[i].timeline.unshift({ id: 'ACT-' + Date.now(), action: 'Comment Deleted', details: 'Comment removed', date: new Date().toISOString(), user: 'Shahim' });
+            list[i].updatedAt = new Date().toISOString();
+            this._saveStorage(list);
+            return mockAsyncResponse(list[i]);
+          }
+        }
+        return mockAsyncResponse(null);
+      },
+
+      addAttachment: function(taskId, name, sizeStr) {
+        var list = this._getStorage();
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].id === taskId) {
+            list[i].attachments = list[i].attachments || [];
+            var newAtt = { id: 'ATT-' + Date.now(), name: name, size: sizeStr, createdAt: new Date().toISOString() };
+            list[i].attachments.push(newAtt);
+            list[i].attachmentsCount = list[i].attachments.length;
+            list[i].timeline = list[i].timeline || [];
+            list[i].timeline.unshift({ id: 'ACT-' + Date.now(), action: 'Attachment Uploaded', details: name, date: new Date().toISOString(), user: 'Shahim' });
+            list[i].updatedAt = new Date().toISOString();
+            this._saveStorage(list);
+            return mockAsyncResponse(list[i]);
+          }
+        }
+        return mockAsyncResponse(null);
+      },
+      
+      deleteAttachment: function(taskId, attachmentId) {
+        var list = this._getStorage();
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].id === taskId) {
+            list[i].attachments = list[i].attachments || [];
+            list[i].attachments = list[i].attachments.filter(a => a.id !== attachmentId);
+            list[i].attachmentsCount = list[i].attachments.length;
+            list[i].timeline = list[i].timeline || [];
+            list[i].timeline.unshift({ id: 'ACT-' + Date.now(), action: 'Attachment Deleted', details: 'Attachment removed', date: new Date().toISOString(), user: 'Shahim' });
+            list[i].updatedAt = new Date().toISOString();
+            this._saveStorage(list);
+            return mockAsyncResponse(list[i]);
+          }
+        }
+        return mockAsyncResponse(null);
+      },
+
+      deleteTask: function (id, permanent) {
+        var list = this._getStorage();
+        if (permanent) {
+          list = list.filter(function (t) { return t.id !== id; });
+        } else {
+          for (var i = 0; i < list.length; i++) {
+            if (list[i].id === id) {
+              list[i].isDeleted = true;
+              list[i].updatedAt = new Date().toISOString();
+              list[i].timeline = list[i].timeline || [];
+              list[i].timeline.unshift({ id: 'ACT-' + Date.now(), action: 'Deleted', details: 'Task deleted.', date: new Date().toISOString(), user: 'Shahim' });
+              break;
+            }
+          }
+        }
+        this._saveStorage(list);
+        return mockAsyncResponse({ success: true });
       }
     },
 

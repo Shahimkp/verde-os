@@ -483,22 +483,25 @@
                 </button>
                 <div id="proj-filter-menu" style="display:none; position:absolute; top:100%; right:0; margin-top:8px; background:var(--surface); border:1px solid var(--border); border-radius:8px; box-shadow:var(--shadow-md); z-index:100; min-width:180px; padding:8px;">
                   <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase; margin:8px 8px 4px 8px;">Status</div>
-                  <div class="dropdown-item" onclick="setProjFilter('status', 'Planning')">Planning</div>
-                  <div class="dropdown-item" onclick="setProjFilter('status', 'In Progress')">In Progress</div>
-                  <div class="dropdown-item" onclick="setProjFilter('status', 'Review')">Review</div>
+                  <div class="dropdown-item" onclick="setProjFilter('status', 'Active')">Active</div>
+                  <div class="dropdown-item" onclick="setProjFilter('status', 'On Hold')">On Hold</div>
                   <div class="dropdown-item" onclick="setProjFilter('status', 'Completed')">Completed</div>
                   <div class="dropdown-item" onclick="setProjFilter('status', 'Archived')">Archived</div>
+                  <div class="dropdown-item" onclick="setProjFilter('status', 'Cancelled')">Cancelled</div>
                   
                   <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase; margin:8px 8px 4px 8px;">Priority</div>
-                  <div class="dropdown-item" onclick="setProjFilter('priority', 'Critical')">Critical</div>
-                  <div class="dropdown-item" onclick="setProjFilter('priority', 'High')">High</div>
+                  <div class="dropdown-item" onclick="setProjFilter('priority', 'High')">High Priority</div>
                   <div class="dropdown-item" onclick="setProjFilter('priority', 'Medium')">Medium</div>
                   <div class="dropdown-item" onclick="setProjFilter('priority', 'Low')">Low</div>
                   
-                  <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase; margin:8px 8px 4px 8px;">Service Type</div>
-                  <div class="dropdown-item" onclick="setProjFilter('category', 'Website Development')">Website Development</div>
-                  <div class="dropdown-item" onclick="setProjFilter('category', 'Brand Development')">Brand Development</div>
-                  <div class="dropdown-item" onclick="setProjFilter('category', 'ERP Development')">ERP Development</div>
+                  <div style="border-top:1px solid var(--border); margin:8px 0;"></div>
+                  <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase; margin:8px 8px 4px 8px;">Sort By</div>
+                  <div class="dropdown-item" onclick="setProjSort('createdAt')">Newest</div>
+                  <div class="dropdown-item" onclick="setProjSort('createdAt_asc')">Oldest</div>
+                  <div class="dropdown-item" onclick="setProjSort('dueDate')">Deadline</div>
+                  <div class="dropdown-item" onclick="setProjSort('priority')">Priority</div>
+                  <div class="dropdown-item" onclick="setProjSort('progress')">Progress</div>
+                  <div class="dropdown-item" onclick="setProjSort('name')">Alphabetically</div>
                   
                   <div style="border-top:1px solid var(--border); margin:8px 0;"></div>
                   <div class="dropdown-item" onclick="setProjFilter(null, null)" style="color:var(--danger); font-weight:600;">Clear Filters</div>
@@ -755,15 +758,30 @@
           <span id="drawer-proj-title">Project Name</span>
           <input type="text" id="edit-proj-title" class="input" style="display:none; font-size:18px; font-weight:800; padding:4px 8px; width:100%;" />
         </div>
-        <div class="proj-card-client">
-          <span id="drawer-proj-client">Client</span>
-          <input type="text" id="edit-proj-client" class="input" style="display:none; font-size:13px; font-weight:600; padding:4px 8px; width:100%; margin-top:4px;" />
+        <div class="proj-card-client" id="drawer-proj-client-container" style="display:flex; align-items:center; gap:12px; margin-top:12px; padding:12px; background:var(--bg-2); border-radius:8px; border:1px solid var(--border);">
+          <div class="proj-avatar" id="drawer-client-logo" style="width:36px; height:36px; font-size:14px; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; border-radius:50%; flex-shrink:0;">CL</div>
+          <div style="flex:1;">
+            <div style="font-size:14px; font-weight:800; color:var(--text-1);" id="drawer-proj-client">Client Name</div>
+            <div style="font-size:11px; color:var(--text-3); margin-top:4px;" id="drawer-client-meta">Contact &bull; Industry</div>
+          </div>
+          <div style="text-align:right; display:none;" id="drawer-client-contact">
+            <div style="font-size:11px; color:var(--text-2);" id="drawer-client-email">email@domain.com</div>
+            <div style="font-size:11px; color:var(--text-2);" id="drawer-client-phone">+1 555-0123</div>
+          </div>
+          <input type="text" id="edit-proj-client" class="input" style="display:none; font-size:13px; font-weight:600; padding:4px 8px; width:100%;" />
         </div>
       </div>
       <div style="display:flex; gap:8px; align-items:center;">
+        <button class="btn btn-sm btn-ghost" id="drawer-client-btn" onclick="openClientProfile()" style="display:none; border:1px solid var(--info-10); color:var(--info);">Client Profile</button>
+        <button class="btn btn-sm btn-ghost" id="drawer-mark-completed-btn" onclick="markProjectCompleted()" style="border:1px solid var(--success-10); color:var(--success);">Complete</button>
+        <button class="btn btn-sm btn-ghost" id="drawer-reopen-btn" onclick="reopenProject()" style="display:none; border:1px solid var(--warning-10); color:var(--warning);">Reopen</button>
+        <button class="btn btn-sm btn-ghost" id="drawer-restore-btn" onclick="restoreProject()" style="display:none; border:1px solid var(--info-10); color:var(--info);">Restore</button>
+        <button class="btn btn-sm btn-ghost" id="drawer-duplicate-btn" onclick="duplicateCurrentProject()" style="border:1px solid var(--border);" title="Duplicate Project">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        </button>
         <button class="btn btn-sm btn-ghost" id="drawer-edit-btn" onclick="toggleProjectEditMode()" style="border:1px solid var(--border);">Edit</button>
         <button class="btn btn-sm btn-ghost" id="drawer-save-btn" onclick="saveProjectEdits()" style="display:none; border:1px solid var(--primary); background:var(--primary); color:white;">Save</button>
-        <button class="btn btn-sm btn-ghost" onclick="archiveCurrentProject()" style="border:1px solid var(--border);" title="Archive Project">
+        <button class="btn btn-sm btn-ghost" id="drawer-archive-btn" onclick="archiveCurrentProject()" style="border:1px solid var(--border);" title="Archive Project">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="21 8 21 21 3 21 3 8"></polyline><rect x="1" y="3" width="22" height="5"></rect><line x1="10" y1="12" x2="14" y2="12"></line></svg>
         </button>
         <button class="btn btn-sm btn-ghost" onclick="deleteCurrentProject()" style="border:1px solid var(--danger-10); color:var(--danger);" title="Delete Project">
@@ -778,7 +796,8 @@
         </button>
       </div>
     </div>    <div class="proj-panel-tabs">
-      <div class="proj-tab active" id="tab-overview" onclick="switchProjTab('overview')">Overview</div>
+      <div class="proj-tab active" id="tab-analytics" onclick="switchProjTab('analytics')">Analytics</div>
+      <div class="proj-tab" id="tab-overview" onclick="switchProjTab('overview')">Overview</div>
       <div class="proj-tab" id="tab-milestones" onclick="switchProjTab('milestones')">Milestones</div>
       <div class="proj-tab" id="tab-files" onclick="switchProjTab('files')">Files</div>
       <div class="proj-tab" id="tab-timeline" onclick="switchProjTab('timeline')">Timeline</div>
@@ -787,8 +806,123 @@
     </div>
     <div class="proj-panel-body" style="position:relative;">
       
+      <!-- Analytics Tab -->
+      <div id="view-analytics" style="display:flex; flex-direction:column; gap:24px;">
+        <!-- Quick Actions -->
+        <div style="display:flex; gap:8px; overflow-x:auto; padding-bottom:4px;">
+          <button class="btn btn-sm btn-ghost" style="border:1px solid var(--border); white-space:nowrap;" onclick="toggleProjectEditMode()">✏️ Edit Project</button>
+          <button class="btn btn-sm btn-ghost" style="border:1px solid var(--border); white-space:nowrap;" onclick="markProjectCompleted()">✅ Complete</button>
+          <button class="btn btn-sm btn-ghost" style="border:1px solid var(--border); white-space:nowrap;" onclick="archiveCurrentProject()">📦 Archive</button>
+          <button class="btn btn-sm btn-ghost" style="border:1px solid var(--border); white-space:nowrap;" onclick="openClientProfile()">👤 Open Client</button>
+          <button class="btn btn-sm btn-ghost" style="border:1px solid var(--border); white-space:nowrap;" onclick="switchProjTab('team'); openTeamModal();">👥 Assign Team</button>
+          <button class="btn btn-sm btn-ghost" style="border:1px solid var(--border); white-space:nowrap;" onclick="switchProjTab('milestones'); showAddMilestoneForm();">📍 Add Milestone</button>
+        </div>
+
+        <!-- KPI Grid -->
+        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:16px;">
+          <div class="proj-box" style="padding:16px; text-align:center;">
+            <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Overall Progress</div>
+            <div style="font-size:20px; font-weight:800; color:var(--primary); margin-top:8px;" id="analytics-progress">0%</div>
+          </div>
+          <div class="proj-box" style="padding:16px; text-align:center;">
+            <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Days Remaining</div>
+            <div style="font-size:20px; font-weight:800; color:var(--text-1); margin-top:8px;" id="analytics-days">0</div>
+          </div>
+          <div class="proj-box" style="padding:16px; text-align:center;">
+            <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Project Health</div>
+            <div style="margin-top:8px;" id="analytics-health"><span class="badge badge-neutral">Unknown</span></div>
+          </div>
+          <div class="proj-box" style="padding:16px; text-align:center;">
+            <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Deadline Status</div>
+            <div style="margin-top:8px;" id="analytics-deadline"><span class="badge badge-neutral">No Date</span></div>
+          </div>
+        </div>
+
+        <!-- Budget & Milestones -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+          <div class="proj-box" style="padding:20px;">
+            <h4 style="font-size:14px; font-weight:800; margin-bottom:16px;">Budget Tracker</h4>
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:13px;">
+              <span style="color:var(--text-2);">Used: <strong id="analytics-budget-used" style="color:var(--text-1);">₹0</strong></span>
+              <span style="color:var(--text-2);">Est: <strong id="analytics-budget-est" style="color:var(--text-1);">₹0</strong></span>
+            </div>
+            <div class="proj-progress" style="height:8px; border-radius:8px; background:var(--bg-3);">
+              <div class="proj-progress-bar" id="analytics-budget-bar" style="width:0%; border-radius:8px; background:var(--primary);"></div>
+            </div>
+            <div style="margin-top:12px; font-size:12px; color:var(--text-3); text-align:right;">Remaining: <strong id="analytics-budget-rem" style="color:var(--success);">₹0</strong></div>
+          </div>
+
+          <div class="proj-box" style="padding:20px;">
+            <h4 style="font-size:14px; font-weight:800; margin-bottom:16px;">Milestone Status</h4>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-size:13px; color:var(--text-2);">
+              <span>Completed</span><strong id="analytics-ms-completed" style="color:var(--success);">0</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-size:13px; color:var(--text-2);">
+              <span>Pending</span><strong id="analytics-ms-pending" style="color:var(--warning);">0</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--text-2);">
+              <span>Overdue</span><strong id="analytics-ms-overdue" style="color:var(--danger);">0</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Insights -->
+        <div class="proj-box" style="padding:20px; background:var(--primary-10); border-color:var(--primary-10);">
+          <div style="display:flex; gap:12px; align-items:center; margin-bottom:12px;">
+            <div style="color:var(--primary);">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            </div>
+            <h4 style="font-size:14px; font-weight:800; color:var(--primary);">Project Insights</h4>
+          </div>
+          <div id="analytics-insights" style="display:flex; flex-direction:column; gap:8px;">
+            <!-- Dynamic Insights -->
+          </div>
+        </div>
+
+        <!-- Bottom Grid: Statistics & Recent Activity -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+          <!-- Statistics -->
+          <div class="proj-box" style="padding:20px;">
+            <h4 style="font-size:14px; font-weight:800; margin-bottom:16px;">Statistics</h4>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+              <div>
+                <div style="font-size:18px; font-weight:800;" id="stat-tasks">0</div>
+                <div style="font-size:11px; color:var(--text-3); text-transform:uppercase;">Milestones</div>
+              </div>
+              <div>
+                <div style="font-size:18px; font-weight:800;" id="stat-members">0</div>
+                <div style="font-size:11px; color:var(--text-3); text-transform:uppercase;">Team Members</div>
+              </div>
+              <div>
+                <div style="font-size:18px; font-weight:800;" id="stat-files">0</div>
+                <div style="font-size:11px; color:var(--text-3); text-transform:uppercase;">Files Uploaded</div>
+              </div>
+              <div>
+                <div style="font-size:18px; font-weight:800;" id="stat-notes">0</div>
+                <div style="font-size:11px; color:var(--text-3); text-transform:uppercase;">Notes Added</div>
+              </div>
+              <div>
+                <div style="font-size:18px; font-weight:800;" id="stat-timeline">0</div>
+                <div style="font-size:11px; color:var(--text-3); text-transform:uppercase;">Timeline Entries</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Activity -->
+          <div class="proj-box" style="padding:20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+              <h4 style="font-size:14px; font-weight:800;">Recent Activity</h4>
+              <button class="btn btn-sm btn-ghost" style="color:var(--primary); padding:0;" onclick="switchProjTab('timeline')">View All</button>
+            </div>
+            <div id="analytics-activity" style="display:flex; flex-direction:column; gap:12px; max-height:200px; overflow-y:auto; padding-right:8px;">
+              <!-- Dynamic Recent Activity -->
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Overview Tab -->
-      <div id="view-overview" style="display:flex; flex-direction:column; gap:32px;">
+      <div id="view-overview" style="display:none; flex-direction:column; gap:32px;">
         <div>
           <div
             style="font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; margin-bottom:8px;">
@@ -797,22 +931,60 @@
           <textarea id="edit-proj-desc" class="input" style="display:none; font-size:14px; font-weight:500; width:100%; min-height:80px; resize:vertical;"></textarea>
         </div>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px;">
           <div class="proj-box" style="padding:20px; transition:none; cursor:default;">
             <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Status</div>
             <div style="font-size:14px; font-weight:700; color:var(--success); margin-top:4px;" id="drawer-proj-status">Active</div>
             <select id="edit-proj-status" class="input" style="display:none; margin-top:4px; width:100%;">
-              <option value="Planning">Planning</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Review">Review</option>
+              <option value="Active">Active</option>
+              <option value="On Hold">On Hold</option>
               <option value="Completed">Completed</option>
               <option value="Archived">Archived</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
+          <div class="proj-box" style="padding:20px; transition:none; cursor:default;">
+            <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Priority</div>
+            <div style="font-size:14px; font-weight:700; color:var(--text-1); margin-top:4px;" id="drawer-proj-priority">Medium</div>
+            <select id="edit-proj-priority" class="input" style="display:none; margin-top:4px; width:100%;">
+              <option value="High">High Priority</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
             </select>
           </div>
           <div class="proj-box" style="padding:20px; transition:none; cursor:default;">
             <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Due Date</div>
             <div style="font-size:14px; font-weight:700; color:var(--text-1); margin-top:4px;" id="drawer-proj-date">Aug 30, 2026</div>
             <input type="date" id="edit-proj-date" class="input" style="display:none; margin-top:4px; width:100%;" />
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px;">
+          <div class="proj-box" style="padding:20px; transition:none; cursor:default;">
+            <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Owner</div>
+            <div style="font-size:14px; font-weight:700; color:var(--text-1); margin-top:4px;" id="drawer-proj-owner">Shahim</div>
+            <input type="text" id="edit-proj-owner" class="input" style="display:none; margin-top:4px; width:100%;" />
+          </div>
+          <div class="proj-box" style="padding:20px; transition:none; cursor:default;">
+            <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Department</div>
+            <div style="font-size:14px; font-weight:700; color:var(--text-1); margin-top:4px;" id="drawer-proj-dept">Engineering</div>
+            <input type="text" id="edit-proj-dept" class="input" style="display:none; margin-top:4px; width:100%;" />
+          </div>
+          <div class="proj-box" style="padding:20px; transition:none; cursor:default;">
+            <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Tags</div>
+            <div style="font-size:14px; font-weight:700; color:var(--text-1); margin-top:4px;" id="drawer-proj-tags">API, Frontend</div>
+            <input type="text" id="edit-proj-tags" class="input" style="display:none; margin-top:4px; width:100%;" />
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+          <div class="proj-box" style="padding:20px; transition:none; cursor:default;">
+            <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Created Date</div>
+            <div style="font-size:14px; font-weight:700; color:var(--text-1); margin-top:4px;" id="drawer-proj-created">Aug 01, 2026</div>
+          </div>
+          <div class="proj-box" style="padding:20px; transition:none; cursor:default;">
+            <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase;">Last Updated</div>
+            <div style="font-size:14px; font-weight:700; color:var(--text-1); margin-top:4px;" id="drawer-proj-updated">Aug 15, 2026</div>
           </div>
         </div>
 
@@ -827,7 +999,7 @@
           </div>
           <div
             style="display:flex; justify-content:space-between; margin-top:16px; font-size:13px; font-weight:600; color:var(--text-2);">
-            <div id="drawer-proj-budget">Est. Budget: $45,000.00</div>
+            <div id="drawer-proj-budget">Est. Budget: ₹45,000.00</div>
             <div id="drawer-proj-team">Team: SH, MI</div>
           </div>
           <div id="edit-proj-budget-wrap" style="display:none; margin-top:12px;">
@@ -902,6 +1074,42 @@
 
   <div id="statusbar-container"></div>
   <div id="overlays-container"></div>
+  
+  <!-- Team Assignment Modal -->
+  <div id="team-assign-modal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 500px; width: 100%; padding: 24px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h3 style="font-size:18px; font-weight:800; color:var(--text-1); margin:0;">Assign Team Members</h3>
+        <button class="btn btn-ghost btn-sm" onclick="closeTeamModal()" style="font-size:16px;">✕</button>
+      </div>
+      
+      <!-- Search Box -->
+      <div style="margin-bottom: 16px;">
+        <input type="text" id="team-search-input" class="input" placeholder="Search employees..." style="width: 100%;" onkeyup="renderEmployeeList()">
+      </div>
+      
+      <!-- Filters -->
+      <div style="display:flex; gap:8px; overflow-x:auto; padding-bottom:8px; margin-bottom:16px; scrollbar-width:none;">
+        <button class="btn btn-sm team-filter-btn active" data-filter="All" onclick="setTeamFilter('All')" style="white-space:nowrap;">All</button>
+        <button class="btn btn-sm btn-ghost team-filter-btn" data-filter="Engineering" onclick="setTeamFilter('Engineering')" style="white-space:nowrap;">Engineering</button>
+        <button class="btn btn-sm btn-ghost team-filter-btn" data-filter="Design" onclick="setTeamFilter('Design')" style="white-space:nowrap;">Design</button>
+        <button class="btn btn-sm btn-ghost team-filter-btn" data-filter="Marketing" onclick="setTeamFilter('Marketing')" style="white-space:nowrap;">Marketing</button>
+        <button class="btn btn-sm btn-ghost team-filter-btn" data-filter="Sales" onclick="setTeamFilter('Sales')" style="white-space:nowrap;">Sales</button>
+        <button class="btn btn-sm btn-ghost team-filter-btn" data-filter="Finance" onclick="setTeamFilter('Finance')" style="white-space:nowrap;">Finance</button>
+        <button class="btn btn-sm btn-ghost team-filter-btn" data-filter="Management" onclick="setTeamFilter('Management')" style="white-space:nowrap;">Management</button>
+      </div>
+      
+      <!-- Employee List -->
+      <div id="team-modal-list" style="max-height: 350px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; padding-right: 4px;">
+        <!-- Dynamically rendered -->
+      </div>
+      
+      <div style="display:flex; justify-content:flex-end; gap:12px;">
+        <button class="btn btn-ghost btn-sm" onclick="closeTeamModal()" style="border:1px solid var(--border);">Cancel</button>
+        <button class="btn btn-sm btn-primary" onclick="assignSelectedMembers()">Assign Selected Members</button>
+      </div>
+    </div>
+  </div>
 
   <script src="../assets/js/models.js"></script>
   <script src="../assets/js/mock-data.js"></script>

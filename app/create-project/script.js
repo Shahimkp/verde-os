@@ -76,7 +76,8 @@
   // Validation before proceeding
   function validateStep1() {
     var name = document.getElementById('inpName');
-    var client = document.getElementById('inpClient');
+    var client = document.getElementById('inpClientName');
+    var clientVal = document.getElementById('clientSelectValue');
     var date = document.getElementById('inpDate');
     var valid = true;
 
@@ -88,10 +89,14 @@
     }
 
     if (client && !client.value) {
-      client.style.borderColor = 'var(--danger)';
+      if (document.getElementById('customClientSelect')) {
+        document.getElementById('customClientSelect').style.borderColor = 'var(--danger)';
+      }
       valid = false;
-    } else if (client) {
-      client.style.borderColor = 'var(--border)';
+    } else {
+      if (document.getElementById('customClientSelect')) {
+        document.getElementById('customClientSelect').style.borderColor = 'var(--border)';
+      }
     }
 
     if (date && !date.value) {
@@ -145,12 +150,12 @@
   // Step 5 Review Population
   function populateReview() {
     var elName = document.getElementById('inpName');
-    var elClient = document.getElementById('inpClient');
+    var elClient = document.getElementById('inpClientName');
     var elDate = document.getElementById('inpDate');
     var elBudget = document.getElementById('inpBudget');
 
     if (document.getElementById('revName')) document.getElementById('revName').textContent = elName ? elName.value || 'Cabo Travels Website' : 'Cabo Travels Website';
-    if (document.getElementById('revClient')) document.getElementById('revClient').textContent = elClient ? elClient.value || 'Cabo Travels' : 'Cabo Travels';
+    if (document.getElementById('revClient')) document.getElementById('revClient').textContent = elClient ? elClient.value || 'None selected' : 'None selected';
     if (document.getElementById('revService')) document.getElementById('revService').textContent = selectedType;
     if (document.getElementById('revDate')) document.getElementById('revDate').textContent = elDate ? elDate.value || 'Aug 30, 2026' : 'Aug 30, 2026';
     
@@ -164,8 +169,8 @@
     }
 
     if (document.getElementById('revBudget')) {
-      var b = parseFloat(elBudget ? elBudget.value || 25000 : 25000).toLocaleString('en-US', { minimumFractionDigits: 2 });
-      document.getElementById('revBudget').textContent = '$' + b;
+      var b = parseFloat(elBudget ? elBudget.value || 25000 : 25000).toLocaleString('en-IN', { minimumFractionDigits: 2 });
+      document.getElementById('revBudget').textContent = '₹' + b;
     }
   }
 
@@ -173,7 +178,7 @@
   window.saveDraftWizard = function () {
     var payload = {
       name: document.getElementById('inpName') ? (document.getElementById('inpName').value.trim() || 'Draft Project') : 'Draft Project',
-      client: document.getElementById('inpClient') ? document.getElementById('inpClient').value : 'Cabo Travels',
+      client: document.getElementById('inpClientName') ? document.getElementById('inpClientName').value : 'Unknown Client',
       category: selectedType,
       dueDate: document.getElementById('inpDate') ? document.getElementById('inpDate').value : '',
       budget: parseFloat(document.getElementById('inpBudget') ? document.getElementById('inpBudget').value : 0),
@@ -206,7 +211,7 @@
 
     var payload = {
       name: document.getElementById('inpName') ? document.getElementById('inpName').value : 'New Project',
-      client: document.getElementById('inpClient') ? document.getElementById('inpClient').value : 'Cabo Travels',
+      client: document.getElementById('inpClientName') ? document.getElementById('inpClientName').value : 'Unknown Client',
       category: selectedType,
       dueDate: document.getElementById('inpDate') ? document.getElementById('inpDate').value : '2026-08-30',
       budget: parseFloat(document.getElementById('inpBudget') ? document.getElementById('inpBudget').value : 25000),
@@ -244,19 +249,114 @@
   };
 
   var currentClientId = null;
+  var allClients = [];
+
+  // Handle Client Dropdown UI
+  function setupClientDropdown() {
+    var selectBox = document.getElementById('customClientSelect');
+    if (!selectBox) return;
+
+    selectBox.addEventListener('click', function(e) {
+      if(e.target.id === 'clientSelectSearch') return;
+      var dropdown = selectBox.querySelector('.verde-select-dropdown');
+      var isClosed = dropdown.style.display === 'none';
+      if(isClosed) {
+        dropdown.style.display = 'block';
+        document.getElementById('clientSelectSearch').focus();
+      } else {
+        dropdown.style.display = 'none';
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      if (!selectBox.contains(e.target)) {
+        selectBox.querySelector('.verde-select-dropdown').style.display = 'none';
+      }
+    });
+  }
+
+  window.filterClientSelect = function() {
+    var query = document.getElementById('clientSelectSearch').value.toLowerCase().trim();
+    document.querySelectorAll('.client-option-item').forEach(function(el) {
+      var text = el.textContent.toLowerCase();
+      el.style.display = text.includes(query) ? 'flex' : 'none';
+    });
+  };
+
+  window.selectClientOption = function(id, name) {
+    currentClientId = id;
+    document.getElementById('inpClientId').value = id;
+    document.getElementById('inpClientName').value = name;
+    
+    var valEl = document.getElementById('clientSelectValue');
+    valEl.textContent = name;
+    valEl.style.color = 'var(--text-1)';
+    valEl.style.fontWeight = '700';
+    
+    document.querySelector('#customClientSelect .verde-select-dropdown').style.display = 'none';
+    document.getElementById('customClientSelect').style.borderColor = 'var(--border)'; // Clear error state if any
+  };
+
+  function renderClientOptions(prefillCompany) {
+    var container = document.getElementById('clientSelectOptions');
+    if (!container) return;
+    
+    var activeClients = allClients.filter(function(c) { return c.status === 'Active'; });
+    
+    if (activeClients.length === 0) {
+      container.innerHTML = '<div style="padding:8px; font-size:12px; color:var(--text-3); text-align:center;">No active clients found.</div>';
+      return;
+    }
+    
+    container.innerHTML = '';
+    activeClients.forEach(function(c) {
+      var html = '<div class="client-option-item" onclick="selectClientOption(\'' + c.id + '\', \'' + c.company + '\')" style="display:flex; align-items:center; gap:12px; padding:8px 12px; cursor:pointer; border-radius:6px;">' +
+        '<div class="proj-avatar" style="width:28px; height:28px; font-size:11px; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; border-radius:50%; flex-shrink:0;">' + c.company.substring(0,2).toUpperCase() + '</div>' +
+        '<div style="flex:1;">' +
+          '<div style="font-size:13px; font-weight:700; color:var(--text-1);">' + c.company + '</div>' +
+          '<div style="font-size:11px; color:var(--text-3);">' + c.contactPerson + ' &bull; ' + (c.industry || 'General') + '</div>' +
+        '</div>' +
+      '</div>';
+      container.innerHTML += html;
+    });
+
+    // Add hover styles dynamically
+    document.querySelectorAll('.client-option-item').forEach(function(el) {
+      el.addEventListener('mouseover', function() { this.style.background = 'var(--bg-2)'; });
+      el.addEventListener('mouseout', function() { this.style.background = 'transparent'; });
+    });
+
+    // Handle Prefill
+    if (prefillCompany) {
+      var matched = activeClients.find(function(c) { return c.company === prefillCompany || c.id === currentClientId; });
+      if (matched) {
+        window.selectClientOption(matched.id, matched.company);
+      }
+    }
+  }
 
   // Init
   function initWizard() {
+    setupClientDropdown();
+    
+    var prefillCompany = null;
     var prefillStr = sessionStorage.getItem('verde_prefill_project');
     if (prefillStr) {
       try {
         var prefill = JSON.parse(prefillStr);
-        var elClient = document.getElementById('inpClient');
-        if (elClient) elClient.value = prefill.company || prefill.client || '';
+        prefillCompany = prefill.company || prefill.client || null;
         if (prefill.clientId) currentClientId = prefill.clientId;
         sessionStorage.removeItem('verde_prefill_project');
       } catch (e) {}
     }
+
+    if (window.VerdeServices && window.VerdeServices.Crm) {
+      window.VerdeServices.Crm.getClients().then(function(clients) {
+        allClients = clients || [];
+        renderClientOptions(prefillCompany);
+      });
+    }
+
     renderStepper();
   }
 

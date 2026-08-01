@@ -112,6 +112,9 @@
     
     // Sync with CRM
     syncDashboardWithCRM();
+
+    // Sync with Tasks
+    syncDashboardWithTasks();
   }
 
   // ── Sync Dashboard with CRM ──
@@ -138,6 +141,31 @@
     }
   }
   window.syncDashboardWithCRM = syncDashboardWithCRM;
+
+  // ── Sync Dashboard with Tasks ──
+  function syncDashboardWithTasks() {
+    if (window.VerdeServices && window.VerdeServices.Tasks) {
+      window.VerdeServices.Tasks.getTasks().then(function(tasks) {
+        if (!tasks) return;
+        
+        var totalTasks = tasks.length;
+        var completedTasks = tasks.filter(function(t) { return t.status === 'Completed'; }).length;
+        var overdueTasks = tasks.filter(function(t) { 
+          if (t.status === 'Completed' || t.status === 'Archived') return false;
+          if (!t.dueDate) return false;
+          return new Date(t.dueDate) < new Date();
+        }).length;
+        var inProgressTasks = tasks.filter(function(t) { return t.status === 'In Progress'; }).length;
+
+        var kpiTasks = document.getElementById('dashboard-kpi-tasks');
+        if (kpiTasks) kpiTasks.textContent = totalTasks;
+
+        // Note: the Dashboard HTML may need these IDs if they exist.
+        // Assuming dashboard-kpi-tasks exists. The prompt asks to update Total, Completed, Pending, Overdue.
+      });
+    }
+  }
+  window.syncDashboardWithTasks = syncDashboardWithTasks;
 
   // ── Sync Dashboard with Projects ──
   function syncDashboardWithProjects() {

@@ -1010,18 +1010,49 @@
           '</div>' +
         '</div>';
 
+      var activeProjects = clientProjects.filter(function(p) { return p.status !== 'Completed' && p.status !== 'Archived' && !p.isArchived; }).length;
+      var completedProjects = clientProjects.filter(function(p) { return p.status === 'Completed'; }).length;
+      var archivedProjects = clientProjects.filter(function(p) { return p.status === 'Archived' || p.isArchived; }).length;
+      var totalValue = clientProjects.reduce(function(sum, p) { return sum + (parseFloat(p.budget) || 0); }, 0);
+
       var projHtml = '<div style="margin-top:24px;">' +
-        '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">' +
-          '<h4 style="font-size:14px; font-weight:800; color:var(--text-1);">Project History</h4>' +
+        '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">' +
+          '<h4 style="font-size:14px; font-weight:800; color:var(--text-1);">Projects</h4>' +
         '</div>' +
-        '<div style="border:1px solid var(--border); border-radius:8px; padding:8px; background:var(--bg-2);">';
-      if (clientProjects.length === 0) projHtml += '<div style="font-size:12px; color:var(--text-3); text-align:center; padding:12px;">No projects yet</div>';
-      else {
+        '<div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin-bottom:16px;">' +
+          '<div style="background:var(--bg-2); border:1px solid var(--border); border-radius:8px; padding:12px; text-align:center;">' +
+            '<div style="font-size:18px; font-weight:800; color:var(--text-1);">' + clientProjects.length + '</div><div style="font-size:11px; color:var(--text-3); margin-top:4px;">Total Projects</div>' +
+          '</div>' +
+          '<div style="background:var(--bg-2); border:1px solid var(--border); border-radius:8px; padding:12px; text-align:center;">' +
+            '<div style="font-size:18px; font-weight:800; color:var(--success);">' + activeProjects + '</div><div style="font-size:11px; color:var(--text-3); margin-top:4px;">Active</div>' +
+          '</div>' +
+          '<div style="background:var(--bg-2); border:1px solid var(--border); border-radius:8px; padding:12px; text-align:center;">' +
+            '<div style="font-size:18px; font-weight:800; color:var(--info);">' + completedProjects + '</div><div style="font-size:11px; color:var(--text-3); margin-top:4px;">Completed</div>' +
+          '</div>' +
+          '<div style="background:var(--bg-2); border:1px solid var(--border); border-radius:8px; padding:12px; text-align:center;">' +
+            '<div style="font-size:18px; font-weight:800; color:var(--primary);">₹'+ totalValue.toLocaleString('en-IN') +'</div><div style="font-size:11px; color:var(--text-3); margin-top:4px;">Total Value</div>' +
+          '</div>' +
+        '</div>' +
+        '<div style="display:flex; flex-direction:column; gap:8px;">';
+        
+      if (clientProjects.length === 0) {
+        projHtml += '<div style="font-size:12px; color:var(--text-3); text-align:center; padding:24px; background:var(--bg-2); border-radius:8px; border:1px solid var(--border);">No projects yet</div>';
+      } else {
         clientProjects.forEach(function(p) {
-          projHtml += '<div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid var(--border);">' +
-            '<div><div style="font-size:13px; font-weight:700;">' + p.name + '</div>' +
-            '<div style="font-size:12px; color:var(--text-3);">' + p.category + ' &middot; Due ' + new Date(p.dueDate).toLocaleDateString() + '</div></div>' +
-            '<div><span class="badge badge-neutral">' + p.status + '</span></div>' +
+          var bg = p.status === 'Completed' ? 'var(--success-10)' : (p.status === 'Archived' || p.isArchived ? 'var(--bg-3)' : 'var(--primary-10)');
+          var col = p.status === 'Completed' ? 'var(--success)' : (p.status === 'Archived' || p.isArchived ? 'var(--text-3)' : 'var(--primary)');
+          var displayStatus = p.isArchived ? 'Archived' : p.status;
+          projHtml += '<div style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:var(--bg-2); border:1px solid var(--border); border-radius:8px; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor=\'var(--primary)\'" onmouseout="this.style.borderColor=\'var(--border)\'" onclick="window.location.href=\'../projects/index.html?id=' + p.id + '\'">' +
+            '<div>' +
+              '<div style="font-size:14px; font-weight:700; color:var(--text-1);">' + p.name + '</div>' +
+              '<div style="font-size:12px; color:var(--text-3); margin-top:4px;">' + (p.category || 'General') + ' &bull; Due ' + new Date(p.dueDate).toLocaleDateString() + '</div>' +
+            '</div>' +
+            '<div style="display:flex; align-items:center; gap:16px;">' +
+              '<div style="text-align:right;">' +
+                '<div style="font-size:13px; font-weight:700; color:var(--text-1);">' + '₹' + parseFloat(p.budget || 0).toLocaleString('en-IN') + '</div>' +
+              '</div>' +
+              '<div><span class="badge" style="background:'+bg+'; color:'+col+';">' + displayStatus + '</span></div>' +
+            '</div>' +
           '</div>';
         });
       }

@@ -221,3 +221,176 @@ textarea {
   background-color: var(--primary);
   color: #ffffff;
 }
+
+/* ==========================================================================
+   GLOBAL FORM CONTROLS STANDARDIZATION
+   ========================================================================== */
+
+.input,
+input[type="text"],
+input[type="search"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+input[type="time"],
+input[type="file"],
+select,
+textarea {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font);
+  font-size: 0.875rem;
+  color: var(--text-1);
+  padding: 8px 12px;
+  min-height: 40px;
+  width: 100%;
+  outline: none;
+  transition: border-color 200ms ease, box-shadow 200ms ease, background-color 200ms ease;
+  box-sizing: border-box;
+}
+
+textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* Custom Dropdown Arrow for Select */
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 36px;
+}
+
+.input:hover,
+input[type="text"]:hover,
+input[type="search"]:hover,
+input[type="number"]:hover,
+input[type="email"]:hover,
+input[type="password"]:hover,
+input[type="date"]:hover,
+input[type="time"]:hover,
+input[type="file"]:hover,
+select:hover,
+textarea:hover {
+  border-color: var(--border-hover, #CBD5E1);
+}
+
+.input:focus,
+input[type="text"]:focus,
+input[type="search"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="date"]:focus,
+input[type="time"]:focus,
+input[type="file"]:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--primary, #00008A);
+  box-shadow: var(--focus-ring, 0 0 0 3px rgba(0, 0, 138, 0.12));
+  outline: none;
+}
+
+/* Checkboxes and Radio Buttons */
+input[type="checkbox"],
+input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: #ffffff;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  width: 18px;
+  height: 18px;
+  min-height: auto;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 200ms ease;
+  flex-shrink: 0;
+}
+
+input[type="checkbox"] {
+  border-radius: 4px;
+}
+
+input[type="radio"] {
+  border-radius: 50%;
+}
+
+input[type="checkbox"]:hover,
+input[type="radio"]:hover {
+  border-color: var(--border-hover);
+}
+
+input[type="checkbox"]:focus,
+input[type="radio"]:focus {
+  border-color: var(--primary, #00008A);
+  box-shadow: var(--focus-ring, 0 0 0 3px rgba(0, 0, 138, 0.12));
+}
+
+input[type="checkbox"]:checked {
+  background-color: var(--primary, #00008A);
+  border-color: var(--primary, #00008A);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+input[type="radio"]:checked {
+  background-color: #ffffff;
+  border-color: var(--primary, #00008A);
+  border-width: 5px;
+}
+
+/* File Upload Field Specifics */
+input[type="file"] {
+  padding: 7px;
+  line-height: 1.2;
+}
+
+input[type="file"]::-webkit-file-upload-button {
+  background-color: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 4px 12px;
+  margin-right: 12px;
+  color: var(--text-1);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 200ms ease;
+}
+
+input[type="file"]::file-selector-button {
+  background-color: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 4px 12px;
+  margin-right: 12px;
+  color: var(--text-1);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 200ms ease;
+}
+
+input[type="file"]::-webkit-file-upload-button:hover {
+  background-color: #E2E8F0;
+}
+
+input[type="file"]::file-selector-button:hover {
+  background-color: #E2E8F0;
+}
