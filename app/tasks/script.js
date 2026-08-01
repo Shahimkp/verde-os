@@ -81,24 +81,65 @@
     });
   }
 
+  // ── EXPORT ──
+  function downloadBlob(content, filename, contentType) {
+    var blob = new Blob([content], { type: contentType });
+    var url = URL.createObjectURL(blob);
+    var pom = document.createElement('a');
+    pom.href = url;
+    pom.setAttribute('download', filename);
+    pom.click();
+  }
+
+  function exportTasksToCSV(tasks) {
+    if (tasks.length === 0) return;
+    const headers = ['ID', 'Title', 'Status', 'Priority', 'Assignee', 'Project', 'Due Date', 'Est Hours'];
+    let csv = headers.join(',') + '\n';
+    tasks.forEach(t => {
+      csv += `"${t.id}","${(t.title || '').replace(/"/g, '""')}","${t.status}","${t.priority}","${t.assigneeId}","${t.projectId}","${t.dueDate}","${t.estimatedHours}"\n`;
+    });
+    downloadBlob(csv, 'tasks_export.csv', 'text/csv;charset=utf-8;');
+  }
+
+  function exportTasksToJSON(tasks) {
+    downloadBlob(JSON.stringify(tasks, null, 2), 'tasks_export.json', 'application/json');
+  }
+  
   // ── RENDER ENGINE ──
   function renderTasks() {
     if (!window.VerdeServices || !window.VerdeServices.Tasks) return;
     
-    window.VerdeServices.Tasks.getTasks({ includeArchived: currentFilter === 'Archived' }).then(function(tasks) {
+    window.VerdeServices.Tasks.getTasks({ includeArchived: true }).then(function(tasks) {
       if (!tasks) tasks = [];
       
-      // 1. Filter
+      // 1. ADVANCED FILTERS
       let filtered = tasks;
-      if (currentFilter !== 'All') {
-        if (['Critical', 'High', 'Medium', 'Low'].includes(currentFilter)) {
-          filtered = filtered.filter(t => t.priority === currentFilter);
-        } else {
-          filtered = filtered.filter(t => t.status === currentFilter);
-        }
-      } else {
-        // By default hide archived from 'All'
-        filtered = filtered.filter(t => t.status !== 'Archived');
+      const fEmp = document.getElementById('filter-employee') ? document.getElementById('filter-employee').value : 'All';
+      const fProj = document.getElementById('filter-project') ? document.getElementById('filter-project').value : 'All';
+      const fPri = document.getElementById('filter-priority') ? document.getElementById('filter-priority').value : 'All';
+      const fStat = document.getElementById('filter-status') ? document.getElementById('filter-status').value : 'All';
+      const fRec = document.getElementById('filter-recurrence') ? document.getElementById('filter-recurrence').value : 'All';
+      const fBlocked = document.getElementById('filter-blocked') ? document.getElementById('filter-blocked').checked : false;
+      
+      if (fEmp !== 'All') filtered = filtered.filter(t => t.assigneeId === fEmp);
+      if (fProj !== 'All') filtered = filtered.filter(t => t.projectId === fProj);
+      if (fPri !== 'All') filtered = filtered.filter(t => t.priority === fPri);
+      if (fStat !== 'All') filtered = filtered.filter(t => t.status === fStat);
+      if (fStat === 'All') filtered = filtered.filter(t => t.status !== 'Archived');
+      if (fRec !== 'All') filtered = filtered.filter(t => t.recurrence === fRec);
+      
+      if (fBlocked) {
+         filtered = filtered.filter(t => {
+            if (t.status === 'Completed') return false;
+            let isBl = false;
+            if (t.dependencies && t.dependencies.length > 0) {
+               t.dependencies.forEach(depId => {
+                  const depT = tasks.find(tx => tx.id === depId);
+                  if (depT && depT.status !== 'Completed') isBl = true;
+               });
+            }
+            return isBl;
+         });
       }
       
       // 2. Search
@@ -107,7 +148,9 @@
         filtered = filtered.filter(t => 
           (t.title && t.title.toLowerCase().includes(q)) || 
           (t.projectId && t.projectId.toLowerCase().includes(q)) || 
-          (t.assigneeId && t.assigneeId.toLowerCase().includes(q))
+          (t.assigneeId && t.assigneeId.toLowerCase().includes(q)) ||
+          (t.description && t.description.toLowerCase().includes(q)) ||
+          (t.tags && t.tags.join(' ').toLowerCase().includes(q))
         );
       }
       
@@ -128,8 +171,38 @@
         }
         return 0;
       });
+      
+      window.lastFilteredTasks = filtered;
 
-      // 4. Render Kanban Board
+      // 4. Update KPI Analytics
+      let total = filtered.length;
+      let completed = filtered.filter(t => t.status === 'Completed').length;
+      let inprog = filtered.filter(t => t.status === 'In Progress').length;
+      let overdue = filtered.filter(t => t.dueDate && new Date(t.dueDate) < new Date() && t.status !== 'Completed').length;
+      let highPri = filtered.filter(t => t.priority === 'High' || t.priority === 'Critical').length;
+      let blocked = filtered.filter(t => {
+         if (t.status === 'Completed') return false;
+         let isBl = false;
+         if (t.dependencies) {
+            t.dependencies.forEach(depId => {
+               const depT = tasks.find(tx => tx.id === depId);
+               if (depT && depT.status !== 'Completed') isBl = true;
+            });
+         }
+         return isBl;
+      }).length;
+      
+      if (document.getElementById('kpi-total')) document.getElementById('kpi-total').textContent = total;
+      if (document.getElementById('kpi-completed')) document.getElementById('kpi-completed').textContent = completed;
+      if (document.getElementById('kpi-progress')) document.getElementById('kpi-progress').textContent = inprog;
+      if (document.getElementById('kpi-overdue')) document.getElementById('kpi-overdue').textContent = overdue;
+      if (document.getElementById('kpi-blocked')) document.getElementById('kpi-blocked').textContent = blocked;
+      if (document.getElementById('kpi-high')) document.getElementById('kpi-high').textContent = highPri;
+      
+      // Charts, Workload, and Project Summary were not implemented.
+      // Skipping undefined function calls to prevent render crash.
+
+      // 8. Render Kanban Board
       const board = document.getElementById('tasks-board');
       if (board) {
         board.innerHTML = '';
@@ -180,13 +253,14 @@
             if (taskId) {
               window.VerdeServices.Tasks.updateTask(taskId, { status: col.id }).then(function() {
                 renderTasks();
-                // update project progress automatically handled inside updateTask timeline? 
-                // wait, updateProjectProgressFromTasks needs to be called. 
-                // We'll call it if we have the task data.
                 window.VerdeServices.Tasks.getTaskById(taskId).then(t => {
                    if (t && t.projectId) updateProjectProgressFromTasks(t.projectId);
                 });
                 if (window.syncDashboardWithTasks) window.syncDashboardWithTasks();
+              }).catch(function(err) {
+                if (window.VerdeToast) window.VerdeToast.error(err.message || 'Cannot move task.');
+                else alert(err.message || 'Cannot move task.');
+                renderTasks(); // Revert UI
               });
             }
           });
@@ -248,6 +322,14 @@
               const isLate = t.dueDate && new Date(t.dueDate) < new Date() && t.status !== 'Completed';
               const dateColor = isLate ? 'var(--danger)' : 'var(--text-2)';
               
+              let isBlocked = false;
+              if (t.status !== 'Completed' && t.dependencies && t.dependencies.length > 0) {
+                 t.dependencies.forEach(depId => {
+                    const depT = tasks.find(tx => tx.id === depId);
+                    if (depT && depT.status !== 'Completed') isBlocked = true;
+                 });
+              }
+
               let subtaskHtml = '';
               if (t.subtasks && t.subtasks.length > 0) {
                 const c = t.subtasks.filter(s => s.completed).length;
@@ -268,7 +350,11 @@
 
               card.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                  <div>${getPriorityBadge(t.priority)}</div>
+                  <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+                    ${getPriorityBadge(t.priority)}
+                    ${isBlocked ? '<span class="badge" style="background:var(--warning-10); color:var(--warning);">Blocked</span>' : ''}
+                    ${isLate ? '<span class="badge" style="background:var(--danger); color:#fff;">Overdue</span>' : ''}
+                  </div>
                   <div class="task-card-menu" style="position:relative;">
                     <button class="btn btn-ghost btn-sm btn-quick-menu" style="padding:4px; color:var(--text-3);" data-id="${t.id}">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
@@ -457,31 +543,52 @@
           selAssignee.innerHTML += `<option value="${m.id}">${m.name} - ${m.role}</option>`;
         });
         
-        if (editingTaskId) {
-          titleEl.textContent = 'Edit Task';
-          window.VerdeServices.Tasks.getTaskById(editingTaskId).then(function(t) {
-            document.getElementById('inpTaskTitle').value = t.title || '';
-            document.getElementById('inpTaskDesc').value = t.description || '';
-            document.getElementById('selTaskProject').value = t.projectId || '';
-            document.getElementById('selTaskAssignee').value = t.assigneeId || 'Unassigned';
-            document.getElementById('selTaskStatus').value = t.status || 'To Do';
-            document.getElementById('selTaskPriority').value = t.priority || 'Medium';
-            document.getElementById('inpTaskDate').value = t.dueDate || '';
-            document.getElementById('inpTaskHours').value = t.estimatedHours || 0;
-            modal.style.display = 'flex';
-          });
-        } else {
-          titleEl.textContent = 'Create Task';
-          document.getElementById('inpTaskTitle').value = '';
-          document.getElementById('inpTaskDesc').value = '';
-          document.getElementById('selTaskProject').value = '';
-          document.getElementById('selTaskAssignee').value = 'Unassigned';
-          document.getElementById('selTaskStatus').value = 'To Do';
-          document.getElementById('selTaskPriority').value = 'Medium';
-          document.getElementById('inpTaskDate').value = '';
-          document.getElementById('inpTaskHours').value = 0;
-          modal.style.display = 'flex';
-        }
+        // Populate Dependencies
+        const depSelect = document.getElementById('selTaskDependencies');
+        depSelect.innerHTML = '';
+        window.VerdeServices.Tasks.getTasks().then(tasks => {
+           tasks.filter(tx => tx.id !== taskId && tx.status !== 'Completed').forEach(tx => {
+              const opt = document.createElement('option');
+              opt.value = tx.id;
+              opt.innerText = tx.title + ' (' + tx.id + ')';
+              depSelect.appendChild(opt);
+           });
+           
+           if (editingTaskId) {
+             titleEl.textContent = 'Edit Task';
+             window.VerdeServices.Tasks.getTaskById(editingTaskId).then(function(t) {
+               document.getElementById('inpTaskTitle').value = t.title || '';
+               document.getElementById('inpTaskDesc').value = t.description || '';
+               document.getElementById('selTaskProject').value = t.projectId || '';
+               document.getElementById('selTaskAssignee').value = t.assigneeId || 'Unassigned';
+               document.getElementById('selTaskStatus').value = t.status || 'To Do';
+               document.getElementById('selTaskPriority').value = t.priority || 'Medium';
+               document.getElementById('inpTaskDate').value = t.dueDate || '';
+               document.getElementById('inpTaskHours').value = t.estimatedHours || 0;
+               document.getElementById('selTaskRecurrence').value = t.recurrence || 'None';
+               document.getElementById('selTaskReminder').value = t.reminder || 'None';
+               
+               Array.from(depSelect.options).forEach(opt => {
+                  if ((t.dependencies || []).includes(opt.value)) opt.selected = true;
+               });
+               
+               modal.style.display = 'flex';
+             });
+           } else {
+             titleEl.textContent = 'Create Task';
+             document.getElementById('inpTaskTitle').value = '';
+             document.getElementById('inpTaskDesc').value = '';
+             document.getElementById('selTaskProject').value = '';
+             document.getElementById('selTaskAssignee').value = 'Unassigned';
+             document.getElementById('selTaskStatus').value = 'To Do';
+             document.getElementById('selTaskPriority').value = 'Medium';
+             document.getElementById('inpTaskDate').value = '';
+             document.getElementById('inpTaskHours').value = 0;
+             document.getElementById('selTaskRecurrence').value = 'None';
+             document.getElementById('selTaskReminder').value = 'None';
+             modal.style.display = 'flex';
+           }
+        });
       });
     }
   }
@@ -492,6 +599,9 @@
 
   function saveTask(e) {
     if (e && e.preventDefault) e.preventDefault();
+    const depSelect = document.getElementById('selTaskDependencies');
+    const deps = Array.from(depSelect.selectedOptions).map(opt => opt.value);
+    
     const data = {
       title: document.getElementById('inpTaskTitle').value.trim(),
       description: document.getElementById('inpTaskDesc').value.trim(),
@@ -500,7 +610,10 @@
       status: document.getElementById('selTaskStatus').value,
       priority: document.getElementById('selTaskPriority').value,
       dueDate: document.getElementById('inpTaskDate').value,
-      estimatedHours: parseFloat(document.getElementById('inpTaskHours').value) || 0
+      estimatedHours: parseFloat(document.getElementById('inpTaskHours').value) || 0,
+      dependencies: deps,
+      recurrence: document.getElementById('selTaskRecurrence').value,
+      reminder: document.getElementById('selTaskReminder').value
     };
     
     if (!data.title) {
@@ -521,6 +634,8 @@
         if (drawer && drawer.style.transform === 'translateX(0px)' && document.getElementById('task-drawer-content').getAttribute('data-active-id') === editingTaskId) {
           openTaskDrawer(editingTaskId);
         }
+      }).catch(function(err) {
+        if(window.VerdeToast) window.VerdeToast.error(err.message || 'Error updating task.');
       });
     } else {
       window.VerdeServices.Tasks.createTask(data).then(function(res) {
@@ -570,6 +685,21 @@
           <div>
             <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase; margin-bottom:8px;">Est. Hours</div>
             <div style="font-size:13px; font-weight:600; color:var(--text-1);">${t.estimatedHours || '0'}h</div>
+          </div>
+        </div>
+        
+        <div style="display:flex; gap:24px; margin-bottom:24px; padding-bottom:24px; border-bottom:1px solid var(--border);">
+          <div>
+            <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase; margin-bottom:8px;">Recurrence</div>
+            <div style="font-size:13px; font-weight:600; color:var(--text-1);">${t.recurrence || 'None'}</div>
+          </div>
+          <div>
+            <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase; margin-bottom:8px;">Reminder</div>
+            <div style="font-size:13px; font-weight:600; color:var(--text-1);">${t.reminder || 'None'}</div>
+          </div>
+          <div>
+            <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase; margin-bottom:8px;">Blocked By</div>
+            <div style="font-size:13px; font-weight:600; color:var(--text-1);">${t.dependencies && t.dependencies.length > 0 ? t.dependencies.join(', ') : 'None'}</div>
           </div>
         </div>
         
@@ -902,45 +1032,66 @@
     }
 
     // Search
-    const searchInput = document.getElementById('tasks-search-input');
-    if (searchInput) {
-      searchInput.addEventListener('input', function(e) {
-        currentSearch = e.target.value;
-        renderTasks();
-      });
-    }
-
     const globalSearch = document.getElementById('tasks-global-search');
     if (globalSearch) {
       globalSearch.addEventListener('input', function(e) {
-        currentSearch = e.target.value;
+        currentSearch = e.target.value.trim();
         renderTasks();
       });
     }
     
-    // Quick mock for filters/sort (In a real app, these would be proper dropdowns. We'll use prompts for now or cycle through states)
-    const btnFilter = document.getElementById('btn-filter-tasks');
-    if (btnFilter) {
-      btnFilter.addEventListener('click', function() {
-        const filters = ['All', 'Backlog', 'To Do', 'In Progress', 'Review', 'Completed', 'Archived', 'Critical', 'High', 'Medium', 'Low'];
-        let idx = filters.indexOf(currentFilter);
-        idx = (idx + 1) % filters.length;
-        currentFilter = filters[idx];
-        if(window.VerdeToast) window.VerdeToast.success('Filter: ' + currentFilter);
-        renderTasks();
+    // Toggle advanced filters
+    const btnToggleFilters = document.getElementById('btn-toggle-filters');
+    const panelFilters = document.getElementById('advanced-filters-panel');
+    if (btnToggleFilters && panelFilters) {
+      btnToggleFilters.addEventListener('click', function() {
+        panelFilters.style.display = panelFilters.style.display === 'none' ? 'block' : 'none';
       });
     }
     
-    const btnSort = document.getElementById('btn-sort-tasks');
-    if (btnSort) {
-      btnSort.addEventListener('click', function() {
-        const sorts = ['Newest', 'Oldest', 'Priority', 'Deadline', 'Alphabetically'];
-        let idx = sorts.indexOf(currentSort);
-        idx = (idx + 1) % sorts.length;
-        currentSort = sorts[idx];
-        if(window.VerdeToast) window.VerdeToast.success('Sort: ' + currentSort);
-        renderTasks();
-      });
+    // Populate advanced filter dropdowns dynamically from mocks
+    if (window.VerdeServices && window.VerdeServices.Projects) {
+       window.VerdeServices.Projects.getProjects().then(projs => {
+          const fProj = document.getElementById('filter-project');
+          if (fProj) {
+             projs.forEach(p => fProj.innerHTML += `<option value="${p.id}">${p.name}</option>`);
+          }
+       });
+    }
+    const fEmp = document.getElementById('filter-employee');
+    if (fEmp) {
+       teamMock.forEach(m => fEmp.innerHTML += `<option value="${m.id}">${m.name}</option>`);
+    }
+    
+    // Bind advanced filters changes
+    document.querySelectorAll('.adv-filter, .adv-filter-check').forEach(el => {
+       el.addEventListener('change', renderTasks);
+    });
+    
+    const btnClearFilters = document.getElementById('btn-clear-filters');
+    if (btnClearFilters) {
+       btnClearFilters.addEventListener('click', function() {
+          document.querySelectorAll('.adv-filter').forEach(el => el.value = 'All');
+          const fb = document.getElementById('filter-blocked');
+          if (fb) fb.checked = false;
+          renderTasks();
+       });
+    }
+    
+    // Bind Exports
+    const btnCsv = document.getElementById('btn-export-csv');
+    if (btnCsv) {
+       btnCsv.addEventListener('click', function() {
+          document.getElementById('export-menu').classList.remove('active');
+          if (window.lastFilteredTasks) exportTasksToCSV(window.lastFilteredTasks);
+       });
+    }
+    const btnJson = document.getElementById('btn-export-json');
+    if (btnJson) {
+       btnJson.addEventListener('click', function() {
+          document.getElementById('export-menu').classList.remove('active');
+          if (window.lastFilteredTasks) exportTasksToJSON(window.lastFilteredTasks);
+       });
     }
     
     renderTasks();

@@ -16,6 +16,63 @@
   }
 
   window.VerdeServices = {
+
+    // 0. NOTIFICATIONS SERVICE (LOCAL STORAGE BACKED)
+    Notifications: {
+      STORAGE_KEY: 'verde_os_notifications',
+
+      _getStorage: function () {
+        var raw = localStorage.getItem(this.STORAGE_KEY);
+        if (!raw) {
+          var initialSeed = [];
+          localStorage.setItem(this.STORAGE_KEY, JSON.stringify(initialSeed));
+          return initialSeed;
+        }
+        try { return JSON.parse(raw); } catch (e) { return []; }
+      },
+
+      _saveStorage: function (list) {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(list));
+        if (window.updateNotificationUI) window.updateNotificationUI();
+      },
+
+      getNotifications: function () {
+        return mockAsyncResponse(this._getStorage());
+      },
+
+      addNotification: function (title, desc) {
+        var list = this._getStorage();
+        var newNotif = {
+          id: 'NOTIF-' + Date.now(),
+          title: title,
+          desc: desc,
+          read: false,
+          createdAt: new Date().toISOString()
+        };
+        list.unshift(newNotif);
+        this._saveStorage(list);
+        return mockAsyncResponse(newNotif);
+      },
+
+      markAsRead: function (id) {
+        var list = this._getStorage();
+        if (id) {
+          for (var i = 0; i < list.length; i++) {
+            if (list[i].id === id) list[i].read = true;
+          }
+        } else {
+          for (var i = 0; i < list.length; i++) list[i].read = true;
+        }
+        this._saveStorage(list);
+        return mockAsyncResponse({ success: true });
+      },
+
+      clearAll: function () {
+        this._saveStorage([]);
+        return mockAsyncResponse({ success: true });
+      }
+    },
+
     // 1. AUTHENTICATION SERVICE (POST /api/v1/auth)
     Auth: {
       login: function (email, password) {
@@ -556,9 +613,9 @@
         if (!raw) {
           var now = new Date().toISOString();
           var initialSeed = [
-            { id: 'TSK-1001', title: 'Design landing page', description: 'Create high-fidelity mockups for Cabo Travels.', projectId: 'PRJ-001', assigneeId: 'SH', status: 'In Progress', priority: 'High', dueDate: '2026-08-05', estimatedHours: 12, tags: ['Design', 'UI'], attachmentsCount: 2, commentsCount: 5, timeline: [{ id: 'ACT-1', action: 'Task Created', details: 'Initialized task.', date: now, user: 'Shahim' }], subtasks: [{id: 'ST-1', title: 'Initial setup', completed: true}, {id: 'ST-2', title: 'Review specs', completed: false}], comments: [{id: 'CMT-1', authorId: 'MI', text: 'Looking forward to this!', createdAt: new Date().toISOString()}], attachments: [{id: 'ATT-1', name: 'specs.pdf', size: '2.4 MB', createdAt: new Date().toISOString()}], createdAt: now, updatedAt: now },
-            { id: 'TSK-1002', title: 'Implement login flow', description: 'Develop authentication using JWT.', projectId: 'PRJ-003', assigneeId: 'NH', status: 'To Do', priority: 'Critical', dueDate: '2026-08-10', estimatedHours: 8, tags: ['Backend', 'Auth'], attachmentsCount: 0, commentsCount: 1, timeline: [{ id: 'ACT-2', action: 'Task Created', details: 'Initialized task.', date: now, user: 'Shahim' }], subtasks: [{id: 'ST-1', title: 'Initial setup', completed: true}, {id: 'ST-2', title: 'Review specs', completed: false}], comments: [{id: 'CMT-1', authorId: 'MI', text: 'Looking forward to this!', createdAt: new Date().toISOString()}], attachments: [{id: 'ATT-1', name: 'specs.pdf', size: '2.4 MB', createdAt: new Date().toISOString()}], createdAt: now, updatedAt: now },
-            { id: 'TSK-1003', title: 'Setup CI/CD pipeline', description: 'Configure GitHub Actions.', projectId: 'PRJ-004', assigneeId: 'MI', status: 'Completed', priority: 'Medium', dueDate: '2026-07-20', estimatedHours: 4, tags: ['DevOps'], attachmentsCount: 0, commentsCount: 0, timeline: [{ id: 'ACT-3', action: 'Task Created', details: 'Initialized task.', date: now, user: 'Shahim' }], subtasks: [{id: 'ST-1', title: 'Initial setup', completed: true}, {id: 'ST-2', title: 'Review specs', completed: false}], comments: [{id: 'CMT-1', authorId: 'MI', text: 'Looking forward to this!', createdAt: new Date().toISOString()}], attachments: [{id: 'ATT-1', name: 'specs.pdf', size: '2.4 MB', createdAt: new Date().toISOString()}], createdAt: now, updatedAt: now }
+            { id: 'TSK-1001', title: 'Design landing page', description: 'Create high-fidelity mockups for Cabo Travels.', projectId: 'PRJ-001', assigneeId: 'SH', status: 'In Progress', priority: 'High', dueDate: '2026-08-05', estimatedHours: 12, tags: ['Design', 'UI'], dependencies: [], recurrence: 'None', reminder: 'None', attachmentsCount: 2, commentsCount: 5, timeline: [{ id: 'ACT-1', action: 'Task Created', details: 'Initialized task.', date: now, user: 'Shahim' }], subtasks: [{id: 'ST-1', title: 'Initial setup', completed: true}, {id: 'ST-2', title: 'Review specs', completed: false}], comments: [{id: 'CMT-1', authorId: 'MI', text: 'Looking forward to this!', createdAt: new Date().toISOString()}], attachments: [{id: 'ATT-1', name: 'specs.pdf', size: '2.4 MB', createdAt: new Date().toISOString()}], createdAt: now, updatedAt: now },
+            { id: 'TSK-1002', title: 'Implement login flow', description: 'Develop authentication using JWT.', projectId: 'PRJ-003', assigneeId: 'NH', status: 'To Do', priority: 'Critical', dueDate: '2026-08-10', estimatedHours: 8, tags: ['Backend', 'Auth'], dependencies: ['TSK-1001'], recurrence: 'None', reminder: 'None', attachmentsCount: 0, commentsCount: 1, timeline: [{ id: 'ACT-2', action: 'Task Created', details: 'Initialized task.', date: now, user: 'Shahim' }], subtasks: [{id: 'ST-1', title: 'Initial setup', completed: true}, {id: 'ST-2', title: 'Review specs', completed: false}], comments: [{id: 'CMT-1', authorId: 'MI', text: 'Looking forward to this!', createdAt: new Date().toISOString()}], attachments: [{id: 'ATT-1', name: 'specs.pdf', size: '2.4 MB', createdAt: new Date().toISOString()}], createdAt: now, updatedAt: now },
+            { id: 'TSK-1003', title: 'Setup CI/CD pipeline', description: 'Configure GitHub Actions.', projectId: 'PRJ-004', assigneeId: 'MI', status: 'Completed', priority: 'Medium', dueDate: '2026-07-20', estimatedHours: 4, tags: ['DevOps'], dependencies: [], recurrence: 'Weekly', reminder: 'None', attachmentsCount: 0, commentsCount: 0, timeline: [{ id: 'ACT-3', action: 'Task Created', details: 'Initialized task.', date: now, user: 'Shahim' }], subtasks: [{id: 'ST-1', title: 'Initial setup', completed: true}, {id: 'ST-2', title: 'Review specs', completed: false}], comments: [{id: 'CMT-1', authorId: 'MI', text: 'Looking forward to this!', createdAt: new Date().toISOString()}], attachments: [{id: 'ATT-1', name: 'specs.pdf', size: '2.4 MB', createdAt: new Date().toISOString()}], createdAt: now, updatedAt: now }
           ];
           localStorage.setItem(this.STORAGE_KEY, JSON.stringify(initialSeed));
           return initialSeed;
@@ -606,6 +663,9 @@
           dueDate: data.dueDate || '',
           estimatedHours: parseFloat(data.estimatedHours || 0),
           tags: data.tags || [],
+          dependencies: data.dependencies || [],
+          recurrence: data.recurrence || 'None',
+          reminder: data.reminder || 'None',
           attachmentsCount: 0,
           commentsCount: 0,
           timeline: [{ id: 'ACT-' + Date.now(), action: 'Task Created', details: 'Task initialized.', date: now, user: 'Shahim' }],
@@ -617,6 +677,11 @@
         };
         list.unshift(newTask);
         this._saveStorage(list);
+
+        if (newTask.assigneeId !== 'Unassigned' && window.VerdeServices.Notifications) {
+          window.VerdeServices.Notifications.addNotification('Task Assigned', newTask.title + ' was assigned to ' + newTask.assigneeId);
+        }
+
         return mockAsyncResponse(newTask);
       },
 
@@ -624,8 +689,28 @@
         var list = this._getStorage();
         for (var i = 0; i < list.length; i++) {
           if (list[i].id === id) {
-            var statusChanged = data.status && data.status !== list[i].status;
+            var oldStatus = list[i].status;
+            var newStatus = data.status || oldStatus;
+            
+            // SMART STATUS: Prevent moving blocked tasks to Completed
+            if (newStatus === 'Completed' && oldStatus !== 'Completed') {
+              var deps = list[i].dependencies || [];
+              var isBlocked = false;
+              for (var d = 0; d < deps.length; d++) {
+                var depTask = list.find(t => t.id === deps[d]);
+                if (depTask && depTask.status !== 'Completed') {
+                  isBlocked = true;
+                  break;
+                }
+              }
+              if (isBlocked) {
+                return Promise.reject(new Error('Cannot complete task. It is blocked by incomplete dependencies.'));
+              }
+            }
+
+            var statusChanged = newStatus !== oldStatus;
             var priorityChanged = data.priority && data.priority !== list[i].priority;
+            var oldAssignee = list[i].assigneeId;
             
             for (var k in data) {
               if (data.hasOwnProperty(k)) list[i][k] = data[k];
@@ -634,10 +719,60 @@
             list[i].timeline = list[i].timeline || [];
             var now = new Date().toISOString();
             if (statusChanged) {
-              list[i].timeline.unshift({ id: 'ACT-' + Date.now(), action: 'Status Changed', details: 'Status changed to ' + data.status, date: now, user: 'Shahim' });
+              list[i].timeline.unshift({ id: 'ACT-' + Date.now(), action: 'Status Changed', details: 'Status changed to ' + newStatus, date: now, user: 'Shahim' });
+              
+              // Notifications
+              if (newStatus === 'Completed') {
+                if (window.VerdeServices.Notifications) {
+                  window.VerdeServices.Notifications.addNotification('Task Completed', list[i].title + ' was completed.');
+                }
+                
+                // UNBLOCK check: If any task depends on this one, notify that it is unblocked
+                var unblockedTasks = list.filter(t => (t.dependencies || []).includes(list[i].id) && t.status !== 'Completed');
+                unblockedTasks.forEach(ut => {
+                  var allDepsCompleted = true;
+                  (ut.dependencies || []).forEach(depId => {
+                    var depT = list.find(tx => tx.id === depId);
+                    if (depT && depT.status !== 'Completed' && depT.id !== list[i].id) allDepsCompleted = false;
+                  });
+                  if (allDepsCompleted && window.VerdeServices.Notifications) {
+                    window.VerdeServices.Notifications.addNotification('Dependency Unblocked', ut.title + ' is now ready to start.');
+                  }
+                });
+
+                // RECURRENCE logic: auto-generate next occurrence
+                if (list[i].recurrence && list[i].recurrence !== 'None') {
+                  var nextDue = new Date();
+                  var currentDue = list[i].dueDate ? new Date(list[i].dueDate) : new Date();
+                  if (list[i].recurrence === 'Daily') nextDue.setDate(currentDue.getDate() + 1);
+                  else if (list[i].recurrence === 'Weekly') nextDue.setDate(currentDue.getDate() + 7);
+                  else if (list[i].recurrence === 'Monthly') nextDue.setMonth(currentDue.getMonth() + 1);
+                  else if (list[i].recurrence === 'Yearly') nextDue.setFullYear(currentDue.getFullYear() + 1);
+                  
+                  var clonedTask = JSON.parse(JSON.stringify(list[i]));
+                  clonedTask.id = 'TSK-' + Math.floor(Math.random() * 9000 + 1000);
+                  clonedTask.status = 'To Do';
+                  clonedTask.dueDate = nextDue.toISOString().split('T')[0];
+                  clonedTask.timeline = [{ id: 'ACT-AUTO', action: 'Task Auto-Generated', details: 'Generated via recurrence rule.', date: now, user: 'System' }];
+                  clonedTask.createdAt = now;
+                  clonedTask.updatedAt = now;
+                  clonedTask.commentsCount = 0;
+                  clonedTask.attachmentsCount = 0;
+                  clonedTask.comments = [];
+                  clonedTask.attachments = [];
+                  list.unshift(clonedTask);
+                }
+              }
             }
+            
             if (priorityChanged) {
               list[i].timeline.unshift({ id: 'ACT-' + Date.now() + 1, action: 'Priority Changed', details: 'Priority changed to ' + data.priority, date: now, user: 'Shahim' });
+            }
+            
+            if (data.assigneeId && data.assigneeId !== oldAssignee && data.assigneeId !== 'Unassigned') {
+              if (window.VerdeServices.Notifications) {
+                window.VerdeServices.Notifications.addNotification('Task Assigned', list[i].title + ' was assigned to ' + data.assigneeId);
+              }
             }
             
             list[i].updatedAt = now;
