@@ -950,6 +950,10 @@
     // 7. TEAM SERVICE (GET/POST /api/v1/team)
     Team: {
       getMembers: function () {
+        const stored = localStorage.getItem('verde_os_team_employees');
+        if (stored) {
+            return mockAsyncResponse(JSON.parse(stored));
+        }
         return mockAsyncResponse(window.VerdeMockData ? window.VerdeMockData.employees : []);
       },
       inviteMember: function (email, role) {
