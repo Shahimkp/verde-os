@@ -7,6 +7,7 @@
   'use strict';
 
   let teamEmployees = [];
+  let teamAttendance = [];
 
   function loadTeamData() {
     const stored = localStorage.getItem('verde_os_team_employees');
@@ -16,6 +17,26 @@
       teamEmployees = window.VerdeMockData && window.VerdeMockData.employees ? [...window.VerdeMockData.employees] : [];
       localStorage.setItem('verde_os_team_employees', JSON.stringify(teamEmployees));
     }
+  }
+
+  function loadAttendanceData() {
+    const stored = localStorage.getItem('verde_os_team_attendance');
+    if (stored) {
+      teamAttendance = JSON.parse(stored);
+    } else {
+      const today = new Date().toISOString().split('T')[0];
+      teamAttendance = [
+        { id: 'ATT-' + Date.now() + 1, empId: 'EMP-001', date: today, checkIn: '08:30 AM', checkOut: '05:30 PM', hours: '9h 0m', status: 'Present' },
+        { id: 'ATT-' + Date.now() + 2, empId: 'EMP-002', date: today, checkIn: '09:00 AM', checkOut: '06:00 PM', hours: '9h 0m', status: 'Present' },
+        { id: 'ATT-' + Date.now() + 3, empId: 'EMP-003', date: today, checkIn: '09:15 AM', checkOut: '06:15 PM', hours: '9h 0m', status: 'Remote' },
+        { id: 'ATT-' + Date.now() + 4, empId: 'EMP-004', date: today, checkIn: '', checkOut: '', hours: '0h 0m', status: 'Leave' }
+      ];
+      saveAttendanceData();
+    }
+  }
+
+  function saveAttendanceData() {
+    localStorage.setItem('verde_os_team_attendance', JSON.stringify(teamAttendance));
   }
 
   function saveTeamData() {
@@ -64,6 +85,9 @@
             <button class="btn btn-ghost btn-sm team-dir-action" style="border:1px solid var(--border); width: 36px; display:flex; justify-content:center; align-items:center;" onclick="window.openAddEmployeeModal && window.openAddEmployeeModal('${emp.id}')" title="Edit Employee">
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
             </button>
+            <button class="btn btn-ghost btn-sm team-dir-action" style="border:1px solid var(--danger-10); color:var(--danger); width: 36px; display:flex; justify-content:center; align-items:center;" onclick="window.deleteEmployee && window.deleteEmployee('${emp.id}')" title="Delete Employee">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            </button>
           </div>
       `;
       grid.appendChild(card);
@@ -78,9 +102,252 @@
     });
   }
 
+  function renderAttendanceKPIs() {
+    const today = new Date().toISOString().split('T')[0];
+    const todaysRecords = teamAttendance.filter(a => a.date === today);
+    
+    let present = 0, absent = 0, onLeave = 0;
+    todaysRecords.forEach(r => {
+      if (['Present', 'Remote', 'Half Day'].includes(r.status)) present++;
+      if (r.status === 'Absent') absent++;
+      if (r.status === 'Leave') onLeave++;
+    });
+
+    const elPresent = document.getElementById('kpi-present');
+    const elAbsent = document.getElementById('kpi-absent');
+    const elLeave = document.getElementById('kpi-leave');
+    
+    if (elPresent) elPresent.textContent = present;
+    if (elAbsent) elAbsent.textContent = absent;
+    if (elLeave) elLeave.textContent = onLeave;
+    
+    let totalMins = 0;
+    let count = 0;
+    teamAttendance.forEach(r => {
+      if (r.hours && r.hours !== '0h 0m') {
+        const parts = r.hours.split(' ');
+        if (parts.length === 2) {
+          const h = parseInt(parts[0]) || 0;
+          const m = parseInt(parts[1]) || 0;
+          totalMins += (h * 60 + m);
+          count++;
+        }
+      }
+    });
+    const avgMins = count > 0 ? Math.floor(totalMins / count) : 0;
+    const avgH = Math.floor(avgMins / 60);
+    const avgM = avgMins % 60;
+    const elAvgHours = document.getElementById('kpi-avg-hours');
+    if (elAvgHours) elAvgHours.textContent = `${avgH}h ${avgM}m`;
+  }
+
+  function renderAttendanceTable() {
+    const tbody = document.getElementById('attendance-table-body');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    
+    if (teamAttendance.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:32px; color:var(--text-3);">No attendance records found</td></tr>`;
+      return;
+    }
+    
+    const sorted = [...teamAttendance].reverse();
+    
+    sorted.forEach(record => {
+      const emp = teamEmployees.find(e => e.id === record.empId) || { name: 'Unknown', id: record.empId, department: 'N/A', initials: 'XX', avatarBg: 'var(--text-3)' };
+      const statusColor = record.status === 'Present' || record.status === 'Remote' ? 'success' : record.status === 'Leave' || record.status === 'Half Day' ? 'warning' : 'danger';
+      
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div class="team-avatar-lg" style="width:32px; height:32px; font-size:11px; background:${emp.avatarBg || 'var(--primary)'}-10; color:${emp.avatarBg || 'var(--primary)'};">${emp.initials || 'XX'}</div>
+            <span style="font-weight:700;">${emp.name}</span>
+          </div>
+        </td>
+        <td style="color:var(--text-2); font-size:13px;">${emp.id}</td>
+        <td style="color:var(--text-2); font-size:13px;">${emp.department || 'N/A'}</td>
+        <td style="color:var(--text-2); font-size:13px;">${record.date}</td>
+        <td style="color:var(--text-2); font-size:13px;">${record.checkIn || '--'}</td>
+        <td style="color:var(--text-2); font-size:13px;">${record.checkOut || '--'}</td>
+        <td style="font-weight:700;">${record.hours || '0h 0m'}</td>
+        <td><span class="badge badge-${statusColor}">${record.status}</span></td>
+        <td style="text-align: right;">
+          <button class="btn btn-sm btn-ghost" style="margin-right:4px;" onclick="window.openMarkAttendanceModal('${record.id}')">Edit</button>
+          <button class="btn btn-sm btn-ghost" style="color:var(--danger);" onclick="window.deleteAttendanceRecord('${record.id}')">Delete</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  window.openMarkAttendanceModal = function(recordId = null) {
+    let editRecord = null;
+    if (recordId) {
+      editRecord = teamAttendance.find(r => r.id === recordId);
+      if (!editRecord) return;
+    }
+
+    const today = new Date().toISOString().split('T')[0];
+    let empOptions = teamEmployees.map(e => `<option value="${e.id}" ${editRecord && editRecord.empId === e.id ? 'selected' : ''}>${e.name} (${e.id})</option>`).join('');
+
+    const formHtml = `
+      <style>
+        .att-form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+        .att-form-label { font-size: 12px; font-weight: 700; color: var(--text-3); text-transform: uppercase; }
+        .att-form-input, .att-form-select { border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; outline: none; background: var(--bg); color: var(--text-1); font-family: inherit; font-size: 13px; width: 100%; box-sizing: border-box; }
+        .att-form-input:focus, .att-form-select:focus { border-color: var(--primary); }
+      </style>
+      <div id="attendance-modal-form">
+        <div class="att-form-group">
+          <label class="att-form-label">Employee</label>
+          <select id="att-empId" class="att-form-select" ${editRecord ? 'disabled' : ''}>
+            ${empOptions}
+          </select>
+        </div>
+        <div class="att-form-group">
+          <label class="att-form-label">Date</label>
+          <input type="date" id="att-date" class="att-form-input" value="${editRecord ? editRecord.date : today}">
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div class="att-form-group">
+            <label class="att-form-label">Check-in Time</label>
+            <input type="time" id="att-checkin" class="att-form-input" value="${editRecord && editRecord.checkIn ? convertToTimeInput(editRecord.checkIn) : '09:00'}">
+          </div>
+          <div class="att-form-group">
+            <label class="att-form-label">Check-out Time</label>
+            <input type="time" id="att-checkout" class="att-form-input" value="${editRecord && editRecord.checkOut ? convertToTimeInput(editRecord.checkOut) : '17:00'}">
+          </div>
+        </div>
+        <div class="att-form-group">
+          <label class="att-form-label">Status</label>
+          <select id="att-status" class="att-form-select">
+            <option value="Present" ${editRecord && editRecord.status === 'Present' ? 'selected' : ''}>Present</option>
+            <option value="Remote" ${editRecord && editRecord.status === 'Remote' ? 'selected' : ''}>Remote</option>
+            <option value="Half Day" ${editRecord && editRecord.status === 'Half Day' ? 'selected' : ''}>Half Day</option>
+            <option value="Absent" ${editRecord && editRecord.status === 'Absent' ? 'selected' : ''}>Absent</option>
+            <option value="Leave" ${editRecord && editRecord.status === 'Leave' ? 'selected' : ''}>Leave</option>
+          </select>
+        </div>
+      </div>
+    `;
+
+    if (window.VerdeModal && window.VerdeModal.create) {
+      const modal = window.VerdeModal.create({
+        title: editRecord ? 'Edit Attendance' : 'Mark Attendance',
+        body: formHtml,
+        confirmText: 'Save Record',
+        cancelText: 'Cancel'
+      });
+
+      const btnSave = modal.querySelector('.modal-confirm-btn');
+      btnSave.addEventListener('click', function() {
+        const empId = document.getElementById('att-empId').value;
+        const date = document.getElementById('att-date').value;
+        const checkin = document.getElementById('att-checkin').value;
+        const checkout = document.getElementById('att-checkout').value;
+        const status = document.getElementById('att-status').value;
+
+        if (!empId || !date) {
+          if (window.VerdeToast) window.VerdeToast.error('Employee and Date are required.');
+          return;
+        }
+
+        let hoursStr = '0h 0m';
+        let checkInFormatted = '';
+        let checkOutFormatted = '';
+        
+        if (checkin && checkout && !['Absent', 'Leave'].includes(status)) {
+          const t1 = checkin.split(':');
+          const t2 = checkout.split(':');
+          let m1 = parseInt(t1[0]) * 60 + parseInt(t1[1]);
+          let m2 = parseInt(t2[0]) * 60 + parseInt(t2[1]);
+          if (m2 < m1) m2 += 24 * 60;
+          const diff = m2 - m1;
+          hoursStr = `${Math.floor(diff/60)}h ${diff%60}m`;
+          checkInFormatted = formatAMPM(new Date(2000, 0, 1, t1[0], t1[1]));
+          checkOutFormatted = formatAMPM(new Date(2000, 0, 1, t2[0], t2[1]));
+        } else if (status === 'Absent' || status === 'Leave') {
+          checkInFormatted = '--';
+          checkOutFormatted = '--';
+        } else {
+            if (checkin) checkInFormatted = formatAMPM(new Date(2000, 0, 1, checkin.split(':')[0], checkin.split(':')[1]));
+            if (checkout) checkOutFormatted = formatAMPM(new Date(2000, 0, 1, checkout.split(':')[0], checkout.split(':')[1]));
+        }
+
+        if (editRecord) {
+          editRecord.empId = empId;
+          editRecord.date = date;
+          editRecord.checkIn = checkInFormatted;
+          editRecord.checkOut = checkOutFormatted;
+          editRecord.hours = hoursStr;
+          editRecord.status = status;
+        } else {
+          teamAttendance.push({
+            id: 'ATT-' + Date.now(),
+            empId: empId,
+            date: date,
+            checkIn: checkInFormatted,
+            checkOut: checkOutFormatted,
+            hours: hoursStr,
+            status: status
+          });
+        }
+        
+        saveAttendanceData();
+        renderAttendanceTable();
+        renderAttendanceKPIs();
+        
+        if (window.VerdeToast) window.VerdeToast.success('Attendance record saved successfully.');
+        window.VerdeModal.close(modal);
+      });
+    }
+  };
+
+  window.deleteAttendanceRecord = function(recordId) {
+    if (window.VerdeModal && window.VerdeModal.delete) {
+      window.VerdeModal.delete(
+        'Delete Record',
+        'Are you sure you want to delete this attendance record?',
+        function() {
+          teamAttendance = teamAttendance.filter(r => r.id !== recordId);
+          saveAttendanceData();
+          renderAttendanceTable();
+          renderAttendanceKPIs();
+          if (window.VerdeToast) window.VerdeToast.success('Record deleted.');
+        }
+      );
+    }
+  };
+
+  function formatAMPM(date) {
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    let ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    minutes = minutes < 10 ? '0'+minutes : minutes;
+    return hours + ':' + minutes + ' ' + ampm;
+  }
+  
+  function convertToTimeInput(timeStr) {
+    if (!timeStr || timeStr === '--') return '';
+    const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    if (!match) return '';
+    let h = parseInt(match[1]);
+    const m = match[2];
+    const ampm = match[3].toUpperCase();
+    if (ampm === 'PM' && h < 12) h += 12;
+    if (ampm === 'AM' && h === 12) h = 0;
+    return (h < 10 ? '0'+h : h) + ':' + m;
+  }
+
   function initTeamWorkspace() {
     loadTeamData();
+    loadAttendanceData();
     renderTeamDirectory();
+    renderAttendanceTable();
+    renderAttendanceKPIs();
 
     // 1. Search Filter for Employee Directory
     const searchInput = document.getElementById('team-search-input');
@@ -113,6 +380,31 @@
       btnExport.addEventListener('click', function () {
         alert('Team Workspace: Exporting Team Roster to CSV...');
       });
+    }
+
+    const tabs = document.querySelectorAll('.team-main-tab');
+    const views = document.querySelectorAll('.view-content');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        views.forEach(v => v.classList.remove('active'));
+        tab.classList.add('active');
+        const targetId = tab.getAttribute('data-target');
+        const targetView = document.getElementById(targetId);
+        if (targetView) targetView.classList.add('active');
+      });
+    });
+    
+    const attSearch = document.getElementById('attendance-search-input');
+    if (attSearch) {
+        attSearch.addEventListener('input', function(e) {
+            const q = e.target.value.toLowerCase().trim();
+            const rows = document.querySelectorAll('#attendance-table-body tr');
+            rows.forEach(r => {
+                const text = r.textContent.toLowerCase();
+                r.style.display = text.includes(q) ? '' : 'none';
+            });
+        });
     }
   }
 
@@ -526,57 +818,253 @@
   };
 
   window.openEmployeeProfile = function(empId) {
-    const drawer = document.getElementById('employee-profile-drawer');
-    if (!drawer) return;
-
     const emp = teamEmployees.find(e => e.id === empId);
     if (!emp) {
       if (window.VerdeToast) window.VerdeToast.error('Employee details not found.');
       return;
     }
 
-    // Populate data
-    const ini = emp.initials || emp.name.substring(0, 2).toUpperCase();
+    const ini = emp.initials || (emp.name ? emp.name.substring(0, 2).toUpperCase() : 'XX');
     const bg = emp.avatarBg || 'var(--primary)';
     
-    document.getElementById('drawer-emp-avatar').textContent = ini;
-    document.getElementById('drawer-emp-avatar').style.background = `${bg}-10`;
-    document.getElementById('drawer-emp-avatar').style.color = bg;
-    
-    document.getElementById('drawer-emp-name').textContent = emp.name || 'N/A';
-    document.getElementById('drawer-emp-role').textContent = emp.role || 'N/A';
-    
     const status = (emp.status || 'Offline');
-    const statusEl = document.getElementById('drawer-emp-status');
-    statusEl.textContent = status;
-    statusEl.style.background = `var(--${status.toLowerCase() === 'online' ? 'success' : status.toLowerCase() === 'busy' ? 'warning' : 'text-3'})-10`;
-    statusEl.style.color = `var(--${status.toLowerCase() === 'online' ? 'success' : status.toLowerCase() === 'busy' ? 'warning' : 'text-3'})`;
+    const statusColor = status.toLowerCase() === 'online' || status.toLowerCase() === 'active' ? 'success' : status.toLowerCase() === 'busy' || status.toLowerCase() === 'on leave' ? 'warning' : 'text-3';
 
-    document.getElementById('drawer-emp-id').textContent = emp.id;
-    document.getElementById('drawer-emp-dept').textContent = emp.department || 'N/A';
-    document.getElementById('drawer-emp-email').textContent = emp.email || emp.name.toLowerCase().replace(' ', '.') + '@verdelabs.com';
-    document.getElementById('drawer-emp-phone').textContent = emp.phone || '+1 (555) 019-8234';
-    document.getElementById('drawer-emp-joined').textContent = emp.joinDate || 'Jan 15, 2026';
-    
-    document.getElementById('drawer-emp-notes').textContent = emp.notes || 'Reliable team member. Needs to complete Q3 compliance training.';
-    
-    // Skills
-    const skills = emp.skills || ['Leadership', 'Communication', 'Agile'];
-    const skillsContainer = document.getElementById('drawer-emp-skills');
-    skillsContainer.innerHTML = '';
-    skills.forEach(skill => {
-      const tag = document.createElement('span');
-      tag.style.cssText = 'font-size:11px; font-weight:600; padding:4px 10px; background:var(--bg-2); border:1px solid var(--border); border-radius:12px; color:var(--text-2);';
-      tag.textContent = skill;
-      skillsContainer.appendChild(tag);
-    });
+    let skillsHtml = '<div style="color: var(--text-3); font-size: 13px; font-weight: 500;">No Data Available</div>';
+    if (emp.skills && emp.skills.length > 0) {
+      skillsHtml = emp.skills.map(s => `<span class="profile-skill">${s}</span>`).join('');
+    } else if (!emp.skills) {
+      // Mock some default skills if none exist to match original behavior slightly, but strictly user said "Use existing employee data. If unavailable, display No Data Available"
+      // Wait, let's adhere strictly: if not available, show No Data Available.
+    }
 
-    // Open drawer
-    drawer.style.display = 'block';
-    // Small delay to allow display:block to apply before animating transform
-    setTimeout(() => {
-      drawer.style.transform = 'translateX(0)';
-    }, 10);
+    const v = (val) => (val !== undefined && val !== null && val !== '') ? val : 'No Data Available';
+
+    const empAttendance = teamAttendance.filter(a => a.empId === empId).reverse();
+    let attHtml = '';
+    if (empAttendance.length === 0) {
+      attHtml = `<div style="text-align: center; padding: 60px 0; color: var(--text-3); font-size: 14px; font-weight: 600;">No Data Available</div>`;
+    } else {
+      attHtml = `
+        <table class="table-enterprise" style="margin-top:0;">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Check-in</th>
+              <th>Check-out</th>
+              <th>Hours</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${empAttendance.map(a => `
+              <tr>
+                <td style="color:var(--text-2); font-size:13px;">${a.date}</td>
+                <td style="color:var(--text-2); font-size:13px;">${a.checkIn || '--'}</td>
+                <td style="color:var(--text-2); font-size:13px;">${a.checkOut || '--'}</td>
+                <td style="font-weight:700; font-size:13px;">${a.hours || '0h 0m'}</td>
+                <td><span class="badge badge-${a.status === 'Present' || a.status === 'Remote' ? 'success' : a.status === 'Leave' || a.status === 'Half Day' ? 'warning' : 'danger'}">${a.status}</span></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    const profileHtml = `
+      <style>
+        .profile-header { display: flex; align-items: center; gap: 24px; margin-bottom: 24px; }
+        .profile-avatar { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 800; flex-shrink: 0; }
+        .profile-info { flex: 1; }
+        .profile-name { font-size: 24px; font-weight: 800; color: var(--text-1); margin-bottom: 4px; display: flex; align-items: center; }
+        .profile-role { font-size: 14px; font-weight: 600; color: var(--text-2); margin-bottom: 8px; }
+        
+        .profile-summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+        .profile-summary-card { background: var(--bg-2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; }
+        .profile-summary-val { font-size: 20px; font-weight: 800; color: var(--text-1); }
+        .profile-summary-label { font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; margin-top: 4px; }
+        
+        .profile-tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 24px; gap: 24px; }
+        .profile-tab { padding: 8px 0; font-size: 14px; font-weight: 700; color: var(--text-3); cursor: pointer; border-bottom: 2px solid transparent; }
+        .profile-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+        
+        .profile-tab-content { display: none; }
+        .profile-tab-content.active { display: block; }
+        
+        .profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .profile-section { display: flex; flex-direction: column; gap: 16px; }
+        .profile-field { display: flex; flex-direction: column; gap: 4px; }
+        .profile-label { font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; }
+        .profile-val { font-size: 14px; font-weight: 500; color: var(--text-1); }
+        
+        .profile-skills { display: flex; flex-wrap: wrap; gap: 8px; }
+        .profile-skill { font-size: 11px; font-weight: 600; padding: 4px 10px; background: var(--bg-2); border: 1px solid var(--border); border-radius: 12px; color: var(--text-2); }
+      </style>
+
+      <div style="max-height: 70vh; overflow-y: auto; padding-right: 8px; width: 650px; max-width: 100%;" id="employee-profile-container">
+        
+        <div class="profile-header">
+          <div class="profile-avatar" style="background: ${bg}-10; color: ${bg};">${ini}</div>
+          <div class="profile-info">
+            <div class="profile-name">
+              ${v(emp.name)} 
+              <span class="badge" style="margin-left: 12px; font-size:12px; font-weight:700; padding: 4px 10px; border-radius: 12px; background: var(--${statusColor}-10); color: var(--${statusColor}); line-height: 1;">${status}</span>
+            </div>
+            <div class="profile-role">${v(emp.role)} • ${v(emp.department)}</div>
+            <div style="font-size: 13px; font-weight: 600; color: var(--text-3); margin-top: 4px;">Employee ID: ${v(emp.id)}</div>
+          </div>
+        </div>
+
+        <div class="profile-summary-grid">
+          <div class="profile-summary-card">
+            <div class="profile-summary-val">${v(emp.workload)}</div>
+            <div class="profile-summary-label">Current Workload</div>
+          </div>
+          <div class="profile-summary-card">
+            <div class="profile-summary-val">${v(emp.assignedProjects)}</div>
+            <div class="profile-summary-label">Assigned Projects</div>
+          </div>
+          <div class="profile-summary-card">
+            <div class="profile-summary-val">${v(emp.assignedTasks)}</div>
+            <div class="profile-summary-label">Assigned Tasks</div>
+          </div>
+          <div class="profile-summary-card">
+            <div class="profile-summary-val">${v(emp.completedTasks)}</div>
+            <div class="profile-summary-label">Completed Tasks</div>
+          </div>
+          <div class="profile-summary-card">
+            <div class="profile-summary-val">${v(emp.productivity)}</div>
+            <div class="profile-summary-label">Productivity %</div>
+          </div>
+          <div class="profile-summary-card">
+            <div class="profile-summary-val">${v(emp.attendancePct)}</div>
+            <div class="profile-summary-label">Attendance %</div>
+          </div>
+        </div>
+
+        <div class="profile-tabs">
+          <div class="profile-tab active" data-tab="overview">Overview</div>
+          <div class="profile-tab" data-tab="projects">Projects</div>
+          <div class="profile-tab" data-tab="tasks">Tasks</div>
+          <div class="profile-tab" data-tab="attendance">Attendance</div>
+          <div class="profile-tab" data-tab="documents">Documents</div>
+        </div>
+        
+        <div class="profile-tab-content active" id="tab-overview">
+          <div class="profile-grid">
+            <div class="profile-section">
+              <div class="profile-field">
+                <div class="profile-label">Employment Type</div>
+                <div class="profile-val">${v(emp.employmentType)}</div>
+              </div>
+              <div class="profile-field">
+                <div class="profile-label">Reporting Manager</div>
+                <div class="profile-val">${v(emp.manager)}</div>
+              </div>
+              <div class="profile-field">
+                <div class="profile-label">Joining Date</div>
+                <div class="profile-val">${v(emp.joinDate)}</div>
+              </div>
+              <div class="profile-field">
+                <div class="profile-label">Company Email</div>
+                <div class="profile-val">${v(emp.email)}</div>
+              </div>
+            </div>
+            <div class="profile-section">
+              <div class="profile-field">
+                <div class="profile-label">Personal Email</div>
+                <div class="profile-val">${v(emp.personalEmail)}</div>
+              </div>
+              <div class="profile-field">
+                <div class="profile-label">Phone Number</div>
+                <div class="profile-val">${v(emp.phone)}</div>
+              </div>
+              <div class="profile-field">
+                <div class="profile-label">Emergency Contact</div>
+                <div class="profile-val">${v(emp.emergencyContact)}</div>
+              </div>
+            </div>
+          </div>
+          
+          <div style="margin-top: 24px;">
+            <div class="profile-field" style="margin-bottom: 24px;">
+              <div class="profile-label" style="margin-bottom: 8px;">Skills</div>
+              <div class="profile-skills">
+                ${skillsHtml}
+              </div>
+            </div>
+            <div class="profile-field">
+              <div class="profile-label" style="margin-bottom: 8px;">Notes</div>
+              <div class="profile-val" style="background: var(--bg-2); padding: 16px; border-radius: 12px; line-height: 1.6;">${v(emp.notes)}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-tab-content" id="tab-projects">
+          <div style="text-align: center; padding: 60px 0; color: var(--text-3); font-size: 14px; font-weight: 600;">No Data Available</div>
+        </div>
+        <div class="profile-tab-content" id="tab-tasks">
+          <div style="text-align: center; padding: 60px 0; color: var(--text-3); font-size: 14px; font-weight: 600;">No Data Available</div>
+        </div>
+        <div class="profile-tab-content" id="tab-attendance">
+          ${attHtml}
+        </div>
+        <div class="profile-tab-content" id="tab-documents">
+          <div style="text-align: center; padding: 60px 0; color: var(--text-3); font-size: 14px; font-weight: 600;">No Data Available</div>
+        </div>
+      </div>
+    `;
+
+    if (window.VerdeModal && window.VerdeModal.confirm) {
+      window.VerdeModal.confirm({
+        title: 'Employee Profile',
+        body: profileHtml,
+        confirmText: 'Close',
+        confirmClass: 'btn-ghost',
+        cancelText: '', // Hide cancel button
+      });
+
+      setTimeout(() => {
+        const modals = document.querySelectorAll('.modal-overlay.active');
+        if (!modals.length) return;
+        const modal = modals[modals.length - 1];
+
+        // Hide cancel button
+        const cancelBtn = modal.querySelector('.modal-cancel-btn');
+        if (cancelBtn) cancelBtn.style.display = 'none';
+
+        // Fix modal width
+        const modalContent = modal.querySelector('.modal-content');
+        if (modalContent) {
+          modalContent.style.maxWidth = '700px';
+          modalContent.style.width = '100%';
+        }
+
+        // Tab Switching Logic
+        const tabs = modal.querySelectorAll('.profile-tab');
+        const contents = modal.querySelectorAll('.profile-tab-content');
+
+        tabs.forEach(tab => {
+          tab.addEventListener('click', () => {
+            // Remove active from all tabs & contents
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.classList.remove('active'));
+
+            // Add active to clicked tab
+            tab.classList.add('active');
+
+            // Show corresponding content
+            const targetId = 'tab-' + tab.getAttribute('data-tab');
+            const targetContent = modal.querySelector('#' + targetId);
+            if (targetContent) {
+              targetContent.classList.add('active');
+            }
+          });
+        });
+      }, 10);
+    } else {
+      alert('Modal system missing!');
+    }
   };
 
   window.closeEmployeeProfile = function() {
@@ -586,6 +1074,50 @@
       setTimeout(() => {
         drawer.style.display = 'none';
       }, 300); // Wait for transition
+    }
+  };
+
+  window.deleteEmployee = function(empId) {
+    const emp = teamEmployees.find(e => e.id === empId);
+    if (!emp) return;
+
+    const fn = (emp.name || '').split(' ')[0] || '';
+    const ln = (emp.name || '').split(' ')[1] || '';
+    const initials = (emp.initials || (fn.substring(0,1) + ln.substring(0,1)) || 'XX').toUpperCase();
+
+    const hasProjects = window.VerdeMockData && window.VerdeMockData.projects && window.VerdeMockData.projects.some(p => p.status === 'Active' && p.team && p.team.includes(initials));
+    const hasTasks = window.VerdeMockData && window.VerdeMockData.tasks && window.VerdeMockData.tasks.some(t => t.status !== 'Completed' && t.assigneeInitials === initials);
+
+    const hasAssignedProjectsField = parseInt(emp.assignedProjects, 10) > 0;
+    const hasAssignedTasksField = parseInt(emp.assignedTasks, 10) > 0;
+
+    if (hasProjects || hasTasks || hasAssignedProjectsField || hasAssignedTasksField) {
+      if (window.VerdeToast) {
+        window.VerdeToast.error('This employee is assigned to active work. Reassign or remove assignments before deleting.');
+      } else {
+        alert('This employee is assigned to active work. Reassign or remove assignments before deleting.');
+      }
+      return;
+    }
+
+    if (window.VerdeModal && window.VerdeModal.delete) {
+      window.VerdeModal.delete(
+        'Delete Employee', 
+        'Are you sure you want to permanently delete this employee?', 
+        function() {
+          teamEmployees = teamEmployees.filter(e => e.id !== empId);
+          saveTeamData();
+          renderTeamDirectory();
+          if (window.VerdeToast) window.VerdeToast.success('Employee deleted successfully.');
+        }
+      );
+    } else {
+      if (confirm('Are you sure you want to permanently delete this employee?')) {
+        teamEmployees = teamEmployees.filter(e => e.id !== empId);
+        saveTeamData();
+        renderTeamDirectory();
+        if (window.VerdeToast) window.VerdeToast.success('Employee deleted successfully.');
+      }
     }
   };
 

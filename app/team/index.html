@@ -459,6 +459,13 @@
         transform: translateY(0);
       }
     }
+
+    .view-content { display: none; }
+    .view-content.active { display: block; animation: fadeUp 0.4s ease forwards; }
+    .team-main-tabs { display: flex; gap: 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; padding: 0 4px; }
+    .team-main-tab { padding: 12px 0; font-size: 14px; font-weight: 700; color: var(--text-3); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s ease; }
+    .team-main-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .team-main-tab:hover:not(.active) { color: var(--text-1); }
   </style>
 </head>
 
@@ -497,6 +504,13 @@
             </div>
           </header>
 
+          <div class="team-main-tabs">
+            <div class="team-main-tab active" data-target="view-directory">Directory</div>
+            <div class="team-main-tab" data-target="view-attendance">Attendance</div>
+            <div class="team-main-tab" data-target="view-leave">Leave</div>
+          </div>
+
+          <div id="view-directory" class="view-content active">
           <!-- 2. KPI Cards (Max 4) -->
           <section class="team-kpi-grid">
             <div class="team-kpi-card">
@@ -692,112 +706,6 @@
             </div>
           </section>
 
-          <!-- 5. Attendance (Table) -->
-          <section class="team-section">
-            <div class="team-section-header">
-              <h2 class="team-section-title">Attendance</h2>
-            </div>
-            <div class="team-table-container">
-              <div class="team-table-toolbar">
-                <div class="team-search" style="width: 300px; border-color: transparent; background: var(--bg-2);">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    style="color:var(--text-3)">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                  </svg>
-                  <input type="text" placeholder="Filter by employee name..." />
-                </div>
-                <div style="display:flex; gap:12px; align-items:center;">
-                  <button class="btn btn-ghost btn-sm"
-                    style="background:var(--surface); border:1px solid var(--border);">Filter</button>
-                  <button class="btn btn-ghost btn-sm"
-                    style="background:var(--surface); border:1px solid var(--border);">Sort</button>
-                </div>
-              </div>
-
-              <table class="table-enterprise">
-                <thead>
-                  <tr>
-                    <th>Employee</th>
-                    <th>Today's Status</th>
-                    <th>Check-in</th>
-                    <th>Check-out</th>
-                    <th>Working Hours</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <div style="display:flex; align-items:center; gap:12px;">
-                        <div class="team-avatar-lg" style="width:32px; height:32px; font-size:11px;">SH</div>
-                        <span style="font-weight:700;">Shahim</span>
-                      </div>
-                    </td>
-                    <td><span class="badge badge-success">Present</span></td>
-                    <td style="color:var(--text-2);">08:30 AM</td>
-                    <td style="color:var(--text-2);">--</td>
-                    <td style="font-weight:700;">4h 15m</td>
-                    <td><button class="btn btn-sm btn-ghost" onclick="alert('Review details coming soon.')">View</button></td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div style="display:flex; align-items:center; gap:12px;">
-                        <div class="team-avatar-lg"
-                          style="width:32px; height:32px; font-size:11px; background:var(--success-10); color:var(--success);">
-                          MI</div>
-                        <span style="font-weight:700;">Midhul</span>
-                      </div>
-                    </td>
-                    <td><span class="badge badge-success">Present</span></td>
-                    <td style="color:var(--text-2);">09:00 AM</td>
-                    <td style="color:var(--text-2);">--</td>
-                    <td style="font-weight:700;">3h 45m</td>
-                    <td><button class="btn btn-sm btn-ghost" onclick="alert('Review details coming soon.')">View</button></td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div style="display:flex; align-items:center; gap:12px;">
-                        <div class="team-avatar-lg"
-                          style="width:32px; height:32px; font-size:11px; background:var(--warning-10); color:var(--warning);">
-                          AM</div>
-                        <span style="font-weight:700;">Ameen</span>
-                      </div>
-                    </td>
-                    <td><span class="badge badge-success">Present (WFH)</span></td>
-                    <td style="color:var(--text-2);">09:15 AM</td>
-                    <td style="color:var(--text-2);">--</td>
-                    <td style="font-weight:700;">3h 30m</td>
-                    <td><button class="btn btn-sm btn-ghost" onclick="alert('Review details coming soon.')">View</button></td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div style="display:flex; align-items:center; gap:12px;">
-                        <div class="team-avatar-lg"
-                          style="width:32px; height:32px; font-size:11px; background:var(--text-3); color:#fff;">NH
-                        </div>
-                        <span style="font-weight:700;">Nihal</span>
-                      </div>
-                    </td>
-                    <td><span class="badge badge-warning">On Leave</span></td>
-                    <td style="color:var(--text-3);">--</td>
-                    <td style="color:var(--text-3);">--</td>
-                    <td style="font-weight:700; color:var(--text-3);">0h 0m</td>
-                    <td><button class="btn btn-sm btn-ghost" onclick="alert('Review details coming soon.')">View</button></td>
-                  </tr>
-                </tbody>
-              </table>
-              <div style="display:flex; justify-content:space-between; align-items:center; padding-top:16px;">
-                <div style="color:var(--text-3); font-size:0.875rem;">Showing 1 to 4 of 42 employees</div>
-                <div style="display:flex; gap:8px;">
-                  <button class="btn btn-ghost btn-sm" disabled style="border:1px solid var(--border);">Prev</button>
-                  <button class="btn btn-ghost btn-sm" style="border:1px solid var(--border);">Next</button>
-                </div>
-              </div>
-            </div>
-          </section>
-
           <!-- 6 & 7. Leave Requests & Recent Activity -->
           <section class="team-half-grid">
 
@@ -953,77 +861,134 @@
             </div>
 
           </section>
+          </div>
 
-          <!-- Employee Profile Drawer -->
-          <div class="drawer" id="employee-profile-drawer" style="display:none; position:fixed; top:0; right:0; width:400px; height:100vh; background:var(--surface); box-shadow:var(--shadow-lg); z-index:1000; overflow-y:auto; transition: transform 0.3s ease; transform: translateX(100%);">
-            <div style="padding:24px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; background:var(--bg-2); position:sticky; top:0; z-index:10;">
-              <h3 style="font-size:18px; font-weight:800; color:var(--text-1);">Employee Profile</h3>
-              <button class="btn btn-ghost" onclick="window.closeEmployeeProfile()" style="padding:6px; border-radius:50%; background:var(--bg); border:1px solid var(--border);">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </button>
-            </div>
-            
-            <div style="padding:24px;" id="employee-profile-content">
-              <!-- Header Section -->
-              <div style="display:flex; flex-direction:column; align-items:center; text-align:center; padding-bottom:24px; border-bottom:1px solid var(--border);">
-                <div id="drawer-emp-avatar" style="width:80px; height:80px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:800; margin-bottom:16px;"></div>
-                <div id="drawer-emp-name" style="font-size:20px; font-weight:800; color:var(--text-1); margin-bottom:4px;"></div>
-                <div id="drawer-emp-role" style="font-size:14px; color:var(--text-2); margin-bottom:8px;"></div>
-                <div id="drawer-emp-status" style="display:inline-block; padding:4px 12px; border-radius:12px; font-size:12px; font-weight:700;"></div>
+          <div id="view-attendance" class="view-content">
+            <!-- Attendance Summary KPIs -->
+            <section class="team-kpi-grid">
+              <div class="team-kpi-card">
+                <div class="team-kpi-value" id="kpi-present">0</div>
+                <div class="team-kpi-label">Present Today</div>
               </div>
-
-              <!-- Action Buttons -->
-              <div style="display:flex; gap:8px; padding:24px 0; border-bottom:1px solid var(--border);">
-                <button class="btn btn-primary" style="flex:1;" onclick="alert('Edit functionality coming soon.')">Edit</button>
-                <button class="btn btn-ghost" style="flex:1; border:1px solid var(--border);" onclick="alert('Archive functionality coming soon.')">Archive</button>
-                <button class="btn btn-ghost" style="flex:1; border:1px solid var(--danger-10); color:var(--danger);" onclick="alert('Delete functionality coming soon.')">Delete</button>
+              <div class="team-kpi-card">
+                <div class="team-kpi-value" id="kpi-absent" style="color:var(--danger);">0</div>
+                <div class="team-kpi-label">Absent Today</div>
               </div>
+              <div class="team-kpi-card">
+                <div class="team-kpi-value" id="kpi-leave" style="color:var(--warning);">0</div>
+                <div class="team-kpi-label">On Leave</div>
+              </div>
+              <div class="team-kpi-card">
+                <div class="team-kpi-value" id="kpi-avg-hours" style="color:var(--primary);">0h 0m</div>
+                <div class="team-kpi-label">Avg Working Hours</div>
+              </div>
+            </section>
 
-              <!-- Details Section -->
-              <div style="padding:24px 0;">
-                <h4 style="font-size:14px; font-weight:800; color:var(--text-1); margin-bottom:16px; text-transform:uppercase; letter-spacing:0.5px;">Contact Info</h4>
-                
-                <div style="display:flex; flex-direction:column; gap:16px;">
-                  <div>
-                    <div style="font-size:11px; color:var(--text-3); text-transform:uppercase; font-weight:700; margin-bottom:4px;">Employee ID</div>
-                    <div id="drawer-emp-id" style="font-size:14px; color:var(--text-1); font-weight:500;"></div>
+            <!-- Attendance Table Section -->
+            <section class="team-section">
+              <div class="team-section-header">
+                <h2 class="team-section-title">Attendance Records</h2>
+              </div>
+              <div class="team-table-container">
+                <div class="team-table-toolbar">
+                  <div class="team-search" style="width: 300px; border-color: transparent; background: var(--bg-2);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                      style="color:var(--text-3)">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="attendance-search-input" placeholder="Filter by employee..." />
                   </div>
-                  
-                  <div>
-                    <div style="font-size:11px; color:var(--text-3); text-transform:uppercase; font-weight:700; margin-bottom:4px;">Department</div>
-                    <div id="drawer-emp-dept" style="font-size:14px; color:var(--text-1); font-weight:500;"></div>
-                  </div>
-                  
-                  <div>
-                    <div style="font-size:11px; color:var(--text-3); text-transform:uppercase; font-weight:700; margin-bottom:4px;">Email</div>
-                    <div id="drawer-emp-email" style="font-size:14px; color:var(--text-1); font-weight:500;"></div>
-                  </div>
-                  
-                  <div>
-                    <div style="font-size:11px; color:var(--text-3); text-transform:uppercase; font-weight:700; margin-bottom:4px;">Phone Number</div>
-                    <div id="drawer-emp-phone" style="font-size:14px; color:var(--text-1); font-weight:500;"></div>
-                  </div>
-
-                  <div>
-                    <div style="font-size:11px; color:var(--text-3); text-transform:uppercase; font-weight:700; margin-bottom:4px;">Joining Date</div>
-                    <div id="drawer-emp-joined" style="font-size:14px; color:var(--text-1); font-weight:500;"></div>
-                  </div>
-                  
-                  <div>
-                    <div style="font-size:11px; color:var(--text-3); text-transform:uppercase; font-weight:700; margin-bottom:4px;">Skills</div>
-                    <div id="drawer-emp-skills" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;"></div>
-                  </div>
-
-                  <div>
-                    <div style="font-size:11px; color:var(--text-3); text-transform:uppercase; font-weight:700; margin-bottom:4px;">Notes</div>
-                    <div id="drawer-emp-notes" style="font-size:13px; color:var(--text-2); line-height:1.6; background:var(--bg-2); padding:12px; border-radius:8px;"></div>
+                  <div style="display:flex; gap:12px; align-items:center;">
+                    <input type="date" id="attendance-date-filter" class="form-input" style="width:160px; height:36px; padding: 0 12px; border:1px solid var(--border); border-radius:8px; background:var(--surface);" />
+                    <button class="btn btn-primary btn-sm" onclick="window.openMarkAttendanceModal && window.openMarkAttendanceModal()">Mark Attendance</button>
                   </div>
                 </div>
+
+                <table class="table-enterprise" id="attendance-table">
+                  <thead>
+                    <tr>
+                      <th>Employee</th>
+                      <th>Employee ID</th>
+                      <th>Department</th>
+                      <th>Date</th>
+                      <th>Check-in</th>
+                      <th>Check-out</th>
+                      <th>Total Hours</th>
+                      <th>Status</th>
+                      <th style="text-align: right;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="attendance-table-body">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
               </div>
-            </div>
+            </section>
+          </div>
+
+          <div id="view-leave" class="view-content">
+            <!-- Leave Summary KPIs -->
+            <section class="team-kpi-grid">
+              <div class="team-kpi-card">
+                <div class="team-kpi-value" id="kpi-leave-pending" style="color:var(--warning);">0</div>
+                <div class="team-kpi-label">Pending Requests</div>
+              </div>
+              <div class="team-kpi-card">
+                <div class="team-kpi-value" id="kpi-leave-approved" style="color:var(--success);">0</div>
+                <div class="team-kpi-label">Approved Today</div>
+              </div>
+              <div class="team-kpi-card">
+                <div class="team-kpi-value" id="kpi-leave-active" style="color:var(--primary);">0</div>
+                <div class="team-kpi-label">Employees On Leave</div>
+              </div>
+              <div class="team-kpi-card">
+                <div class="team-kpi-value" id="kpi-leave-balance">--</div>
+                <div class="team-kpi-label">Leave Balance</div>
+              </div>
+            </section>
+
+            <!-- Leave Table Section -->
+            <section class="team-section">
+              <div class="team-section-header">
+                <h2 class="team-section-title">Leave Management</h2>
+              </div>
+              <div class="team-table-container">
+                <div class="team-table-toolbar">
+                  <div class="team-search" style="width: 300px; border-color: transparent; background: var(--bg-2);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="leave-search-input" placeholder="Filter by employee..." />
+                  </div>
+                  <div style="display:flex; gap:12px; align-items:center;">
+                    <button class="btn btn-primary btn-sm" onclick="window.openLeaveModal && window.openLeaveModal()">Create Request</button>
+                  </div>
+                </div>
+
+                <table class="table-enterprise" id="leave-table">
+                  <thead>
+                    <tr>
+                      <th>Employee</th>
+                      <th>Employee ID</th>
+                      <th>Department</th>
+                      <th>Leave Type</th>
+                      <th>Start Date</th>
+                      <th>End Date</th>
+                      <th>Total Days</th>
+                      <th>Reason</th>
+                      <th>Status</th>
+                      <th style="text-align: right;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="leave-table-body">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </section>
           </div>
 
         </div>
