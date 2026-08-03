@@ -508,6 +508,7 @@
             <div class="team-main-tab active" data-target="view-directory">Directory</div>
             <div class="team-main-tab" data-target="view-attendance">Attendance</div>
             <div class="team-main-tab" data-target="view-leave">Leave</div>
+            <div class="team-main-tab" data-target="view-payroll">Payroll</div>
           </div>
 
           <div id="view-directory" class="view-content active">
@@ -987,6 +988,72 @@
                     <!-- Populated by JS -->
                   </tbody>
                 </table>
+              </div>
+            </section>
+          </div>
+
+          <div id="view-payroll" class="view-content">
+            <!-- Payroll Summary KPIs -->
+            <section class="team-kpi-grid">
+              <div class="team-kpi-card">
+                <div class="team-kpi-value" id="kpi-payroll-total">₹0</div>
+                <div class="team-kpi-label">Total Monthly Payroll</div>
+              </div>
+              <div class="team-kpi-card">
+                <div class="team-kpi-value" id="kpi-payroll-paid" style="color:var(--success);">0</div>
+                <div class="team-kpi-label">Employees Paid</div>
+              </div>
+              <div class="team-kpi-card">
+                <div class="team-kpi-value" id="kpi-payroll-pending" style="color:var(--warning);">0</div>
+                <div class="team-kpi-label">Pending Payments</div>
+              </div>
+              <div class="team-kpi-card">
+                <div class="team-kpi-value" id="kpi-payroll-avg" style="color:var(--primary);">₹0</div>
+                <div class="team-kpi-label">Average Salary</div>
+              </div>
+            </section>
+
+            <!-- Payroll Table Section -->
+            <section class="team-section">
+              <div class="team-section-header">
+                <h2 class="team-section-title">Payroll Management</h2>
+              </div>
+              <div class="team-table-container">
+                <div class="team-table-toolbar">
+                  <div class="team-search" style="width: 300px; border-color: transparent; background: var(--bg-2);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="payroll-search-input" placeholder="Filter by employee..." />
+                  </div>
+                  <div style="display:flex; gap:12px; align-items:center;">
+                    <button class="btn btn-primary btn-sm" onclick="window.openPayrollModal && window.openPayrollModal()">Generate Payroll</button>
+                  </div>
+                </div>
+
+                <div style="width: 100%; overflow-x: auto; padding-bottom: 8px;">
+                  <table class="table-enterprise" id="payroll-table" style="min-width: 100%;">
+                    <thead>
+                      <tr>
+                        <th style="white-space: nowrap;">Employee</th>
+                        <th style="white-space: nowrap;">Employee ID</th>
+                        <th style="white-space: nowrap;">Department</th>
+                        <th style="white-space: nowrap;">Payroll Month</th>
+                        <th style="white-space: nowrap;">Basic Salary</th>
+                        <th style="white-space: nowrap;">Allowances</th>
+                        <th style="white-space: nowrap;">Bonus</th>
+                        <th style="white-space: nowrap;">Deductions</th>
+                        <th style="white-space: nowrap;">Net Salary</th>
+                        <th style="white-space: nowrap;">Payment Status</th>
+                        <th style="text-align: right; white-space: nowrap;">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="payroll-table-body">
+                      <!-- Populated by JS -->
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </section>
           </div>

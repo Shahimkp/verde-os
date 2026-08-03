@@ -420,6 +420,18 @@
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+    /* Tab Navigation Styles */
+    .view-content { display: none; }
+    .view-content.active { display: block; animation: fadeUp 0.4s ease forwards; }
+    .fin-main-tabs { display: flex; gap: 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; padding: 0 4px; }
+    .fin-main-tab { padding: 12px 0; font-size: 14px; font-weight: 700; color: var(--text-3); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s ease; }
+    .fin-main-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .fin-main-tab:hover:not(.active) { color: var(--text-1); }
+
+    /* Modal Sub-Table (For items) */
+    .modal-table-input { border: 1px solid var(--border); background: transparent; padding: 4px 8px; border-radius: 4px; font-size: 13px; color: var(--text-1); width: 100%; box-sizing: border-box; }
+    .modal-table-input:focus { border-color: var(--primary); outline: none; }
   </style>
 </head>
 
@@ -436,7 +448,7 @@
           <header class="fin-header">
             <div>
               <h1 class="fin-header-title">Finance</h1>
-              <div class="fin-header-desc">How is my business performing financially today?</div>
+              <div class="fin-header-desc">Manage your company's financial operations.</div>
             </div>
             <div class="fin-toolbar">
               <div class="fin-search">
@@ -444,382 +456,552 @@
                   <circle cx="11" cy="11" r="8"></circle>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
-                <input type="text" placeholder="Search transactions..." />
+                <input type="text" placeholder="Search finance..." />
               </div>
-              <button class="btn btn-ghost" style="background:var(--surface); border:1px solid var(--border);">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                This Month
-              </button>
-              <button class="btn btn-secondary" onclick="alert('Record expense coming soon.')">+ Record Expense</button>
-              <button class="btn btn-primary" onclick="alert('New invoice coming soon.')">+ New Invoice</button>
             </div>
           </header>
 
-          <!-- 7. Quick Actions -->
-          <div class="fin-quick-grid">
-            <div class="fin-quick-card">
-              <div class="fin-quick-icon" style="color:var(--primary);">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-              </div>
-              <div class="fin-quick-text">Create Invoice</div>
-            </div>
-            <div class="fin-quick-card">
-              <div class="fin-quick-icon" style="color:var(--danger);">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-              </div>
-              <div class="fin-quick-text">Record Expense</div>
-            </div>
-            <div class="fin-quick-card">
-              <div class="fin-quick-icon" style="color:var(--success);">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-              </div>
-              <div class="fin-quick-text">Download Report</div>
-            </div>
-            <div class="fin-quick-card">
-              <div class="fin-quick-icon" style="color:var(--info);">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-              </div>
-              <div class="fin-quick-text">Payment History</div>
-            </div>
+          <!-- Tab Navigation -->
+          <div class="fin-main-tabs">
+            <div class="fin-main-tab active" onclick="window.switchFinanceTab('dashboard')">Dashboard</div>
+            <div class="fin-main-tab" onclick="window.switchFinanceTab('invoices')">Invoices</div>
+            <div class="fin-main-tab" onclick="window.switchFinanceTab('expenses')">Expenses</div>
+            <div class="fin-main-tab" onclick="window.switchFinanceTab('payments')">Payments</div>
+            <div class="fin-main-tab" onclick="window.switchFinanceTab('reports')">Reports</div>
           </div>
 
-          <!-- 2. KPI Cards (Max 4) -->
-          <section class="fin-kpi-grid">
-            <div class="fin-kpi-card">
-              <div class="fin-kpi-value">₹142₹1,42,500</div>
-              <div class="fin-kpi-label">Revenue (YTD)</div>
-            </div>
-            <div class="fin-kpi-card">
-              <div class="fin-kpi-value" style="color:var(--warning);">₹18,400</div>
-              <div class="fin-kpi-label">Outstanding Invoices</div>
-            </div>
-            <div class="fin-kpi-card">
-              <div class="fin-kpi-value" style="color:var(--danger);">₹45,200</div>
-              <div class="fin-kpi-label">Expenses (YTD)</div>
-            </div>
-            <div class="fin-kpi-card">
-              <div class="fin-kpi-value" style="color:var(--success);">₹97,300</div>
-              <div class="fin-kpi-label">Net Profit (YTD)</div>
-            </div>
-          </section>
+          <!-- ═══════════ VIEW: DASHBOARD ═══════════ -->
+          <div id="view-dashboard" class="view-content active">
 
-          <!-- 3 & 6. Analytics & Overview -->
-          <section class="fin-split-grid">
-            
-            <!-- 3. Cash Flow -->
-            <div class="fin-box">
-              <div class="fin-box-header">
-                <div class="fin-box-title">Cash Flow</div>
-                <div class="fin-box-meta">Last 6 Months</div>
+            <!-- KPI Cards -->
+            <section class="fin-kpi-grid">
+              <div class="fin-kpi-card">
+                <div class="fin-kpi-value" id="kpi-total-revenue">₹12,45,000</div>
+                <div class="fin-kpi-label">Total Revenue (₹)</div>
               </div>
-              <div class="cf-metrics">
-                <div class="cf-metric-item">
-                  <div class="cf-metric-label">Avg Inflow</div>
-                  <div class="cf-metric-value" style="color:var(--success);">₹24₹1,42,500</div>
-                </div>
-                <div class="cf-metric-item">
-                  <div class="cf-metric-label">Avg Outflow</div>
-                  <div class="cf-metric-value" style="color:var(--danger);">₹7,200</div>
-                </div>
-                <div class="cf-metric-item">
-                  <div class="cf-metric-label">Net Cash</div>
-                  <div class="cf-metric-value" style="color:var(--primary);">₹17,300</div>
-                </div>
+              <div class="fin-kpi-card">
+                <div class="fin-kpi-value" id="kpi-total-expenses" style="color:var(--danger);">₹4,20,000</div>
+                <div class="fin-kpi-label">Total Expenses (₹)</div>
               </div>
-              <div class="cf-chart-area">
-                <!-- Custom CSS Chart -->
-                <div class="cf-chart-col">
-                  <div class="cf-bar-wrapper">
-                    <div class="cf-bar in" style="height: 60%;"></div>
-                    <div class="cf-bar out" style="height: 20%;"></div>
-                  </div>
-                  <div class="cf-month">Mar</div>
+              <div class="fin-kpi-card">
+                <div class="fin-kpi-value" id="kpi-net-profit" style="color:var(--success);">₹8,25,000</div>
+                <div class="fin-kpi-label">Net Profit (₹)</div>
+              </div>
+              <div class="fin-kpi-card">
+                <div class="fin-kpi-value" id="kpi-pending-invoices" style="color:var(--warning);">14</div>
+                <div class="fin-kpi-label">Pending Invoices</div>
+              </div>
+            </section>
+
+            <!-- Quick Actions -->
+            <div class="fin-quick-grid">
+              <div class="fin-quick-card" onclick="window.switchFinanceTab('invoices'); setTimeout(function(){ window.openCreateInvoice && window.openCreateInvoice(); }, 100);">
+                <div class="fin-quick-icon" style="color:var(--primary);">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                 </div>
-                <div class="cf-chart-col">
-                  <div class="cf-bar-wrapper">
-                    <div class="cf-bar in" style="height: 75%;"></div>
-                    <div class="cf-bar out" style="height: 30%;"></div>
-                  </div>
-                  <div class="cf-month">Apr</div>
+                <div class="fin-quick-text">New Invoice</div>
+              </div>
+              <div class="fin-quick-card" onclick="window.switchFinanceTab('expenses'); setTimeout(function(){ window.openCreateExpense && window.openCreateExpense(); }, 100);">
+                <div class="fin-quick-icon" style="color:var(--danger);">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
                 </div>
-                <div class="cf-chart-col">
-                  <div class="cf-bar-wrapper">
-                    <div class="cf-bar in" style="height: 50%;"></div>
-                    <div class="cf-bar out" style="height: 25%;"></div>
-                  </div>
-                  <div class="cf-month">May</div>
+                <div class="fin-quick-text">Add Expense</div>
+              </div>
+              <div class="fin-quick-card" onclick="window.VerdeToast && window.VerdeToast.info('Payment recording coming soon.')">
+                <div class="fin-quick-icon" style="color:var(--success);">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                 </div>
-                <div class="cf-chart-col">
-                  <div class="cf-bar-wrapper">
-                    <div class="cf-bar in" style="height: 85%;"></div>
-                    <div class="cf-bar out" style="height: 35%;"></div>
-                  </div>
-                  <div class="cf-month">Jun</div>
+                <div class="fin-quick-text">Record Payment</div>
+              </div>
+              <div class="fin-quick-card" onclick="window.VerdeToast && window.VerdeToast.info('Report export coming soon.')">
+                <div class="fin-quick-icon" style="color:var(--info);">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                 </div>
-                <div class="cf-chart-col">
-                  <div class="cf-bar-wrapper">
-                    <div class="cf-bar in" style="height: 70%;"></div>
-                    <div class="cf-bar out" style="height: 40%;"></div>
-                  </div>
-                  <div class="cf-month">Jul</div>
-                </div>
-                <div class="cf-chart-col">
-                  <div class="cf-bar-wrapper">
-                    <div class="cf-bar in" style="height: 95%;"></div>
-                    <div class="cf-bar out" style="height: 30%;"></div>
-                  </div>
-                  <div class="cf-month">Aug</div>
-                </div>
+                <div class="fin-quick-text">Export Report</div>
               </div>
             </div>
 
-            <!-- 6. Expense Overview -->
-            <div class="fin-box">
-              <div class="fin-box-header">
-                <div class="fin-box-title">Expense Overview</div>
-                <div class="fin-box-meta">This Month</div>
+            <!-- Financial Overview (Charts) -->
+            <section class="fin-split-grid" style="grid-template-columns: repeat(3, 1fr);">
+              <div class="fin-box">
+                <div class="fin-box-header">
+                  <div class="fin-box-title">Monthly Revenue</div>
+                </div>
+                <div style="padding: 24px; display: flex; align-items: flex-end; justify-content: space-around; height: 180px;">
+                  <div class="cf-bar in" style="height: 40%; width: 30px;"></div>
+                  <div class="cf-bar in" style="height: 60%; width: 30px;"></div>
+                  <div class="cf-bar in" style="height: 80%; width: 30px;"></div>
+                  <div class="cf-bar in" style="height: 50%; width: 30px;"></div>
+                  <div class="cf-bar in" style="height: 90%; width: 30px;"></div>
+                </div>
               </div>
-              <div class="exp-list">
-                
-                <div class="exp-item">
-                  <div class="exp-header">
-                    <div class="exp-cat">Salary & Wages</div>
-                    <div class="exp-spent">₹12,000</div>
-                  </div>
-                  <div class="exp-bar-bg">
-                    <div class="exp-bar-fill" style="width: 80%;"></div>
-                  </div>
-                  <div class="exp-stats">
-                    <span>Budget: ₹15,000</span>
-                    <span>₹3,000 left</span>
-                  </div>
+              <div class="fin-box">
+                <div class="fin-box-header">
+                  <div class="fin-box-title">Monthly Expenses</div>
                 </div>
-
-                <div class="exp-item">
-                  <div class="exp-header">
-                    <div class="exp-cat">Software Subscriptions</div>
-                    <div class="exp-spent">₹1,250</div>
-                  </div>
-                  <div class="exp-bar-bg">
-                    <div class="exp-bar-fill" style="width: 62%; background:var(--warning);"></div>
-                  </div>
-                  <div class="exp-stats">
-                    <span>Budget: ₹2,000</span>
-                    <span>₹750 left</span>
-                  </div>
+                <div style="padding: 24px; display: flex; align-items: flex-end; justify-content: space-around; height: 180px;">
+                  <div class="cf-bar out" style="height: 30%; width: 30px;"></div>
+                  <div class="cf-bar out" style="height: 50%; width: 30px;"></div>
+                  <div class="cf-bar out" style="height: 40%; width: 30px;"></div>
+                  <div class="cf-bar out" style="height: 70%; width: 30px;"></div>
+                  <div class="cf-bar out" style="height: 45%; width: 30px;"></div>
                 </div>
-
-                <div class="exp-item">
-                  <div class="exp-header">
-                    <div class="exp-cat">Office Expenses</div>
-                    <div class="exp-spent">₹850</div>
-                  </div>
-                  <div class="exp-bar-bg">
-                    <div class="exp-bar-fill" style="width: 42%; background:var(--info);"></div>
-                  </div>
-                  <div class="exp-stats">
-                    <span>Budget: ₹2,000</span>
-                    <span>₹1,150 left</span>
-                  </div>
-                </div>
-
-                <div class="exp-item">
-                  <div class="exp-header">
-                    <div class="exp-cat">Marketing</div>
-                    <div class="exp-spent">₹3,400</div>
-                  </div>
-                  <div class="exp-bar-bg">
-                    <div class="exp-bar-fill" style="width: 95%; background:var(--danger);"></div>
-                  </div>
-                  <div class="exp-stats">
-                    <span>Budget: ₹3₹1,42,500</span>
-                    <span style="color:var(--danger);">₹100 left</span>
-                  </div>
-                </div>
-
               </div>
-            </div>
+              <div class="fin-box">
+                <div class="fin-box-header">
+                  <div class="fin-box-title">Cash Flow</div>
+                </div>
+                <div style="padding: 24px; display: flex; align-items: center; justify-content: center; height: 180px; flex-direction: column;">
+                  <div style="font-size: 32px; font-weight: 800; color: var(--success);">+ ₹8,25,000</div>
+                  <div style="font-size: 13px; color: var(--text-3); margin-top: 8px;">Positive Cash Flow Trend</div>
+                </div>
+              </div>
+            </section>
 
-          </section>
-
-          <!-- 4 & 5. Transactions & Pending -->
-          <section class="fin-split-grid">
-            
-            <!-- 4. Recent Transactions -->
-            <div class="fin-box">
+            <!-- Recent Transactions -->
+            <div class="fin-box" style="margin-bottom: 0;">
               <div class="fin-box-header" style="border-bottom: none; padding-bottom: 0;">
                 <div class="fin-box-title">Recent Transactions</div>
               </div>
-              <div class="fin-table-toolbar" style="border-top: 1px solid var(--border); margin-top: 24px;">
+              <div class="fin-table-toolbar" style="border-top: 1px solid var(--border); margin-top: 24px; display: flex; justify-content: space-between; align-items: center; padding: 16px 24px;">
                 <div class="fin-search" style="width: 300px; border-color: transparent; background: var(--bg-2);">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3)"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                   <input type="text" placeholder="Search transactions..." />
                 </div>
                 <div style="display:flex; gap:12px; align-items:center;">
                   <button class="btn btn-ghost btn-sm" style="background:var(--surface); border:1px solid var(--border);">Filter</button>
-                  <button class="btn btn-ghost btn-sm" style="background:var(--surface); border:1px solid var(--border);">Sort</button>
                 </div>
               </div>
-              
-              <table class="table-enterprise">
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Client / Vendor</th>
-                    <th>Description</th>
-                    <th>Type</th>
-                    <th>Amount</th>
-                    <th>Status</th>
-                    <th style="text-align:right;">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Aug 14, 2026</td>
-                    <td style="font-weight:700;">Cabo Travels</td>
-                    <td style="color:var(--text-2);">Invoice #1042 Paid</td>
-                    <td><span class="badge badge-success">Income</span></td>
-                    <td style="font-weight:800;">₹4₹1,42,500.00</td>
-                    <td><span class="badge badge-success">Completed</span></td>
-                    <td style="text-align:right;"><button class="btn btn-ghost btn-sm" onclick="alert('View invoice coming soon.')">View</button></td>
-                  </tr>
-                  <tr>
-                    <td>Aug 13, 2026</td>
-                    <td style="font-weight:700;">AWS Hosting</td>
-                    <td style="color:var(--text-2);">Monthly Server Cost</td>
-                    <td><span class="badge badge-danger">Expense</span></td>
-                    <td style="font-weight:800;">₹340.00</td>
-                    <td><span class="badge badge-success">Completed</span></td>
-                    <td style="text-align:right;"><button class="btn btn-ghost btn-sm" onclick="alert('View invoice coming soon.')">View</button></td>
-                  </tr>
-                  <tr>
-                    <td>Aug 12, 2026</td>
-                    <td style="font-weight:700;">GreenLeaf</td>
-                    <td style="color:var(--text-2);">Design Retainer (Aug)</td>
-                    <td><span class="badge badge-success">Income</span></td>
-                    <td style="font-weight:800;">₹2,000.00</td>
-                    <td><span class="badge badge-success">Completed</span></td>
-                    <td style="text-align:right;"><button class="btn btn-ghost btn-sm" onclick="alert('View invoice coming soon.')">View</button></td>
-                  </tr>
-                  <tr>
-                    <td>Aug 10, 2026</td>
-                    <td style="font-weight:700;">Workspace Co</td>
-                    <td style="color:var(--text-2);">Office Rent</td>
-                    <td><span class="badge badge-danger">Expense</span></td>
-                    <td style="font-weight:800;">₹1,800.00</td>
-                    <td><span class="badge badge-success">Completed</span></td>
-                    <td style="text-align:right;"><button class="btn btn-ghost btn-sm" onclick="alert('View invoice coming soon.')">View</button></td>
-                  </tr>
-                  <tr>
-                    <td>Aug 08, 2026</td>
-                    <td style="font-weight:700;">BlueWave Tech</td>
-                    <td style="color:var(--text-2);">API Integration Phase 1</td>
-                    <td><span class="badge badge-success">Income</span></td>
-                    <td style="font-weight:800;">₹6,200.00</td>
-                    <td><span class="badge badge-warning">Processing</span></td>
-                    <td style="text-align:right;"><button class="btn btn-ghost btn-sm" onclick="alert('View invoice coming soon.')">View</button></td>
-                  </tr>
-                </tbody>
-              </table>
-              <div style="display:flex; justify-content:space-between; align-items:center; padding-top:16px;">
+              <div style="width: 100%; overflow-x: auto;">
+                <table class="table-enterprise" style="min-width: 100%;">
+                  <thead>
+                    <tr>
+                      <th style="white-space: nowrap;">Date</th>
+                      <th style="white-space: nowrap;">Description</th>
+                      <th style="white-space: nowrap;">Category</th>
+                      <th style="white-space: nowrap;">Type</th>
+                      <th style="white-space: nowrap;">Amount (₹)</th>
+                      <th style="white-space: nowrap;">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Aug 14, 2026</td>
+                      <td style="font-weight:700;">Invoice #1042 Paid</td>
+                      <td>Client Services</td>
+                      <td><span class="badge badge-success">Income</span></td>
+                      <td style="font-weight:800;">₹4,500.00</td>
+                      <td><span class="badge badge-success">Completed</span></td>
+                    </tr>
+                    <tr>
+                      <td>Aug 13, 2026</td>
+                      <td style="font-weight:700;">Monthly Server Cost</td>
+                      <td>Infrastructure</td>
+                      <td><span class="badge badge-danger">Expense</span></td>
+                      <td style="font-weight:800;">₹340.00</td>
+                      <td><span class="badge badge-success">Completed</span></td>
+                    </tr>
+                    <tr>
+                      <td>Aug 12, 2026</td>
+                      <td style="font-weight:700;">Design Retainer (Aug)</td>
+                      <td>Client Services</td>
+                      <td><span class="badge badge-success">Income</span></td>
+                      <td style="font-weight:800;">₹2,000.00</td>
+                      <td><span class="badge badge-success">Completed</span></td>
+                    </tr>
+                    <tr>
+                      <td>Aug 10, 2026</td>
+                      <td style="font-weight:700;">Office Rent</td>
+                      <td>Facilities</td>
+                      <td><span class="badge badge-danger">Expense</span></td>
+                      <td style="font-weight:800;">₹1,800.00</td>
+                      <td><span class="badge badge-success">Completed</span></td>
+                    </tr>
+                    <tr>
+                      <td>Aug 08, 2026</td>
+                      <td style="font-weight:700;">API Integration Phase 1</td>
+                      <td>Software Development</td>
+                      <td><span class="badge badge-success">Income</span></td>
+                      <td style="font-weight:800;">₹6,200.00</td>
+                      <td><span class="badge badge-warning">Processing</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; padding:16px 24px;">
                 <div style="color:var(--text-3); font-size:0.875rem;">Showing 1 to 5 of 24 transactions</div>
                 <div style="display:flex; gap:8px;">
                   <button class="btn btn-ghost btn-sm" disabled style="border:1px solid var(--border);">Prev</button>
                   <button class="btn btn-ghost btn-sm" style="border:1px solid var(--border);">Next</button>
                 </div>
-            </div>
-
-            <!-- UX States (Hidden by default) -->
-            <div style="display:none;" class="empty-state">
-              <div class="empty-state-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
               </div>
-              <div class="empty-state-title">No Transactions Found</div>
-              <div class="empty-state-desc">You don't have any financial transactions for this period.</div>
-              <button class="btn btn-primary" style="margin-top:16px;">Add Transaction</button>
             </div>
 
-            <div style="display:none; margin-top:24px;" class="skeleton-table"></div>
-
-            <div style="display:none; margin-top:24px;" class="alert alert-danger">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-              <span>Failed to load financial records. Please try again.</span>
-            </div>
-
-            <div style="display:none; margin-top:24px;" class="alert alert-success">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-              <span>Transaction successfully recorded.</span>
-            </div>
           </div>
+          <!-- ═══════════ END: DASHBOARD ═══════════ -->
 
-            <!-- 5. Pending Payments -->
-            <div class="fin-box">
-              <div class="fin-box-header">
-                <div class="fin-box-title">Pending Payments</div>
-                <button class="btn btn-ghost btn-sm" style="color:var(--primary);">View All</button>
+
+          <!-- ═══════════ VIEW: INVOICES ═══════════ -->
+          <div id="view-invoices" class="view-content">
+
+            <!-- Invoice KPI Cards -->
+            <section class="fin-kpi-grid">
+              <div class="fin-kpi-card">
+                <div class="fin-kpi-value" id="inv-kpi-outstanding" style="color:var(--warning);">₹0</div>
+                <div class="fin-kpi-label">Total Outstanding (₹)</div>
               </div>
-              <div class="pend-list">
-                
-                <div class="pend-item">
-                  <div class="pend-top">
-                    <div>
-                      <div class="pend-client">Vertex Systems</div>
-                      <div class="pend-inv">Invoice #1043</div>
-                    </div>
-                    <div class="pend-amount">₹3,800.00</div>
-                  </div>
-                  <div class="pend-bottom">
-                    <div class="pend-due">Overdue by 2 days</div>
-                    <button class="btn btn-secondary btn-sm">Send Reminder</button>
-                  </div>
-                </div>
+              <div class="fin-kpi-card">
+                <div class="fin-kpi-value" id="inv-kpi-paid" style="color:var(--success);">₹0</div>
+                <div class="fin-kpi-label">Total Paid (₹)</div>
+              </div>
+              <div class="fin-kpi-card">
+                <div class="fin-kpi-value" id="inv-kpi-overdue" style="color:var(--danger);">0</div>
+                <div class="fin-kpi-label">Overdue Invoices</div>
+              </div>
+              <div class="fin-kpi-card">
+                <div class="fin-kpi-value" id="inv-kpi-draft" style="color:var(--text-3);">0</div>
+                <div class="fin-kpi-label">Draft Invoices</div>
+              </div>
+            </section>
 
-                <div class="pend-item">
-                  <div class="pend-top">
-                    <div>
-                      <div class="pend-client">BlueWave Tech</div>
-                      <div class="pend-inv">Invoice #1044</div>
-                    </div>
-                    <div class="pend-amount">₹6,200.00</div>
-                  </div>
-                  <div class="pend-bottom">
-                    <div class="pend-due" style="color:var(--warning);">Due Today</div>
-                    <button class="btn btn-ghost btn-sm" style="border:1px solid var(--border);" onclick="alert('Reminder sent.')">Send Reminder</button>
-                  </div>
+            <!-- Invoice Table -->
+            <div class="fin-box">
+              <div class="fin-box-header" style="border-bottom: none; padding-bottom: 0;">
+                <div class="fin-box-title">Invoice Management</div>
+              </div>
+              <div class="fin-table-toolbar" style="border-top: 1px solid var(--border); margin-top: 24px; display: flex; justify-content: space-between; align-items: center; padding: 16px 24px;">
+                <div class="fin-search" style="width: 300px; border-color: transparent; background: var(--bg-2);">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3)"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                  <input type="text" id="invoice-search-input" placeholder="Search invoices..." oninput="window.renderInvoicesTable && window.renderInvoicesTable()" />
                 </div>
-
-                <div class="pend-item">
-                  <div class="pend-top">
-                    <div>
-                      <div class="pend-client">Cabo Travels</div>
-                      <div class="pend-inv">Invoice #1045</div>
-                    </div>
-                    <div class="pend-amount">₹1₹1,42,500.00</div>
-                  </div>
-                  <div class="pend-bottom">
-                    <div class="pend-due" style="color:var(--text-3);">Due in 5 days</div>
-                    <button class="btn btn-ghost btn-sm" style="border:1px solid var(--border);" onclick="alert('Reminder sent.')">Send Reminder</button>
-                  </div>
+                <div style="display:flex; gap:12px; align-items:center;">
+                  <button class="btn btn-primary btn-sm" onclick="window.openCreateInvoice && window.openCreateInvoice()">+ Create Invoice</button>
                 </div>
-                
-                <div class="pend-item">
-                  <div class="pend-top">
-                    <div>
-                      <div class="pend-client">GreenLeaf</div>
-                      <div class="pend-inv">Invoice #1046</div>
-                    </div>
-                    <div class="pend-amount">₹4,250.00</div>
-                  </div>
-                  <div class="pend-bottom">
-                    <div class="pend-due" style="color:var(--text-3);">Due in 12 days</div>
-                    <button class="btn btn-ghost btn-sm" style="border:1px solid var(--border);" onclick="alert('Reminder sent.')">Send Reminder</button>
-                  </div>
-                </div>
-
+              </div>
+              <div style="width: 100%; overflow-x: auto; padding-bottom: 4px;">
+                <table class="table-enterprise" id="invoices-table" style="min-width: 100%;">
+                  <thead>
+                    <tr>
+                      <th style="white-space: nowrap;">Invoice #</th>
+                      <th style="white-space: nowrap;">Client Name</th>
+                      <th style="white-space: nowrap;">Related Project</th>
+                      <th style="white-space: nowrap;">Issue Date</th>
+                      <th style="white-space: nowrap;">Due Date</th>
+                      <th style="white-space: nowrap;">Amount (₹)</th>
+                      <th style="white-space: nowrap;">GST (₹)</th>
+                      <th style="white-space: nowrap;">Total (₹)</th>
+                      <th style="white-space: nowrap;">Status</th>
+                      <th style="white-space: nowrap; text-align: right;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="invoices-table-body">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
               </div>
             </div>
 
-          </section>
+          </div>
+          <!-- ═══════════ END: INVOICES ═══════════ -->
+
+
+          <!-- ═══════════ VIEW: EXPENSES ═══════════ -->
+          <div id="view-expenses" class="view-content">
+
+            <!-- Expense KPI Cards -->
+            <section class="fin-kpi-grid">
+              <div class="fin-kpi-card">
+                <div class="fin-kpi-value" id="exp-kpi-total" style="color:var(--danger);">₹0</div>
+                <div class="fin-kpi-label">Total Expenses (₹)</div>
+              </div>
+              <div class="fin-kpi-card">
+                <div class="fin-kpi-value" id="exp-kpi-pending" style="color:var(--warning);">0</div>
+                <div class="fin-kpi-label">Pending Approvals</div>
+              </div>
+              <div class="fin-kpi-card">
+                <div class="fin-kpi-value" id="exp-kpi-paid" style="color:var(--success);">₹0</div>
+                <div class="fin-kpi-label">Paid Expenses (₹)</div>
+              </div>
+              <div class="fin-kpi-card">
+                <div class="fin-kpi-value" id="exp-kpi-monthly" style="color:var(--primary);">₹0</div>
+                <div class="fin-kpi-label">Monthly Expenses (₹)</div>
+              </div>
+            </section>
+
+            <!-- Expense Table -->
+            <div class="fin-box">
+              <div class="fin-box-header" style="border-bottom: none; padding-bottom: 0;">
+                <div class="fin-box-title">Expense Management</div>
+              </div>
+              <!-- Toolbar -->
+              <div class="fin-table-toolbar" style="border-top: 1px solid var(--border); margin-top: 24px; display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; gap: 12px; flex-wrap: wrap;">
+                <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+                  <div class="fin-search" style="width:260px; border-color:transparent; background:var(--bg-2);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3)"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="exp-search-input" placeholder="Search expenses..." oninput="window.renderExpensesTable && window.renderExpensesTable()" />
+                  </div>
+                  <select id="exp-filter-category" class="btn btn-ghost btn-sm" style="border:1px solid var(--border); padding:8px 12px; font-size:13px; background:var(--surface); color:var(--text-1); cursor:pointer;" onchange="window.renderExpensesTable && window.renderExpensesTable()">
+                    <option value="">All Categories</option>
+                    <option>Salary</option>
+                    <option>Office Rent</option>
+                    <option>Utilities</option>
+                    <option>Marketing</option>
+                    <option>Travel</option>
+                    <option>Software</option>
+                    <option>Equipment</option>
+                    <option>Maintenance</option>
+                    <option>Miscellaneous</option>
+                  </select>
+                  <select id="exp-filter-status" class="btn btn-ghost btn-sm" style="border:1px solid var(--border); padding:8px 12px; font-size:13px; background:var(--surface); color:var(--text-1); cursor:pointer;" onchange="window.renderExpensesTable && window.renderExpensesTable()">
+                    <option value="">All Statuses</option>
+                    <option>Pending</option>
+                    <option>Approved</option>
+                    <option>Rejected</option>
+                    <option>Paid</option>
+                  </select>
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="window.openCreateExpense && window.openCreateExpense()">+ Add Expense</button>
+              </div>
+              <!-- Table -->
+              <div style="width:100%; overflow-x:auto; padding-bottom:4px;">
+                <table class="table-enterprise" id="expenses-table" style="min-width:100%;">
+                  <thead>
+                    <tr>
+                      <th style="white-space:nowrap;">Expense ID</th>
+                      <th style="white-space:nowrap;">Expense Title</th>
+                      <th style="white-space:nowrap;">Category</th>
+                      <th style="white-space:nowrap;">Vendor</th>
+                      <th style="white-space:nowrap;">Date</th>
+                      <th style="white-space:nowrap;">Payment Method</th>
+                      <th style="white-space:nowrap;">Amount (₹)</th>
+                      <th style="white-space:nowrap;">GST (₹)</th>
+                      <th style="white-space:nowrap;">Total (₹)</th>
+                      <th style="white-space:nowrap;">Receipt</th>
+                      <th style="white-space:nowrap;">Status</th>
+                      <th style="white-space:nowrap; text-align:right;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="expenses-table-body">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+          <!-- ═══════════ END: EXPENSES ═══════════ -->
+
+
+          <!-- ═══════════ VIEW: PAYMENTS ═══════════ -->
+          <div id="view-payments" class="view-content">
+
+            <!-- Payment KPI Cards -->
+            <section class="fin-kpi-grid">
+              <div class="fin-kpi-card">
+                <div class="fin-kpi-value" id="pay-kpi-received" style="color:var(--success);">&#8377;0</div>
+                <div class="fin-kpi-label">Total Received (&#8377;)</div>
+              </div>
+              <div class="fin-kpi-card">
+                <div class="fin-kpi-value" id="pay-kpi-made" style="color:var(--danger);">&#8377;0</div>
+                <div class="fin-kpi-label">Total Paid Out (&#8377;)</div>
+              </div>
+              <div class="fin-kpi-card">
+                <div class="fin-kpi-value" id="pay-kpi-pending" style="color:var(--warning);">0</div>
+                <div class="fin-kpi-label">Pending Payments</div>
+              </div>
+              <div class="fin-kpi-card">
+                <div class="fin-kpi-value" id="pay-kpi-failed" style="color:var(--danger);">0</div>
+                <div class="fin-kpi-label">Failed Payments</div>
+              </div>
+            </section>
+
+            <!-- Payment Table -->
+            <div class="fin-box">
+              <div class="fin-box-header" style="border-bottom:none; padding-bottom:0;">
+                <div class="fin-box-title">Payment Management</div>
+              </div>
+              <!-- Toolbar -->
+              <div class="fin-table-toolbar" style="border-top:1px solid var(--border); margin-top:24px; display:flex; justify-content:space-between; align-items:center; padding:16px 24px; gap:12px; flex-wrap:wrap;">
+                <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+                  <div class="fin-search" style="width:260px; border-color:transparent; background:var(--bg-2);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3)"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="pay-search-input" placeholder="Search payments..." oninput="window.renderPaymentsTable && window.renderPaymentsTable()" />
+                  </div>
+                  <select id="pay-filter-type" class="btn btn-ghost btn-sm" style="border:1px solid var(--border); padding:8px 12px; font-size:13px; background:var(--surface); color:var(--text-1); cursor:pointer;" onchange="window.renderPaymentsTable && window.renderPaymentsTable()">
+                    <option value="">All Types</option>
+                    <option>Invoice</option>
+                    <option>Expense</option>
+                  </select>
+                  <select id="pay-filter-status" class="btn btn-ghost btn-sm" style="border:1px solid var(--border); padding:8px 12px; font-size:13px; background:var(--surface); color:var(--text-1); cursor:pointer;" onchange="window.renderPaymentsTable && window.renderPaymentsTable()">
+                    <option value="">All Statuses</option>
+                    <option>Pending</option>
+                    <option>Completed</option>
+                    <option>Failed</option>
+                    <option>Refunded</option>
+                  </select>
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="window.openRecordPayment && window.openRecordPayment()">+ Record Payment</button>
+              </div>
+              <!-- Table -->
+              <div style="width:100%; overflow-x:auto; padding-bottom:4px;">
+                <table class="table-enterprise" id="payments-table" style="min-width:100%;">
+                  <thead>
+                    <tr>
+                      <th style="white-space:nowrap;">Payment ID</th>
+                      <th style="white-space:nowrap;">Type</th>
+                      <th style="white-space:nowrap;">Reference #</th>
+                      <th style="white-space:nowrap;">Client / Vendor</th>
+                      <th style="white-space:nowrap;">Payment Date</th>
+                      <th style="white-space:nowrap;">Method</th>
+                      <th style="white-space:nowrap;">Amount (&#8377;)</th>
+                      <th style="white-space:nowrap;">Transaction ID</th>
+                      <th style="white-space:nowrap;">Status</th>
+                      <th style="white-space:nowrap; text-align:right;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="payments-table-body">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+          <!-- ═══════════ END: PAYMENTS ═══════════ -->
+
+
+          <!-- ═══════════ VIEW: REPORTS ═══════════ -->
+          <div id="view-reports" class="view-content">
+
+            <!-- Reports Header + Export -->
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:24px;">
+              <div>
+                <div style="font-size:20px; font-weight:800; color:var(--text-1);">Financial Reports &amp; Analytics</div>
+                <div style="font-size:13px; color:var(--text-3); margin-top:2px;">Live calculations from Invoice, Expense &amp; Payment data.</div>
+              </div>
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button class="btn btn-ghost btn-sm" style="border:1px solid var(--border);" onclick="window.exportReportCSV &amp;&amp; window.exportReportCSV()">&#x2193; CSV</button>
+                <button class="btn btn-ghost btn-sm" style="border:1px solid var(--border);" onclick="window.exportReportExcel &amp;&amp; window.exportReportExcel()">&#x2193; Excel</button>
+                <button class="btn btn-primary btn-sm" onclick="window.exportReportPDF &amp;&amp; window.exportReportPDF()">&#x2193; PDF</button>
+              </div>
+            </div>
+
+            <!-- Filter Bar -->
+            <div class="fin-box" style="padding:20px 24px; margin-bottom:24px;">
+              <div style="display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap;">
+                <div>
+                  <div style="font-size:11px; font-weight:700; color:var(--text-3); margin-bottom:5px;">DATE FROM</div>
+                  <input type="date" id="rpt-from" class="btn btn-ghost btn-sm" style="border:1px solid var(--border); padding:7px 10px; font-size:13px; background:var(--surface); color:var(--text-1);" onchange="window.applyReportFilters &amp;&amp; window.applyReportFilters()" />
+                </div>
+                <div>
+                  <div style="font-size:11px; font-weight:700; color:var(--text-3); margin-bottom:5px;">DATE TO</div>
+                  <input type="date" id="rpt-to" class="btn btn-ghost btn-sm" style="border:1px solid var(--border); padding:7px 10px; font-size:13px; background:var(--surface); color:var(--text-1);" onchange="window.applyReportFilters &amp;&amp; window.applyReportFilters()" />
+                </div>
+                <div>
+                  <div style="font-size:11px; font-weight:700; color:var(--text-3); margin-bottom:5px;">INVOICE STATUS</div>
+                  <select id="rpt-inv-status" class="btn btn-ghost btn-sm" style="border:1px solid var(--border); padding:7px 10px; font-size:13px; background:var(--surface); color:var(--text-1); cursor:pointer;" onchange="window.applyReportFilters &amp;&amp; window.applyReportFilters()">
+                    <option value="">All</option>
+                    <option>Draft</option>
+                    <option>Sent</option>
+                    <option>Paid</option>
+                    <option>Overdue</option>
+                    <option>Partially Paid</option>
+                  </select>
+                </div>
+                <div>
+                  <div style="font-size:11px; font-weight:700; color:var(--text-3); margin-bottom:5px;">PAYMENT STATUS</div>
+                  <select id="rpt-pay-status" class="btn btn-ghost btn-sm" style="border:1px solid var(--border); padding:7px 10px; font-size:13px; background:var(--surface); color:var(--text-1); cursor:pointer;" onchange="window.applyReportFilters &amp;&amp; window.applyReportFilters()">
+                    <option value="">All</option>
+                    <option>Pending</option>
+                    <option>Completed</option>
+                    <option>Failed</option>
+                    <option>Refunded</option>
+                  </select>
+                </div>
+                <div>
+                  <div style="font-size:11px; font-weight:700; color:var(--text-3); margin-bottom:5px;">TYPE</div>
+                  <select id="rpt-type" class="btn btn-ghost btn-sm" style="border:1px solid var(--border); padding:7px 10px; font-size:13px; background:var(--surface); color:var(--text-1); cursor:pointer;" onchange="window.applyReportFilters &amp;&amp; window.applyReportFilters()">
+                    <option value="">All</option>
+                    <option>Invoice</option>
+                    <option>Expense</option>
+                    <option>Payment</option>
+                  </select>
+                </div>
+                <button class="btn btn-ghost btn-sm" style="border:1px solid var(--border);" onclick="window.clearReportFilters &amp;&amp; window.clearReportFilters()">Clear Filters</button>
+              </div>
+            </div>
+
+            <!-- Summary KPI Cards -->
+            <section class="fin-kpi-grid" style="margin-bottom:24px;">
+              <div class="fin-kpi-card">
+                <div class="fin-kpi-value" id="rpt-kpi-revenue" style="color:var(--success);">&#8377;0</div>
+                <div class="fin-kpi-label">Total Revenue (&#8377;)</div>
+              </div>
+              <div class="fin-kpi-card">
+                <div class="fin-kpi-value" id="rpt-kpi-expenses" style="color:var(--danger);">&#8377;0</div>
+                <div class="fin-kpi-label">Total Expenses (&#8377;)</div>
+              </div>
+              <div class="fin-kpi-card">
+                <div class="fin-kpi-value" id="rpt-kpi-profit">&#8377;0</div>
+                <div class="fin-kpi-label">Net Profit (&#8377;)</div>
+              </div>
+              <div class="fin-kpi-card">
+                <div class="fin-kpi-value" id="rpt-kpi-cash" style="color:var(--primary);">&#8377;0</div>
+                <div class="fin-kpi-label">Cash Balance (&#8377;)</div>
+              </div>
+            </section>
+
+            <!-- Charts Row 1 -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px;">
+              <div class="fin-box" style="padding:24px;">
+                <div style="font-size:14px; font-weight:700; margin-bottom:16px;">Revenue vs Expenses</div>
+                <canvas id="rpt-chart-rev-exp" height="220"></canvas>
+              </div>
+              <div class="fin-box" style="padding:24px;">
+                <div style="font-size:14px; font-weight:700; margin-bottom:16px;">Monthly Net Profit</div>
+                <canvas id="rpt-chart-profit" height="220"></canvas>
+              </div>
+            </div>
+
+            <!-- Charts Row 2 -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px;">
+              <div class="fin-box" style="padding:24px;">
+                <div style="font-size:14px; font-weight:700; margin-bottom:16px;">Invoice Status Distribution</div>
+                <canvas id="rpt-chart-inv-status" height="220"></canvas>
+              </div>
+              <div class="fin-box" style="padding:24px;">
+                <div style="font-size:14px; font-weight:700; margin-bottom:16px;">Payment Status Distribution</div>
+                <canvas id="rpt-chart-pay-status" height="220"></canvas>
+              </div>
+            </div>
+
+            <!-- Report Table -->
+            <div class="fin-box">
+              <div class="fin-box-header" style="border-bottom:none; padding-bottom:0;">
+                <div class="fin-box-title">Transaction Report</div>
+                <div id="rpt-record-count" style="font-size:12px; color:var(--text-3); font-weight:600;"></div>
+              </div>
+              <div style="width:100%; overflow-x:auto; padding-bottom:4px; margin-top:16px;">
+                <table class="table-enterprise" style="min-width:100%;">
+                  <thead>
+                    <tr>
+                      <th style="white-space:nowrap;">Date</th>
+                      <th style="white-space:nowrap;">Type</th>
+                      <th style="white-space:nowrap;">Reference</th>
+                      <th style="white-space:nowrap;">Client / Vendor</th>
+                      <th style="white-space:nowrap;">Amount (&#8377;)</th>
+                      <th style="white-space:nowrap;">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="rpt-table-body">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+          <!-- ═══════════ END: REPORTS ═══════════ -->
 
         </div>
       </main>
@@ -841,5 +1023,7 @@
   <script src="../assets/js/components.js"></script>
   <script src="../assets/js/navigation.js"></script>
   <script src="../assets/js/app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>

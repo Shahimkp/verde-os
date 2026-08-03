@@ -8,6 +8,43 @@
 
   let teamEmployees = [];
   let teamAttendance = [];
+  let teamLeaves = [];
+  let teamPayroll = [];
+
+  function loadPayrollData() {
+    const stored = localStorage.getItem('verde_os_team_payroll');
+    if (stored) {
+      teamPayroll = JSON.parse(stored);
+    } else {
+      teamPayroll = [
+        { id: 'PR-001', empId: 'EMP-001', month: '2026-07', basic: 150000, allowances: 50000, bonus: 0, deductions: 10000, net: 190000, status: 'Paid' },
+        { id: 'PR-002', empId: 'EMP-002', month: '2026-07', basic: 80000, allowances: 20000, bonus: 5000, deductions: 3000, net: 102000, status: 'Processed' },
+        { id: 'PR-003', empId: 'EMP-003', month: '2026-07', basic: 60000, allowances: 15000, bonus: 0, deductions: 2000, net: 73000, status: 'Pending' }
+      ];
+      savePayrollData();
+    }
+  }
+
+  function savePayrollData() {
+    localStorage.setItem('verde_os_team_payroll', JSON.stringify(teamPayroll));
+  }
+
+  function loadLeaveData() {
+    const stored = localStorage.getItem('verde_os_team_leaves');
+    if (stored) {
+      teamLeaves = JSON.parse(stored);
+    } else {
+      teamLeaves = [
+        { id: 'LV-001', empId: 'EMP-004', type: 'Sick Leave', startDate: '2026-08-10', endDate: '2026-08-12', days: 3, reason: 'Flu', status: 'Pending' },
+        { id: 'LV-002', empId: 'EMP-001', type: 'Annual Leave', startDate: '2026-09-01', endDate: '2026-09-05', days: 5, reason: 'Vacation', status: 'Approved' }
+      ];
+      saveLeaveData();
+    }
+  }
+
+  function saveLeaveData() {
+    localStorage.setItem('verde_os_team_leaves', JSON.stringify(teamLeaves));
+  }
 
   function loadTeamData() {
     const stored = localStorage.getItem('verde_os_team_employees');
@@ -181,6 +218,149 @@
     });
   }
 
+  function renderLeaveTable() {
+    const tbody = document.getElementById('leave-table-body');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    
+    if (teamLeaves.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:32px; color:var(--text-3);">No leave requests found</td></tr>`;
+      return;
+    }
+    
+    const sorted = [...teamLeaves].reverse();
+    
+    sorted.forEach(record => {
+      const emp = teamEmployees.find(e => e.id === record.empId) || { name: 'Unknown', id: record.empId, department: 'N/A', initials: 'XX', avatarBg: 'var(--text-3)' };
+      const statusColor = record.status === 'Approved' ? 'success' : record.status === 'Pending' ? 'warning' : record.status === 'Cancelled' ? 'text-3' : 'danger';
+      
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div class="team-avatar-lg" style="width:32px; height:32px; font-size:11px; background:${emp.avatarBg || 'var(--primary)'}-10; color:${emp.avatarBg || 'var(--primary)'};">${emp.initials || 'XX'}</div>
+            <span style="font-weight:700;">${emp.name}</span>
+          </div>
+        </td>
+        <td style="color:var(--text-2); font-size:13px;">${emp.id}</td>
+        <td style="color:var(--text-2); font-size:13px;">${emp.department || 'N/A'}</td>
+        <td style="color:var(--text-2); font-size:13px;">${record.type}</td>
+        <td style="color:var(--text-2); font-size:13px;">${record.startDate}</td>
+        <td style="color:var(--text-2); font-size:13px;">${record.endDate}</td>
+        <td style="font-weight:700;">${record.days}</td>
+        <td style="color:var(--text-2); font-size:13px;">${record.reason || '--'}</td>
+        <td><span class="badge badge-${statusColor}" style="${record.status === 'Cancelled' ? 'background:var(--bg-2); color:var(--text-2);' : ''}">${record.status}</span></td>
+        <td style="text-align: right;">
+          ${record.status === 'Pending' ? `
+            <button class="btn btn-sm btn-ghost" style="color:var(--success); margin-right:4px;" onclick="window.approveLeave('${record.id}')">Approve</button>
+            <button class="btn btn-sm btn-ghost" style="color:var(--danger); margin-right:4px;" onclick="window.rejectLeave('${record.id}')">Reject</button>
+          ` : record.status === 'Approved' ? `
+            <button class="btn btn-sm btn-ghost" style="color:var(--warning); margin-right:4px;" onclick="window.cancelLeave('${record.id}')">Cancel</button>
+          ` : ''}
+          <button class="btn btn-sm btn-ghost" style="margin-right:4px;" onclick="window.openLeaveModal('${record.id}')">Edit</button>
+          <button class="btn btn-sm btn-ghost" style="color:var(--danger);" onclick="window.deleteLeaveRecord('${record.id}')">Delete</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function renderLeaveKPIs() {
+    let pending = 0, approvedToday = 0, active = 0;
+    const today = new Date().toISOString().split('T')[0];
+    
+    teamLeaves.forEach(r => {
+      if (r.status === 'Pending') pending++;
+      if (r.status === 'Approved' && r.startDate <= today && r.endDate >= today) active++;
+      if (r.status === 'Approved') approvedToday++;
+    });
+
+    const elPending = document.getElementById('kpi-leave-pending');
+    const elApproved = document.getElementById('kpi-leave-approved');
+    const elActive = document.getElementById('kpi-leave-active');
+    
+    if (elPending) elPending.textContent = pending;
+    if (elApproved) elApproved.textContent = approvedToday;
+    if (elActive) elActive.textContent = active;
+  }
+
+  function formatCurrency(num) {
+    return '₹' + Number(num).toLocaleString('en-IN');
+  }
+
+  function renderPayrollTable() {
+    const tbody = document.getElementById('payroll-table-body');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    
+    if (teamPayroll.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding:32px; color:var(--text-3);">No payroll records found</td></tr>`;
+      return;
+    }
+    
+    const sorted = [...teamPayroll].reverse();
+    
+    sorted.forEach(record => {
+      const emp = teamEmployees.find(e => e.id === record.empId) || { name: 'Unknown', id: record.empId, department: 'N/A', initials: 'XX', avatarBg: 'var(--text-3)' };
+      const statusColor = record.status === 'Paid' ? 'success' : record.status === 'Processed' ? 'info' : 'warning';
+      
+      const monthStr = new Date(record.month + '-01').toLocaleString('default', { month: 'short', year: 'numeric' });
+      
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div class="team-avatar-lg" style="width:32px; height:32px; font-size:11px; background:${emp.avatarBg || 'var(--primary)'}-10; color:${emp.avatarBg || 'var(--primary)'};">${emp.initials || 'XX'}</div>
+            <span style="font-weight:700;">${emp.name}</span>
+          </div>
+        </td>
+        <td style="color:var(--text-2); font-size:13px;">${emp.id}</td>
+        <td style="color:var(--text-2); font-size:13px;">${emp.department || 'N/A'}</td>
+        <td style="color:var(--text-2); font-size:13px; font-weight:600;">${monthStr}</td>
+        <td style="color:var(--text-2); font-size:13px;">${formatCurrency(record.basic)}</td>
+        <td style="color:var(--text-2); font-size:13px;">${formatCurrency(record.allowances)}</td>
+        <td style="color:var(--text-2); font-size:13px;">${formatCurrency(record.bonus)}</td>
+        <td style="color:var(--danger); font-size:13px;">${formatCurrency(record.deductions)}</td>
+        <td style="font-weight:800; color:var(--text-1); font-size:14px;">${formatCurrency(record.net)}</td>
+        <td><span class="badge badge-${statusColor}">${record.status}</span></td>
+        <td style="text-align: right; min-width: 320px;">
+          <button class="btn btn-sm btn-ghost" style="color:var(--primary); margin-right:4px;" onclick="window.generatePayslip('${record.id}')">View Payslip</button>
+          <button class="btn btn-sm btn-ghost" style="margin-right:4px; ${record.status === 'Paid' ? 'opacity:0.5; cursor:not-allowed;' : ''}" onclick="window.editPayrollModal('${record.id}')" ${record.status === 'Paid' ? 'disabled' : ''}>Edit Payroll</button>
+          <button class="btn btn-sm btn-ghost" style="color:var(--success); margin-right:4px; ${record.status === 'Paid' ? 'opacity:0.5; cursor:not-allowed;' : ''}" onclick="window.markPayrollPaid('${record.id}')" ${record.status === 'Paid' ? 'disabled' : ''}>Mark as Paid</button>
+          <button class="btn btn-sm btn-ghost" style="color:var(--danger);" onclick="window.deletePayrollRecord('${record.id}')">Delete Payroll</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function renderPayrollKPIs() {
+    let totalPayroll = 0;
+    let paidCount = 0;
+    let pendingCount = 0;
+    
+    teamPayroll.forEach(r => {
+      totalPayroll += Number(r.net) || 0;
+      if (r.status === 'Paid') {
+        paidCount++;
+      } else {
+        pendingCount++;
+      }
+    });
+
+    const avgSalary = teamPayroll.length > 0 ? (totalPayroll / teamPayroll.length) : 0;
+
+    const elTotal = document.getElementById('kpi-payroll-total');
+    const elPaid = document.getElementById('kpi-payroll-paid');
+    const elPending = document.getElementById('kpi-payroll-pending');
+    const elAvg = document.getElementById('kpi-payroll-avg');
+    
+    if (elTotal) elTotal.textContent = formatCurrency(totalPayroll);
+    if (elPaid) elPaid.textContent = paidCount;
+    if (elPending) elPending.textContent = pendingCount;
+    if (elAvg) elAvg.textContent = formatCurrency(Math.round(avgSalary));
+  }
+
   window.openMarkAttendanceModal = function(recordId = null) {
     let editRecord = null;
     if (recordId) {
@@ -345,9 +525,15 @@
   function initTeamWorkspace() {
     loadTeamData();
     loadAttendanceData();
+    loadLeaveData();
+    loadPayrollData();
     renderTeamDirectory();
     renderAttendanceTable();
     renderAttendanceKPIs();
+    renderLeaveTable();
+    renderLeaveKPIs();
+    renderPayrollTable();
+    renderPayrollKPIs();
 
     // 1. Search Filter for Employee Directory
     const searchInput = document.getElementById('team-search-input');
@@ -400,6 +586,30 @@
         attSearch.addEventListener('input', function(e) {
             const q = e.target.value.toLowerCase().trim();
             const rows = document.querySelectorAll('#attendance-table-body tr');
+            rows.forEach(r => {
+                const text = r.textContent.toLowerCase();
+                r.style.display = text.includes(q) ? '' : 'none';
+            });
+        });
+    }
+
+    const lvSearch = document.getElementById('leave-search-input');
+    if (lvSearch) {
+        lvSearch.addEventListener('input', function(e) {
+            const q = e.target.value.toLowerCase().trim();
+            const rows = document.querySelectorAll('#leave-table-body tr');
+            rows.forEach(r => {
+                const text = r.textContent.toLowerCase();
+                r.style.display = text.includes(q) ? '' : 'none';
+            });
+        });
+    }
+
+    const prSearch = document.getElementById('payroll-search-input');
+    if (prSearch) {
+        prSearch.addEventListener('input', function(e) {
+            const q = e.target.value.toLowerCase().trim();
+            const rows = document.querySelectorAll('#payroll-table-body tr');
             rows.forEach(r => {
                 const text = r.textContent.toLowerCase();
                 r.style.display = text.includes(q) ? '' : 'none';
@@ -871,6 +1081,39 @@
       `;
     }
 
+    const empLeaves = teamLeaves.filter(l => l.empId === empId).reverse();
+    let leaveHtml = '';
+    if (empLeaves.length === 0) {
+      leaveHtml = `<div style="text-align: center; padding: 60px 0; color: var(--text-3); font-size: 14px; font-weight: 600;">No Leave History Available</div>`;
+    } else {
+      leaveHtml = `
+        <table class="table-enterprise" style="margin-top:0;">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Days</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${empLeaves.map(l => {
+              const stColor = l.status === 'Approved' ? 'success' : l.status === 'Pending' ? 'warning' : l.status === 'Cancelled' ? 'text-3' : 'danger';
+              return `
+              <tr>
+                <td style="color:var(--text-2); font-size:13px; font-weight:600;">${l.type}</td>
+                <td style="color:var(--text-2); font-size:13px;">${l.startDate}</td>
+                <td style="color:var(--text-2); font-size:13px;">${l.endDate}</td>
+                <td style="font-weight:700; font-size:13px;">${l.days}</td>
+                <td><span class="badge badge-${stColor}" style="${l.status === 'Cancelled' ? 'background:var(--bg-2); color:var(--text-2);' : ''}">${l.status}</span></td>
+              </tr>
+            `}).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
     const profileHtml = `
       <style>
         .profile-header { display: flex; align-items: center; gap: 24px; margin-bottom: 24px; }
@@ -947,6 +1190,7 @@
           <div class="profile-tab" data-tab="projects">Projects</div>
           <div class="profile-tab" data-tab="tasks">Tasks</div>
           <div class="profile-tab" data-tab="attendance">Attendance</div>
+          <div class="profile-tab" data-tab="leave">Leaves</div>
           <div class="profile-tab" data-tab="documents">Documents</div>
         </div>
         
@@ -1008,6 +1252,9 @@
         </div>
         <div class="profile-tab-content" id="tab-attendance">
           ${attHtml}
+        </div>
+        <div class="profile-tab-content" id="tab-leave">
+          ${leaveHtml}
         </div>
         <div class="profile-tab-content" id="tab-documents">
           <div style="text-align: center; padding: 60px 0; color: var(--text-3); font-size: 14px; font-weight: 600;">No Data Available</div>
@@ -1118,6 +1365,608 @@
         renderTeamDirectory();
         if (window.VerdeToast) window.VerdeToast.success('Employee deleted successfully.');
       }
+    }
+  };
+
+  window.openLeaveModal = function(recordId = null) {
+    let editRecord = null;
+    if (recordId) {
+      editRecord = teamLeaves.find(r => r.id === recordId);
+      if (!editRecord) return;
+    }
+
+    const today = new Date().toISOString().split('T')[0];
+    let empOptions = teamEmployees.map(e => `<option value="${e.id}" ${editRecord && editRecord.empId === e.id ? 'selected' : ''}>${e.name} (${e.id})</option>`).join('');
+
+    const formHtml = `
+      <style>
+        .lv-form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+        .lv-form-label { font-size: 12px; font-weight: 700; color: var(--text-3); text-transform: uppercase; }
+        .lv-form-input, .lv-form-select, .lv-form-textarea { border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; outline: none; background: var(--bg); color: var(--text-1); font-family: inherit; font-size: 13px; width: 100%; box-sizing: border-box; }
+        .lv-form-input:focus, .lv-form-select:focus, .lv-form-textarea:focus { border-color: var(--primary); }
+      </style>
+      <div id="leave-modal-form">
+        <div class="lv-form-group">
+          <label class="lv-form-label">Employee</label>
+          <select id="lv-empId" class="lv-form-select" ${editRecord ? 'disabled' : ''}>
+            ${empOptions}
+          </select>
+        </div>
+        <div class="lv-form-group">
+          <label class="lv-form-label">Leave Type</label>
+          <select id="lv-type" class="lv-form-select">
+            <option value="Sick Leave" ${editRecord && editRecord.type === 'Sick Leave' ? 'selected' : ''}>Sick Leave</option>
+            <option value="Annual Leave" ${editRecord && editRecord.type === 'Annual Leave' ? 'selected' : ''}>Annual Leave</option>
+            <option value="Casual Leave" ${editRecord && editRecord.type === 'Casual Leave' ? 'selected' : ''}>Casual Leave</option>
+            <option value="Unpaid Leave" ${editRecord && editRecord.type === 'Unpaid Leave' ? 'selected' : ''}>Unpaid Leave</option>
+          </select>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div class="lv-form-group">
+            <label class="lv-form-label">Start Date</label>
+            <input type="date" id="lv-start" class="lv-form-input" value="${editRecord ? editRecord.startDate : today}" onchange="window.calculateLeaveDays()">
+          </div>
+          <div class="lv-form-group">
+            <label class="lv-form-label">End Date</label>
+            <input type="date" id="lv-end" class="lv-form-input" value="${editRecord ? editRecord.endDate : today}" onchange="window.calculateLeaveDays()">
+          </div>
+        </div>
+        <div class="lv-form-group">
+          <label class="lv-form-label">Total Days</label>
+          <input type="number" id="lv-days" class="lv-form-input" value="${editRecord ? editRecord.days : 1}" readonly style="background: var(--bg-2);">
+        </div>
+        <div class="lv-form-group">
+          <label class="lv-form-label">Reason</label>
+          <textarea id="lv-reason" class="lv-form-textarea" rows="3">${editRecord ? editRecord.reason : ''}</textarea>
+        </div>
+        <div class="lv-form-group">
+          <label class="lv-form-label">Status</label>
+          <select id="lv-status" class="lv-form-select">
+            <option value="Pending" ${editRecord && editRecord.status === 'Pending' ? 'selected' : ''}>Pending</option>
+            <option value="Approved" ${editRecord && editRecord.status === 'Approved' ? 'selected' : ''}>Approved</option>
+            <option value="Rejected" ${editRecord && editRecord.status === 'Rejected' ? 'selected' : ''}>Rejected</option>
+            <option value="Cancelled" ${editRecord && editRecord.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+          </select>
+        </div>
+      </div>
+    `;
+
+    if (window.VerdeModal && window.VerdeModal.create) {
+      const modal = window.VerdeModal.create({
+        title: editRecord ? 'Edit Leave Request' : 'Create Leave Request',
+        body: formHtml,
+        confirmText: editRecord ? 'Update Request' : 'Submit Request',
+        cancelText: 'Cancel'
+      });
+
+      const btnSave = modal.querySelector('.modal-confirm-btn');
+      btnSave.addEventListener('click', function() {
+        const empId = document.getElementById('lv-empId').value;
+        const type = document.getElementById('lv-type').value;
+        const start = document.getElementById('lv-start').value;
+        const end = document.getElementById('lv-end').value;
+        const days = parseInt(document.getElementById('lv-days').value) || 0;
+        const reason = document.getElementById('lv-reason').value;
+        const status = document.getElementById('lv-status').value;
+
+        if (!empId || !start || !end) {
+          if (window.VerdeToast) window.VerdeToast.error('Please fill in all required fields.');
+          return;
+        }
+
+        if (new Date(end) < new Date(start)) {
+          if (window.VerdeToast) window.VerdeToast.error('End Date cannot be before Start Date.');
+          return;
+        }
+
+        const overlapping = teamLeaves.find(r => 
+          r.empId === empId && 
+          r.status !== 'Rejected' && r.status !== 'Cancelled' &&
+          ((start >= r.startDate && start <= r.endDate) || (end >= r.startDate && end <= r.endDate) || (start <= r.startDate && end >= r.endDate)) &&
+          (!editRecord || r.id !== editRecord.id)
+        );
+
+        if (overlapping) {
+          if (window.VerdeToast) window.VerdeToast.error('Leave request overlaps with an existing request for this employee.');
+          return;
+        }
+
+        if (editRecord) {
+          editRecord.empId = empId;
+          editRecord.type = type;
+          editRecord.startDate = start;
+          editRecord.endDate = end;
+          editRecord.days = days;
+          editRecord.reason = reason;
+          editRecord.status = status;
+        } else {
+          teamLeaves.push({
+            id: 'LV-' + Date.now(),
+            empId: empId,
+            type: type,
+            startDate: start,
+            endDate: end,
+            days: days,
+            reason: reason,
+            status: status
+          });
+        }
+        
+        saveLeaveData();
+        renderLeaveTable();
+        renderLeaveKPIs();
+        
+        if (window.VerdeToast) window.VerdeToast.success(editRecord ? 'Leave request updated.' : 'Leave request submitted.');
+        window.VerdeModal.close(modal);
+      });
+    }
+  };
+
+  window.calculateLeaveDays = function() {
+    const start = document.getElementById('lv-start').value;
+    const end = document.getElementById('lv-end').value;
+    if (start && end) {
+        const d1 = new Date(start);
+        const d2 = new Date(end);
+        if (d2 >= d1) {
+            const diffTime = Math.abs(d2 - d1);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; 
+            document.getElementById('lv-days').value = diffDays;
+        } else {
+            document.getElementById('lv-days').value = 0;
+        }
+    }
+  };
+
+  window.deleteLeaveRecord = function(recordId) {
+    if (window.VerdeModal && window.VerdeModal.delete) {
+      window.VerdeModal.delete(
+        'Delete Request',
+        'Are you sure you want to delete this leave request?',
+        function() {
+          teamLeaves = teamLeaves.filter(r => r.id !== recordId);
+          saveLeaveData();
+          renderLeaveTable();
+          renderLeaveKPIs();
+          if (window.VerdeToast) window.VerdeToast.success('Leave request deleted.');
+        }
+      );
+    }
+  };
+
+  window.approveLeave = function(recordId) {
+    const record = teamLeaves.find(r => r.id === recordId);
+    if (record) {
+      record.status = 'Approved';
+      saveLeaveData();
+      renderLeaveTable();
+      renderLeaveKPIs();
+      if (window.VerdeToast) window.VerdeToast.success('Leave approved.');
+    }
+  };
+
+  window.rejectLeave = function(recordId) {
+    const record = teamLeaves.find(r => r.id === recordId);
+    if (record) {
+      record.status = 'Rejected';
+      saveLeaveData();
+      renderLeaveTable();
+      renderLeaveKPIs();
+      if (window.VerdeToast) window.VerdeToast.success('Leave rejected.');
+    }
+  };
+
+  window.cancelLeave = function(recordId) {
+    const record = teamLeaves.find(r => r.id === recordId);
+    if (record) {
+      record.status = 'Cancelled';
+      saveLeaveData();
+      renderLeaveTable();
+      renderLeaveKPIs();
+      if (window.VerdeToast) window.VerdeToast.success('Leave cancelled.');
+    }
+  };
+
+  window.openPayrollModal = function() {
+    const currentMonth = new Date().toISOString().substring(0, 7);
+    let empOptions = teamEmployees.map(e => {
+        let defaultBasic = e.salary ? e.salary : 0;
+        return `<option value="${e.id}" data-basic="${defaultBasic}">${e.name} (${e.id})</option>`;
+    }).join('');
+
+    const formHtml = `
+      <style>
+        .pr-form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+        .pr-form-label { font-size: 12px; font-weight: 700; color: var(--text-3); text-transform: uppercase; }
+        .pr-form-input, .pr-form-select { border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; outline: none; background: var(--bg); color: var(--text-1); font-family: inherit; font-size: 13px; width: 100%; box-sizing: border-box; }
+        .pr-form-input:focus, .pr-form-select:focus { border-color: var(--primary); }
+      </style>
+      <div id="payroll-modal-form">
+        <div class="pr-form-group">
+          <label class="pr-form-label">Employee</label>
+          <select id="pr-empId" class="pr-form-select" onchange="window.updatePayrollBasicFromEmp()">
+            <option value="">Select Employee</option>
+            ${empOptions}
+          </select>
+        </div>
+        <div class="pr-form-group">
+          <label class="pr-form-label">Payroll Month</label>
+          <input type="month" id="pr-month" class="pr-form-input" value="${currentMonth}">
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div class="pr-form-group">
+            <label class="pr-form-label">Basic Salary (₹)</label>
+            <input type="number" id="pr-basic" class="pr-form-input" value="0" oninput="window.calculatePayrollNet()">
+          </div>
+          <div class="pr-form-group">
+            <label class="pr-form-label">Allowances (₹)</label>
+            <input type="number" id="pr-allowances" class="pr-form-input" value="0" oninput="window.calculatePayrollNet()">
+          </div>
+          <div class="pr-form-group">
+            <label class="pr-form-label">Bonus (₹)</label>
+            <input type="number" id="pr-bonus" class="pr-form-input" value="0" oninput="window.calculatePayrollNet()">
+          </div>
+          <div class="pr-form-group">
+            <label class="pr-form-label">Deductions (₹)</label>
+            <input type="number" id="pr-deductions" class="pr-form-input" value="0" oninput="window.calculatePayrollNet()">
+          </div>
+        </div>
+        <div class="pr-form-group">
+          <label class="pr-form-label">Net Salary (₹)</label>
+          <input type="number" id="pr-net" class="pr-form-input" value="0" readonly style="background: var(--bg-2); font-weight:bold; color:var(--text-1); font-size:16px;">
+        </div>
+      </div>
+    `;
+
+    if (window.VerdeModal && window.VerdeModal.create) {
+      window.VerdeModal.create('Generate Payroll', formHtml);
+
+      setTimeout(() => {
+        const modals = document.querySelectorAll('.modal-overlay.active');
+        if (!modals.length) return;
+        const modal = modals[modals.length - 1];
+
+        const btnSave = modal.querySelector('.modal-confirm-btn');
+        if (btnSave) {
+          const clone = btnSave.cloneNode(true);
+          clone.textContent = 'Generate Record';
+          btnSave.parentNode.replaceChild(clone, btnSave);
+
+          clone.addEventListener('click', function() {
+            const empId = document.getElementById('pr-empId').value;
+            const month = document.getElementById('pr-month').value;
+            const basic = parseFloat(document.getElementById('pr-basic').value) || 0;
+            const allowances = parseFloat(document.getElementById('pr-allowances').value) || 0;
+            const bonus = parseFloat(document.getElementById('pr-bonus').value) || 0;
+            const deductions = parseFloat(document.getElementById('pr-deductions').value) || 0;
+            const net = parseFloat(document.getElementById('pr-net').value) || 0;
+
+            if (!empId || !month || !basic) {
+              if (window.VerdeToast) window.VerdeToast.error('Employee, Payroll Month, and Basic Salary are required.');
+              return;
+            }
+
+            const exists = teamPayroll.find(r => r.empId === empId && r.month === month);
+            if (exists) {
+              if (window.VerdeToast) window.VerdeToast.error('Payroll record for this employee and month already exists.');
+              return;
+            }
+
+            teamPayroll.push({
+              id: 'PR-' + Date.now(),
+              empId: empId,
+              month: month,
+              basic: basic,
+              allowances: allowances,
+              bonus: bonus,
+              deductions: deductions,
+              net: net,
+              status: 'Pending'
+            });
+
+            savePayrollData();
+            renderPayrollTable();
+            renderPayrollKPIs();
+
+            if (window.VerdeToast) window.VerdeToast.success('Payroll record generated.');
+            
+            modal.classList.remove('active');
+            setTimeout(() => { if (modal.parentNode) modal.parentNode.removeChild(modal); }, 200);
+          });
+        }
+      }, 10);
+    }
+  };
+
+  window.updatePayrollBasicFromEmp = function() {
+    const sel = document.getElementById('pr-empId');
+    if (!sel) return;
+    const option = sel.options[sel.selectedIndex];
+    if (option && option.value) {
+      const basic = parseFloat(option.getAttribute('data-basic')) || 0;
+      document.getElementById('pr-basic').value = basic;
+      window.calculatePayrollNet();
+    }
+  };
+
+  window.calculatePayrollNet = function() {
+    const basic = parseFloat(document.getElementById('pr-basic').value) || 0;
+    const allowances = parseFloat(document.getElementById('pr-allowances').value) || 0;
+    const bonus = parseFloat(document.getElementById('pr-bonus').value) || 0;
+    const deductions = parseFloat(document.getElementById('pr-deductions').value) || 0;
+    const net = basic + allowances + bonus - deductions;
+    const el = document.getElementById('pr-net');
+    if(el) el.value = net;
+  };
+
+  window.editPayrollModal = function(recordId) {
+    const editRecord = teamPayroll.find(r => r.id === recordId);
+    if (!editRecord || editRecord.status === 'Paid') return;
+
+    const emp = teamEmployees.find(e => e.id === editRecord.empId) || { name: 'Unknown', id: editRecord.empId };
+
+    const formHtml = `
+      <style>
+        .pr-form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+        .pr-form-label { font-size: 12px; font-weight: 700; color: var(--text-3); text-transform: uppercase; }
+        .pr-form-input { border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; outline: none; background: var(--bg); color: var(--text-1); font-family: inherit; font-size: 13px; width: 100%; box-sizing: border-box; }
+        .pr-form-input:focus { border-color: var(--primary); }
+      </style>
+      <div id="payroll-edit-form">
+        <div class="pr-form-group">
+          <label class="pr-form-label">Employee</label>
+          <input type="text" class="pr-form-input" value="${emp.name} (${emp.id})" disabled style="background: var(--bg-2);">
+        </div>
+        <div class="pr-form-group">
+          <label class="pr-form-label">Payroll Month</label>
+          <input type="month" class="pr-form-input" value="${editRecord.month}" disabled style="background: var(--bg-2);">
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div class="pr-form-group">
+            <label class="pr-form-label">Basic Salary (₹)</label>
+            <input type="number" id="pr-edit-basic" class="pr-form-input" value="${editRecord.basic}" oninput="window.calculateEditPayrollNet()">
+          </div>
+          <div class="pr-form-group">
+            <label class="pr-form-label">Allowances (₹)</label>
+            <input type="number" id="pr-edit-allowances" class="pr-form-input" value="${editRecord.allowances}" oninput="window.calculateEditPayrollNet()">
+          </div>
+          <div class="pr-form-group">
+            <label class="pr-form-label">Bonus (₹)</label>
+            <input type="number" id="pr-edit-bonus" class="pr-form-input" value="${editRecord.bonus}" oninput="window.calculateEditPayrollNet()">
+          </div>
+          <div class="pr-form-group">
+            <label class="pr-form-label">Deductions (₹)</label>
+            <input type="number" id="pr-edit-deductions" class="pr-form-input" value="${editRecord.deductions}" oninput="window.calculateEditPayrollNet()">
+          </div>
+        </div>
+        <div class="pr-form-group">
+          <label class="pr-form-label">Net Salary (₹)</label>
+          <input type="number" id="pr-edit-net" class="pr-form-input" value="${editRecord.net}" readonly style="background: var(--bg-2); font-weight:bold; color:var(--text-1); font-size:16px;">
+        </div>
+      </div>
+    `;
+
+    if (window.VerdeModal && window.VerdeModal.edit) {
+      window.VerdeModal.edit('Edit Payroll', formHtml);
+
+      setTimeout(() => {
+        const modals = document.querySelectorAll('.modal-overlay.active');
+        if (!modals.length) return;
+        const modal = modals[modals.length - 1];
+
+        const btnSave = modal.querySelector('.modal-confirm-btn');
+        if (btnSave) {
+          const clone = btnSave.cloneNode(true);
+          clone.textContent = 'Save Changes';
+          btnSave.parentNode.replaceChild(clone, btnSave);
+
+          clone.addEventListener('click', function() {
+            const basic = parseFloat(document.getElementById('pr-edit-basic').value) || 0;
+            const allowances = parseFloat(document.getElementById('pr-edit-allowances').value) || 0;
+            const bonus = parseFloat(document.getElementById('pr-edit-bonus').value) || 0;
+            const deductions = parseFloat(document.getElementById('pr-edit-deductions').value) || 0;
+            const net = parseFloat(document.getElementById('pr-edit-net').value) || 0;
+
+            if (basic <= 0) {
+              if (window.VerdeToast) window.VerdeToast.error('Basic Salary must be greater than 0.');
+              return;
+            }
+
+            editRecord.basic = basic;
+            editRecord.allowances = allowances;
+            editRecord.bonus = bonus;
+            editRecord.deductions = deductions;
+            editRecord.net = net;
+
+            savePayrollData();
+            renderPayrollTable();
+            renderPayrollKPIs();
+
+            if (window.VerdeToast) window.VerdeToast.success('Payroll record updated.');
+            
+            modal.classList.remove('active');
+            setTimeout(() => { if (modal.parentNode) modal.parentNode.removeChild(modal); }, 200);
+          });
+        }
+      }, 10);
+    }
+  };
+
+  window.calculateEditPayrollNet = function() {
+    const basic = parseFloat(document.getElementById('pr-edit-basic').value) || 0;
+    const allowances = parseFloat(document.getElementById('pr-edit-allowances').value) || 0;
+    const bonus = parseFloat(document.getElementById('pr-edit-bonus').value) || 0;
+    const deductions = parseFloat(document.getElementById('pr-edit-deductions').value) || 0;
+    const net = basic + allowances + bonus - deductions;
+    const el = document.getElementById('pr-edit-net');
+    if(el) el.value = net;
+  };
+
+  window.markPayrollPaid = function(recordId) {
+    const record = teamPayroll.find(r => r.id === recordId);
+    if (record && record.status !== 'Paid') {
+      record.status = 'Paid';
+      savePayrollData();
+      renderPayrollTable();
+      renderPayrollKPIs();
+      if (window.VerdeToast) window.VerdeToast.success('Payroll marked as paid.');
+    }
+  };
+
+  window.deletePayrollRecord = function(recordId) {
+    if (window.VerdeModal && window.VerdeModal.delete) {
+      window.VerdeModal.delete(
+        'Delete Payroll',
+        'Are you sure you want to delete this payroll record?',
+        function() {
+          teamPayroll = teamPayroll.filter(r => r.id !== recordId);
+          savePayrollData();
+          renderPayrollTable();
+          renderPayrollKPIs();
+          if (window.VerdeToast) window.VerdeToast.success('Payroll record deleted.');
+        }
+      );
+    }
+  };
+
+  window.generatePayslip = function(recordId) {
+    const record = teamPayroll.find(r => r.id === recordId);
+    if (!record) return;
+    const emp = teamEmployees.find(e => e.id === record.empId) || { name: 'Unknown', id: record.empId, department: 'N/A', role: 'N/A' };
+    const monthStr = new Date(record.month + '-01').toLocaleString('default', { month: 'long', year: 'numeric' });
+
+    const payslipHtml = `
+      <style>
+        .payslip-container { padding: 24px; background: #fff; color: #000; border-radius: 8px; }
+        .payslip-header { display: flex; justify-content: space-between; border-bottom: 2px solid #eee; padding-bottom: 16px; margin-bottom: 24px; }
+        .payslip-logo { font-size: 24px; font-weight: 900; letter-spacing: -1px; color: #111; }
+        .payslip-title { font-size: 18px; font-weight: 700; color: #555; text-align: right; }
+        .payslip-meta { display: flex; justify-content: space-between; margin-bottom: 32px; }
+        .payslip-meta-col { display: flex; flex-direction: column; gap: 8px; }
+        .payslip-meta-item { font-size: 13px; }
+        .payslip-meta-item strong { font-weight: 700; width: 100px; display: inline-block; }
+        .payslip-table { width: 100%; border-collapse: collapse; margin-bottom: 32px; }
+        .payslip-table th, .payslip-table td { padding: 12px; border: 1px solid #ddd; font-size: 13px; }
+        .payslip-table th { background: #f9f9f9; font-weight: 700; text-align: left; }
+        .payslip-table td.amount { text-align: right; font-family: monospace; font-size: 14px; }
+        .payslip-table th.amount { text-align: right; }
+        .payslip-footer { display: flex; justify-content: space-between; align-items: flex-end; border-top: 2px solid #eee; padding-top: 24px; }
+        .payslip-net { font-size: 20px; font-weight: 800; }
+        .payslip-status { padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: 800; text-transform: uppercase; }
+        .status-paid { background: #dcfce7; color: #166534; }
+        .status-pending { background: #fef08a; color: #854d0e; }
+        .status-processed { background: #e0f2fe; color: #075985; }
+        
+        @media print {
+            body * { visibility: hidden; }
+            #payslip-print-area, #payslip-print-area * { visibility: visible; }
+            #payslip-print-area { position: absolute; left: 0; top: 0; width: 100%; }
+        }
+      </style>
+      <div id="payslip-print-area" class="payslip-container">
+        <div class="payslip-header">
+          <div>
+            <div class="payslip-logo">VERDE OS</div>
+            <div style="font-size:12px; color:#666; margin-top:4px;">123 Business Avenue, Suite 100<br>New York, NY 10001</div>
+          </div>
+          <div>
+            <div class="payslip-title">PAYSLIP</div>
+            <div style="font-size:13px; color:#666; margin-top:4px; text-align:right;">${monthStr}</div>
+          </div>
+        </div>
+        
+        <div class="payslip-meta">
+          <div class="payslip-meta-col">
+            <div class="payslip-meta-item"><strong>Employee Name:</strong> ${emp.name}</div>
+            <div class="payslip-meta-item"><strong>Employee ID:</strong> ${emp.id}</div>
+          </div>
+          <div class="payslip-meta-col">
+            <div class="payslip-meta-item"><strong>Department:</strong> ${emp.department}</div>
+            <div class="payslip-meta-item"><strong>Designation:</strong> ${emp.role}</div>
+          </div>
+        </div>
+        
+        <table class="payslip-table">
+          <thead>
+            <tr>
+              <th style="width:50%;">Earnings</th>
+              <th class="amount">Amount</th>
+              <th style="width:50%; border-left: 2px solid #ddd;">Deductions</th>
+              <th class="amount">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Basic Salary</td>
+              <td class="amount">${formatCurrency(record.basic)}</td>
+              <td style="border-left: 2px solid #ddd;">Tax / Other Deductions</td>
+              <td class="amount">${formatCurrency(record.deductions)}</td>
+            </tr>
+            <tr>
+              <td>Allowances</td>
+              <td class="amount">${formatCurrency(record.allowances)}</td>
+              <td style="border-left: 2px solid #ddd;"></td>
+              <td class="amount"></td>
+            </tr>
+            <tr>
+              <td>Bonus</td>
+              <td class="amount">${formatCurrency(record.bonus)}</td>
+              <td style="border-left: 2px solid #ddd;"></td>
+              <td class="amount"></td>
+            </tr>
+            <tr style="background:#f9f9f9; font-weight:700;">
+              <td>Total Earnings</td>
+              <td class="amount">${formatCurrency(record.basic + record.allowances + record.bonus)}</td>
+              <td style="border-left: 2px solid #ddd;">Total Deductions</td>
+              <td class="amount">${formatCurrency(record.deductions)}</td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <div class="payslip-footer">
+          <div>
+            <span class="payslip-status status-${record.status.toLowerCase()}">${record.status}</span>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:12px; color:#666; font-weight:700; text-transform:uppercase; margin-bottom:4px;">Net Salary</div>
+            <div class="payslip-net">${formatCurrency(record.net)}</div>
+          </div>
+        </div>
+      </div>
+      <!-- Injecting extra buttons to bypass default footer limitations -->
+      <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:24px;" id="payslip-custom-footer">
+        <button class="btn btn-ghost btn-sm" style="border:1px solid var(--border);" onclick="const m = this.closest('.modal-overlay'); m.classList.remove('active'); setTimeout(()=>m.remove(),200);">Close</button>
+        <button class="btn btn-primary btn-sm" onclick="window.print()">Print</button>
+        <button class="btn btn-primary btn-sm" onclick="window.print()">Download PDF</button>
+      </div>
+    `;
+
+    if (window.VerdeModal && window.VerdeModal.confirm) {
+      window.VerdeModal.confirm({
+        title: 'Payslip',
+        body: payslipHtml,
+        confirmText: 'Dummy', 
+        cancelText: 'Dummy'
+      });
+
+      setTimeout(() => {
+        const modals = document.querySelectorAll('.modal-overlay.active');
+        if (!modals.length) return;
+        const modal = modals[modals.length - 1];
+        
+        const modalContent = modal.querySelector('.modal-content');
+        if (modalContent) {
+          modalContent.style.maxWidth = '800px';
+          modalContent.style.width = '100%';
+          
+          // Hide the default modal footer which is placed automatically by VerdeModal.confirm
+          const divs = modalContent.querySelectorAll('div');
+          const defaultFooter = divs[divs.length - 1];
+          if (defaultFooter && defaultFooter.style.justifyContent === 'flex-end') {
+            defaultFooter.style.display = 'none';
+          }
+        }
+      }, 10);
     }
   };
 
