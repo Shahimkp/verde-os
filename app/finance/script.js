@@ -132,6 +132,96 @@
       elNet.style.color = netProfit >= 0 ? 'var(--success)' : 'var(--danger)';
     }
     if (elPend) elPend.textContent = pendingInvoices;
+
+    /* ── Render Recent Transactions ── */
+    var tb = document.getElementById('dashboard-transactions-body');
+    if (tb) {
+      // 1. Read payments (we didn't read them above)
+      var payments = [];
+      try { payments = JSON.parse(localStorage.getItem('verde_finance_payments') || '[]'); } catch (e) { payments = []; }
+
+      var allTransactions = [];
+
+      // Paid Invoices
+      invoices.forEach(function (inv) {
+        if (inv.status === 'Paid') {
+          allTransactions.push({
+            date: inv.issueDate || inv.dueDate || '',
+            description: inv.invoiceNumber + ' Paid',
+            category: inv.clientName || 'Client Services',
+            type: 'Income',
+            amount: inv.total || 0,
+            status: 'Completed'
+          });
+        }
+      });
+
+      // Approved/Paid Expenses
+      expenses.forEach(function (exp) {
+        if (exp.status === 'Paid' || exp.status === 'Approved') {
+          allTransactions.push({
+            date: exp.date || '',
+            description: exp.title || 'Expense',
+            category: exp.category || 'Operations',
+            type: 'Expense',
+            amount: exp.total || 0,
+            status: exp.status === 'Paid' ? 'Completed' : 'Pending'
+          });
+        }
+      });
+
+      // Recorded Payments
+      payments.forEach(function (pay) {
+        allTransactions.push({
+          date: pay.date || '',
+          description: pay.type + ' Payment',
+          category: pay.clientVendor || 'Various',
+          type: pay.type === 'Expense' ? 'Expense' : 'Income',
+          amount: pay.amount || 0,
+          status: (pay.status === 'Completed' || pay.status === 'Paid') ? 'Completed' : 'Pending'
+        });
+      });
+
+      // Sort newest first
+      allTransactions.sort(function (a, b) {
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
+      });
+
+      if (allTransactions.length === 0) {
+        tb.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:40px; color:var(--text-3); font-weight:600; background:var(--surface);">No financial transactions available.</td></tr>';
+        var cntEl = document.getElementById('dashboard-transactions-count');
+        if (cntEl) cntEl.textContent = 'Showing 0 transactions';
+      } else {
+        var html = '';
+        var displayRows = allTransactions.slice(0, 10);
+        displayRows.forEach(function (t) {
+          var dateFmt = new Date(t.date).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: '2-digit' });
+          if (dateFmt === 'Invalid Date') dateFmt = t.date;
+
+          var typeBadge = t.type === 'Income'
+            ? '<span class="badge badge-success">Income</span>'
+            : '<span class="badge badge-danger">Expense</span>';
+
+          var statusBadge = t.status === 'Completed'
+            ? '<span class="badge badge-success">Completed</span>'
+            : '<span class="badge badge-warning">Pending</span>';
+
+          var amountStr = '\u20b9' + Number(t.amount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+          html += '<tr>' +
+            '<td style="white-space:nowrap; color:var(--text-2);">' + dateFmt + '</td>' +
+            '<td style="font-weight:700; color:var(--text-1);">' + t.description + '</td>' +
+            '<td style="color:var(--text-2);">' + t.category + '</td>' +
+            '<td>' + typeBadge + '</td>' +
+            '<td style="font-weight:800; color:var(--text-1);">' + amountStr + '</td>' +
+            '<td>' + statusBadge + '</td>' +
+          '</tr>';
+        });
+        tb.innerHTML = html;
+        var cntEl = document.getElementById('dashboard-transactions-count');
+        if (cntEl) cntEl.textContent = 'Showing 1 to ' + displayRows.length + ' of ' + allTransactions.length + ' transactions';
+      }
+    }
   };
 
   /* ── Tab Switching ── */
@@ -1095,6 +1185,7 @@
         savePayments();
         window.renderPaymentsKPI();
         window.renderPaymentsTable();
+        window.refreshDashboardKPIs && window.refreshDashboardKPIs();
         window.VerdeToast.success('Payment ' + pay.paymentId + ' recorded successfully.');
       }
     });
@@ -1770,5 +1861,255 @@
   /* ── INIT ── */
   loadExpenses();
   console.log('Expense module initialized.');
+
+})();
+
+/* ==========================================================================
+   VERDE OS — FINANCIAL REPORTS & ANALYTICS MODULE
+   ========================================================================== */
+(function () {
+  'use strict';
+
+  /* ── Helpers ── */
+  function fmtMoney(n) { return '\u20b9' + Number(n || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  function fmtDate(d) {
+    if (!d) return '\u2014';
+    return new Date(d).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: '2-digit' });
+  }
+
+  /* ── Read all data from localStorage ── */
+  function loadAll() {
+    var invoices = [], expenses = [], payments = [];
+    try { invoices = JSON.parse(localStorage.getItem('verde_finance_invoices') || '[]'); } catch (e) {}
+    try { expenses = JSON.parse(localStorage.getItem('verde_finance_expenses') || '[]'); } catch (e) {}
+    try { payments = JSON.parse(localStorage.getItem('verde_finance_payments') || '[]'); } catch (e) {}
+    return { invoices: invoices, expenses: expenses, payments: payments };
+  }
+
+  /* ── Build unified transaction rows ── */
+  function buildRows(data, filters) {
+    var rows = [];
+    var fromTs = filters.from ? new Date(filters.from).getTime() : null;
+    var toTs   = filters.to   ? new Date(filters.to + 'T23:59:59').getTime() : null;
+    function inRange(ds) {
+      if (!ds) return true;
+      var t = new Date(ds).getTime();
+      if (fromTs && t < fromTs) return false;
+      if (toTs   && t > toTs)   return false;
+      return true;
+    }
+    var tf = filters.type || '', isf = filters.invStatus || '', psf = filters.payStatus || '';
+
+    if (!tf || tf === 'Invoice') {
+      data.invoices.forEach(function (inv) {
+        if (!inRange(inv.issueDate)) return;
+        if (isf && inv.status !== isf) return;
+        rows.push({ date: inv.issueDate, type: 'Invoice', ref: inv.invoiceNumber, party: inv.clientName || '\u2014', amount: inv.total || 0, status: inv.status });
+      });
+    }
+    if (!tf || tf === 'Expense') {
+      data.expenses.forEach(function (exp) {
+        if (!inRange(exp.date)) return;
+        rows.push({ date: exp.date, type: 'Expense', ref: exp.expenseId, party: exp.vendor || '\u2014', amount: exp.total || 0, status: exp.status });
+      });
+    }
+    if (!tf || tf === 'Payment') {
+      data.payments.forEach(function (pay) {
+        if (!inRange(pay.date)) return;
+        if (psf && pay.status !== psf) return;
+        rows.push({ date: pay.date, type: 'Payment (' + pay.type + ')', ref: pay.paymentId, party: pay.clientVendor || '\u2014', amount: pay.amount || 0, status: pay.status });
+      });
+    }
+    rows.sort(function (a, b) { return new Date(b.date) - new Date(a.date); });
+    return rows;
+  }
+
+  /* ── Badges ── */
+  function statusColor(s) {
+    var m = { 'Paid':'var(--success)','Completed':'var(--success)','Approved':'var(--info)','Sent':'var(--info)','Refunded':'var(--info)','Pending':'var(--warning)','Failed':'var(--danger)','Rejected':'var(--danger)','Overdue':'var(--danger)','Draft':'var(--text-3)','Partially Paid':'var(--warning)' };
+    return m[s] || 'var(--text-3)';
+  }
+  function sBadge(s) { var c = statusColor(s); return '<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;background:color-mix(in srgb,' + c + ' 15%,transparent);color:' + c + ';">' + s + '</span>'; }
+  function tBadge(t) { var b = t.replace(/ \(.+\)/,''); var c = b==='Invoice'?'var(--primary)':b==='Expense'?'var(--danger)':'var(--text-2)'; return '<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;background:color-mix(in srgb,' + c + ' 15%,transparent);color:' + c + ';">' + t + '</span>'; }
+
+  /* ── Chart registry ── */
+  var _charts = {};
+  function destroyChart(k) { if (_charts[k]) { _charts[k].destroy(); _charts[k] = null; } }
+
+  /* ── Monthly buckets (last 6 months) ── */
+  function last6() {
+    var labels = [], keys = [], now = new Date();
+    for (var i = 5; i >= 0; i--) {
+      var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      keys.push(d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0'));
+      labels.push(d.toLocaleDateString('en-IN', { month:'short', year:'2-digit' }));
+    }
+    return { labels: labels, keys: keys };
+  }
+  function sumByMonth(items, df, af, keys) {
+    var s = {}; keys.forEach(function(k){ s[k]=0; });
+    items.forEach(function(it){ var k=(it[df]||'').substring(0,7); if(s.hasOwnProperty(k)) s[k]+=(it[af]||0); });
+    return keys.map(function(k){ return s[k]; });
+  }
+
+  /* ── Render all charts ── */
+  function renderCharts(data) {
+    var Ch = window.Chart; if (!Ch) return;
+    var st = getComputedStyle(document.documentElement);
+    var tc = (st.getPropertyValue('--text-2')||'').trim() || '#888';
+    var gc = (st.getPropertyValue('--border')||'').trim() || '#ddd';
+    var scaleOpts = { x:{ ticks:{color:tc,font:{size:11}}, grid:{color:gc} }, y:{ ticks:{color:tc,font:{size:11},callback:function(v){return '\u20b9'+Number(v).toLocaleString('en-IN');}}, grid:{color:gc} } };
+    var legOpts = { labels:{ color:tc, font:{size:11,weight:'600'} } };
+    var b = last6();
+
+    // Bar: Revenue vs Expenses
+    destroyChart('re');
+    var paidInv = data.invoices.filter(function(i){return i.status==='Paid';});
+    var nonRejExp = data.expenses.filter(function(e){return e.status!=='Rejected';});
+    var rv = sumByMonth(paidInv,'issueDate','total',b.keys);
+    var ev = sumByMonth(nonRejExp,'date','total',b.keys);
+    var c1 = document.getElementById('rpt-chart-rev-exp');
+    if (c1) _charts['re'] = new Ch(c1,{ type:'bar', data:{ labels:b.labels, datasets:[
+      { label:'Revenue', data:rv, backgroundColor:'rgba(34,197,94,0.75)', borderColor:'#22c55e', borderWidth:1, borderRadius:4 },
+      { label:'Expenses', data:ev, backgroundColor:'rgba(239,68,68,0.75)', borderColor:'#ef4444', borderWidth:1, borderRadius:4 }
+    ]}, options:{ responsive:true, maintainAspectRatio:true, plugins:{ legend:legOpts }, scales:scaleOpts } });
+
+    // Line: Monthly Profit
+    destroyChart('pr');
+    var pv = rv.map(function(r,i){return r-ev[i];});
+    var c2 = document.getElementById('rpt-chart-profit');
+    if (c2) _charts['pr'] = new Ch(c2,{ type:'line', data:{ labels:b.labels, datasets:[{
+      label:'Net Profit', data:pv, borderColor:'#6366f1', backgroundColor:'rgba(99,102,241,0.15)',
+      borderWidth:2, fill:true, tension:0.4, pointBackgroundColor:'#6366f1', pointRadius:4
+    }]}, options:{ responsive:true, maintainAspectRatio:true, plugins:{ legend:legOpts }, scales:scaleOpts } });
+
+    // Doughnut: Invoice Status
+    destroyChart('is');
+    var isl = ['Draft','Sent','Paid','Overdue','Partially Paid'];
+    var isd = isl.map(function(s){return data.invoices.filter(function(i){return i.status===s;}).length;});
+    var c3 = document.getElementById('rpt-chart-inv-status');
+    if (c3) _charts['is'] = new Ch(c3,{ type:'doughnut', data:{ labels:isl, datasets:[{data:isd, backgroundColor:['#94a3b8','#6366f1','#22c55e','#ef4444','#f59e0b'], borderWidth:0}]},
+      options:{ responsive:true, maintainAspectRatio:true, plugins:{ legend:{ position:'right', labels:{ color:tc, font:{size:11,weight:'600'}, padding:12 } } } } });
+
+    // Doughnut: Payment Status
+    destroyChart('ps');
+    var psl = ['Pending','Completed','Failed','Refunded'];
+    var psd = psl.map(function(s){return data.payments.filter(function(p){return p.status===s;}).length;});
+    var c4 = document.getElementById('rpt-chart-pay-status');
+    if (c4) _charts['ps'] = new Ch(c4,{ type:'doughnut', data:{ labels:psl, datasets:[{data:psd, backgroundColor:['#f59e0b','#22c55e','#ef4444','#6366f1'], borderWidth:0}]},
+      options:{ responsive:true, maintainAspectRatio:true, plugins:{ legend:{ position:'right', labels:{ color:tc, font:{size:11,weight:'600'}, padding:12 } } } } });
+  }
+
+  /* ── Render KPIs ── */
+  function renderKPIs(data) {
+    var rev=0, exp=0, cin=0, cout=0;
+    data.invoices.forEach(function(i){ if(i.status==='Paid') rev+=(i.total||0); });
+    data.expenses.forEach(function(e){ if(e.status!=='Rejected') exp+=(e.total||0); });
+    data.payments.forEach(function(p){ if(p.status==='Completed'){ if(p.type==='Invoice') cin+=(p.amount||0); else cout+=(p.amount||0); } });
+    var profit = rev-exp, cash = cin-cout;
+    var e1=document.getElementById('rpt-kpi-revenue'), e2=document.getElementById('rpt-kpi-expenses'), e3=document.getElementById('rpt-kpi-profit'), e4=document.getElementById('rpt-kpi-cash');
+    if(e1) e1.textContent=fmtMoney(rev);
+    if(e2) e2.textContent=fmtMoney(exp);
+    if(e3){ e3.textContent=fmtMoney(profit); e3.style.color=profit>=0?'var(--success)':'var(--danger)'; }
+    if(e4) e4.textContent=fmtMoney(cash);
+  }
+
+  /* ── Render Table ── */
+  function renderTable(rows) {
+    var tbody=document.getElementById('rpt-table-body');
+    var cnt=document.getElementById('rpt-record-count');
+    if(cnt) cnt.textContent=rows.length+' record'+(rows.length!==1?'s':'');
+    if(!tbody) return;
+    if(rows.length===0){ tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:48px 24px;color:var(--text-3);font-weight:600;">No records match the selected filters.</td></tr>'; return; }
+    var html='';
+    rows.forEach(function(r){
+      html+='<tr>'+
+        '<td style="white-space:nowrap;">'+fmtDate(r.date)+'</td>'+
+        '<td>'+tBadge(r.type)+'</td>'+
+        '<td style="font-weight:700;">'+r.ref+'</td>'+
+        '<td style="color:var(--text-2);">'+r.party+'</td>'+
+        '<td style="font-weight:800;">'+fmtMoney(r.amount)+'</td>'+
+        '<td>'+sBadge(r.status)+'</td>'+
+      '</tr>';
+    });
+    tbody.innerHTML=html;
+  }
+
+  /* ── Read Filters ── */
+  function getFilters() {
+    return { from:(document.getElementById('rpt-from')||{}).value||'', to:(document.getElementById('rpt-to')||{}).value||'',
+      invStatus:(document.getElementById('rpt-inv-status')||{}).value||'', payStatus:(document.getElementById('rpt-pay-status')||{}).value||'',
+      type:(document.getElementById('rpt-type')||{}).value||'' };
+  }
+
+  /* ── APPLY FILTERS ── */
+  window.applyReportFilters = function () {
+    var data = loadAll();
+    var rows = buildRows(data, getFilters());
+    renderKPIs(data);
+    renderTable(rows);
+    renderCharts(data);
+  };
+
+  /* ── CLEAR FILTERS ── */
+  window.clearReportFilters = function () {
+    ['rpt-from','rpt-to','rpt-inv-status','rpt-pay-status','rpt-type'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+    window.applyReportFilters();
+  };
+
+  /* ── EXPORT MODAL ── */
+  window.openDashboardExportModal = function () {
+    var body = '<div style="display:flex; flex-direction:column; gap:16px;">' +
+      '<div style="color:var(--text-2); font-size:14px;">Select a format to export your financial report:</div>' +
+      '<div style="display:flex; gap:12px; justify-content:center;">' +
+        '<button class="btn btn-primary" onclick="window.exportReportPDF(); document.querySelector(\'.modal-close-btn\').click();" style="flex:1;">&#x2193; PDF</button>' +
+        '<button class="btn btn-ghost" onclick="window.exportReportExcel(); document.querySelector(\'.modal-close-btn\').click();" style="flex:1; border:1px solid var(--border);">&#x2193; Excel</button>' +
+        '<button class="btn btn-ghost" onclick="window.exportReportCSV(); document.querySelector(\'.modal-close-btn\').click();" style="flex:1; border:1px solid var(--border);">&#x2193; CSV</button>' +
+      '</div>' +
+    '</div>';
+    
+    window.VerdeModal.confirm({
+      title: 'Export Financial Report',
+      body: body,
+      confirmText: 'Done',
+      cancelText: 'Cancel',
+      onConfirm: function () {}
+    });
+  };
+
+  /* ── EXPORT CSV ── */
+  window.exportReportCSV = function () {
+    var rows = buildRows(loadAll(), getFilters());
+    var lines = ['Date,Type,Reference,Client/Vendor,Amount,Status'];
+    rows.forEach(function(r){ lines.push([r.date,'"'+r.type+'"',r.ref,'"'+(r.party||'').replace(/"/g,'""')+'"',r.amount,r.status].join(',')); });
+    var blob = new Blob([lines.join('\n')],{type:'text/csv'});
+    var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+    a.download='verde_report_'+new Date().toISOString().split('T')[0]+'.csv'; a.click(); URL.revokeObjectURL(a.href);
+    window.VerdeToast && window.VerdeToast.success('CSV exported successfully.');
+  };
+
+  /* ── EXPORT EXCEL (TSV) ── */
+  window.exportReportExcel = function () {
+    var rows = buildRows(loadAll(), getFilters());
+    var lines = ['Date\tType\tReference\tClient/Vendor\tAmount (INR)\tStatus'];
+    rows.forEach(function(r){ lines.push([r.date,r.type,r.ref,r.party,r.amount,r.status].join('\t')); });
+    var blob = new Blob(['\uFEFF'+lines.join('\n')],{type:'application/vnd.ms-excel;charset=utf-8'});
+    var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+    a.download='verde_report_'+new Date().toISOString().split('T')[0]+'.xls'; a.click(); URL.revokeObjectURL(a.href);
+    window.VerdeToast && window.VerdeToast.success('Excel exported successfully.');
+  };
+
+  /* ── EXPORT PDF (print popup) ── */
+  window.exportReportPDF = function () {
+    var rows = buildRows(loadAll(), getFilters());
+    var trs = rows.map(function(r){
+      return '<tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">'+fmtDate(r.date)+'</td><td style="padding:6px 8px;">'+r.type+'</td><td style="padding:6px 8px;font-weight:700;">'+r.ref+'</td><td style="padding:6px 8px;">'+r.party+'</td><td style="padding:6px 8px;font-weight:800;text-align:right;">'+fmtMoney(r.amount)+'</td><td style="padding:6px 8px;">'+r.status+'</td></tr>';
+    }).join('');
+    var win=window.open('','_blank');
+    win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>VERDE OS \u2014 Financial Report</title><style>body{font-family:sans-serif;font-size:12px;color:#1e293b;padding:32px;}h1{font-size:20px;margin-bottom:4px;}p{color:#64748b;font-size:12px;margin-bottom:24px;}table{width:100%;border-collapse:collapse;}thead th{background:#f1f5f9;padding:8px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;}tr:nth-child(even){background:#f8fafc;}@media print{button{display:none!important;}}</style></head><body><div style="display:flex;justify-content:space-between;align-items:flex-start;"><div><h1>VERDE OS \u2014 Financial Report</h1><p>Generated: '+new Date().toLocaleString('en-IN')+'&nbsp;|&nbsp;'+rows.length+' records</p></div><button onclick="window.print()" style="padding:8px 16px;background:#6366f1;color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer;">Print / Save PDF</button></div><table><thead><tr><th>Date</th><th>Type</th><th>Reference</th><th>Client / Vendor</th><th style="text-align:right;">Amount</th><th>Status</th></tr></thead><tbody>'+trs+'</tbody></table></body></html>');
+    win.document.close();
+  };
+
+  console.log('Reports module initialized.');
 
 })();
