@@ -446,468 +446,461 @@
           <!-- 1. Page Header -->
           <header class="set-header">
             <div>
-              <h1 class="set-header-title">Settings</h1>
-              <div class="set-header-desc">How do I manage my account and application preferences?</div>
-            </div>
-            <div class="set-toolbar">
-              <div class="set-search">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                  style="color:var(--text-3)">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-                <input type="text" placeholder="Search settings..." />
-              </div>
+              <h1 class="set-header-title">Settings & Administration</h1>
+              <div class="set-header-desc">Configure your workspace, company details, and application preferences.</div>
             </div>
           </header>
 
-          <!-- 2. Profile Settings -->
-          <div class="set-profile-card">
-            <div class="set-profile-avatar">S</div>
-            <div class="set-profile-content">
-              <div class="set-profile-header">
-                <div>
-                  <div class="set-profile-name">Shahim KP</div>
-                  <div class="set-profile-job">Chief Executive Officer</div>
+          <!-- Tabs Navigation -->
+          <div class="set-tabs" style="display:flex; gap:24px; border-bottom:1px solid var(--border); margin-bottom:32px;">
+            <button class="set-tab active" onclick="window.switchSetTab('general')" style="padding:12px 0; border-bottom:2px solid var(--primary); font-weight:800; color:var(--text-1); background:transparent; border-top:none; border-left:none; border-right:none; cursor:pointer;">General</button>
+            <button class="set-tab" onclick="window.switchSetTab('company')" style="padding:12px 0; border-bottom:2px solid transparent; font-weight:600; color:var(--text-3); background:transparent; border-top:none; border-left:none; border-right:none; cursor:pointer; transition:color 0.2s;">Company</button>
+            <button class="set-tab" onclick="window.switchSetTab('localization')" style="padding:12px 0; border-bottom:2px solid transparent; font-weight:600; color:var(--text-3); background:transparent; border-top:none; border-left:none; border-right:none; cursor:pointer; transition:color 0.2s;">Localization</button>
+            <button class="set-tab" onclick="window.switchSetTab('appearance')" style="padding:12px 0; border-bottom:2px solid transparent; font-weight:600; color:var(--text-3); background:transparent; border-top:none; border-left:none; border-right:none; cursor:pointer; transition:color 0.2s;">Appearance</button>
+            <button class="set-tab" onclick="window.switchSetTab('security')" style="padding:12px 0; border-bottom:2px solid transparent; font-weight:600; color:var(--text-3); background:transparent; border-top:none; border-left:none; border-right:none; cursor:pointer; transition:color 0.2s;">Security</button>
+            <button class="set-tab" onclick="window.switchSetTab('backup')" style="padding:12px 0; border-bottom:2px solid transparent; font-weight:600; color:var(--text-3); background:transparent; border-top:none; border-left:none; border-right:none; cursor:pointer; transition:color 0.2s;">Backup</button>
+            <button class="set-tab" onclick="window.switchSetTab('roles')" style="padding:12px 0; border-bottom:2px solid transparent; font-weight:600; color:var(--text-3); background:transparent; border-top:none; border-left:none; border-right:none; cursor:pointer; transition:color 0.2s;">Roles & Permissions</button>
+          </div>
+
+          <!-- ═══════════ TAB: GENERAL ═══════════ -->
+          <div id="stab-general" class="set-tab-content" style="display:block; max-width:800px;">
+            <div class="set-box" style="margin-bottom:24px;">
+              <div class="set-box-header"><div class="set-box-title">Application Settings</div></div>
+              <div style="padding:24px; display:flex; flex-direction:column; gap:20px;">
+                <div><label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Application Name</label><input type="text" id="gs-app-name" class="input gs-inp" value="VERDE OS" style="width:100%; max-width:400px;"></div>
+                <div><label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Organization Name</label><input type="text" id="gs-org-name" class="input gs-inp" value="VERDE LABS" style="width:100%; max-width:400px;"></div>
+                <div><label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Default Dashboard</label>
+                  <select id="gs-dashboard" class="input gs-inp" style="width:100%; max-width:400px;">
+                    <option value="Mission Control">Mission Control</option>
+                    <option value="CRM">CRM & Sales</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Marketing">Marketing</option>
+                    <option value="Projects">Projects</option>
+                  </select>
                 </div>
-                <button class="btn btn-secondary btn-sm">Edit Profile</button>
-              </div>
-              <div class="set-profile-details">
-                <div class="set-profile-item">
-                  <svg class="set-profile-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                    <polyline points="22,6 12,13 2,6"></polyline>
-                  </svg>
-                  shahim@verdelabs.co
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; max-width:400px;">
+                  <div><label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Time Zone</label>
+                    <select id="gs-timezone" class="input gs-inp" style="width:100%;">
+                      <option value="UTC+05:30">UTC+05:30 (IST)</option>
+                      <option value="UTC+00:00">UTC+00:00 (GMT)</option>
+                      <option value="UTC-05:00">UTC-05:00 (EST)</option>
+                      <option value="UTC-08:00">UTC-08:00 (PST)</option>
+                      <option value="UTC+08:00">UTC+08:00 (CST)</option>
+                      <option value="UTC+09:00">UTC+09:00 (JST)</option>
+                    </select>
+                  </div>
+                  <div><label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Week Start Day</label>
+                    <select id="gs-weekstart" class="input gs-inp" style="width:100%;">
+                      <option value="Monday">Monday</option>
+                      <option value="Sunday">Sunday</option>
+                      <option value="Saturday">Saturday</option>
+                    </select>
+                  </div>
                 </div>
-                <div class="set-profile-item">
-                  <svg class="set-profile-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path
-                      d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
-                    </path>
-                  </svg>
-                  +1 (555) 019-2026
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; max-width:400px;">
+                  <div><label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Date Format</label>
+                    <select id="gs-dateformat" class="input gs-inp" style="width:100%;">
+                      <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                      <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                      <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                      <option value="MMM DD, YYYY">MMM DD, YYYY</option>
+                    </select>
+                  </div>
+                  <div><label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Time Format</label>
+                    <select id="gs-timeformat" class="input gs-inp" style="width:100%;">
+                      <option value="12h">12 Hour</option>
+                      <option value="24h">24 Hour</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- 3 & 5. Split Section -->
-          <section class="set-half-grid">
-
-            <!-- 3. Account & Security -->
-            <div class="set-box">
-              <div class="set-box-header">
-                <div class="set-box-title">Account & Security</div>
+          <!-- ═══════════ TAB: COMPANY ═══════════ -->
+          <div id="stab-company" class="set-tab-content" style="display:none; max-width:800px;">
+            <div class="set-box" style="margin-bottom:24px;">
+              <div class="set-box-header"><div class="set-box-title">Company Information</div></div>
+              <div style="padding:24px; display:flex; flex-direction:column; gap:20px;">
+                <div style="display:flex; align-items:center; gap:24px;">
+                  <div id="co-logo-preview" style="width:80px; height:80px; border-radius:16px; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:900; flex-shrink:0; overflow:hidden;">VL</div>
+                  <div>
+                    <label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Company Logo</label>
+                    <input type="file" id="gs-co-logo" accept="image/png,image/jpeg,image/webp" style="font-size:13px;">
+                  </div>
+                </div>
+                <div><label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Company Name</label><input type="text" id="gs-co-name" class="input gs-inp" value="VERDE LABS" style="width:100%; max-width:400px;"></div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; max-width:600px;">
+                  <div><label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Email</label><input type="email" id="gs-co-email" class="input gs-inp" value="info@verdelabs.co" style="width:100%;"></div>
+                  <div><label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Phone</label><input type="text" id="gs-co-phone" class="input gs-inp" value="+91 9876543210" style="width:100%;"></div>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; max-width:600px;">
+                  <div><label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Website</label><input type="url" id="gs-co-web" class="input gs-inp" value="https://verdelabs.co" style="width:100%;"></div>
+                  <div><label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">GST Number</label><input type="text" id="gs-co-gst" class="input gs-inp" value="" style="width:100%;" placeholder="e.g. 22AAAAA0000A1Z5"></div>
+                </div>
+                <div><label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Address</label><textarea id="gs-co-addr" class="input gs-inp" style="width:100%; max-width:600px; height:80px;"></textarea></div>
+                <div><label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Currency</label>
+                  <select id="gs-co-currency" class="input gs-inp" style="width:100%; max-width:300px;">
+                    <option value="INR">₹ INR (Indian Rupee)</option>
+                    <option value="USD">$ USD (US Dollar)</option>
+                    <option value="EUR">€ EUR (Euro)</option>
+                    <option value="GBP">£ GBP (British Pound)</option>
+                    <option value="AED">د.إ AED (UAE Dirham)</option>
+                  </select>
+                </div>
               </div>
-              <div class="set-list">
+            </div>
+          </div>
 
-                <div class="set-list-item">
-                  <div>
-                    <div class="set-list-title">Change Password</div>
-                    <div class="set-list-sub">Update your authentication credentials</div>
-                  </div>
-                  <div class="set-list-value">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2">
-                      <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
+          <!-- ═══════════ TAB: LOCALIZATION ═══════════ -->
+          <div id="stab-localization" class="set-tab-content" style="display:none; max-width:800px;">
+            <div class="set-box" style="margin-bottom:24px;">
+              <div class="set-box-header"><div class="set-box-title">Regional Settings</div></div>
+              <div style="padding:24px; display:flex; flex-direction:column; gap:20px;">
+                <div><label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Language</label>
+                  <select id="gs-loc-lang" class="input gs-inp" style="width:100%; max-width:300px;">
+                    <option value="English">English</option>
+                    <option value="Hindi">Hindi</option>
+                    <option value="Malayalam">Malayalam</option>
+                    <option value="Arabic">Arabic</option>
+                    <option value="French">French</option>
+                    <option value="Spanish">Spanish</option>
+                  </select>
+                </div>
+                <div><label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Currency</label>
+                  <select id="gs-loc-currency" class="input gs-inp" style="width:100%; max-width:300px;">
+                    <option value="INR">₹ INR</option>
+                    <option value="USD">$ USD</option>
+                    <option value="EUR">€ EUR</option>
+                    <option value="GBP">£ GBP</option>
+                    <option value="AED">د.إ AED</option>
+                  </select>
+                </div>
+                <div><label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Number Format</label>
+                  <select id="gs-loc-numfmt" class="input gs-inp" style="width:100%; max-width:300px;">
+                    <option value="1,00,000.00">Indian (1,00,000.00)</option>
+                    <option value="1,000,000.00">International (1,000,000.00)</option>
+                    <option value="1.000.000,00">European (1.000.000,00)</option>
+                  </select>
+                </div>
+                <div><label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Date Format</label>
+                  <select id="gs-loc-datefmt" class="input gs-inp" style="width:100%; max-width:300px;">
+                    <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                    <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                    <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                  </select>
+                </div>
+                <div><label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Time Zone</label>
+                  <select id="gs-loc-tz" class="input gs-inp" style="width:100%; max-width:300px;">
+                    <option value="UTC+05:30">UTC+05:30 (IST)</option>
+                    <option value="UTC+00:00">UTC+00:00 (GMT)</option>
+                    <option value="UTC-05:00">UTC-05:00 (EST)</option>
+                    <option value="UTC-08:00">UTC-08:00 (PST)</option>
+                    <option value="UTC+08:00">UTC+08:00 (CST)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══════════ TAB: APPEARANCE ═══════════ -->
+          <div id="stab-appearance" class="set-tab-content" style="display:none; max-width:800px;">
+            <div class="set-box" style="margin-bottom:24px;">
+              <div class="set-box-header"><div class="set-box-title">Visual Configuration</div></div>
+              <div style="padding:24px; display:flex; flex-direction:column; gap:24px;">
+                <div><label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Theme</label>
+                  <select id="gs-app-theme" class="input gs-inp" style="width:100%; max-width:300px;">
+                    <option value="System">System Default</option>
+                    <option value="Dark">Dark</option>
+                    <option value="Light">Light</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Primary Color</label>
+                  <div style="display:flex; gap:12px; align-items:center;">
+                    <input type="color" id="gs-app-color" class="gs-inp" value="#10b981" style="width:48px; height:36px; border:1px solid var(--border); border-radius:8px; cursor:pointer; padding:2px;">
+                    <span id="gs-color-label" style="font-size:13px; font-weight:600; color:var(--text-2);">#10b981</span>
                   </div>
                 </div>
-
-                <div class="set-list-item">
-                  <div>
-                    <div class="set-list-title">Two-Factor Authentication</div>
-                    <div class="set-list-sub">Add an extra layer of security to your account</div>
-                  </div>
-                  <div class="set-list-value" style="color:var(--success);">
-                    Enabled
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2">
-                      <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                  </div>
+                <div><label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Sidebar Style</label>
+                  <select id="gs-app-sidebar" class="input gs-inp" style="width:100%; max-width:300px;">
+                    <option value="Full">Full (Default)</option>
+                    <option value="Compact">Compact</option>
+                    <option value="Hidden">Hidden</option>
+                  </select>
                 </div>
-
-                <div class="set-list-item">
-                  <div>
-                    <div class="set-list-title">Active Login Sessions</div>
-                    <div class="set-list-sub">Manage devices logged into your account</div>
-                  </div>
-                  <div class="set-list-value">
-                    3 Devices
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2">
-                      <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                  </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; max-width:400px;">
+                  <div><div style="font-weight:700; color:var(--text-1); font-size:14px;">Compact Mode</div><div style="font-weight:500; color:var(--text-3); font-size:12px;">Reduce padding and spacing across layouts.</div></div>
+                  <label class="toggle-switch"><input type="checkbox" id="gs-app-compact" class="gs-inp"><span class="slider"></span></label>
                 </div>
-
-                <div class="set-list-item">
-                  <div>
-                    <div class="set-list-title">Recovery Email</div>
-                    <div class="set-list-sub">Fallback email for account recovery</div>
-                  </div>
-                  <div class="set-list-value">
-                    s.kp@verdelabs.co
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2">
-                      <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                  </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; max-width:400px;">
+                  <div><div style="font-weight:700; color:var(--text-1); font-size:14px;">Animations</div><div style="font-weight:500; color:var(--text-3); font-size:12px;">Enable smooth transitions and micro-animations.</div></div>
+                  <label class="toggle-switch"><input type="checkbox" id="gs-app-anims" class="gs-inp" checked><span class="slider"></span></label>
                 </div>
+              </div>
+            </div>
+          </div>
 
+          <!-- ═══════════ TAB: SECURITY ═══════════ -->
+          <div id="stab-security" class="set-tab-content" style="display:none; max-width:800px;">
+            <div class="set-box" style="margin-bottom:24px;">
+              <div class="set-box-header"><div class="set-box-title">Security Configuration</div></div>
+              <div style="padding:24px; display:flex; flex-direction:column; gap:24px;">
+                <div><label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Session Timeout (minutes)</label>
+                  <select id="gs-sec-timeout" class="input gs-inp" style="width:100%; max-width:300px;">
+                    <option value="15">15 Minutes</option>
+                    <option value="30">30 Minutes</option>
+                    <option value="60">60 Minutes</option>
+                    <option value="120">2 Hours</option>
+                    <option value="never">Never</option>
+                  </select>
+                </div>
+                <div><label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Password Policy</label>
+                  <select id="gs-sec-pwpolicy" class="input gs-inp" style="width:100%; max-width:300px;">
+                    <option value="Standard">Standard (8+ chars)</option>
+                    <option value="Strong">Strong (12+ chars, special)</option>
+                    <option value="Enterprise">Enterprise (16+ chars, MFA enforced)</option>
+                  </select>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; max-width:400px;">
+                  <div><div style="font-weight:700; color:var(--text-1); font-size:14px;">Two-Factor Authentication</div><div style="font-weight:500; color:var(--text-3); font-size:12px;">Require 2FA for all user logins.</div></div>
+                  <label class="toggle-switch"><input type="checkbox" id="gs-sec-2fa" class="gs-inp" checked><span class="slider"></span></label>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; max-width:400px;">
+                  <div><div style="font-weight:700; color:var(--text-1); font-size:14px;">Login Notifications</div><div style="font-weight:500; color:var(--text-3); font-size:12px;">Send alerts on new device logins.</div></div>
+                  <label class="toggle-switch"><input type="checkbox" id="gs-sec-loginnotif" class="gs-inp" checked><span class="slider"></span></label>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; max-width:400px;">
+                  <div><div style="font-weight:700; color:var(--text-1); font-size:14px;">Device Trust</div><div style="font-weight:500; color:var(--text-3); font-size:12px;">Remember trusted devices for 30 days.</div></div>
+                  <label class="toggle-switch"><input type="checkbox" id="gs-sec-devtrust" class="gs-inp"><span class="slider"></span></label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══════════ TAB: BACKUP ═══════════ -->
+          <div id="stab-backup" class="set-tab-content" style="display:none; max-width:800px;">
+            <div class="set-box" style="margin-bottom:24px;">
+              <div class="set-box-header"><div class="set-box-title">Backup & Restore</div></div>
+              <div style="padding:24px; display:flex; flex-direction:column; gap:24px;">
+                <div style="border:1px solid var(--border); border-radius:12px; padding:20px; display:flex; justify-content:space-between; align-items:center;">
+                  <div><div style="font-weight:700; color:var(--text-1); font-size:14px;">Export Settings</div><div style="font-weight:500; color:var(--text-3); font-size:12px; margin-top:4px;">Download all Settings & Administration configurations as a JSON file.</div></div>
+                  <button class="btn btn-primary" onclick="window.exportAppSettings()">Export</button>
+                </div>
+                <div style="border:1px solid var(--border); border-radius:12px; padding:20px; display:flex; justify-content:space-between; align-items:center;">
+                  <div><div style="font-weight:700; color:var(--text-1); font-size:14px;">Import Settings</div><div style="font-weight:500; color:var(--text-3); font-size:12px; margin-top:4px;">Restore settings from a previously exported JSON file.</div></div>
+                  <div><input type="file" id="gs-import-file" accept=".json" style="display:none;" onchange="window.importAppSettings(event)"><button class="btn btn-secondary" onclick="document.getElementById('gs-import-file').click()">Import</button></div>
+                </div>
+                <div style="border:1px solid var(--danger-10); border-radius:12px; padding:20px; display:flex; justify-content:space-between; align-items:center;">
+                  <div><div style="font-weight:700; color:var(--danger); font-size:14px;">Reset Settings</div><div style="font-weight:500; color:var(--text-3); font-size:12px; margin-top:4px;">Reset all administration settings to their default factory values. This cannot be undone.</div></div>
+                  <button class="btn btn-ghost" style="color:var(--danger); border:1px solid var(--danger-10); background:var(--danger-10);" onclick="window.resetAppSettings()">Reset</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- ═══════════ TAB: ROLES & PERMISSIONS ═══════════ -->
+          <div id="stab-roles" class="set-tab-content" style="display:none; max-width:1000px;">
+            
+            <div id="roles-list-view">
+            <!-- SECTION 1: ROLE MANAGEMENT -->
+            <div class="set-box" style="margin-bottom:32px;">
+              <div class="set-box-header" style="display:flex; justify-content:space-between; align-items:center;">
+                <div class="set-box-title">Role Management</div>
+                <div style="display:flex; gap:12px;">
+                  <div style="position:relative;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-3);">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="role-search" class="input" placeholder="Search roles..." style="padding-left:36px; width:200px; font-size:13px;" oninput="window.renderRolesTable()">
+                  </div>
+                  <select id="role-filter" class="input" style="font-size:13px; width:120px;" onchange="window.renderRolesTable()">
+                    <option value="All">All Status</option>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                  </select>
+                  <button class="btn btn-primary" onclick="window.openRoleEditor()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Create Role
+                  </button>
+                </div>
+              </div>
+              
+              <div style="width:100%; overflow-x:auto;">
+                <table class="verde-table" style="width:100%; text-align:left; border-collapse:collapse;">
+                  <thead>
+                    <tr style="border-bottom:1px solid var(--border);">
+                      <th style="padding:16px; font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px;">Role Name</th>
+                      <th style="padding:16px; font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px;">Description</th>
+                      <th style="padding:16px; font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px;">Status</th>
+                      <th style="padding:16px; font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; width:60px;"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="roles-table-body">
+                    <!-- Dynamic -->
+                  </tbody>
+                </table>
               </div>
             </div>
 
-            <!-- 5. Appearance -->
-            <div class="set-box">
-              <div class="set-box-header">
-                <div class="set-box-title">Appearance</div>
+            <!-- SECTION 2: USER ROLE ASSIGNMENT -->
+            <div class="set-box" style="margin-bottom:32px;">
+              <div class="set-box-header" style="display:flex; justify-content:space-between; align-items:center;">
+                <div class="set-box-title">User Role Assignment</div>
+                <div style="display:flex; gap:12px;">
+                  <div style="position:relative;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-3);">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="user-role-search" class="input" placeholder="Search users..." style="padding-left:36px; width:200px; font-size:13px;" oninput="window.renderUserRolesTable()">
+                  </div>
+                  <select id="user-role-filter" class="input" style="font-size:13px; width:150px;" onchange="window.renderUserRolesTable()">
+                    <option value="All">All Roles</option>
+                    <!-- Populated dynamically -->
+                  </select>
+                  <button class="btn btn-secondary" onclick="window.openAssignModal()">Assign Role</button>
+                </div>
               </div>
-              <div class="set-list">
-
-                <div class="set-list-item">
-                  <div>
-                    <div class="set-list-title">Theme</div>
-                    <div class="set-list-sub">Select your interface color scheme</div>
-                  </div>
-                  <div class="set-list-value">
-                    System Default
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2">
-                      <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                  </div>
-                </div>
-
-                <div class="set-list-item">
-                  <div>
-                    <div class="set-list-title">Font Size</div>
-                    <div class="set-list-sub">Adjust text scale across VERDE OS</div>
-                  </div>
-                  <div class="set-list-value">
-                    Medium (Default)
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2">
-                      <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                  </div>
-                </div>
-
-                <div class="set-list-item">
-                  <div>
-                    <div class="set-list-title">Compact Mode</div>
-                    <div class="set-list-sub">Reduce padding and spacing in lists</div>
-                  </div>
-                  <div class="set-list-value">
-                    <label class="toggle-switch">
-                      <input type="checkbox">
-                      <span class="slider"></span>
-                    </label>
-                  </div>
-                </div>
-
-                <div class="set-list-item">
-                  <div>
-                    <div class="set-list-title">Accent Color</div>
-                    <div class="set-list-sub">Customize primary brand highlights</div>
-                  </div>
-                  <div class="set-list-value">
-                    <span
-                      style="width:16px;height:16px;background:var(--primary);border-radius:50%;display:inline-block;margin-right:8px;"></span>
-                    VERDE Green
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2">
-                      <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                  </div>
-                </div>
-
+              
+              <div style="width:100%; overflow-x:auto;">
+                <table class="verde-table" style="width:100%; text-align:left; border-collapse:collapse;">
+                  <thead>
+                    <tr style="border-bottom:1px solid var(--border);">
+                      <th style="padding:16px; font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px;">Employee</th>
+                      <th style="padding:16px; font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px;">Assigned Role</th>
+                      <th style="padding:16px; font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px;">Assigned Date</th>
+                      <th style="padding:16px; font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px;">Status</th>
+                      <th style="padding:16px; font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; width:60px;"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="user-roles-table-body">
+                    <!-- Dynamic -->
+                  </tbody>
+                </table>
               </div>
             </div>
 
-          </section>
+          </div>
 
-          <!-- 4. Notifications -->
-          <section class="set-section">
-            <div class="set-section-header">
-              <h2 class="set-section-title">Notifications</h2>
-            </div>
-            <div class="set-notif-grid">
+          
+          </div> <!-- End roles-list-view -->
 
-              <div class="set-notif-card">
-                <div class="set-notif-info">
-                  <div class="set-notif-title">Email Notifications</div>
-                  <div class="set-notif-desc">Receive daily summaries and critical alerts via email</div>
-                </div>
-                <label class="toggle-switch">
-                  <input type="checkbox" checked>
-                  <span class="slider"></span>
-                </label>
-              </div>
-
-              <div class="set-notif-card">
-                <div class="set-notif-info">
-                  <div class="set-notif-title">Push Notifications</div>
-                  <div class="set-notif-desc">Real-time alerts on your desktop and mobile devices</div>
-                </div>
-                <label class="toggle-switch">
-                  <input type="checkbox" checked>
-                  <span class="slider"></span>
-                </label>
-              </div>
-
-              <div class="set-notif-card">
-                <div class="set-notif-info">
-                  <div class="set-notif-title">Task Alerts</div>
-                  <div class="set-notif-desc">Updates when you are assigned or mentioned in a task</div>
-                </div>
-                <label class="toggle-switch">
-                  <input type="checkbox" checked>
-                  <span class="slider"></span>
-                </label>
-              </div>
-
-              <div class="set-notif-card">
-                <div class="set-notif-info">
-                  <div class="set-notif-title">Meeting Reminders</div>
-                  <div class="set-notif-desc">Get notified 15 minutes before scheduled meetings</div>
-                </div>
-                <label class="toggle-switch">
-                  <input type="checkbox" checked>
-                  <span class="slider"></span>
-                </label>
-              </div>
-
-              <div class="set-notif-card">
-                <div class="set-notif-info">
-                  <div class="set-notif-title">Marketing Updates</div>
-                  <div class="set-notif-desc">Product announcements and promotional offers</div>
-                </div>
-                <label class="toggle-switch">
-                  <input type="checkbox">
-                  <span class="slider"></span>
-                </label>
-              </div>
-
-            </div>
-          </section>
-
-          <!-- 6 & 7. Split Section (Language & Privacy) -->
-          <section class="set-half-grid">
-
-            <!-- 6. Language & Region -->
-            <div class="set-box">
-              <div class="set-box-header">
-                <div class="set-box-title">Language & Region</div>
-              </div>
-              <div class="set-list">
-
-                <div class="set-list-item">
-                  <div>
-                    <div class="set-list-title">Language</div>
-                    <div class="set-list-sub">Your personal display language</div>
-                  </div>
-                  <div class="set-list-value">
-                    English (US)
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2">
-                      <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                  </div>
-                </div>
-
-                <div class="set-list-item">
-                  <div>
-                    <div class="set-list-title">Time Zone</div>
-                    <div class="set-list-sub">Local time zone for events and tasks</div>
-                  </div>
-                  <div class="set-list-value">
-                    UTC-08:00 (Pacific)
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2">
-                      <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                  </div>
-                </div>
-
-                <div class="set-list-item">
-                  <div>
-                    <div class="set-list-title">Date Format</div>
-                    <div class="set-list-sub">How dates appear in your UI</div>
-                  </div>
-                  <div class="set-list-value">
-                    MMM DD, YYYY
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2">
-                      <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                  </div>
-                </div>
-
-                <div class="set-list-item">
-                  <div>
-                    <div class="set-list-title">Currency</div>
-                    <div class="set-list-sub">Preferred currency for financial data</div>
-                  </div>
-                  <div class="set-list-value">
-                    INR (₹)
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2">
-                      <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                  </div>
-                </div>
-
+          <!-- ROLE EDITOR VIEW -->
+          <div id="roles-editor-view" style="display:none; max-width:1000px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid var(--border);">
+              <div style="display:flex; align-items:center; gap:16px;">
+                <button class="btn btn-ghost" onclick="window.closeRoleEditor()" style="padding:8px; color:var(--text-2);">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                </button>
+                <h3 id="role-editor-title" style="font-size:20px; font-weight:800; color:var(--text-1); margin:0;">Create Role</h3>
               </div>
             </div>
 
-            <!-- 7. Privacy -->
-            <div class="set-box">
-              <div class="set-box-header">
-                <div class="set-box-title">Privacy & Data</div>
-              </div>
-              <div class="set-list">
-
-                <div class="set-list-item">
+            <div class="set-box" style="margin-bottom:32px;">
+              <div class="set-box-header"><div class="set-box-title">Role Information</div></div>
+              <div style="padding:24px;">
+                <input type="hidden" id="role-id">
+                
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:24px;">
                   <div>
-                    <div class="set-list-title">Privacy Preferences</div>
-                    <div class="set-list-sub">Manage data sharing and telemetry</div>
+                    <label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Role Name *</label>
+                    <input type="text" id="role-name" class="input" style="width:100%;">
                   </div>
-                  <div class="set-list-value">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2">
-                      <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
+                  <div>
+                    <label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Status</label>
+                    <select id="role-status" class="input" style="width:100%;">
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                    </select>
                   </div>
                 </div>
 
-                <div class="set-list-item">
-                  <div>
-                    <div class="set-list-title">Download My Data</div>
-                    <div class="set-list-sub">Request an archive of your personal information</div>
-                  </div>
-                  <div class="set-list-value">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2">
-                      <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                  </div>
+                <div>
+                  <label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Description</label>
+                  <input type="text" id="role-desc" class="input" style="width:100%;">
                 </div>
-
-                <div class="set-list-item">
-                  <div>
-                    <div class="set-list-title">Export Account</div>
-                    <div class="set-list-sub">Transfer your data to another workspace</div>
-                  </div>
-                  <div class="set-list-value">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2">
-                      <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                  </div>
-                </div>
-
-                <div class="set-list-item">
-                  <div>
-                    <div class="set-list-title danger">Delete Account</div>
-                    <div class="set-list-sub">Permanently remove your account and data</div>
-                  </div>
-                  <div class="set-list-value">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2">
-                      <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                  </div>
-                </div>
-
               </div>
             </div>
 
-          </section>
-
-          <!-- 8. Connected Devices -->
-          <section class="set-section">
-            <div class="set-box">
-              <div class="set-box-header">
-                <div class="set-box-title">Connected Devices</div>
-                <button class="btn btn-secondary btn-sm">Sign Out All Other Devices</button>
+            <div class="set-box" style="margin-bottom:120px;">
+              <div class="set-box-header"><div class="set-box-title">Permission Matrix</div></div>
+              <div style="width:100%; overflow-x:auto;">
+                <table style="width:100%; border-collapse:collapse; text-align:center;">
+                  <thead style="position:sticky; top:0; background:var(--bg-2); border-bottom:1px solid var(--border); z-index:10; box-shadow:0 1px 0 var(--border);">
+                    <tr>
+                      <th style="padding:16px; text-align:left; font-size:12px; font-weight:700; color:var(--text-2); text-transform:uppercase; letter-spacing:0.5px;">Module</th>
+                      <th style="padding:16px; font-size:12px; font-weight:700; color:var(--text-2); text-transform:uppercase; letter-spacing:0.5px;">View</th>
+                      <th style="padding:16px; font-size:12px; font-weight:700; color:var(--text-2); text-transform:uppercase; letter-spacing:0.5px;">Create</th>
+                      <th style="padding:16px; font-size:12px; font-weight:700; color:var(--text-2); text-transform:uppercase; letter-spacing:0.5px;">Edit</th>
+                      <th style="padding:16px; font-size:12px; font-weight:700; color:var(--text-2); text-transform:uppercase; letter-spacing:0.5px;">Delete</th>
+                      <th style="padding:16px; font-size:12px; font-weight:700; color:var(--text-2); text-transform:uppercase; letter-spacing:0.5px;">Export</th>
+                      <th style="padding:16px; font-size:12px; font-weight:700; color:var(--text-2); text-transform:uppercase; letter-spacing:0.5px;">Manage</th>
+                    </tr>
+                  </thead>
+                  <tbody id="role-matrix-body">
+                    <!-- Dynamic -->
+                  </tbody>
+                </table>
               </div>
-              <table class="set-table">
-                <thead>
-                  <tr>
-                    <th>Device</th>
-                    <th>Browser</th>
-                    <th>Location</th>
-                    <th>Last Active</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <div class="set-device-name">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                          stroke="currentColor" stroke-width="2" style="color:var(--text-3);">
-                          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                          <line x1="8" y1="21" x2="16" y2="21"></line>
-                          <line x1="12" y1="17" x2="12" y2="21"></line>
-                        </svg>
-                        MacBook Pro 16"
-                      </div>
-                    </td>
-                    <td>Chrome 118.0</td>
-                    <td>San Francisco, CA</td>
-                    <td>Just now</td>
-                    <td><span class="badge badge-success">Active Now</span></td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="set-device-name">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                          stroke="currentColor" stroke-width="2" style="color:var(--text-3);">
-                          <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
-                          <line x1="12" y1="18" x2="12.01" y2="18"></line>
-                        </svg>
-                        iPhone 15 Pro
-                      </div>
-                    </td>
-                    <td>Safari Mobile</td>
-                    <td>San Francisco, CA</td>
-                    <td>2 hours ago</td>
-                    <td><span class="badge badge-neutral">Offline</span></td>
-                    <td><button class="btn btn-ghost btn-sm" style="color:var(--danger); padding:0;">Logout</button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="set-device-name">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                          stroke="currentColor" stroke-width="2" style="color:var(--text-3);">
-                          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                          <line x1="8" y1="21" x2="16" y2="21"></line>
-                          <line x1="12" y1="17" x2="12" y2="21"></line>
-                        </svg>
-                        Windows Desktop
-                      </div>
-                    </td>
-                    <td>Edge 117.0</td>
-                    <td>New York, NY</td>
-                    <td>Oct 12, 2026</td>
-                    <td><span class="badge badge-neutral">Offline</span></td>
-                    <td><button class="btn btn-ghost btn-sm" style="color:var(--danger); padding:0;">Logout</button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
             </div>
-          </section>
+
+            <!-- Sticky Bottom Action Bar -->
+            <div style="position:fixed; bottom:0; left:260px; right:0; background:var(--bg-1); border-top:1px solid var(--border); padding:16px 32px; display:flex; justify-content:flex-end; gap:16px; z-index:100; box-shadow:0 -4px 12px rgba(0,0,0,0.05);">
+              <button class="btn btn-ghost" onclick="window.closeRoleEditor()">Cancel</button>
+              <button class="btn btn-primary" onclick="window.saveRole()">Save Role</button>
+            </div>
+          </div>
+
+          <!-- ASSIGN MODAL -->
+          <div id="assign-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+            <div style="background:var(--bg-1); width:100%; max-width:480px; border-radius:16px; box-shadow:0 24px 48px rgba(0,0,0,0.2); display:flex; flex-direction:column; animation:scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); height:500px; max-height:90vh; overflow:hidden;">
+              
+              <div style="padding:20px 24px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-shrink:0;">
+                <h3 id="assign-modal-title" style="font-size:18px; font-weight:800; color:var(--text-1); margin:0;">Assign Role</h3>
+                <button onclick="document.getElementById('assign-modal').style.display='none'" style="background:none; border:none; color:var(--text-3); cursor:pointer; padding:4px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+              </div>
+
+              <div style="padding:24px; flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:20px;">
+                <input type="hidden" id="assign-id">
+                
+                <div>
+                  <label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Employee</label>
+                  <select id="assign-employee" class="input" style="width:100%;">
+                    <!-- Dynamic -->
+                  </select>
+                </div>
+
+                <div>
+                  <label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Role</label>
+                  <select id="assign-role" class="input" style="width:100%;">
+                    <!-- Dynamic -->
+                  </select>
+                </div>
+
+                <div>
+                  <label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Status</label>
+                  <select id="assign-status" class="input" style="width:100%;">
+                    <option value="Active">Active</option>
+                    <option value="Suspended">Suspended</option>
+                  </select>
+                </div>
+
+              </div>
+
+              <div style="padding:20px 24px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:12px; background:var(--bg-2); flex-shrink:0;">
+                <button class="btn btn-ghost" onclick="document.getElementById('assign-modal').style.display='none'">Cancel</button>
+                <button class="btn btn-primary" onclick="window.saveUserRole()">Save Assignment</button>
+              </div>
+            </div>
+          </div>
 
         </div>
       </main>
@@ -929,6 +922,7 @@
   <script src="../assets/js/components.js"></script>
   <script src="../assets/js/navigation.js"></script>
   <script src="../assets/js/app.js"></script>
+  <script src="./settings.js"></script>
 </body>
 
 </html>
