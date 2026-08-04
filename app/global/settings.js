@@ -719,3 +719,324 @@
 
 
 })();
+
+
+// ==========================================
+// NOTIFICATIONS MODULE
+// ==========================================
+
+const NOTIF_STORAGE_KEY = 'verde_admin_notifications';
+
+let notifData = JSON.parse(localStorage.getItem(NOTIF_STORAGE_KEY));
+if (!notifData) {
+  notifData = {
+    templates: [
+      { id: "NT-001", title: "System Alert", category: "System", message: "A system event has occurred.", priority: "High", status: "Active" },
+      { id: "NT-002", title: "Welcome Onboard", category: "Onboarding", message: "Welcome to VERDE OS!", priority: "Medium", status: "Active" }
+    ],
+    channels: [
+      { name: "Email", enabled: true, isDefault: true },
+      { name: "In-App", enabled: true, isDefault: true },
+      { name: "SMS", enabled: false, isDefault: false },
+      { name: "Push", enabled: false, isDefault: false },
+      { name: "Webhook", enabled: false, isDefault: false }
+    ],
+    events: [
+      { name: "New Lead", enabled: true },
+      { name: "Project Created", enabled: true },
+      { name: "Task Assigned", enabled: true },
+      { name: "Task Completed", enabled: false },
+      { name: "Leave Request", enabled: true },
+      { name: "Payroll Generated", enabled: true },
+      { name: "Invoice Paid", enabled: true },
+      { name: "Expense Added", enabled: true },
+      { name: "Campaign Published", enabled: true },
+      { name: "AI Workflow Finished", enabled: true },
+      { name: "Settings Changed", enabled: false },
+      { name: "Role Changed", enabled: false },
+      { name: "Permission Changed", enabled: false },
+      { name: "System Backup", enabled: true }
+    ],
+    deliveryRule: "Instant",
+    history: [
+      { id: "NH-001", date: "2026-08-04", title: "System Backup Complete", recipient: "Admin User", channel: "Email", priority: "Low", status: "Sent" },
+      { id: "NH-002", date: "2026-08-03", title: "New Lead Assigned", recipient: "Sales Team", channel: "In-App", priority: "Medium", status: "Sent" },
+      { id: "NH-003", date: "2026-08-02", title: "Failed Login Attempt", recipient: "Admin User", channel: "Email", priority: "Critical", status: "Pending" }
+    ]
+  };
+  localStorage.setItem(NOTIF_STORAGE_KEY, JSON.stringify(notifData));
+}
+
+function saveNotifData() {
+  localStorage.setItem(NOTIF_STORAGE_KEY, JSON.stringify(notifData));
+}
+
+// ------------------------------------------
+// NOTIFICATION TEMPLATES
+// ------------------------------------------
+window.renderNotifTemplates = function() {
+  const tbody = document.getElementById('notif-templates-body');
+  if (!tbody) return;
+  let html = '';
+  if (notifData.templates.length === 0) {
+    html = `<tr><td colspan="5" style="padding:24px; text-align:center; color:var(--text-3);">No templates found.</td></tr>`;
+  } else {
+    notifData.templates.forEach(t => {
+      let badgeColor = 'var(--primary)';
+      if (t.priority === 'Critical') badgeColor = '#ff4d4f';
+      if (t.priority === 'High') badgeColor = '#faad14';
+      if (t.priority === 'Low') badgeColor = 'var(--text-3)';
+      
+      let statusColor = t.status === 'Active' ? '#52c41a' : 'var(--text-3)';
+
+      html += `
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:16px; font-size:13px; font-weight:600; color:var(--text-1);">${t.title}</td>
+          <td style="padding:16px; font-size:13px; color:var(--text-2);">${t.category}</td>
+          <td style="padding:16px; font-size:13px;"><span style="background:${badgeColor}20; color:${badgeColor}; padding:4px 8px; border-radius:4px; font-weight:700; font-size:11px;">${t.priority}</span></td>
+          <td style="padding:16px; font-size:13px;"><span style="color:${statusColor}; font-weight:600;">${t.status}</span></td>
+          <td style="padding:16px; position:relative; text-align:right;">
+            <button class="btn btn-ghost" onclick="window.toggleActionMenu(event, 'notif-tpl-action-${t.id}')" style="padding:4px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
+            </button>
+            <div id="notif-tpl-action-${t.id}" class="action-menu" style="display:none; position:fixed; background:var(--bg-1); border:1px solid var(--border); border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.1); padding:8px; z-index:99999; width:140px; text-align:left;">
+              <div class="action-item" onclick="window.openNotifTemplateModal('${t.id}')">Edit</div>
+              <div class="action-item" onclick="window.openNotifTemplateModal('${t.id}', true)">Duplicate</div>
+              <div class="action-item" style="color:#ff4d4f;" onclick="window.deleteNotifTemplate('${t.id}')">Delete</div>
+            </div>
+          </td>
+        </tr>
+      `;
+    });
+  }
+  tbody.innerHTML = html;
+};
+
+window.openNotifTemplateModal = function(id = null, duplicate = false) {
+  const modal = document.getElementById('notif-template-modal');
+  if (!modal) return;
+  document.getElementById('notif-template-modal-title').innerText = id && !duplicate ? 'Edit Template' : 'Create Template';
+  
+  if (id) {
+    const t = notifData.templates.find(x => x.id === id);
+    if (t) {
+      document.getElementById('notif-tpl-id').value = duplicate ? '' : t.id;
+      document.getElementById('notif-tpl-title').value = t.title + (duplicate ? ' (Copy)' : '');
+      document.getElementById('notif-tpl-category').value = t.category;
+      document.getElementById('notif-tpl-status').value = t.status;
+      document.getElementById('notif-tpl-priority').value = t.priority;
+      document.getElementById('notif-tpl-message').value = t.message;
+    }
+  } else {
+    document.getElementById('notif-tpl-id').value = '';
+    document.getElementById('notif-tpl-title').value = '';
+    document.getElementById('notif-tpl-category').value = '';
+    document.getElementById('notif-tpl-status').value = 'Active';
+    document.getElementById('notif-tpl-priority').value = 'Medium';
+    document.getElementById('notif-tpl-message').value = '';
+  }
+  modal.style.display = 'flex';
+};
+
+window.saveNotifTemplate = function() {
+  const id = document.getElementById('notif-tpl-id').value;
+  const title = document.getElementById('notif-tpl-title').value.trim();
+  const category = document.getElementById('notif-tpl-category').value.trim();
+  const status = document.getElementById('notif-tpl-status').value;
+  const priority = document.getElementById('notif-tpl-priority').value;
+  const message = document.getElementById('notif-tpl-message').value.trim();
+
+  if (!title) {
+    if (window.VerdeToast) window.VerdeToast.show('Title is required.', 'error');
+    return;
+  }
+
+  if (id) {
+    const idx = notifData.templates.findIndex(x => x.id === id);
+    if (idx !== -1) {
+      notifData.templates[idx] = { id, title, category, status, priority, message };
+    }
+  } else {
+    const newId = 'NT-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+    notifData.templates.push({ id: newId, title, category, status, priority, message });
+  }
+
+  saveNotifData();
+  window.renderNotifTemplates();
+  document.getElementById('notif-template-modal').style.display = 'none';
+  if (window.VerdeToast) window.VerdeToast.show('Template saved.', 'success');
+};
+
+window.deleteNotifTemplate = function(id) {
+  if (window.VerdeModal && window.VerdeModal.confirm) {
+    window.VerdeModal.confirm('Delete Template', 'Are you sure you want to delete this template?', () => {
+      notifData.templates = notifData.templates.filter(x => x.id !== id);
+      saveNotifData();
+      window.renderNotifTemplates();
+      if (window.VerdeToast) window.VerdeToast.show('Template deleted.', 'success');
+    });
+  } else {
+    if(confirm("Are you sure?")) {
+      notifData.templates = notifData.templates.filter(x => x.id !== id);
+      saveNotifData();
+      window.renderNotifTemplates();
+    }
+  }
+};
+
+// ------------------------------------------
+// CHANNELS & EVENTS
+// ------------------------------------------
+window.renderNotifChannels = function() {
+  const cont = document.getElementById('notif-channels-body');
+  if (!cont) return;
+  let html = `<div style="display:flex; flex-direction:column; gap:16px;">`;
+  notifData.channels.forEach((c, idx) => {
+    html += `
+      <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:12px; border-bottom:1px solid var(--border-light);">
+        <div style="font-size:13px; font-weight:600; color:var(--text-1);">${c.name}</div>
+        <div style="display:flex; gap:24px;">
+          <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-2); cursor:pointer;">
+            <input type="checkbox" onchange="window.updateChannel(${idx}, 'enabled', this.checked)" ${c.enabled ? 'checked' : ''}>
+            Enabled
+          </label>
+          <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-2); cursor:pointer;">
+            <input type="checkbox" onchange="window.updateChannel(${idx}, 'isDefault', this.checked)" ${c.isDefault ? 'checked' : ''}>
+            Default
+          </label>
+        </div>
+      </div>
+    `;
+  });
+  html += `</div>`;
+  cont.innerHTML = html;
+};
+
+window.updateChannel = function(idx, field, val) {
+  notifData.channels[idx][field] = val;
+  saveNotifData();
+  if (window.VerdeToast) window.VerdeToast.show('Channel settings updated.', 'success');
+};
+
+window.renderNotifEvents = function() {
+  const cont = document.getElementById('notif-events-body');
+  if (!cont) return;
+  let html = `<div style="display:flex; flex-direction:column; gap:12px; max-height:400px; overflow-y:auto; padding-right:8px;">`;
+  notifData.events.forEach((e, idx) => {
+    html += `
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div style="font-size:13px; font-weight:600; color:var(--text-2);">${e.name}</div>
+        <label style="display:flex; align-items:center; cursor:pointer;">
+          <input type="checkbox" onchange="window.updateEvent(${idx}, this.checked)" ${e.enabled ? 'checked' : ''}>
+        </label>
+      </div>
+    `;
+  });
+  html += `</div>`;
+  cont.innerHTML = html;
+};
+
+window.updateEvent = function(idx, val) {
+  notifData.events[idx].enabled = val;
+  saveNotifData();
+  if (window.VerdeToast) window.VerdeToast.show('Event settings updated.', 'success');
+};
+
+// ------------------------------------------
+// DELIVERY RULES
+// ------------------------------------------
+window.renderNotifDelivery = function() {
+  const radios = document.getElementsByName('notif-delivery');
+  radios.forEach(r => {
+    if (r.value === notifData.deliveryRule) {
+      r.checked = true;
+    }
+  });
+};
+
+window.saveNotifDelivery = function() {
+  const radios = document.getElementsByName('notif-delivery');
+  let val = 'Instant';
+  radios.forEach(r => { if(r.checked) val = r.value; });
+  notifData.deliveryRule = val;
+  saveNotifData();
+  if (window.VerdeToast) window.VerdeToast.show('Delivery rule updated.', 'success');
+};
+
+// ------------------------------------------
+// NOTIFICATION HISTORY
+// ------------------------------------------
+window.renderNotifHistory = function() {
+  const tbody = document.getElementById('notif-hist-body');
+  if (!tbody) return;
+  
+  const search = (document.getElementById('notif-hist-search')?.value || '').toLowerCase();
+  const pri = document.getElementById('notif-hist-filter-pri')?.value || 'All';
+  const stat = document.getElementById('notif-hist-filter-stat')?.value || 'All';
+  const chan = document.getElementById('notif-hist-filter-chan')?.value || 'All';
+
+  let filtered = notifData.history.filter(h => {
+    if (search && !h.title.toLowerCase().includes(search) && !h.recipient.toLowerCase().includes(search)) return false;
+    if (pri !== 'All' && h.priority !== pri) return false;
+    if (stat !== 'All' && h.status !== stat) return false;
+    if (chan !== 'All' && h.channel !== chan) return false;
+    return true;
+  });
+
+  let html = '';
+  if (filtered.length === 0) {
+    html = `<tr><td colspan="7" style="padding:24px; text-align:center; color:var(--text-3);">No history found.</td></tr>`;
+  } else {
+    filtered.forEach(h => {
+      let badgeColor = 'var(--primary)';
+      if (h.priority === 'Critical') badgeColor = '#ff4d4f';
+      if (h.priority === 'High') badgeColor = '#faad14';
+      if (h.priority === 'Low') badgeColor = 'var(--text-3)';
+      
+      let statusColor = h.status === 'Sent' ? '#52c41a' : (h.status === 'Failed' ? '#ff4d4f' : '#faad14');
+
+      html += `
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:16px; font-size:13px; color:var(--text-2);">${h.date}</td>
+          <td style="padding:16px; font-size:13px; font-weight:600; color:var(--text-1);">${h.title}</td>
+          <td style="padding:16px; font-size:13px; color:var(--text-2);">${h.recipient}</td>
+          <td style="padding:16px; font-size:13px; color:var(--text-2);">${h.channel}</td>
+          <td style="padding:16px; font-size:13px;"><span style="background:${badgeColor}20; color:${badgeColor}; padding:4px 8px; border-radius:4px; font-weight:700; font-size:11px;">${h.priority}</span></td>
+          <td style="padding:16px; font-size:13px;"><span style="color:${statusColor}; font-weight:600;">${h.status}</span></td>
+          <td style="padding:16px; position:relative; text-align:right;">
+            <button class="btn btn-ghost" onclick="window.toggleActionMenu(event, 'notif-hist-action-${h.id}')" style="padding:4px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
+            </button>
+            <div id="notif-hist-action-${h.id}" class="action-menu" style="display:none; position:fixed; background:var(--bg-1); border:1px solid var(--border); border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.1); padding:8px; z-index:99999; width:120px; text-align:left;">
+              <div class="action-item" onclick="if(window.VerdeToast) window.VerdeToast.show('Viewing details...', 'info');">View</div>
+              <div class="action-item" onclick="window.resendNotifHistory('${h.id}')">Resend</div>
+              <div class="action-item" style="color:#ff4d4f;" onclick="window.deleteNotifHistory('${h.id}')">Delete</div>
+            </div>
+          </td>
+        </tr>
+      `;
+    });
+  }
+  tbody.innerHTML = html;
+};
+
+window.resendNotifHistory = function(id) {
+  if (window.VerdeToast) window.VerdeToast.show('Notification resent.', 'success');
+};
+
+window.deleteNotifHistory = function(id) {
+  if (window.VerdeModal && window.VerdeModal.confirm) {
+    window.VerdeModal.confirm('Delete History', 'Are you sure you want to delete this record?', () => {
+      notifData.history = notifData.history.filter(x => x.id !== id);
+      saveNotifData();
+      window.renderNotifHistory();
+      if (window.VerdeToast) window.VerdeToast.show('Record deleted.', 'success');
+    });
+  } else {
+    if(confirm("Are you sure?")) {
+      notifData.history = notifData.history.filter(x => x.id !== id);
+      saveNotifData();
+      window.renderNotifHistory();
+    }
+  }
+};

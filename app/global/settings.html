@@ -460,6 +460,7 @@
             <button class="set-tab" onclick="window.switchSetTab('security')" style="padding:12px 0; border-bottom:2px solid transparent; font-weight:600; color:var(--text-3); background:transparent; border-top:none; border-left:none; border-right:none; cursor:pointer; transition:color 0.2s;">Security</button>
             <button class="set-tab" onclick="window.switchSetTab('backup')" style="padding:12px 0; border-bottom:2px solid transparent; font-weight:600; color:var(--text-3); background:transparent; border-top:none; border-left:none; border-right:none; cursor:pointer; transition:color 0.2s;">Backup</button>
             <button class="set-tab" onclick="window.switchSetTab('roles')" style="padding:12px 0; border-bottom:2px solid transparent; font-weight:600; color:var(--text-3); background:transparent; border-top:none; border-left:none; border-right:none; cursor:pointer; transition:color 0.2s;">Roles & Permissions</button>
+            <button class="set-tab" onclick="window.switchSetTab('notifications')" style="padding:12px 0; border-bottom:2px solid transparent; font-weight:600; color:var(--text-3); background:transparent; border-top:none; border-left:none; border-right:none; cursor:pointer; transition:color 0.2s;">Notifications</button>
           </div>
 
           <!-- ═══════════ TAB: GENERAL ═══════════ -->
@@ -857,6 +858,143 @@
             </div>
           </div>
 
+          
+          <!-- ═══════════ TAB: NOTIFICATIONS ═══════════ -->
+          <div id="stab-notifications" class="set-tab-content" style="display:none; max-width:1000px;">
+            
+            <!-- SECTION 1: NOTIFICATION TEMPLATES -->
+            <div class="set-box" style="margin-bottom:32px;">
+              <div class="set-box-header" style="display:flex; justify-content:space-between; align-items:center;">
+                <div class="set-box-title">Notification Templates</div>
+                <button class="btn btn-primary" onclick="window.openNotifTemplateModal()">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  Create Template
+                </button>
+              </div>
+              <div style="width:100%; overflow-x:auto;">
+                <table class="verde-table" style="width:100%; text-align:left; border-collapse:collapse;">
+                  <thead>
+                    <tr style="border-bottom:1px solid var(--border);">
+                      <th style="padding:16px; font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px;">Title</th>
+                      <th style="padding:16px; font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px;">Category</th>
+                      <th style="padding:16px; font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px;">Priority</th>
+                      <th style="padding:16px; font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px;">Status</th>
+                      <th style="padding:16px; font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; width:60px;"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="notif-templates-body">
+                    <!-- Dynamic -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- SECTION 2 & 3: CHANNELS & EVENTS -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:32px;">
+              
+              <!-- CHANNELS -->
+              <div class="set-box">
+                <div class="set-box-header"><div class="set-box-title">Notification Channels</div></div>
+                <div style="padding:24px;" id="notif-channels-body">
+                  <!-- Dynamic -->
+                </div>
+              </div>
+
+              <!-- EVENTS -->
+              <div class="set-box">
+                <div class="set-box-header"><div class="set-box-title">Notification Events</div></div>
+                <div style="padding:24px;" id="notif-events-body">
+                  <!-- Dynamic -->
+                </div>
+              </div>
+
+            </div>
+
+            <!-- SECTION 4: DELIVERY RULES -->
+            <div class="set-box" style="margin-bottom:32px;">
+              <div class="set-box-header"><div class="set-box-title">Delivery Rules</div></div>
+              <div style="padding:24px;">
+                <div style="display:flex; gap:24px; flex-wrap:wrap;">
+                  <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                    <input type="radio" name="notif-delivery" value="Instant" onchange="window.saveNotifDelivery()">
+                    <span style="font-size:13px; font-weight:600; color:var(--text-1);">Instant</span>
+                  </label>
+                  <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                    <input type="radio" name="notif-delivery" value="Every Hour" onchange="window.saveNotifDelivery()">
+                    <span style="font-size:13px; font-weight:600; color:var(--text-1);">Every Hour</span>
+                  </label>
+                  <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                    <input type="radio" name="notif-delivery" value="Daily Digest" onchange="window.saveNotifDelivery()">
+                    <span style="font-size:13px; font-weight:600; color:var(--text-1);">Daily Digest</span>
+                  </label>
+                  <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                    <input type="radio" name="notif-delivery" value="Weekly Digest" onchange="window.saveNotifDelivery()">
+                    <span style="font-size:13px; font-weight:600; color:var(--text-1);">Weekly Digest</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- SECTION 5: NOTIFICATION HISTORY -->
+            <div class="set-box" style="margin-bottom:32px;">
+              <div class="set-box-header" style="display:flex; justify-content:space-between; align-items:center;">
+                <div class="set-box-title">Notification History</div>
+                <div style="display:flex; gap:12px;">
+                  <div style="position:relative;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-3);">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="notif-hist-search" class="input" placeholder="Search history..." style="padding-left:36px; width:200px; font-size:13px;" oninput="window.renderNotifHistory()">
+                  </div>
+                  <select id="notif-hist-filter-pri" class="input" style="font-size:13px; width:120px;" onchange="window.renderNotifHistory()">
+                    <option value="All">All Priorities</option>
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                    <option value="Critical">Critical</option>
+                  </select>
+                  <select id="notif-hist-filter-stat" class="input" style="font-size:13px; width:120px;" onchange="window.renderNotifHistory()">
+                    <option value="All">All Statuses</option>
+                    <option value="Sent">Sent</option>
+                    <option value="Failed">Failed</option>
+                    <option value="Pending">Pending</option>
+                  </select>
+                  <select id="notif-hist-filter-chan" class="input" style="font-size:13px; width:120px;" onchange="window.renderNotifHistory()">
+                    <option value="All">All Channels</option>
+                    <option value="Email">Email</option>
+                    <option value="In-App">In-App</option>
+                    <option value="SMS">SMS</option>
+                    <option value="Push">Push</option>
+                    <option value="Webhook">Webhook</option>
+                  </select>
+                </div>
+              </div>
+              <div style="width:100%; overflow-x:auto;">
+                <table class="verde-table" style="width:100%; text-align:left; border-collapse:collapse;">
+                  <thead>
+                    <tr style="border-bottom:1px solid var(--border);">
+                      <th style="padding:16px; font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px;">Date</th>
+                      <th style="padding:16px; font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px;">Title</th>
+                      <th style="padding:16px; font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px;">Recipient</th>
+                      <th style="padding:16px; font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px;">Channel</th>
+                      <th style="padding:16px; font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px;">Priority</th>
+                      <th style="padding:16px; font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px;">Status</th>
+                      <th style="padding:16px; font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; width:60px;"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="notif-hist-body">
+                    <!-- Dynamic -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            
+          </div>
+
           <!-- ASSIGN MODAL -->
           <div id="assign-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
             <div style="background:var(--bg-1); width:100%; max-width:480px; border-radius:16px; box-shadow:0 24px 48px rgba(0,0,0,0.2); display:flex; flex-direction:column; animation:scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); height:500px; max-height:90vh; overflow:hidden;">
@@ -923,6 +1061,67 @@
   <script src="../assets/js/navigation.js"></script>
   <script src="../assets/js/app.js"></script>
   <script src="./settings.js"></script>
-</body>
+
+          <!-- NOTIFICATION TEMPLATE MODAL -->
+          <div id="notif-template-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.45); z-index:9999; align-items:center; justify-content:center;">
+            <div style="background:#ffffff; opacity:1; width:100%; max-width:600px; border-radius:20px; box-shadow:0 24px 80px rgba(0,0,0,0.18); display:flex; flex-direction:column; max-height:90vh; animation:scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); overflow:hidden; z-index:10000;">
+              
+              <!-- Header (fixed) -->
+              <div style="background:#ffffff; padding:20px 24px; border-bottom:1px solid var(--border); flex-shrink:0; display:flex; justify-content:space-between; align-items:center;">
+                <h3 id="notif-template-modal-title" style="font-size:18px; font-weight:800; color:var(--text-1); margin:0;">Create Template</h3>
+                <button onclick="document.getElementById('notif-template-modal').style.display='none'" style="background:none; border:none; color:var(--text-3); cursor:pointer; padding:4px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+              </div>
+
+              <!-- Body (scrollable) -->
+              <div style="background:#ffffff; padding:24px; overflow-y:auto; flex:1; min-height:0; display:flex; flex-direction:column; gap:20px;">
+                <input type="hidden" id="notif-tpl-id">
+                
+                <div>
+                  <label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Title *</label>
+                  <input type="text" id="notif-tpl-title" class="input" style="width:100%;">
+                </div>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+                  <div>
+                    <label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Category</label>
+                    <input type="text" id="notif-tpl-category" class="input" style="width:100%;">
+                  </div>
+                  <div>
+                    <label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Status</label>
+                    <select id="notif-tpl-status" class="input" style="width:100%;">
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Priority</label>
+                  <select id="notif-tpl-priority" class="input" style="width:100%;">
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                    <option value="Critical">Critical</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Message</label>
+                  <textarea id="notif-tpl-message" class="input" style="width:100%; height:120px; resize:vertical; padding:12px;"></textarea>
+                </div>
+
+              </div>
+
+              <!-- Footer (fixed) -->
+              <div style="background:#ffffff; padding:20px 24px; border-top:1px solid var(--border); flex-shrink:0; display:flex; justify-content:flex-end; gap:12px;">
+                <button class="btn btn-ghost" onclick="document.getElementById('notif-template-modal').style.display='none'">Cancel</button>
+                <button class="btn btn-primary" onclick="window.saveNotifTemplate()">Save Template</button>
+              </div>
+            </div>
+          </div>
+
+  </body>
 
 </html>
