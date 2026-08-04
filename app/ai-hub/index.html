@@ -487,11 +487,11 @@
       <main class="app-content">
         <div class="ai-layout">
 
-          <!-- 1. Page Header -->
+                    <!-- 1. Page Header -->
           <header class="ai-header">
             <div>
               <h1 class="ai-header-title">AI Hub</h1>
-              <div class="ai-header-desc">How can AI help me run VERDE LABS today?</div>
+              <div class="ai-header-desc">Manage prompts, history, and AI tools for VERDE OS.</div>
             </div>
             <div class="ai-toolbar">
               <div class="ai-status-badge">
@@ -505,75 +505,98 @@
                   <circle cx="11" cy="11" r="8"></circle>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
-                <input type="text" placeholder="Search prompts..." />
+                <input type="text" id="ai-global-search" placeholder="Search prompts..." />
               </div>
-              <button class="btn btn-primary">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2" style="margin-right:6px;">
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-                New AI Chat
-              </button>
             </div>
           </header>
 
-          <!-- 2, 6, 7. Split Section -->
-          <section class="ai-split-grid">
+          <!-- Tabs Navigation -->
+          <div class="ai-tabs" style="display:flex; gap:24px; border-bottom:1px solid var(--border); margin-bottom:32px;">
+            <button class="ai-tab active" onclick="window.switchAiTab('dashboard')" style="padding:12px 0; border-bottom:2px solid var(--primary); font-weight:800; color:var(--text-1); background:transparent; border-top:none; border-left:none; border-right:none; cursor:pointer;">AI Dashboard</button>
+            <button class="ai-tab" onclick="window.switchAiTab('chat')" style="padding:12px 0; border-bottom:2px solid transparent; font-weight:600; color:var(--text-3); background:transparent; border-top:none; border-left:none; border-right:none; cursor:pointer; transition:color 0.2s;">AI Chat</button>
+            <button class="ai-tab" onclick="window.switchAiTab('documents')" style="padding:12px 0; border-bottom:2px solid transparent; font-weight:600; color:var(--text-3); background:transparent; border-top:none; border-left:none; border-right:none; cursor:pointer; transition:color 0.2s;">Document Studio</button>
+            <button class="ai-tab" onclick="window.switchAiTab('tools')" style="padding:12px 0; border-bottom:2px solid transparent; font-weight:600; color:var(--text-3); background:transparent; border-top:none; border-left:none; border-right:none; cursor:pointer; transition:color 0.2s;">AI Tools</button>
+            <button class="ai-tab" onclick="window.switchAiTab('workflows')" style="padding:12px 0; border-bottom:2px solid transparent; font-weight:600; color:var(--text-3); background:transparent; border-top:none; border-left:none; border-right:none; cursor:pointer; transition:color 0.2s;">Workflow Automation</button>
+            <button class="ai-tab" onclick="window.switchAiTab('prompts')" style="padding:12px 0; border-bottom:2px solid transparent; font-weight:600; color:var(--text-3); background:transparent; border-top:none; border-left:none; border-right:none; cursor:pointer; transition:color 0.2s;">Prompt Library</button>
+            <button class="ai-tab" onclick="window.switchAiTab('settings')" style="padding:12px 0; border-bottom:2px solid transparent; font-weight:600; color:var(--text-3); background:transparent; border-top:none; border-left:none; border-right:none; cursor:pointer; transition:color 0.2s;">AI Settings</button>
+            <button class="ai-tab" onclick="window.switchAiTab('history')" style="padding:12px 0; border-bottom:2px solid transparent; font-weight:600; color:var(--text-3); background:transparent; border-top:none; border-left:none; border-right:none; cursor:pointer; transition:color 0.2s;">AI History</button>
+          </div>
 
-            <!-- 2. AI Assistant -->
-            <div class="ai-box" style="min-height: 600px;">
+          <!-- ═══════════ VIEW: DASHBOARD ═══════════ -->
+          <div id="tab-dashboard" class="ai-tab-content" style="display:block;">
+            <section class="ai-section" style="display:grid; grid-template-columns: repeat(4, 1fr); gap:24px; margin-bottom:48px;">
+              <div class="ai-box" style="padding:24px; text-align:center;">
+                <div style="font-size:32px; font-weight:900; color:var(--primary);" id="kpi-reqs">0</div>
+                <div style="font-size:14px; font-weight:600; color:var(--text-3); margin-top:8px;">AI Requests Today</div>
+              </div>
+              <div class="ai-box" style="padding:24px; text-align:center;">
+                <div style="font-size:32px; font-weight:900; color:var(--text-1);" id="kpi-docs">0</div>
+                <div style="font-size:14px; font-weight:600; color:var(--text-3); margin-top:8px;">Documents Generated</div>
+              </div>
+              <div class="ai-box" style="padding:24px; text-align:center;">
+                <div style="font-size:32px; font-weight:900; color:var(--success);" id="kpi-convs">0</div>
+                <div style="font-size:14px; font-weight:600; color:var(--text-3); margin-top:8px;">Conversations</div>
+              </div>
+              <div class="ai-box" style="padding:24px; text-align:center;">
+                <div style="font-size:32px; font-weight:900; color:var(--text-1);" id="kpi-prompts">0</div>
+                <div style="font-size:14px; font-weight:600; color:var(--text-3); margin-top:8px;">Saved Prompts</div>
+              </div>
+            </section>
+            <section class="ai-section">
+              <div class="ai-section-header">
+                <h2 class="ai-section-title">Recent AI Activity</h2>
+              </div>
+              <div class="ai-table-container">
+                <table class="table-enterprise">
+                  <thead>
+                    <tr>
+                      <th>Time</th>
+                      <th>Tool</th>
+                      <th>User</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>10:45 AM</td><td>VERDE Copilot</td><td>Shahim</td><td><span class="badge badge-success">Completed</span></td></tr>
+                    <tr><td>09:12 AM</td><td>Email Generator</td><td>Elena</td><td><span class="badge badge-success">Completed</span></td></tr>
+                    <tr><td>Yesterday</td><td>Document Generator</td><td>Marcus</td><td><span class="badge badge-warning">Timeout</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+
+          <!-- ═══════════ VIEW: CHAT ═══════════ -->
+          <div id="tab-chat" class="ai-tab-content" style="display:none;">
+            <div class="ai-box" style="min-height: 600px; display:flex; flex-direction:column;">
               <div class="ai-box-header">
                 <div class="ai-box-title" style="display:flex; align-items:center; gap:8px;">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" style="color:var(--primary);">
-                    <path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10-5.523 0-10-4.477-10-10A10 10 0 0 1 12 2Z">
-                    </path>
-                    <path d="M8 12h.01"></path>
-                    <path d="M12 12h.01"></path>
-                    <path d="M16 12h.01"></path>
+                    <path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10-5.523 0-10-4.477-10-10A10 10 0 0 1 12 2Z"></path>
+                    <path d="M8 12h.01"></path><path d="M12 12h.01"></path><path d="M16 12h.01"></path>
                   </svg>
                   VERDE Copilot
                 </div>
-                <button class="btn btn-ghost btn-sm" style="color:var(--text-2);">Clear Chat</button>
-              </div>
-
-              <div class="ai-chat-area">
-                <div class="chat-bubble chat-system">
-                  Hello Shahim, I am your VERDE OS Copilot.<br /><br />
-                  Currently, all systems are optimal. I have reviewed your agenda for today. Would you like me to
-                  prioritize your tasks or generate the weekly financial briefing?
-                  <div class="chat-timestamp">10:42 AM</div>
-                </div>
-
-                <div class="chat-bubble chat-user">
-                  Please generate a quick summary of yesterday's completed tasks.
-                  <div class="chat-timestamp">10:45 AM</div>
-                </div>
-
-                <div class="chat-bubble chat-system">
-                  <span style="display:flex; gap:4px; align-items:center; height:20px;">
-                    <span
-                      style="width:6px;height:6px;background:currentColor;border-radius:50%;animation:pulse 1s infinite;"></span>
-                    <span
-                      style="width:6px;height:6px;background:currentColor;border-radius:50%;animation:pulse 1s infinite 0.2s;"></span>
-                    <span
-                      style="width:6px;height:6px;background:currentColor;border-radius:50%;animation:pulse 1s infinite 0.4s;"></span>
-                  </span>
+                <div style="display:flex; gap:8px;">
+                  <button class="btn btn-ghost btn-sm" style="color:var(--text-2);" onclick="window.clearAiChat()">Clear Chat</button>
+                  <button class="btn btn-ghost btn-sm" style="color:var(--text-2);" onclick="window.copyAiResponse()">Copy Response</button>
+                  <button class="btn btn-ghost btn-sm" style="color:var(--text-2);" onclick="window.regenerateAiResponse()">Regenerate Response</button>
                 </div>
               </div>
-
+              
+              <div class="ai-chat-area" id="ai-chat-container" style="flex:1; overflow-y:auto; padding:24px; display:flex; flex-direction:column; gap:24px; max-height:500px;">
+                <div class="chat-bubble chat-system">
+                  Hello, I am your VERDE OS Copilot. How can I assist you today?
+                  <div class="chat-timestamp">Now</div>
+                </div>
+              </div>
+              
               <div class="ai-input-area">
-                <div class="ai-suggestions">
-                  <div class="ai-pill">Summarize Q3 Revenue</div>
-                  <div class="ai-pill">Draft email to Cabo Travels</div>
-                  <div class="ai-pill">Prioritize my tasks</div>
-                </div>
                 <div class="ai-input-wrapper">
-                  <input type="text" placeholder="Ask AI to analyze data, draft documents, or automate tasks..." />
-                  <button class="ai-submit-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2">
+                  <input type="text" id="ai-chat-input" placeholder="Ask AI to analyze data, draft documents, or automate tasks..." onkeypress="if(event.key==='Enter') window.sendAiMessage()" />
+                  <button class="ai-submit-btn" onclick="window.sendAiMessage()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <line x1="22" y1="2" x2="11" y2="13"></line>
                       <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
                     </svg>
@@ -581,422 +604,536 @@
                 </div>
               </div>
             </div>
+          </div>
 
-            <div style="display: flex; flex-direction: column; gap: 24px;">
-              <!-- 6. AI Insights -->
-              <div class="ai-box">
-                <div class="ai-box-header">
-                  <div class="ai-box-title">AI Insights</div>
+          
+          <!-- ═══════════ VIEW: DOCUMENT STUDIO ═══════════ -->
+          <div id="tab-documents" class="ai-tab-content" style="display:none;">
+            <section class="ai-section" style="margin-bottom: 48px;">
+              <div class="ai-section-header" style="display:flex; justify-content:space-between; align-items:center;">
+                <h2 class="ai-section-title">Document Generators</h2>
+              </div>
+              <div class="ai-tools-grid">
+                <!-- 10 Document Generators -->
+                <div class="ai-tool-card" style="cursor:pointer;" onclick="window.openDocStudioModal('Proposal Generator')">
+                  <div class="ai-tool-header">
+                    <div class="ai-tool-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg></div>
+                    <div class="ai-tool-title">Proposal Generator</div>
+                  </div>
                 </div>
-                <div class="ai-list">
-                  <div class="ai-list-item" style="padding:12px 24px;">
-                    <div class="ai-item-left">
-                      <div class="ai-item-icon" style="color:var(--success);"><svg xmlns="http://www.w3.org/2000/svg"
-                          width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
-                          <polyline points="16 7 22 7 22 13"></polyline>
-                        </svg></div>
-                      <div class="ai-item-title">Revenue increased by 14% this month</div>
-                    </div>
+                <div class="ai-tool-card" style="cursor:pointer;" onclick="window.openDocStudioModal('Quotation Generator')">
+                  <div class="ai-tool-header">
+                    <div class="ai-tool-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></div>
+                    <div class="ai-tool-title">Quotation Generator</div>
                   </div>
-                  <div class="ai-list-item" style="padding:12px 24px;">
-                    <div class="ai-item-left">
-                      <div class="ai-item-icon" style="color:var(--danger);"><svg xmlns="http://www.w3.org/2000/svg"
-                          width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <circle cx="12" cy="12" r="10"></circle>
-                          <line x1="12" y1="8" x2="12" y2="12"></line>
-                          <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                        </svg></div>
-                      <div class="ai-item-title">GreenLeaf project is delayed by 2 days</div>
-                    </div>
+                </div>
+                <div class="ai-tool-card" style="cursor:pointer;" onclick="window.openDocStudioModal('Invoice Draft Generator')">
+                  <div class="ai-tool-header">
+                    <div class="ai-tool-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line></svg></div>
+                    <div class="ai-tool-title">Invoice Draft Generator</div>
                   </div>
-                  <div class="ai-list-item" style="padding:12px 24px;">
-                    <div class="ai-item-left">
-                      <div class="ai-item-icon" style="color:var(--warning);"><svg xmlns="http://www.w3.org/2000/svg"
-                          width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                          <polyline points="14 2 14 8 20 8"></polyline>
-                          <line x1="16" y1="13" x2="8" y2="13"></line>
-                          <line x1="16" y1="17" x2="8" y2="17"></line>
-                          <polyline points="10 9 9 9 8 9"></polyline>
-                        </svg></div>
-                      <div class="ai-item-title">3 high-value invoices are pending</div>
-                    </div>
+                </div>
+                <div class="ai-tool-card" style="cursor:pointer;" onclick="window.openDocStudioModal('Contract Generator')">
+                  <div class="ai-tool-header">
+                    <div class="ai-tool-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline></svg></div>
+                    <div class="ai-tool-title">Contract Generator</div>
                   </div>
-                  <div class="ai-list-item" style="padding:12px 24px;">
-                    <div class="ai-item-left">
-                      <div class="ai-item-icon" style="color:var(--text-3);"><svg xmlns="http://www.w3.org/2000/svg"
-                          width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                          <circle cx="12" cy="7" r="4"></circle>
-                        </svg></div>
-                      <div class="ai-item-title">Vertex Systems client has been inactive</div>
-                    </div>
+                </div>
+                <div class="ai-tool-card" style="cursor:pointer;" onclick="window.openDocStudioModal('NDA Generator')">
+                  <div class="ai-tool-header">
+                    <div class="ai-tool-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></div>
+                    <div class="ai-tool-title">NDA Generator</div>
                   </div>
-                  <div class="ai-list-item" style="padding:12px 24px;">
-                    <div class="ai-item-left">
-                      <div class="ai-item-icon" style="color:var(--info);"><svg xmlns="http://www.w3.org/2000/svg"
-                          width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                          <circle cx="9" cy="7" r="4"></circle>
-                          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg></div>
-                      <div class="ai-item-title">Design team workload is very high</div>
-                    </div>
+                </div>
+                <div class="ai-tool-card" style="cursor:pointer;" onclick="window.openDocStudioModal('Resume Generator')">
+                  <div class="ai-tool-header">
+                    <div class="ai-tool-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"></circle><path d="M5.5 21v-2a4 4 0 0 1 4-4h5a4 4 0 0 1 4 4v2"></path></svg></div>
+                    <div class="ai-tool-title">Resume Generator</div>
+                  </div>
+                </div>
+                <div class="ai-tool-card" style="cursor:pointer;" onclick="window.openDocStudioModal('Offer Letter Generator')">
+                  <div class="ai-tool-header">
+                    <div class="ai-tool-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></div>
+                    <div class="ai-tool-title">Offer Letter Generator</div>
+                  </div>
+                </div>
+                <div class="ai-tool-card" style="cursor:pointer;" onclick="window.openDocStudioModal('Project Report Generator')">
+                  <div class="ai-tool-header">
+                    <div class="ai-tool-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></div>
+                    <div class="ai-tool-title">Project Report Generator</div>
+                  </div>
+                </div>
+                <div class="ai-tool-card" style="cursor:pointer;" onclick="window.openDocStudioModal('Meeting Minutes Generator')">
+                  <div class="ai-tool-header">
+                    <div class="ai-tool-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+                    <div class="ai-tool-title">Meeting Minutes Generator</div>
+                  </div>
+                </div>
+                <div class="ai-tool-card" style="cursor:pointer;" onclick="window.openDocStudioModal('Business Plan Generator')">
+                  <div class="ai-tool-header">
+                    <div class="ai-tool-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10.01 10.01 0 0 1-9.9 10 10 10 0 0 1-10-10 10 10 0 0 1 14.3-9.1"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></div>
+                    <div class="ai-tool-title">Business Plan Generator</div>
                   </div>
                 </div>
               </div>
+            </section>
 
-              <!-- 7. AI Activity -->
-              <div class="ai-box">
-                <div class="ai-box-header">
-                  <div class="ai-box-title">Recent AI Activity</div>
-                </div>
-                <div class="ai-list">
-                  <div class="ai-list-item" style="padding:12px 24px;">
-                    <div class="ai-item-left">
-                      <div class="ai-item-icon"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                          <polyline points="14 2 14 8 20 8"></polyline>
-                          <line x1="16" y1="13" x2="8" y2="13"></line>
-                          <line x1="16" y1="17" x2="8" y2="17"></line>
-                          <polyline points="10 9 9 9 8 9"></polyline>
-                        </svg></div>
-                      <div class="ai-item-title">Proposal Generated (Cabo)</div>
-                    </div>
+            <section class="ai-section">
+              <div class="ai-section-header" style="display:flex; justify-content:space-between; align-items:center;">
+                <h2 class="ai-section-title">Document History</h2>
+                <div style="display:flex; gap:12px;">
+                  <div class="ai-search">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3)"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="ds-search" placeholder="Search documents..." oninput="window.renderDocuments()"/>
                   </div>
-                  <div class="ai-list-item" style="padding:12px 24px;">
-                    <div class="ai-item-left">
-                      <div class="ai-item-icon"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <circle cx="12" cy="12" r="10"></circle>
-                          <path d="M12 6v6l4 2"></path>
-                        </svg></div>
-                      <div class="ai-item-title">Meeting Summarized (Standup)</div>
-                    </div>
-                  </div>
-                  <div class="ai-list-item" style="padding:12px 24px;">
-                    <div class="ai-item-left">
-                      <div class="ai-item-icon"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <line x1="18" y1="20" x2="18" y2="10"></line>
-                          <line x1="12" y1="20" x2="12" y2="4"></line>
-                          <line x1="6" y1="20" x2="6" y2="14"></line>
-                        </svg></div>
-                      <div class="ai-item-title">Q3 SEO Report Created</div>
-                    </div>
-                  </div>
-                  <div class="ai-list-item" style="padding:12px 24px;">
-                    <div class="ai-item-left">
-                      <div class="ai-item-icon"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                          <polyline points="22,6 12,13 2,6"></polyline>
-                        </svg></div>
-                      <div class="ai-item-title">Client Email Drafted (Follow-up)</div>
-                    </div>
-                  </div>
-                  <div class="ai-list-item" style="padding:12px 24px;">
-                    <div class="ai-item-left">
-                      <div class="ai-item-icon"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-                        </svg></div>
-                      <div class="ai-item-title">Prompt Saved: Invoice Gen</div>
-                    </div>
-                  </div>
-                  <div class="ai-list-item" style="padding:12px 24px;">
-                    <div class="ai-item-left">
-                      <div class="ai-item-icon"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <polyline points="9 11 12 14 22 4"></polyline>
-                          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                        </svg></div>
-                      <div class="ai-item-title">Task Prioritization Completed</div>
-                    </div>
-                  </div>
+                  <select id="ds-filter-type" class="input" style="width:140px; padding:8px;" onchange="window.renderDocuments()">
+                    <option value="">All Types</option>
+                    <option value="Proposal">Proposal</option>
+                    <option value="Quotation">Quotation</option>
+                    <option value="Invoice">Invoice</option>
+                    <option value="Contract">Contract</option>
+                    <option value="NDA">NDA</option>
+                    <option value="Resume">Resume</option>
+                    <option value="Offer">Offer</option>
+                    <option value="Report">Report</option>
+                    <option value="Meeting">Meeting</option>
+                    <option value="Business Plan">Business Plan</option>
+                  </select>
+                  <select id="ds-filter-status" class="input" style="width:120px; padding:8px;" onchange="window.renderDocuments()">
+                    <option value="">All Statuses</option>
+                    <option value="Draft">Draft</option>
+                    <option value="Saved">Saved</option>
+                  </select>
                 </div>
               </div>
-            </div>
+              <div class="ai-table-container">
+                <table class="table-enterprise">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Document Type</th>
+                      <th>Title</th>
+                      <th>Client/Context</th>
+                      <th>Status</th>
+                      <th style="width:50px;"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-documents"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
 
-          </section>
-
-          <!-- 3. AI Tools -->
-          <section class="ai-section">
-            <div class="ai-section-header">
-              <h2 class="ai-section-title">Copilot Tools</h2>
-            </div>
+          <!-- ═══════════ VIEW: TOOLS ═══════════ -->
+          <div id="tab-tools" class="ai-tab-content" style="display:none;">
             <div class="ai-tools-grid">
-
-              <div class="ai-tool-card">
+              <div class="ai-tool-card" style="cursor:pointer;" onclick="window.openAIToolModal('Document Generator')">
                 <div class="ai-tool-header">
-                  <div class="ai-tool-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                      <polyline points="14 2 14 8 20 8"></polyline>
-                      <line x1="16" y1="13" x2="8" y2="13"></line>
-                      <line x1="16" y1="17" x2="8" y2="17"></line>
-                      <polyline points="10 9 9 9 8 9"></polyline>
-                    </svg></div>
+                  <div class="ai-tool-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg></div>
+                  <div class="ai-tool-title">Document Generator</div>
+                </div>
+                <div class="ai-tool-desc">Create structured documents, reports, and templates instantly.</div>
+              </div>
+              <div class="ai-tool-card" style="cursor:pointer;" onclick="window.openAIToolModal('Email Generator')">
+                <div class="ai-tool-header">
+                  <div class="ai-tool-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></div>
+                  <div class="ai-tool-title">Email Generator</div>
+                </div>
+                <div class="ai-tool-desc">Draft professional emails contextually tailored for clients.</div>
+              </div>
+              <div class="ai-tool-card" style="cursor:pointer;" onclick="window.openAIToolModal('Proposal Generator')">
+                <div class="ai-tool-header">
+                  <div class="ai-tool-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></div>
                   <div class="ai-tool-title">Proposal Generator</div>
                 </div>
-                <div class="ai-tool-desc">Instantly draft premium client proposals based on project specifications and
-                  templates.</div>
-                <button class="btn btn-ghost btn-sm" style="border:1px solid var(--border); width:100%;">Launch
-                  Tool</button>
+                <div class="ai-tool-desc">Generate robust sales proposals and quotes.</div>
               </div>
-
-              <div class="ai-tool-card">
+              <div class="ai-tool-card" style="cursor:pointer;" onclick="window.openAIToolModal('Meeting Summary')">
                 <div class="ai-tool-header">
-                  <div class="ai-tool-icon" style="color:var(--success); background:var(--success-10);"><svg
-                      xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2">
-                      <line x1="12" y1="1" x2="12" y2="23"></line>
-                      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                    </svg></div>
-                  <div class="ai-tool-title">Invoice Generator</div>
-                </div>
-                <div class="ai-tool-desc">Automatically compile tracked time and expenses into ready-to-send invoices.
-                </div>
-                <button class="btn btn-ghost btn-sm" style="border:1px solid var(--border); width:100%;">Launch
-                  Tool</button>
-              </div>
-
-              <div class="ai-tool-card">
-                <div class="ai-tool-header">
-                  <div class="ai-tool-icon" style="color:var(--warning); background:var(--warning-10);"><svg
-                      xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2">
-                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                    </svg></div>
+                  <div class="ai-tool-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line></svg></div>
                   <div class="ai-tool-title">Meeting Summary</div>
                 </div>
-                <div class="ai-tool-desc">Extract action items and concise executive summaries from meeting transcripts.
-                </div>
-                <button class="btn btn-ghost btn-sm" style="border:1px solid var(--border); width:100%;">Launch
-                  Tool</button>
+                <div class="ai-tool-desc">Auto-summarize transcripts into actionable bullet points.</div>
               </div>
-
-              <div class="ai-tool-card">
+              <div class="ai-tool-card" style="cursor:pointer;" onclick="window.openAIToolModal('Blog Writer')">
                 <div class="ai-tool-header">
-                  <div class="ai-tool-icon" style="color:var(--info); background:var(--info-10);"><svg
-                      xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2">
-                      <polyline points="9 11 12 14 22 4"></polyline>
-                      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                    </svg></div>
-                  <div class="ai-tool-title">Task Planner</div>
+                  <div class="ai-tool-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg></div>
+                  <div class="ai-tool-title">Blog Writer</div>
                 </div>
-                <div class="ai-tool-desc">Break down large objectives into actionable daily task lists with estimated
-                  durations.</div>
-                <button class="btn btn-ghost btn-sm" style="border:1px solid var(--border); width:100%;">Launch
-                  Tool</button>
+                <div class="ai-tool-desc">Draft long-form marketing articles with SEO structures.</div>
               </div>
-
-              <div class="ai-tool-card">
+              <div class="ai-tool-card" style="cursor:pointer;" onclick="window.openAIToolModal('Social Caption Generator')">
                 <div class="ai-tool-header">
-                  <div class="ai-tool-icon" style="color:var(--text-1); background:var(--bg-2);"><svg
-                      xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2">
-                      <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-                      <polyline points="2 17 12 22 22 17"></polyline>
-                      <polyline points="2 12 12 17 22 12"></polyline>
-                    </svg></div>
-                  <div class="ai-tool-title">Project Planner</div>
+                  <div class="ai-tool-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></div>
+                  <div class="ai-tool-title">Social Caption Generator</div>
                 </div>
-                <div class="ai-tool-desc">Generate comprehensive project timelines, milestones, and resource
-                  allocations.</div>
-                <button class="btn btn-ghost btn-sm" style="border:1px solid var(--border); width:100%;">Launch
-                  Tool</button>
+                <div class="ai-tool-desc">Produce engaging multi-platform social media posts.</div>
               </div>
-
-              <div class="ai-tool-card">
+              <div class="ai-tool-card" style="cursor:pointer;" onclick="window.openAIToolModal('Code Assistant')">
                 <div class="ai-tool-header">
-                  <div class="ai-tool-icon" style="color:var(--danger); background:var(--danger-10);"><svg
-                      xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2">
-                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                      <polyline points="22,6 12,13 2,6"></polyline>
-                    </svg></div>
-                  <div class="ai-tool-title">Client Email Writer</div>
+                  <div class="ai-tool-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></div>
+                  <div class="ai-tool-title">Code Assistant</div>
                 </div>
-                <div class="ai-tool-desc">Draft professional, context-aware emails for clients, partners, and vendors.
-                </div>
-                <button class="btn btn-ghost btn-sm" style="border:1px solid var(--border); width:100%;">Launch
-                  Tool</button>
+                <div class="ai-tool-desc">Generate code snippets, debug, and write documentation.</div>
               </div>
-
+              <div class="ai-tool-card" style="cursor:pointer;" onclick="window.openAIToolModal('Translation Assistant')">
+                <div class="ai-tool-header">
+                  <div class="ai-tool-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg></div>
+                  <div class="ai-tool-title">Translation Assistant</div>
+                </div>
+                <div class="ai-tool-desc">Translate blocks of text securely avoiding public engines.</div>
+              </div>
             </div>
-          </section>
+          </div>
 
-          <!-- 4 & 5. Automations & Prompts -->
-          <section class="ai-half-grid">
+          
+          <!-- ═══════════ VIEW: WORKFLOW AUTOMATION ═══════════ -->
+          <div id="tab-workflows" class="ai-tab-content" style="display:none;">
+            <!-- KPI Dashboard -->
+            <section class="ai-section" style="display:grid; grid-template-columns: repeat(4, 1fr); gap:24px; margin-bottom:48px;">
+              <div class="ai-box" style="padding:24px; text-align:center;">
+                <div style="font-size:32px; font-weight:900; color:var(--primary);" id="kpi-wf-active">0</div>
+                <div style="font-size:14px; font-weight:600; color:var(--text-3); margin-top:8px;">Active Workflows</div>
+              </div>
+              <div class="ai-box" style="padding:24px; text-align:center;">
+                <div style="font-size:32px; font-weight:900; color:var(--text-1);" id="kpi-wf-execs">0</div>
+                <div style="font-size:14px; font-weight:600; color:var(--text-3); margin-top:8px;">Total Executions</div>
+              </div>
+              <div class="ai-box" style="padding:24px; text-align:center;">
+                <div style="font-size:32px; font-weight:900; color:var(--success);" id="kpi-wf-success">0</div>
+                <div style="font-size:14px; font-weight:600; color:var(--text-3); margin-top:8px;">Successful Runs</div>
+              </div>
+              <div class="ai-box" style="padding:24px; text-align:center;">
+                <div style="font-size:32px; font-weight:900; color:var(--danger);" id="kpi-wf-failed">0</div>
+                <div style="font-size:14px; font-weight:600; color:var(--text-3); margin-top:8px;">Failed Runs</div>
+              </div>
+            </section>
 
-            <!-- 4. AI Automations -->
-            <div class="ai-box">
+            <!-- Templates -->
+            <section class="ai-section" style="margin-bottom: 48px;">
+              <div class="ai-section-header" style="display:flex; justify-content:space-between; align-items:center;">
+                <h2 class="ai-section-title">Workflow Templates</h2>
+                <button class="btn btn-primary" onclick="window.openWorkflowModal()">+ Create Custom Workflow</button>
+              </div>
+              <div class="ai-tools-grid" style="grid-template-columns: repeat(4, 1fr);">
+                <!-- 8 Templates -->
+                <div class="ai-tool-card" style="cursor:pointer; padding:16px;" onclick="window.openWorkflowModal({name: 'Auto Reply Emails', category: 'Marketing', trigger: 'Event Based', desc: 'Automatically reply to inbound leads with contextual info.'})">
+                  <div class="ai-tool-title">Auto Reply Emails</div>
+                  <div class="ai-tool-desc" style="font-size:12px; margin-top:8px;">Marketing • Event Based</div>
+                </div>
+                <div class="ai-tool-card" style="cursor:pointer; padding:16px;" onclick="window.openWorkflowModal({name: 'Lead Qualification', category: 'Sales', trigger: 'Scheduled', desc: 'Score and qualify CRM leads daily.'})">
+                  <div class="ai-tool-title">Lead Qualification</div>
+                  <div class="ai-tool-desc" style="font-size:12px; margin-top:8px;">Sales • Scheduled</div>
+                </div>
+                <div class="ai-tool-card" style="cursor:pointer; padding:16px;" onclick="window.openWorkflowModal({name: 'Proposal Generator', category: 'Sales', trigger: 'Manual', desc: 'Generate customized sales proposals.'})">
+                  <div class="ai-tool-title">Proposal Generator</div>
+                  <div class="ai-tool-desc" style="font-size:12px; margin-top:8px;">Sales • Manual</div>
+                </div>
+                <div class="ai-tool-card" style="cursor:pointer; padding:16px;" onclick="window.openWorkflowModal({name: 'Invoice Reminder', category: 'Finance', trigger: 'Scheduled', desc: 'Send automated invoice reminders.'})">
+                  <div class="ai-tool-title">Invoice Reminder</div>
+                  <div class="ai-tool-desc" style="font-size:12px; margin-top:8px;">Finance • Scheduled</div>
+                </div>
+                <div class="ai-tool-card" style="cursor:pointer; padding:16px;" onclick="window.openWorkflowModal({name: 'Meeting Summary', category: 'Operations', trigger: 'Event Based', desc: 'Distribute meeting notes upon call end.'})">
+                  <div class="ai-tool-title">Meeting Summary</div>
+                  <div class="ai-tool-desc" style="font-size:12px; margin-top:8px;">Operations • Event Based</div>
+                </div>
+                <div class="ai-tool-card" style="cursor:pointer; padding:16px;" onclick="window.openWorkflowModal({name: 'Employee Onboarding', category: 'HR', trigger: 'Manual', desc: 'Send onboarding documents to new hires.'})">
+                  <div class="ai-tool-title">Employee Onboarding</div>
+                  <div class="ai-tool-desc" style="font-size:12px; margin-top:8px;">HR • Manual</div>
+                </div>
+                <div class="ai-tool-card" style="cursor:pointer; padding:16px;" onclick="window.openWorkflowModal({name: 'Weekly Report Generator', category: 'Operations', trigger: 'Scheduled', desc: 'Compile team updates into a weekly digest.'})">
+                  <div class="ai-tool-title">Weekly Report Generator</div>
+                  <div class="ai-tool-desc" style="font-size:12px; margin-top:8px;">Operations • Scheduled</div>
+                </div>
+                <div class="ai-tool-card" style="cursor:pointer; padding:16px;" onclick="window.openWorkflowModal({name: 'Social Media Content Generator', category: 'Marketing', trigger: 'Manual', desc: 'Draft social posts for the week.'})">
+                  <div class="ai-tool-title">Social Media Content</div>
+                  <div class="ai-tool-desc" style="font-size:12px; margin-top:8px;">Marketing • Manual</div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Table -->
+            <section class="ai-section">
+              <div class="ai-section-header" style="display:flex; justify-content:space-between; align-items:center;">
+                <h2 class="ai-section-title">My Workflows</h2>
+                <div style="display:flex; gap:12px;">
+                  <div class="ai-search">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3)"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="wf-search" placeholder="Search workflows..." oninput="window.renderWorkflows()"/>
+                  </div>
+                  <select id="wf-filter-cat" class="input" style="width:140px; padding:8px;" onchange="window.renderWorkflows()">
+                    <option value="">All Categories</option>
+                    <option value="Sales">Sales</option>
+                    <option value="HR">HR</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Marketing">Marketing</option>
+                    <option value="Operations">Operations</option>
+                  </select>
+                  <select id="wf-filter-trigger" class="input" style="width:140px; padding:8px;" onchange="window.renderWorkflows()">
+                    <option value="">All Triggers</option>
+                    <option value="Manual">Manual</option>
+                    <option value="Scheduled">Scheduled</option>
+                    <option value="Event Based">Event Based</option>
+                  </select>
+                  <select id="wf-filter-status" class="input" style="width:120px; padding:8px;" onchange="window.renderWorkflows()">
+                    <option value="">All Statuses</option>
+                    <option value="Active">Active</option>
+                    <option value="Paused">Paused</option>
+                    <option value="Draft">Draft</option>
+                  </select>
+                </div>
+              </div>
+              <div class="ai-table-container">
+                <table class="table-enterprise">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Workflow Name</th>
+                      <th>Category</th>
+                      <th>Trigger</th>
+                      <th>Last Run</th>
+                      <th>Status</th>
+                      <th style="width:50px;"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-workflows"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+
+          <!-- ═══════════ VIEW: PROMPTS ═══════════ -->
+          <div id="tab-prompts" class="ai-tab-content" style="display:none;">
+            <section class="ai-section">
+              <div class="ai-section-header" style="display:flex; justify-content:space-between; align-items:center;">
+                <h2 class="ai-section-title">Prompt Library</h2>
+                <div style="display:flex; gap:10px;">
+                  <button class="btn btn-primary" onclick="window.openPromptModal()">+ Create Prompt</button>
+                </div>
+              </div>
+              <div class="ai-table-container">
+                <table class="table-enterprise">
+                  <thead>
+                    <tr>
+                      <th>Favorite</th>
+                      <th>Title</th>
+                      <th>Category</th>
+                      <th>Prompt Text</th>
+                      <th style="width:50px;"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-prompts"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+
+          
+          <!-- ═══════════ VIEW: SETTINGS ═══════════ -->
+          <div id="tab-settings" class="ai-tab-content" style="display:none; max-width: 800px; margin:0 auto;">
+            
+            <!-- SECTION 1: General Settings -->
+            <section class="ai-box" style="margin-bottom: 24px;">
               <div class="ai-box-header">
-                <div class="ai-box-title">AI Automations</div>
+                <div class="ai-box-title">General Settings</div>
               </div>
-              <div class="ai-list">
-
-                <div class="ai-list-item">
-                  <div class="ai-item-left">
-                    <div>
-                      <div class="ai-item-title">Daily Briefing</div>
-                      <div class="ai-item-sub">Receive a morning summary of metrics & priorities.</div>
-                    </div>
+              <div style="padding:24px; display:flex; flex-direction:column; gap:20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <div>
+                    <div style="font-weight:700; color:var(--text-1); font-size:14px;">AI Enabled</div>
+                    <div style="font-weight:500; color:var(--text-3); font-size:12px;">Toggle system-wide AI capabilities.</div>
                   </div>
-                  <label class="toggle-switch">
-                    <input type="checkbox" checked>
-                    <span class="slider"></span>
-                  </label>
+                  <label class="toggle-switch"><input type="checkbox" id="set-ai-enabled" class="ai-setting-inp"><span class="slider"></span></label>
                 </div>
-
-                <div class="ai-list-item">
-                  <div class="ai-item-left">
-                    <div>
-                      <div class="ai-item-title">Weekly Report</div>
-                      <div class="ai-item-sub">Auto-generate a comprehensive Friday performance report.</div>
-                    </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <div>
+                    <div style="font-weight:700; color:var(--text-1); font-size:14px;">Save AI Conversations</div>
+                    <div style="font-weight:500; color:var(--text-3); font-size:12px;">Retain Copilot chat transcripts locally.</div>
                   </div>
-                  <label class="toggle-switch">
-                    <input type="checkbox" checked>
-                    <span class="slider"></span>
-                  </label>
+                  <label class="toggle-switch"><input type="checkbox" id="set-save-conv" class="ai-setting-inp"><span class="slider"></span></label>
                 </div>
-
-                <div class="ai-list-item">
-                  <div class="ai-item-left">
-                    <div>
-                      <div class="ai-item-title">Meeting Reminder</div>
-                      <div class="ai-item-sub">Send context-rich agendas 15 mins before meetings.</div>
-                    </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <div>
+                    <div style="font-weight:700; color:var(--text-1); font-size:14px;">Save AI History</div>
+                    <div style="font-weight:500; color:var(--text-3); font-size:12px;">Log all prompts and workflow triggers to the history ledger.</div>
                   </div>
-                  <label class="toggle-switch">
-                    <input type="checkbox">
-                    <span class="slider"></span>
-                  </label>
+                  <label class="toggle-switch"><input type="checkbox" id="set-save-hist" class="ai-setting-inp"><span class="slider"></span></label>
                 </div>
-
-                <div class="ai-list-item">
-                  <div class="ai-item-left">
-                    <div>
-                      <div class="ai-item-title">Follow-up Generator</div>
-                      <div class="ai-item-sub">Draft follow-up emails after completed client meetings.</div>
-                    </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <div>
+                    <div style="font-weight:700; color:var(--text-1); font-size:14px;">Auto-save Documents</div>
+                    <div style="font-weight:500; color:var(--text-3); font-size:12px;">Automatically save generated documents as 'Saved' rather than 'Draft'.</div>
                   </div>
-                  <label class="toggle-switch">
-                    <input type="checkbox" checked>
-                    <span class="slider"></span>
-                  </label>
+                  <label class="toggle-switch"><input type="checkbox" id="set-auto-doc" class="ai-setting-inp"><span class="slider"></span></label>
                 </div>
-
-                <div class="ai-list-item">
-                  <div class="ai-item-left">
-                    <div>
-                      <div class="ai-item-title">Task Prioritizer</div>
-                      <div class="ai-item-sub">Automatically re-rank overdue tasks based on urgency.</div>
-                    </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <div>
+                    <div style="font-weight:700; color:var(--text-1); font-size:14px;">Enable Workflow Automation</div>
+                    <div style="font-weight:500; color:var(--text-3); font-size:12px;">Allow background processing of scheduled AI workflows.</div>
                   </div>
-                  <label class="toggle-switch">
-                    <input type="checkbox">
-                    <span class="slider"></span>
-                  </label>
+                  <label class="toggle-switch"><input type="checkbox" id="set-wf-enabled" class="ai-setting-inp"><span class="slider"></span></label>
                 </div>
-
               </div>
-            </div>
+            </section>
 
-            <!-- 5. Prompt Library -->
-            <div class="ai-box">
+            <!-- SECTION 2 & 3: Model & Generation -->
+            <section class="ai-box" style="margin-bottom: 24px;">
               <div class="ai-box-header">
-                <div class="ai-box-title">Prompt Library</div>
-                <button class="btn btn-ghost btn-sm" style="color:var(--primary);">View All</button>
+                <div class="ai-box-title">Model Configuration</div>
               </div>
-
-              <div style="padding: 16px 24px; border-bottom: 1px solid var(--border-subtle); display: flex; gap: 8px;">
-                <span class="badge badge-primary" style="cursor:pointer;">All</span>
-                <span class="badge badge-neutral" style="cursor:pointer; font-weight:600;">Sales</span>
-                <span class="badge badge-neutral" style="cursor:pointer; font-weight:600;">Finance</span>
-                <span class="badge badge-neutral" style="cursor:pointer; font-weight:600;">Marketing</span>
-                <span class="badge badge-neutral" style="cursor:pointer; font-weight:600;">HR</span>
-                <span class="badge badge-neutral" style="cursor:pointer; font-weight:600;">Development</span>
+              <div style="padding:24px; display:flex; flex-direction:column; gap:24px;">
+                <!-- Section 2 -->
+                <div>
+                  <label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Default AI Model</label>
+                  <select id="set-model" class="input ai-setting-inp" style="width:100%; max-width:300px;">
+                    <option value="GPT-5">GPT-5</option>
+                    <option value="GPT-4.1">GPT-4.1</option>
+                    <option value="Gemini 2.5 Pro">Gemini 2.5 Pro</option>
+                    <option value="Claude 4">Claude 4</option>
+                    <option value="DeepSeek V3">DeepSeek V3</option>
+                    <option value="Custom">Custom</option>
+                  </select>
+                </div>
+                
+                <hr style="border:none; border-top:1px solid var(--border-subtle); margin:0;">
+                
+                <!-- Section 3 -->
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+                  <div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                      <label style="font-size:13px; font-weight:700; color:var(--text-1);">Temperature</label>
+                      <span id="lbl-temp" style="font-size:13px; font-weight:700; color:var(--primary);">0.7</span>
+                    </div>
+                    <input type="range" id="set-temp" class="ai-setting-inp" min="0" max="2" step="0.1" style="width:100%;">
+                  </div>
+                  <div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                      <label style="font-size:13px; font-weight:700; color:var(--text-1);">Max Tokens</label>
+                      <span id="lbl-tokens" style="font-size:13px; font-weight:700; color:var(--primary);">2048</span>
+                    </div>
+                    <input type="range" id="set-tokens" class="ai-setting-inp" min="256" max="8192" step="256" style="width:100%;">
+                  </div>
+                  <div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                      <label style="font-size:13px; font-weight:700; color:var(--text-1);">Top-P</label>
+                      <span id="lbl-topp" style="font-size:13px; font-weight:700; color:var(--primary);">1.0</span>
+                    </div>
+                    <input type="range" id="set-topp" class="ai-setting-inp" min="0" max="1" step="0.05" style="width:100%;">
+                  </div>
+                  <div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                      <label style="font-size:13px; font-weight:700; color:var(--text-1);">Presence Penalty</label>
+                      <span id="lbl-pres" style="font-size:13px; font-weight:700; color:var(--primary);">0.0</span>
+                    </div>
+                    <input type="range" id="set-pres" class="ai-setting-inp" min="-2" max="2" step="0.1" style="width:100%;">
+                  </div>
+                  <div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                      <label style="font-size:13px; font-weight:700; color:var(--text-1);">Frequency Penalty</label>
+                      <span id="lbl-freq" style="font-size:13px; font-weight:700; color:var(--primary);">0.0</span>
+                    </div>
+                    <input type="range" id="set-freq" class="ai-setting-inp" min="-2" max="2" step="0.1" style="width:100%;">
+                  </div>
+                </div>
               </div>
+            </section>
 
-              <div class="ai-list">
-
-                <div class="ai-list-item">
-                  <div class="ai-item-left">
-                    <div class="ai-item-icon" style="color:var(--warning);"><svg xmlns="http://www.w3.org/2000/svg"
-                        width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-                      </svg></div>
-                    <div>
-                      <div class="ai-item-title">Analyze Quarterly Spend</div>
-                      <div class="ai-item-sub">Pinned • Finance</div>
-                    </div>
-                  </div>
-                  <button class="btn btn-ghost btn-sm" style="border:1px solid var(--border);">Use</button>
-                </div>
-
-                <div class="ai-list-item">
-                  <div class="ai-item-left">
-                    <div class="ai-item-icon" style="color:var(--warning);"><svg xmlns="http://www.w3.org/2000/svg"
-                        width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-                      </svg></div>
-                    <div>
-                      <div class="ai-item-title">Draft Cold Outreach</div>
-                      <div class="ai-item-sub">Pinned • Sales</div>
-                    </div>
-                  </div>
-                  <button class="btn btn-ghost btn-sm" style="border:1px solid var(--border);">Use</button>
-                </div>
-
-                <div class="ai-list-item">
-                  <div class="ai-item-left">
-                    <div class="ai-item-icon"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="4 7 4 4 20 4 20 7"></polyline>
-                        <line x1="9" y1="20" x2="15" y2="20"></line>
-                        <line x1="12" y1="4" x2="12" y2="20"></line>
-                      </svg></div>
-                    <div>
-                      <div class="ai-item-title">Generate React Component</div>
-                      <div class="ai-item-sub">Recent • Development</div>
-                    </div>
-                  </div>
-                  <button class="btn btn-ghost btn-sm" style="border:1px solid var(--border);">Use</button>
-                </div>
-
-                <div class="ai-list-item">
-                  <div class="ai-item-left">
-                    <div class="ai-item-icon"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="4 7 4 4 20 4 20 7"></polyline>
-                        <line x1="9" y1="20" x2="15" y2="20"></line>
-                        <line x1="12" y1="4" x2="12" y2="20"></line>
-                      </svg></div>
-                    <div>
-                      <div class="ai-item-title">Write Job Description</div>
-                      <div class="ai-item-sub">Recent • HR</div>
-                    </div>
-                  </div>
-                  <button class="btn btn-ghost btn-sm" style="border:1px solid var(--border);">Use</button>
-                </div>
-
+            <!-- SECTION 4: Prompt Preferences -->
+            <section class="ai-box" style="margin-bottom: 24px;">
+              <div class="ai-box-header">
+                <div class="ai-box-title">Prompt Preferences</div>
               </div>
-            </div>
+              <div style="padding:24px; display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+                <div style="grid-column: span 2;">
+                  <label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Default System Prompt</label>
+                  <textarea id="set-sys-prompt" class="input ai-setting-inp" style="width:100%; height:80px;"></textarea>
+                </div>
+                <div>
+                  <label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Default Writing Style</label>
+                  <input type="text" id="set-style" class="input ai-setting-inp" style="width:100%;" placeholder="e.g. Professional, Casual">
+                </div>
+                <div>
+                  <label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Preferred Response Length</label>
+                  <select id="set-length" class="input ai-setting-inp" style="width:100%;">
+                    <option value="Concise">Concise</option>
+                    <option value="Standard">Standard</option>
+                    <option value="Detailed">Detailed</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Preferred Language</label>
+                  <input type="text" id="set-lang" class="input ai-setting-inp" style="width:100%;" placeholder="e.g. English">
+                </div>
+              </div>
+            </section>
 
-          </section>
+            <!-- SECTION 5: Data & Privacy -->
+            <section class="ai-box" style="margin-bottom: 24px;">
+              <div class="ai-box-header">
+                <div class="ai-box-title">Data & Privacy</div>
+              </div>
+              <div style="padding:24px; display:flex; gap:16px;">
+                <button class="btn btn-primary" onclick="window.exportAIHistory()">Export AI History</button>
+                <button class="btn btn-ghost" style="color:var(--danger); border:1px solid var(--danger-10); background:var(--danger-10);" onclick="window.clearAIHistory()">Clear AI History</button>
+                <button class="btn btn-ghost" style="color:var(--text-2); border:1px solid var(--border);" onclick="window.resetAISettings()">Reset AI Settings</button>
+              </div>
+            </section>
+
+            <!-- SECTION 6: Connection Status -->
+            <section class="ai-box" style="margin-bottom: 64px;">
+              <div class="ai-box-header">
+                <div class="ai-box-title">Connection Status</div>
+              </div>
+              <div style="padding:24px; display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:16px; border:1px solid var(--border); border-radius:12px;">
+                  <div style="font-weight:700; color:var(--text-1);">OpenAI</div>
+                  <span class="badge badge-neutral">Not Connected</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:16px; border:1px solid var(--border); border-radius:12px;">
+                  <div style="font-weight:700; color:var(--text-1);">Gemini</div>
+                  <span class="badge badge-neutral">Not Connected</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:16px; border:1px solid var(--border); border-radius:12px;">
+                  <div style="font-weight:700; color:var(--text-1);">Claude</div>
+                  <span class="badge badge-neutral">Not Connected</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:16px; border:1px solid var(--border); border-radius:12px;">
+                  <div style="font-weight:700; color:var(--text-1);">Local Model</div>
+                  <span class="badge badge-neutral">Not Connected</span>
+                </div>
+              </div>
+            </section>
+
+          </div>
+
+          <!-- ═══════════ VIEW: HISTORY ═══════════ -->
+          <div id="tab-history" class="ai-tab-content" style="display:none;">
+            <section class="ai-section">
+              <div class="ai-section-header" style="display:flex; justify-content:space-between; align-items:center;">
+                <h2 class="ai-section-title">AI History</h2>
+              </div>
+              <div class="ai-table-container">
+                <table class="table-enterprise">
+                  <thead>
+                    <tr>
+                      <th>Timestamp</th>
+                      <th>Tool</th>
+                      <th>Prompt</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-history"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
 
         </div>
       </main>
-
     </div>
   </div>
+
+  <div id="ai-action-portal" style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9999;"></div>
 
   <div id="statusbar-container"></div>
   <div id="overlays-container"></div>
@@ -1012,6 +1149,6 @@
   <script src="../assets/js/components.js"></script>
   <script src="../assets/js/navigation.js"></script>
   <script src="../assets/js/app.js"></script>
+  <script src="./script.js"></script>
 </body>
-
 </html>
