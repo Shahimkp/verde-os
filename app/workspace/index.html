@@ -471,7 +471,7 @@
       <div id="topbar-container"></div>
 
       <main class="app-content">
-        <div class="ws-layout">
+        <div class="ws-layout" id="ws-dashboard-view">
 
           <!-- 1. Page Header -->
           <header class="ws-header">
@@ -566,10 +566,84 @@
             </div>
           </div>
 
+          <!-- Workspace Directory -->
+          <section class="ws-section" id="workspace-directory-section">
+            <div class="ws-section-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+              <div style="display:flex; align-items:center; gap:24px;">
+                <h2 class="ws-section-title" style="margin:0;">Workspace Directory</h2>
+                <div style="display:flex; gap:16px; font-size:12px; font-weight:600; color:var(--text-3);">
+                  <span>Total Workspaces: <span id="wd-total" style="color:var(--text-1);">0</span></span>
+                  <span>Login Enabled: <span id="wd-login" style="color:var(--success);">0</span></span>
+                  <span>Active Workspaces: <span id="wd-active" style="color:var(--success);">0</span></span>
+                  <span>Departments Covered: <span id="wd-depts" style="color:var(--primary);">0</span></span>
+                </div>
+              </div>
+              <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+                <input type="text" id="wd-search" class="form-control" placeholder="Search workspaces..." style="width:220px; font-size:13px; padding:6px 12px;">
+                <select id="wd-filter-dept" class="form-control" style="width:140px; font-size:13px; padding:6px 12px;">
+                  <option value="">All Depts</option>
+                </select>
+                <select id="wd-filter-role" class="form-control" style="width:140px; font-size:13px; padding:6px 12px;">
+                  <option value="">All Roles</option>
+                  <option value="Owner">Owner</option>
+                  <option value="Admin">Admin</option>
+                  <option value="Manager">Manager</option>
+                  <option value="Team Lead">Team Lead</option>
+                  <option value="Employee">Employee</option>
+                </select>
+                <select id="wd-filter-status" class="form-control" style="width:120px; font-size:13px; padding:6px 12px;">
+                  <option value="">All Status</option>
+                  <option value="Active">Active</option>
+                  <option value="Inactive">Inactive</option>
+                </select>
+                <select id="wd-filter-login" class="form-control" style="width:120px; font-size:13px; padding:6px 12px;">
+                  <option value="">Login Any</option>
+                  <option value="Yes">Login: Yes</option>
+                  <option value="No">Login: No</option>
+                </select>
+              </div>
+            </div>
+            <div style="overflow-x:auto; background:var(--surface); border:1px solid var(--border); border-radius:12px;">
+              <table class="table" style="width:100%; border-collapse:collapse;">
+                <thead>
+                  <tr style="border-bottom:1px solid var(--border);">
+                    <th style="text-align:left; padding:12px 16px; font-size:12px; color:var(--text-3); font-weight:600;">Workspace Name</th>
+                    <th style="text-align:left; padding:12px 16px; font-size:12px; color:var(--text-3); font-weight:600;">Employee</th>
+                    <th style="text-align:left; padding:12px 16px; font-size:12px; color:var(--text-3); font-weight:600;">Department</th>
+                    <th style="text-align:left; padding:12px 16px; font-size:12px; color:var(--text-3); font-weight:600;">Role</th>
+                    <th style="text-align:left; padding:12px 16px; font-size:12px; color:var(--text-3); font-weight:600;">Login</th>
+                    <th style="text-align:left; padding:12px 16px; font-size:12px; color:var(--text-3); font-weight:600;">Status</th>
+                    <th style="text-align:left; padding:12px 16px; font-size:12px; color:var(--text-3); font-weight:600;">Created</th>
+                    <th style="text-align:right; padding:12px 16px; font-size:12px; color:var(--text-3); font-weight:600;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="wd-tbody">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </section>
+
           <!-- 3. Departments -->
           <section class="ws-section">
-            <div class="ws-section-header">
-              <h2 class="ws-section-title">Departments</h2>
+            <div class="ws-section-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+              <div style="display:flex; align-items:center; gap:24px;">
+                <h2 class="ws-section-title" style="margin:0;">Departments</h2>
+                <div id="dept-dashboard" style="display:flex; gap:16px; font-size:12px; font-weight:600; color:var(--text-3);">
+                  <span>Total: <span id="dept-total" style="color:var(--text-1);">0</span></span>
+                  <span>Active: <span id="dept-active" style="color:var(--success);">0</span></span>
+                  <span>Avg Employees/Dept: <span id="dept-avg" style="color:var(--primary);">0</span></span>
+                </div>
+              </div>
+              <div style="display:flex; gap:12px; align-items:center;">
+                <input type="text" id="dept-search" class="form-control" placeholder="Search departments..." style="width:220px; font-size:13px; padding:6px 12px;">
+                <select id="dept-status-filter" class="form-control" style="width:140px; font-size:13px; padding:6px 12px;">
+                  <option value="">All Statuses</option>
+                  <option value="Active">Active</option>
+                  <option value="Inactive">Inactive</option>
+                </select>
+                <button class="btn btn-primary" style="font-size:13px; padding:6px 16px;" onclick="window._ws.openCreateDept()">Create Dept</button>
+              </div>
             </div>
             <div class="ws-dept-grid">
 
@@ -935,6 +1009,83 @@
           </section>
 
         </div>
+        
+        <!-- Workspace Provisioning View -->
+        <div class="ws-layout" id="ws-provisioning-view" style="display:none;">
+          <header class="ws-header" style="border-bottom:1px solid var(--border); padding-bottom:24px; margin-bottom:32px;">
+            <div>
+              <h1 class="ws-header-title">Workspace Provisioning</h1>
+              <div class="ws-header-desc">Provision a new personal workspace for an employee</div>
+            </div>
+            <div class="ws-toolbar">
+              <button class="btn btn-ghost" onclick="window._ws.closeWorkspaceProvisioning()">Back to Dashboard</button>
+            </div>
+          </header>
+          
+          <div class="ws-section">
+            <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:32px; max-width:800px; margin:0 auto;">
+              
+              <input type="hidden" id="prov-edit-id" value="">
+              
+              <div style="margin-bottom:24px;">
+                <label style="display:block; font-size:13px; font-weight:600; color:var(--text-2); margin-bottom:8px;">Employee *</label>
+                <select id="prov-employee" class="form-control" onchange="window._ws.onProvEmployeeChange()" style="width:100%;"></select>
+                <div style="font-size:11px; color:var(--text-3); margin-top:4px;">Only employees without a workspace can be provisioned. Selecting an employee with an existing workspace will load it for editing.</div>
+              </div>
+              
+              <div style="margin-bottom:24px;">
+                <label style="display:block; font-size:13px; font-weight:600; color:var(--text-2); margin-bottom:8px;">Workspace Name *</label>
+                <input type="text" id="prov-name" class="form-control" placeholder="e.g. John Doe Workspace" style="width:100%;">
+              </div>
+              
+              <div style="display:flex; gap:24px; margin-bottom:24px;">
+                <div style="flex:1;">
+                  <label style="display:block; font-size:13px; font-weight:600; color:var(--text-2); margin-bottom:8px;">Department</label>
+                  <input type="text" id="prov-dept" class="form-control" readonly style="width:100%; background:var(--bg-2);">
+                </div>
+                <div style="flex:1;">
+                  <label style="display:block; font-size:13px; font-weight:600; color:var(--text-2); margin-bottom:8px;">Role</label>
+                  <select id="prov-role" class="form-control" style="width:100%;">
+                    <!-- Roles will be dynamically populated -->
+                    <option value="Owner">Owner</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Manager">Manager</option>
+                    <option value="Team Lead">Team Lead</option>
+                    <option value="Employee" selected>Employee</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div style="display:flex; gap:24px; margin-bottom:24px;">
+                <div style="flex:1;">
+                  <label style="display:block; font-size:13px; font-weight:600; color:var(--text-2); margin-bottom:8px;">Can Login</label>
+                  <select id="prov-login" class="form-control" style="width:100%;">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                  </select>
+                </div>
+                <div style="flex:1;">
+                  <label style="display:block; font-size:13px; font-weight:600; color:var(--text-2); margin-bottom:8px;">Portal Status</label>
+                  <select id="prov-status" class="form-control" style="width:100%;">
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div style="margin-bottom:32px;">
+                <label style="display:block; font-size:13px; font-weight:600; color:var(--text-2); margin-bottom:8px;">Notes</label>
+                <textarea id="prov-notes" class="form-control" rows="4" style="width:100%;"></textarea>
+              </div>
+              
+              <div style="display:flex; justify-content:flex-end; gap:16px;">
+                <button class="btn btn-ghost" onclick="window._ws.closeWorkspaceProvisioning()">Cancel</button>
+                <button class="btn btn-primary" onclick="window._ws.saveEmpWorkspace()">Save Workspace</button>
+              </div>
+              
+            </div>
+          </div>
+        </div>
       </main>
 
     </div>
@@ -954,6 +1105,7 @@
   <script src="../assets/js/components.js"></script>
   <script src="../assets/js/navigation.js"></script>
   <script src="../assets/js/app.js"></script>
+  <script src="./api.js"></script>
   <script src="./workspace.js"></script>
 </body>
 

@@ -279,77 +279,211 @@
      9. RENDER: DEPARTMENTS
      ══════════════════════════════════════════════════════════════════════════ */
 
+  function getDepts() {
+    var stored = localStorage.getItem('verde_departments');
+    if (stored) {
+      try { return JSON.parse(stored); } catch(e) {}
+    }
+    // Migrate if empty
+    if (state.departments && state.departments.length > 0) {
+      saveDepts(state.departments);
+      return state.departments;
+    }
+    return [];
+  }
+
+  function saveDepts(list) {
+    localStorage.setItem('verde_departments', JSON.stringify(list));
+  }
+
+  function getEmployees() {
+    var stored = localStorage.getItem('verde_api_members');
+    if (stored) { try { return JSON.parse(stored); } catch(e) {} }
+    return [
+      { id: 'mem-1', name: 'Shahim' },
+      { id: 'mem-2', name: 'Midhul' },
+      { id: 'mem-3', name: 'Ameen' },
+      { id: 'mem-4', name: 'Nihal' }
+    ];
+  }
+
   function renderDepartments() {
     var grid = document.querySelector('.ws-dept-grid');
     if (!grid) return;
-    grid.innerHTML = state.departments.map(function (d) {
-      return '<div class="ws-dept-card" data-dept-id="' + d.id + '">' +
-        '<div class="ws-dept-top">' +
-          '<div>' +
-            '<div class="ws-dept-name">' + esc(d.name) + '</div>' +
-            '<div class="ws-dept-members">' + d.members + ' Members</div>' +
-          '</div>' +
-          '<span class="badge ' + (d.status === 'Active' ? 'badge-success' : 'badge-neutral') + '">' + esc(d.status) + '</span>' +
-        '</div>' +
-        '<div class="ws-dept-bottom">' +
-          '<div>' +
-            '<div class="ws-dept-head-label">Department Head</div>' +
-            '<div class="ws-dept-head-name">' + esc(d.head || 'Unassigned') + '</div>' +
-          '</div>' +
-        '</div>' +
-      '</div>';
-    }).join('');
+    
+    var list = getDepts();
+    
+    // Apply filters
+    var searchInput = document.getElementById('dept-search');
+    var statusFilter = document.getElementById('dept-status-filter');
+    var q = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    var sf = statusFilter ? statusFilter.value : '';
 
-    // Wire click on each card
-    grid.querySelectorAll('.ws-dept-card').forEach(function (card) {
-      card.addEventListener('click', function () { openEditDept(card.getAttribute('data-dept-id')); });
+    var filtered = list.filter(function(d) {
+      var matchName = d.name.toLowerCase().includes(q);
+      var matchMgr = (d.headName || d.head || '').toLowerCase().includes(q);
+      var matchSearch = !q || matchName || matchMgr;
+      var matchStatus = !sf || d.status === sf;
+      return matchSearch && matchStatus;
     });
+
+    if (filtered.length === 0) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-3);">No departments match your search.</div>';
+    } else {
+      grid.innerHTML = filtered.map(function (d) {
+        return '<div class="ws-dept-card" data-dept-id="' + d.id + '">' +
+          '<div class="ws-dept-top">' +
+            '<div>' +
+              '<div class="ws-dept-name">' + esc(d.name) + '</div>' +
+              '<div class="ws-dept-members">' + (d.members || 0) + ' Members</div>' +
+            '</div>' +
+            '<span class="badge ' + (d.status === 'Active' ? 'badge-success' : 'badge-neutral') + '">' + esc(d.status) + '</span>' +
+          '</div>' +
+          '<div class="ws-dept-bottom">' +
+            '<div>' +
+              '<div class="ws-dept-head-label">Department Head</div>' +
+              '<div class="ws-dept-head-name">' + esc(d.headName || d.head || 'Unassigned') + '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    grid.querySelectorAll('.ws-dept-card').forEach(function (card) {
+      card.addEventListener('click', function () { openViewDept(card.getAttribute('data-dept-id')); });
+    });
+
+    updateDeptDashboard(list);
+  }
+
+  function updateDeptDashboard(list) {
+    if(!list) list = getDepts();
+    var total = list.length;
+    var active = list.filter(function(d) { return d.status === 'Active'; }).length;
+    var empTotal = list.reduce(function(sum, d) { return sum + parseInt(d.members || 0, 10); }, 0);
+    var avg = total === 0 ? 0 : (empTotal / total).toFixed(1);
+
+    var elTotal = document.getElementById('dept-total');
+    var elActive = document.getElementById('dept-active');
+    var elAvg = document.getElementById('dept-avg');
+    
+    if(elTotal) elTotal.textContent = total;
+    if(elActive) elActive.textContent = active;
+    if(elAvg) elAvg.textContent = avg;
   }
 
   function openCreateDept() {
+    var emps = getEmployees();
+    var empOpts = [{label:'-- Select Manager --', value:''}].concat(emps.map(function(e) { return {label: e.name, value: e.id}; }));
+    var autoCode = 'DEP-' + Math.floor(1000 + Math.random() * 9000);
+    
     var body =
-      fieldHTML('Department Name', inputHTML('dp-name', ''), true) +
+      fieldHTML('Department Name *', inputHTML('dp-name', ''), true) +
+      fieldHTML('Department Code', '<input type="text" id="dp-code" class="form-control" value="' + autoCode + '" readonly style="background:var(--bg);">') +
       fieldHTML('Description', textareaHTML('dp-desc', '')) +
       row2(
-        fieldHTML('Department Head', inputHTML('dp-head', '')),
+        fieldHTML('Department Head', selectHTML('dp-head', empOpts, '')),
         fieldHTML('Status', selectHTML('dp-status', ['Active', 'Inactive'], 'Active'))
       );
     var footer = '<button class="btn btn-ghost" onclick="window._ws.closeModal(\'ws-m-dept\')">Cancel</button>' +
                  '<button class="btn btn-primary" onclick="window._ws.saveDept()">Create Department</button>';
-    openModal('ws-m-dept', 'Create Department', body, footer);
+    openModal('ws-m-dept', 'Create Department', body, footer, '500px');
+  }
+
+  function openViewDept(id) {
+    var d = getDepts().find(function (x) { return x.id === id; });
+    if (!d) return;
+    var badgeStyle = d.status === 'Active' ? 'background:rgba(46,204,113,0.1);color:#2ecc71;' : 'background:rgba(231,76,60,0.1);color:#e74c3c;';
+    var body =
+      '<div style="display:flex; gap:20px; margin-bottom:15px;">' +
+        '<div style="flex:1;"><label style="font-size:12px;color:var(--text-3);font-weight:600;display:block;margin-bottom:4px;">Department Name</label><div style="font-size:14px;color:var(--text-1);font-weight:600;">' + esc(d.name) + '</div></div>' +
+        '<div style="flex:1;"><label style="font-size:12px;color:var(--text-3);font-weight:600;display:block;margin-bottom:4px;">Department Code</label><div style="font-size:14px;color:var(--text-1);">' + esc(d.code || d.id.toUpperCase()) + '</div></div>' +
+      '</div>' +
+      '<div style="margin-bottom:15px;"><label style="font-size:12px;color:var(--text-3);font-weight:600;display:block;margin-bottom:4px;">Description</label><div style="font-size:14px;color:var(--text-1);">' + (esc(d.desc) || '<i>No description</i>') + '</div></div>' +
+      '<div style="display:flex; gap:20px; margin-bottom:15px;">' +
+        '<div style="flex:1;"><label style="font-size:12px;color:var(--text-3);font-weight:600;display:block;margin-bottom:4px;">Manager</label><div style="font-size:14px;color:var(--text-1);">' + esc(d.headName || d.head || 'Unassigned') + '</div></div>' +
+        '<div style="flex:1;"><label style="font-size:12px;color:var(--text-3);font-weight:600;display:block;margin-bottom:4px;">Status</label><div><span style="padding:4px 8px;border-radius:4px;font-size:11px;font-weight:600;' + badgeStyle + '">' + esc(d.status) + '</span></div></div>' +
+      '</div>';
+      
+    var actionBtn = d.status === 'Active' ? 
+      '<button class="btn btn-ghost" style="color:#f39c12;" onclick="window._ws.toggleDeptStatus(\'' + id + '\', \'Inactive\')">Deactivate</button>' : 
+      '<button class="btn btn-ghost" style="color:#2ecc71;" onclick="window._ws.toggleDeptStatus(\'' + id + '\', \'Active\')">Reactivate</button>';
+
+    var footer = '<button class="btn btn-ghost" style="color:var(--danger);margin-right:auto;" onclick="window._ws.deleteDept(\'' + id + '\')">Delete</button>' +
+                 actionBtn +
+                 '<button class="btn btn-primary" onclick="window._ws.openEditDept(\'' + id + '\')">Edit</button>';
+    openModal('ws-m-view-dept', 'View Department', body, footer, '500px');
+  }
+
+  function toggleDeptStatus(id, newStatus) {
+    var list = getDepts();
+    var d = list.find(function(x) { return x.id === id; });
+    if(d) {
+      d.status = newStatus;
+      saveDepts(list);
+      toast('Department ' + (newStatus === 'Active' ? 'reactivated' : 'deactivated'), 'success');
+      closeModal('ws-m-view-dept');
+      renderDepartments();
+    }
   }
 
   function openEditDept(id) {
-    var d = state.departments.find(function (x) { return x.id === id; });
+    var d = getDepts().find(function (x) { return x.id === id; });
     if (!d) return;
+    var emps = getEmployees();
+    var empOpts = [{label:'-- Select Manager --', value:''}].concat(emps.map(function(e) { return {label: e.name, value: e.id}; }));
+    var currentMgrId = d.headId || (emps.find(function(e){ return e.name === d.head; }) || {}).id || '';
+    
     var body =
       '<input type="hidden" id="dp-edit-id" value="' + id + '">' +
-      fieldHTML('Department Name', inputHTML('dp-name', d.name), true) +
+      fieldHTML('Department Name *', inputHTML('dp-name', d.name), true) +
+      fieldHTML('Department Code', '<input type="text" id="dp-code" class="form-control" value="' + esc(d.code || d.id.toUpperCase()) + '" readonly style="background:var(--bg);">') +
       fieldHTML('Description', textareaHTML('dp-desc', d.desc || '')) +
       row2(
-        fieldHTML('Department Head', inputHTML('dp-head', d.head)),
+        fieldHTML('Department Head', selectHTML('dp-head', empOpts, currentMgrId)),
         fieldHTML('Status', selectHTML('dp-status', ['Active', 'Inactive'], d.status))
       );
-    var footer = '<button class="btn btn-ghost" style="color:var(--danger);margin-right:auto;" onclick="window._ws.deleteDept(\'' + id + '\')">Delete</button>' +
-                 '<button class="btn btn-ghost" onclick="window._ws.closeModal(\'ws-m-dept\')">Cancel</button>' +
+    var footer = '<button class="btn btn-ghost" onclick="window._ws.closeModal(\'ws-m-dept\')">Cancel</button>' +
                  '<button class="btn btn-primary" onclick="window._ws.saveDept()">Save Changes</button>';
-    openModal('ws-m-dept', 'Edit Department', body, footer);
+    closeModal('ws-m-view-dept');
+    openModal('ws-m-dept', 'Edit Department', body, footer, '500px');
   }
 
   function saveDept() {
     var name = val('dp-name');
-    if (!name) { toast('Department name is required', 'error'); return; }
+    if (!name || name.trim() === '') { toast('Department name is required', 'error'); return; }
+    
+    var list = getDepts();
     var editId = val('dp-edit-id');
-    if (editId) {
-      var d = state.departments.find(function (x) { return x.id === editId; });
-      if (d) { d.name = name; d.desc = val('dp-desc'); d.head = val('dp-head'); d.status = val('dp-status'); }
-    } else {
-      state.departments.push({ id: 'dept-' + Date.now(), name: name, desc: val('dp-desc'), head: val('dp-head'), status: val('dp-status'), members: 0 });
+    var code = val('dp-code');
+    var headId = val('dp-head');
+    var status = val('dp-status');
+    var desc = val('dp-desc');
+    
+    var emps = getEmployees();
+    var headName = '';
+    if(headId) {
+       var emp = emps.find(function(e) { return e.id === headId; });
+       if(emp) headName = emp.name;
     }
-    persist('departments');
+    
+    var dup = list.find(function(d) { return d.name.toLowerCase() === name.toLowerCase() && d.id !== editId; });
+    if (dup) { toast('Department name must be unique', 'error'); return; }
+
+    if (editId) {
+      var d = list.find(function (x) { return x.id === editId; });
+      if (d) { 
+        d.name = name; d.desc = desc; d.headId = headId; d.headName = headName; 
+        d.head = headName; d.status = status; d.code = code;
+      }
+      toast('Department updated', 'success');
+    } else {
+      list.push({ id: 'dept-' + Date.now(), code: code, name: name, desc: desc, headId: headId, headName: headName, head: headName, status: status, members: 0 });
+      toast('Department created', 'success');
+    }
+    saveDepts(list);
     closeModal('ws-m-dept');
     renderDepartments();
-    toast(editId ? 'Department updated' : 'Department created');
   }
 
   function deleteDept(id) {
@@ -361,12 +495,13 @@
   }
 
   function confirmDeleteDept(id) {
-    state.departments = state.departments.filter(function (d) { return d.id !== id; });
-    persist('departments');
+    var list = getDepts().filter(function (d) { return d.id !== id; });
+    saveDepts(list);
     closeModal('ws-m-confirm');
+    closeModal('ws-m-view-dept');
     closeModal('ws-m-dept');
     renderDepartments();
-    toast('Department deleted');
+    toast('Department deleted', 'success');
   }
 
   /* ══════════════════════════════════════════════════════════════════════════
@@ -871,11 +1006,11 @@
       dd.style.cssText = 'position:fixed;top:' + (rect.bottom + 8) + 'px;right:' + (window.innerWidth - rect.right) + 'px;background:#fff;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.12);border:1px solid var(--border);padding:8px;z-index:10000;width:220px;display:flex;flex-direction:column;gap:2px;opacity:0;transform:translateY(-4px);transition:all 0.15s ease;';
 
       var items = [
-        { label: 'Invite Member', fn: function () { openInviteMemberModal(); } },
-        { label: 'Create Department', fn: function () { openCreateDept(); } },
-        { label: 'Generate API Key', fn: function () { generateAPIKey(); } },
-        { label: 'Upload Logo', fn: function () { openUploadLogoModal(); } },
-        { label: 'Manage Permissions', fn: function () { openManagePermissions(); } }
+        { label: 'Create Workspace', fn: function () { window._ws.openWorkspaceProvisioning(); } },
+        { label: 'Invite Member', fn: function () { if(typeof openInviteMemberModal !== 'undefined') openInviteMemberModal(); else if(typeof openInviteMember !== 'undefined') openInviteMember(); else toast('Invite Member', 'info'); } },
+        { label: 'Upload File', fn: function () { toast('Upload File opened', 'info'); } },
+        { label: 'Workspace Settings', fn: function () { toast('Workspace Settings opened', 'info'); } },
+        { label: 'Organization Profile', fn: function () { if(typeof openOrganizationProfile !== 'undefined') openOrganizationProfile(); else toast('Organization Profile', 'info'); } }
       ];
 
       dd.innerHTML = items.map(function (it, i) {
@@ -923,6 +1058,319 @@
       toast('Logo uploaded successfully');
       closeModal('ws-m-logo');
     }
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════════
+     CREATE WORKSPACE HANDLERS (RESTORED)
+     ══════════════════════════════════════════════════════════════════════════ */
+  function getWorkspaces() {
+    var stored = localStorage.getItem('verdeWorkspaces');
+    if (stored) {
+      try { return JSON.parse(stored); } catch(e) {}
+    }
+    return [];
+  }
+
+  function saveWorkspaces(list) {
+    localStorage.setItem('verdeWorkspaces', JSON.stringify(list));
+  }
+
+  function openCreateWorkspace(id) {
+    var list = getWorkspaces();
+    var ws = { name: '', description: '', type: 'Team', visibility: 'Internal', storage: '50', status: 'Active' };
+    var isEdit = false;
+    if (id && typeof id === 'string') {
+      var existing = list.filter(function(w) { return w.id === id; })[0];
+      if (existing) { ws = existing; isEdit = true; }
+    }
+    var types = [{label:'Personal',value:'Personal'},{label:'Team',value:'Team'},{label:'Enterprise',value:'Enterprise'}];
+    var vis = [{label:'Private',value:'Private'},{label:'Internal',value:'Internal'},{label:'Public',value:'Public'}];
+    var stats = [{label:'Active',value:'Active'},{label:'Archived',value:'Archived'}];
+    var body =
+      '<input type="hidden" id="cws-id" value="' + (isEdit ? esc(id) : '') + '">' +
+      fieldHTML('Workspace Name *', inputHTML('cws-name', ws.name), true) +
+      fieldHTML('Description', textareaHTML('cws-desc', ws.description)) +
+      row2(fieldHTML('Workspace Type', selectHTML('cws-type', types, ws.type)), fieldHTML('Visibility', selectHTML('cws-vis', vis, ws.visibility))) +
+      row2(fieldHTML('Storage Limit (GB)', inputHTML('cws-storage', ws.storage, 'number')), fieldHTML('Status', selectHTML('cws-status', stats, ws.status)));
+    var footer =
+      '<button class="btn btn-ghost" onclick="window._ws.closeModal(\'ws-m-create\')">Cancel</button>' +
+      '<button class="btn btn-primary" onclick="window._ws.saveWorkspace()">Save Workspace</button>';
+    openModal('ws-m-create', isEdit ? 'Edit Workspace' : 'Create Workspace', body, footer, '500px');
+  }
+
+  function saveWorkspace() {
+    var id = val('cws-id');
+    var name = val('cws-name');
+    if (!name || name.trim() === '') { toast('Workspace Name is required', 'error'); return; }
+    var list = getWorkspaces();
+    var dup = list.filter(function(w) { return w.name.toLowerCase() === name.toLowerCase() && w.id !== id; });
+    if (dup.length > 0) { toast('Workspace name already exists', 'error'); return; }
+    if (id) {
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].id === id) {
+          list[i].name = name; list[i].description = val('cws-desc'); list[i].type = val('cws-type');
+          list[i].visibility = val('cws-vis'); list[i].storage = val('cws-storage'); list[i].status = val('cws-status');
+          break;
+        }
+      }
+      toast('Workspace updated successfully', 'success');
+    } else {
+      list.push({ id: 'WS-' + Math.floor(Math.random() * 1000000), name: name, description: val('cws-desc'), type: val('cws-type'), visibility: val('cws-vis'), storage: val('cws-storage'), status: val('cws-status') });
+      toast('Workspace created successfully', 'success');
+    }
+    saveWorkspaces(list); 
+    closeModal('ws-m-create');
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════════
+     14.5. EMPLOYEE WORKSPACE PROVISIONING
+     ══════════════════════════════════════════════════════════════════════════ */
+  function getEmpWorkspaces() {
+    var stored = localStorage.getItem('verde_emp_workspaces');
+    return stored ? JSON.parse(stored) : [];
+  }
+  function saveEmpWorkspaces(list) {
+    localStorage.setItem('verde_emp_workspaces', JSON.stringify(list));
+  }
+  
+  function openWorkspaceProvisioning(editId) {
+    var dv = document.getElementById('ws-dashboard-view');
+    var pv = document.getElementById('ws-provisioning-view');
+    if(dv) dv.style.display = 'none';
+    if(pv) pv.style.display = 'block';
+    
+    // Populate employees
+    var empSelect = document.getElementById('prov-employee');
+    var members = state.members || [];
+    var depts = typeof getDepartments === 'function' ? getDepartments() : [];
+    empSelect.innerHTML = '<option value="">Select Employee...</option>' + members.map(function(m) {
+      return '<option value="' + esc(m.id) + '">' + esc(m.name) + '</option>';
+    }).join('');
+    
+    // Roles
+    var roleSelect = document.getElementById('prov-role');
+    var roles = [];
+    try {
+      roles = JSON.parse(localStorage.getItem('verde_settings_roles') || '[]');
+    } catch(e) {}
+    if(roles && roles.length > 0) {
+      roleSelect.innerHTML = roles.map(function(r) { return '<option value="' + esc(r.name) + '">' + esc(r.name) + '</option>'; }).join('');
+    }
+    
+    if (editId) {
+      var ws = getEmpWorkspaces().find(function(w) { return w.id === editId; });
+      if(ws) {
+        document.getElementById('prov-edit-id').value = ws.id;
+        document.getElementById('prov-employee').value = ws.employeeId;
+        document.getElementById('prov-employee').disabled = true;
+        document.getElementById('prov-name').value = ws.name;
+        document.getElementById('prov-dept').value = ws.department || '';
+        document.getElementById('prov-role').value = ws.role;
+        document.getElementById('prov-login').value = ws.canLogin;
+        document.getElementById('prov-status').value = ws.status;
+        document.getElementById('prov-notes').value = ws.notes || '';
+      }
+    } else {
+      document.getElementById('prov-edit-id').value = '';
+      document.getElementById('prov-employee').value = '';
+      document.getElementById('prov-employee').disabled = false;
+      document.getElementById('prov-name').value = '';
+      document.getElementById('prov-dept').value = '';
+      document.getElementById('prov-role').selectedIndex = 0;
+      document.getElementById('prov-login').value = 'Yes';
+      document.getElementById('prov-status').value = 'Active';
+      document.getElementById('prov-notes').value = '';
+    }
+  }
+  
+  function closeWorkspaceProvisioning() {
+    var dv = document.getElementById('ws-dashboard-view');
+    var pv = document.getElementById('ws-provisioning-view');
+    if(dv) dv.style.display = 'block';
+    if(pv) pv.style.display = 'none';
+    renderWorkspaceDirectory();
+  }
+  
+  function onProvEmployeeChange() {
+    var empId = document.getElementById('prov-employee').value;
+    if(!empId) return;
+    
+    var workspaces = getEmpWorkspaces();
+    var existing = workspaces.find(function(w) { return w.employeeId === empId; });
+    if(existing) {
+      toast('Employee already has a workspace. Switching to Edit mode.', 'info');
+      openWorkspaceProvisioning(existing.id);
+      return;
+    }
+    
+    var members = state.members || [];
+    var emp = members.find(function(m) { return m.id === empId; });
+    if(emp) {
+      document.getElementById('prov-name').value = emp.name + " Workspace";
+      document.getElementById('prov-dept').value = emp.department || '';
+    }
+  }
+  
+  function saveEmpWorkspace() {
+    var id = document.getElementById('prov-edit-id').value;
+    var employeeId = document.getElementById('prov-employee').value;
+    var name = document.getElementById('prov-name').value.trim();
+    var dept = document.getElementById('prov-dept').value;
+    var role = document.getElementById('prov-role').value;
+    var canLogin = document.getElementById('prov-login').value;
+    var status = document.getElementById('prov-status').value;
+    var notes = document.getElementById('prov-notes').value.trim();
+    
+    if(!employeeId || !name) {
+      toast('Employee and Workspace Name are required.', 'error');
+      return;
+    }
+    
+    var members = state.members || [];
+    var emp = members.find(function(m) { return m.id === employeeId; });
+    
+    var list = getEmpWorkspaces();
+    if(id) {
+      var idx = list.findIndex(function(w) { return w.id === id; });
+      if(idx > -1) {
+        list[idx].name = name;
+        list[idx].role = role;
+        list[idx].canLogin = canLogin;
+        list[idx].status = status;
+        list[idx].notes = notes;
+        list[idx].lastUpdated = new Date().toISOString();
+        saveEmpWorkspaces(list);
+        toast('Workspace updated successfully', 'success');
+      }
+    } else {
+      var newWs = {
+        id: 'WS-' + Math.floor(1000 + Math.random() * 9000),
+        employeeId: employeeId,
+        employeeName: emp ? emp.name : 'Unknown',
+        department: dept,
+        role: role,
+        canLogin: canLogin,
+        status: status,
+        notes: notes,
+        createdDate: new Date().toISOString(),
+        lastUpdated: new Date().toISOString()
+      };
+      list.push(newWs);
+      saveEmpWorkspaces(list);
+      toast('Workspace created successfully', 'success');
+    }
+    closeWorkspaceProvisioning();
+  }
+  
+  function renderWorkspaceDirectory() {
+    var tbody = document.getElementById('wd-tbody');
+    if(!tbody) return;
+    
+    var list = getEmpWorkspaces();
+    
+    // Get filters
+    var elSearch = document.getElementById('wd-search');
+    var elDept = document.getElementById('wd-filter-dept');
+    var elRole = document.getElementById('wd-filter-role');
+    var elStatus = document.getElementById('wd-filter-status');
+    var elLogin = document.getElementById('wd-filter-login');
+    
+    var search = elSearch ? (elSearch.value || '').toLowerCase() : '';
+    var filterDept = elDept ? elDept.value : '';
+    var filterRole = elRole ? elRole.value : '';
+    var filterStatus = elStatus ? elStatus.value : '';
+    var filterLogin = elLogin ? elLogin.value : '';
+    
+    var activeCount = 0;
+    var loginCount = 0;
+    var deptsSet = {};
+    
+    var filtered = list.filter(function(w) {
+      if(w.status === 'Active') activeCount++;
+      if(w.canLogin === 'Yes') loginCount++;
+      if(w.department) deptsSet[w.department] = true;
+      
+      if(search && w.name.toLowerCase().indexOf(search) === -1 && (w.employeeName || '').toLowerCase().indexOf(search) === -1) return false;
+      if(filterDept && w.department !== filterDept) return false;
+      if(filterRole && w.role !== filterRole) return false;
+      if(filterStatus && w.status !== filterStatus) return false;
+      if(filterLogin && w.canLogin !== filterLogin) return false;
+      return true;
+    });
+    
+    // Update dashboard
+    var tTotal = document.getElementById('wd-total');
+    if(tTotal) tTotal.innerText = list.length;
+    var tActive = document.getElementById('wd-active');
+    if(tActive) tActive.innerText = activeCount;
+    var tLogin = document.getElementById('wd-login');
+    if(tLogin) tLogin.innerText = loginCount;
+    var tDepts = document.getElementById('wd-depts');
+    if(tDepts) tDepts.innerText = Object.keys(deptsSet).length;
+    
+    if(filtered.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:32px; color:var(--text-3); font-size:13px;">No workspaces found.</td></tr>';
+      return;
+    }
+    
+    tbody.innerHTML = filtered.map(function(w) {
+      var d = new Date(w.createdDate);
+      var dateStr = d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+      var badge = w.status === 'Active' ? '<span class="badge badge-success">Active</span>' : '<span class="badge badge-warning">Inactive</span>';
+      return '<tr style="border-bottom:1px solid var(--border);">' +
+        '<td style="padding:12px 16px; font-size:13px; font-weight:500; color:var(--text-1);">' + esc(w.name) + '</td>' +
+        '<td style="padding:12px 16px; font-size:13px;">' + esc(w.employeeName) + '</td>' +
+        '<td style="padding:12px 16px; font-size:13px;">' + esc(w.department || '-') + '</td>' +
+        '<td style="padding:12px 16px; font-size:13px;">' + esc(w.role) + '</td>' +
+        '<td style="padding:12px 16px; font-size:13px;">' + (w.canLogin === 'Yes' ? 'Yes' : 'No') + '</td>' +
+        '<td style="padding:12px 16px;">' + badge + '</td>' +
+        '<td style="padding:12px 16px; font-size:13px; color:var(--text-2);">' + dateStr + '</td>' +
+        '<td style="padding:12px 16px; text-align:right;">' +
+          '<div class="dropdown" style="display:inline-block; position:relative;">' +
+            '<button class="btn btn-ghost btn-sm" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display===\'block\'?\'none\':\'block\'">Options</button>' +
+            '<div class="dropdown-menu" style="display:none; position:absolute; right:0; top:100%; background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:4px 0; min-width:140px; box-shadow:0 4px 12px rgba(0,0,0,0.1); z-index:100;">' +
+              '<div onclick="window._ws.openWorkspaceProvisioning(\'' + w.id + '\')" style="padding:8px 16px; font-size:13px; cursor:pointer; color:var(--text-1);">Edit Workspace</div>' +
+              '<div onclick="window._ws.toggleEmpWorkspace(\'' + w.id + '\')" style="padding:8px 16px; font-size:13px; cursor:pointer; color:var(--text-1);">' + (w.status==='Active'?'Disable Workspace':'Enable Workspace') + '</div>' +
+              '<div style="border-top:1px solid var(--border); margin:4px 0;"></div>' +
+              '<div onclick="window._ws.confirmDeleteEmpWorkspace(\'' + w.id + '\')" style="padding:8px 16px; font-size:13px; cursor:pointer; color:var(--error);">Delete Workspace</div>' +
+            '</div>' +
+          '</div>' +
+        '</td>' +
+      '</tr>';
+    }).join('');
+    
+    // Also populate dept filter if needed
+    if(elDept && elDept.options.length <= 1) {
+      var dlist = (typeof getDepartments === 'function') ? getDepartments().filter(function(d){ return d.status==='Active';}) : [];
+      elDept.innerHTML = '<option value="">All Depts</option>' + dlist.map(function(d){ return '<option value="'+esc(d.name)+'">'+esc(d.name)+'</option>';}).join('');
+    }
+  }
+  
+  function toggleEmpWorkspace(id) {
+    var list = getEmpWorkspaces();
+    var idx = list.findIndex(function(w) { return w.id === id; });
+    if(idx > -1) {
+      list[idx].status = list[idx].status === 'Active' ? 'Inactive' : 'Active';
+      saveEmpWorkspaces(list);
+      toast('Workspace ' + list[idx].status.toLowerCase(), 'success');
+      renderWorkspaceDirectory();
+    }
+  }
+  
+  function confirmDeleteEmpWorkspace(id) {
+    var body = '<div style="padding:16px 0; font-size:14px; color:var(--text-2);">Are you sure you want to delete this workspace? This action cannot be undone.</div>';
+    var footer = '<button class="btn btn-ghost" onclick="window._ws.closeModal(\'ws-m-del-emp-ws\')">Cancel</button>' +
+                 '<button class="btn btn-primary" style="background:var(--error);" onclick="window._ws.deleteEmpWorkspace(\'' + id + '\')">Delete</button>';
+    openModal('ws-m-del-emp-ws', 'Delete Workspace', body, footer);
+  }
+  
+  function deleteEmpWorkspace(id) {
+    var list = getEmpWorkspaces();
+    var next = list.filter(function(w) { return w.id !== id; });
+    saveEmpWorkspaces(next);
+    closeModal('ws-m-del-emp-ws');
+    toast('Workspace deleted', 'success');
+    renderWorkspaceDirectory();
   }
 
   /* ══════════════════════════════════════════════════════════════════════════
@@ -979,11 +1427,24 @@
      ══════════════════════════════════════════════════════════════════════════ */
 
   window._ws = {
+    openCreateWorkspace: openCreateWorkspace,
+    saveWorkspace: saveWorkspace,
     closeModal: closeModal,
     saveProfile: saveProfile,
+    openWorkspaceProvisioning: openWorkspaceProvisioning,
+    closeWorkspaceProvisioning: closeWorkspaceProvisioning,
+    onProvEmployeeChange: onProvEmployeeChange,
+    saveEmpWorkspace: saveEmpWorkspace,
+    toggleEmpWorkspace: toggleEmpWorkspace,
+    confirmDeleteEmpWorkspace: confirmDeleteEmpWorkspace,
+    deleteEmpWorkspace: deleteEmpWorkspace,
+    openCreateDept: openCreateDept,
+    openViewDept: openViewDept,
+    openEditDept: openEditDept,
     saveDept: saveDept,
     deleteDept: deleteDept,
     confirmDeleteDept: confirmDeleteDept,
+    toggleDeptStatus: toggleDeptStatus,
     connectIntegration: connectIntegration,
     disconnectIntegration: disconnectIntegration,
     confirmDisconnect: confirmDisconnect,
@@ -1014,11 +1475,24 @@
     wireEditProfile();
     renderKPIs();
     renderDepartments();
+    renderWorkspaceDirectory();
     wireIntegrations();
     renderPreferences();
     renderSecurity();
     wireQuickActions();
     wireSearch();
+    
+    // Wire department filters
+    var dSearch = document.getElementById('dept-search');
+    var dFilter = document.getElementById('dept-status-filter');
+    if(dSearch) dSearch.addEventListener('input', renderDepartments);
+    if(dFilter) dFilter.addEventListener('change', renderDepartments);
+    
+    // Wire directory filters
+    ['wd-search', 'wd-filter-dept', 'wd-filter-role', 'wd-filter-status', 'wd-filter-login'].forEach(function(fid) {
+      var el = document.getElementById(fid);
+      if(el) el.addEventListener(fid === 'wd-search' ? 'input' : 'change', renderWorkspaceDirectory);
+    });
   }
 
   if (document.readyState === 'loading') {
