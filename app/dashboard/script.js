@@ -115,7 +115,45 @@
 
     // Sync with Tasks
     syncDashboardWithTasks();
+
+    // Sync with My Work Focus
+    syncDashboardWithMyWork();
+    setInterval(syncDashboardWithMyWork, 1000);
   }
+
+  // ── Sync Dashboard with My Work ──
+  function syncDashboardWithMyWork() {
+    try {
+      var sessionStr = localStorage.getItem('verde_mywork_focus_session');
+      var historyStr = localStorage.getItem('verde_mywork_focus_history');
+      var currentSessionSeconds = 0;
+      if (sessionStr) {
+        var session = JSON.parse(sessionStr);
+        if (session && session.status === 'active') {
+          currentSessionSeconds = Math.floor((Date.now() - session.startedAt) / 1000);
+        }
+      }
+      
+      var historyElapsed = 0;
+      if (historyStr) {
+        var history = JSON.parse(historyStr);
+        historyElapsed = history.reduce(function(total, s) { return total + (s.elapsedSeconds || 0); }, 0);
+      }
+      
+      var totalHours = 6.5 + ((historyElapsed + currentSessionSeconds) / 3600);
+      
+      var labels = document.querySelectorAll('.mc-mstat-label');
+      labels.forEach(function(label) {
+        if (label.textContent.trim() === 'Hours Worked') {
+          var valueDiv = label.previousElementSibling;
+          if (valueDiv && valueDiv.classList.contains('mc-mstat-value')) {
+            valueDiv.innerHTML = totalHours.toFixed(1) + '<span style="font-size:14px;color:var(--text-3);font-weight:600;">h</span>';
+          }
+        }
+      });
+    } catch(e) {}
+  }
+  window.syncDashboardWithMyWork = syncDashboardWithMyWork;
 
   // ── Sync Dashboard with CRM ──
   function syncDashboardWithCRM() {

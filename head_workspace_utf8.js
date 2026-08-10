@@ -1,14 +1,14 @@
-/* ==========================================================================
-   VERDE OS — WORKSPACE MODULE CONTROLLER
-   Full Functional Implementation — Zero UI Changes
+﻿/* ==========================================================================
+   VERDE OS ΓÇö WORKSPACE MODULE CONTROLLER
+   Full Functional Implementation ΓÇö Zero UI Changes
    ========================================================================== */
 
 (function () {
   'use strict';
 
-  /* ══════════════════════════════════════════════════════════════════════════
+  /* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
      1. DEFAULT MOCK DATA
-     ══════════════════════════════════════════════════════════════════════════ */
+     ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 
   var DEFAULTS = {
     profile: {
@@ -39,22 +39,22 @@
     preferences: {
       name: 'VERDE LABS',
       timezone: 'UTC-08:00 (Pacific Time)',
-      currency: 'INR (₹)',
+      currency: 'INR (Γé╣)',
       language: 'English (US)',
       dateFormat: 'MMM DD, YYYY'
     },
     security: {
       tfaEnabled: true,
       sessions: [
-        { id: 'ses-1', device: 'MacBook Pro — Chrome', location: 'San Francisco, CA', lastActive: 'Current Session', current: true },
-        { id: 'ses-2', device: 'iPhone 15 — Safari', location: 'San Francisco, CA', lastActive: '2 hours ago', current: false },
-        { id: 'ses-3', device: 'Windows Desktop — Edge', location: 'New York, NY', lastActive: '1 day ago', current: false }
+        { id: 'ses-1', device: 'MacBook Pro ΓÇö Chrome', location: 'San Francisco, CA', lastActive: 'Current Session', current: true },
+        { id: 'ses-2', device: 'iPhone 15 ΓÇö Safari', location: 'San Francisco, CA', lastActive: '2 hours ago', current: false },
+        { id: 'ses-3', device: 'Windows Desktop ΓÇö Edge', location: 'New York, NY', lastActive: '1 day ago', current: false }
       ],
       loginHistory: [
-        { date: '2026-08-04 10:30', device: 'MacBook Pro — Chrome', ip: '192.168.1.42', status: 'Success' },
-        { date: '2026-08-03 14:15', device: 'iPhone 15 — Safari', ip: '10.0.0.15', status: 'Success' },
-        { date: '2026-08-02 09:00', device: 'Windows Desktop — Edge', ip: '172.16.0.8', status: 'Success' },
-        { date: '2026-08-01 22:45', device: 'Unknown — Firefox', ip: '203.0.113.50', status: 'Failed' }
+        { date: '2026-08-04 10:30', device: 'MacBook Pro ΓÇö Chrome', ip: '192.168.1.42', status: 'Success' },
+        { date: '2026-08-03 14:15', device: 'iPhone 15 ΓÇö Safari', ip: '10.0.0.15', status: 'Success' },
+        { date: '2026-08-02 09:00', device: 'Windows Desktop ΓÇö Edge', ip: '172.16.0.8', status: 'Success' },
+        { date: '2026-08-01 22:45', device: 'Unknown ΓÇö Firefox', ip: '203.0.113.50', status: 'Failed' }
       ],
       apiKeys: [
         { id: 'key-1', name: 'Production API Key', key: 'vrd_prod_a1b2c3d4e5f6g7h8', created: 'Aug 1, 2026', status: 'Active' },
@@ -69,9 +69,9 @@
     ]
   };
 
-  /* ══════════════════════════════════════════════════════════════════════════
+  /* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
      2. STATE MANAGEMENT
-     ══════════════════════════════════════════════════════════════════════════ */
+     ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 
   function load(key) {
     try { var d = localStorage.getItem('verde_ws_' + key); return d ? JSON.parse(d) : null; } catch (e) { return null; }
@@ -95,9 +95,9 @@
   // Initialize on first load
   if (!localStorage.getItem('verde_ws_profile')) persistAll();
 
-  /* ══════════════════════════════════════════════════════════════════════════
+  /* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
      3. TOAST HELPER
-     ══════════════════════════════════════════════════════════════════════════ */
+     ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 
   function toast(msg, type) {
     if (window.VerdeToast) {
@@ -107,9 +107,9 @@
     }
   }
 
-  /* ══════════════════════════════════════════════════════════════════════════
+  /* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
      4. GLOBAL MODAL SYSTEM
-     ══════════════════════════════════════════════════════════════════════════ */
+     ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 
   var chevronSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>';
   var closeSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
@@ -161,9 +161,9 @@
     setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 200);
   }
 
-  /* ══════════════════════════════════════════════════════════════════════════
+  /* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
      5. FORM FIELD HELPERS
-     ══════════════════════════════════════════════════════════════════════════ */
+     ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 
   function fieldHTML(label, inputHTML, required) {
     return '<div>' +
@@ -192,9 +192,9 @@
   function val(id) { var e = document.getElementById(id); return e ? e.value.trim() : ''; }
   function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
-  /* ══════════════════════════════════════════════════════════════════════════
+  /* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
      6. SVG ICON BANK (matching existing HTML exactly)
-     ══════════════════════════════════════════════════════════════════════════ */
+     ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 
   var ICONS = {
     globe: '<svg class="ws-profile-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>',
@@ -203,9 +203,9 @@
     pin: '<svg class="ws-profile-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>'
   };
 
-  /* ══════════════════════════════════════════════════════════════════════════
+  /* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
      7. RENDER: ORGANIZATION PROFILE
-     ══════════════════════════════════════════════════════════════════════════ */
+     ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 
   function renderProfile() {
     var p = state.profile;
@@ -262,9 +262,9 @@
     toast('Organization profile updated');
   }
 
-  /* ══════════════════════════════════════════════════════════════════════════
+  /* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
      8. RENDER: KPI CARDS (dynamic values)
-     ══════════════════════════════════════════════════════════════════════════ */
+     ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 
   function renderKPIs() {
     var kpiGrid = document.querySelector('.ws-kpi-grid');
@@ -275,9 +275,9 @@
     }
   }
 
-  /* ══════════════════════════════════════════════════════════════════════════
+  /* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
      9. RENDER: DEPARTMENTS
-     ══════════════════════════════════════════════════════════════════════════ */
+     ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 
   function getDepts() {
     var stored = localStorage.getItem('verde_departments');
@@ -374,8 +374,7 @@
 
   function openCreateDept() {
     var emps = getEmployees();
-    var empOpts = [{label:'-- Select Manager --', value:''}].concat(emps.map(function(e) { 
-  return {label: e.name, value: e.id}; }));
+    var empOpts = [{label:'-- Select Manager --', value:''}].concat(emps.map(function(e) { return {label: e.name, value: e.id}; }));
     var autoCode = 'DEP-' + Math.floor(1000 + Math.random() * 9000);
     
     var body =
@@ -432,16 +431,7 @@
     var d = getDepts().find(function (x) { return x.id === id; });
     if (!d) return;
     var emps = getEmployees();
-    var empOpts = [{label:'-- Select Manager --', value:''}].concat(emps.map(function(e) { 
-
-  /* ══════════════════════════════════════════════════════════════════════════
-     15. ACTIVITY LOGS
-     ══════════════════════════════════════════════════════════════════════════ */  
-  // Call it on init
-  
-
-  return {
-label: e.name, value: e.id}; }));
+    var empOpts = [{label:'-- Select Manager --', value:''}].concat(emps.map(function(e) { return {label: e.name, value: e.id}; }));
     var currentMgrId = d.headId || (emps.find(function(e){ return e.name === d.head; }) || {}).id || '';
     
     var body =
@@ -505,8 +495,6 @@ label: e.name, value: e.id}; }));
   }
 
   function confirmDeleteDept(id) {
-    var targetDept = getDepts().find(function (d) { return d.id === id; });
-    
     var list = getDepts().filter(function (d) { return d.id !== id; });
     saveDepts(list);
     closeModal('ws-m-confirm');
@@ -516,9 +504,9 @@ label: e.name, value: e.id}; }));
     toast('Department deleted', 'success');
   }
 
-  /* ══════════════════════════════════════════════════════════════════════════
+  /* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
      10. RENDER: INTEGRATIONS
-     ══════════════════════════════════════════════════════════════════════════ */
+     ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 
   // We keep the original HTML for integrations and just wire events
   function wireIntegrations() {
@@ -641,9 +629,9 @@ label: e.name, value: e.id}; }));
     }
   }
 
-  /* ══════════════════════════════════════════════════════════════════════════
+  /* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
      11. RENDER: WORKSPACE PREFERENCES
-     ══════════════════════════════════════════════════════════════════════════ */
+     ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 
   var prefItems = [
     { key: 'name', title: 'Workspace Name', sub: "Your company's primary workspace handle" },
@@ -671,7 +659,7 @@ label: e.name, value: e.id}; }));
 
   var prefOptions = {
     timezone: ['UTC-12:00 (Baker Island)', 'UTC-08:00 (Pacific Time)', 'UTC-05:00 (Eastern Time)', 'UTC+00:00 (GMT)', 'UTC+01:00 (CET)', 'UTC+05:30 (IST)', 'UTC+08:00 (CST)', 'UTC+09:00 (JST)'],
-    currency: ['USD ($)', 'EUR (€)', 'GBP (£)', 'INR (₹)', 'JPY (¥)', 'AUD (A$)', 'CAD (C$)'],
+    currency: ['USD ($)', 'EUR (Γé¼)', 'GBP (┬ú)', 'INR (Γé╣)', 'JPY (┬Ñ)', 'AUD (A$)', 'CAD (C$)'],
     language: ['English (US)', 'English (UK)', 'Spanish', 'French', 'German', 'Hindi', 'Japanese', 'Chinese (Simplified)'],
     dateFormat: ['MMM DD, YYYY', 'DD/MM/YYYY', 'MM/DD/YYYY', 'YYYY-MM-DD', 'DD.MM.YYYY']
   };
@@ -703,9 +691,9 @@ label: e.name, value: e.id}; }));
     toast(key.charAt(0).toUpperCase() + key.slice(1) + ' updated');
   }
 
-  /* ══════════════════════════════════════════════════════════════════════════
+  /* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
      12. RENDER: SECURITY OVERVIEW
-     ══════════════════════════════════════════════════════════════════════════ */
+     ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 
   function renderSecurity() {
     var secBox = document.querySelector('.ws-half-grid .ws-box:nth-child(2)');
@@ -780,7 +768,7 @@ label: e.name, value: e.id}; }));
       return '<div style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border);">' +
         '<div>' +
           '<div style="font-size:13px;font-weight:700;color:var(--text-1);">' + esc(s.device) + '</div>' +
-          '<div style="font-size:12px;color:var(--text-3);margin-top:4px;">' + esc(s.location) + ' · ' + esc(s.lastActive) + '</div>' +
+          '<div style="font-size:12px;color:var(--text-3);margin-top:4px;">' + esc(s.location) + ' ┬╖ ' + esc(s.lastActive) + '</div>' +
         '</div>' +
         (s.current
           ? '<span class="badge badge-success">Current</span>'
@@ -829,7 +817,7 @@ label: e.name, value: e.id}; }));
       return '<div style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border);">' +
         '<div style="flex:1;">' +
           '<div style="font-size:13px;font-weight:700;color:var(--text-1);">' + esc(k.name) + '</div>' +
-          '<div style="font-size:12px;color:var(--text-3);margin-top:4px;font-family:monospace;">' + esc(k.key.substring(0, 12)) + '••••••••</div>' +
+          '<div style="font-size:12px;color:var(--text-3);margin-top:4px;font-family:monospace;">' + esc(k.key.substring(0, 12)) + 'ΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇó</div>' +
           '<div style="font-size:11px;color:var(--text-3);margin-top:4px;">Created ' + esc(k.created) + '</div>' +
         '</div>' +
         '<div style="display:flex;gap:8px;">' +
@@ -935,9 +923,9 @@ label: e.name, value: e.id}; }));
     openModal('ws-m-secpanel', 'Manage Security', body, null, '550px');
   }
 
-  /* ══════════════════════════════════════════════════════════════════════════
+  /* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
      13. MEMBER MANAGEMENT (Quick Actions modal)
-     ══════════════════════════════════════════════════════════════════════════ */
+     ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 
   function openInviteMemberModal() {
     var body =
@@ -998,9 +986,9 @@ label: e.name, value: e.id}; }));
     openModal('ws-m-perms', 'Manage Permissions', '<div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;">' + body + '</div>', null, '600px');
   }
 
-  /* ══════════════════════════════════════════════════════════════════════════
+  /* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
      14. QUICK ACTIONS
-     ══════════════════════════════════════════════════════════════════════════ */
+     ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 
   function wireQuickActions() {
     var btn = document.querySelector('.ws-toolbar .btn-primary');
@@ -1058,7 +1046,7 @@ label: e.name, value: e.id}; }));
       '<div style="border:2px dashed var(--border);border-radius:12px;padding:40px;text-align:center;cursor:pointer;" onclick="document.getElementById(\'logo-input\').click();">' +
         '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2" style="margin-bottom:12px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>' +
         '<div style="font-size:14px;font-weight:600;color:var(--text-1);">Click to upload logo</div>' +
-        '<div style="font-size:12px;color:var(--text-3);margin-top:4px;">Recommended: 256×256 PNG</div>' +
+        '<div style="font-size:12px;color:var(--text-3);margin-top:4px;">Recommended: 256├ù256 PNG</div>' +
       '</div>' +
       '<input type="file" id="logo-input" accept="image/*" style="display:none;" onchange="window._ws.handleLogoUpload(this)">';
     var footer = '<button class="btn btn-ghost" onclick="window._ws.closeModal(\'ws-m-logo\')">Cancel</button>';
@@ -1072,9 +1060,9 @@ label: e.name, value: e.id}; }));
     }
   }
 
-  /* ══════════════════════════════════════════════════════════════════════════
+  /* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
      CREATE WORKSPACE HANDLERS (RESTORED)
-     ══════════════════════════════════════════════════════════════════════════ */
+     ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
   function getWorkspaces() {
     var stored = localStorage.getItem('verdeWorkspaces');
     if (stored) {
@@ -1134,9 +1122,9 @@ label: e.name, value: e.id}; }));
     closeModal('ws-m-create');
   }
 
-  /* ══════════════════════════════════════════════════════════════════════════
+  /* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
      14.5. EMPLOYEE WORKSPACE PROVISIONING
-     ══════════════════════════════════════════════════════════════════════════ */
+     ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
   function getEmpWorkspaces() {
     var stored = localStorage.getItem('verde_emp_workspaces');
     return stored ? JSON.parse(stored) : [];
@@ -1154,97 +1142,32 @@ label: e.name, value: e.id}; }));
     // Populate employees
     var empSelect = document.getElementById('prov-employee');
     var members = state.members || [];
-    var depts = getDepts().filter(function(d){ return d.status === 'Active'; });
+    var depts = typeof getDepartments === 'function' ? getDepartments() : [];
     empSelect.innerHTML = '<option value="">Select Employee...</option>' + members.map(function(m) {
       return '<option value="' + esc(m.id) + '">' + esc(m.name) + '</option>';
     }).join('');
     
-    // Departments Dropdown
-    var deptSelect = document.getElementById('prov-dept');
-    var sysDepts = getDepts().filter(function(d){ return d.status === 'Active'; });
-    if(sysDepts.length === 0) {
-      deptSelect.innerHTML = '<option value="">No departments found. Please create a department first.</option>';
-      var btn = document.getElementById('prov-save-btn');
-      if(btn) btn.disabled = true;
-    } else {
-      deptSelect.innerHTML = '<option value="">Select Department...</option>' + sysDepts.map(function(d) {
-        return '<option value="' + esc(d.name) + '">' + esc(d.name) + '</option>';
-      }).join('');
-      var btn = document.getElementById('prov-save-btn');
-      if(btn) btn.disabled = false;
-    }
-
     // Roles
     var roleSelect = document.getElementById('prov-role');
     var roles = [];
     try {
       roles = JSON.parse(localStorage.getItem('verde_settings_roles') || '[]');
     } catch(e) {}
-    
-    var requiredOrder = ['CEO', 'Co-Founder', 'Administrator', 'Manager', 'Team Lead', 'Employee', 'Intern', 'Guest'];
-    var roleMap = {};
-    roles.forEach(function(r) { roleMap[r.name] = r; });
-    
-    var changed = false;
-    requiredOrder.forEach(function(reqName) {
-      if (!roleMap[reqName]) {
-        roleMap[reqName] = { id: 'ROLE-' + Math.floor(1000 + Math.random() * 9000), name: reqName, description: 'System Role', status: 'Active', permissions: [] };
-        roles.push(roleMap[reqName]);
-        changed = true;
-      }
-    });
-    
-    if (changed) {
-      localStorage.setItem('verde_settings_roles', JSON.stringify(roles));
+    if(roles && roles.length > 0) {
+      roleSelect.innerHTML = roles.map(function(r) { return '<option value="' + esc(r.name) + '">' + esc(r.name) + '</option>'; }).join('');
     }
-    
-    var optionsHtml = '';
-    requiredOrder.forEach(function(reqName) {
-      optionsHtml += '<option value="' + esc(reqName) + '">' + esc(reqName) + '</option>';
-    });
-    
-    roles.forEach(function(r) {
-      if (requiredOrder.indexOf(r.name) === -1 && r.name !== 'Owner') {
-        optionsHtml += '<option value="' + esc(r.name) + '">' + esc(r.name) + '</option>';
-      }
-    });
-    
-    roleSelect.innerHTML = optionsHtml;
     
     if (editId) {
       var ws = getEmpWorkspaces().find(function(w) { return w.id === editId; });
       if(ws) {
-        var optExists = false;
-        for(var i=0; i<roleSelect.options.length; i++) {
-          if(roleSelect.options[i].value === ws.role) { optExists = true; break; }
-        }
-        if(!optExists && ws.role) {
-          roleSelect.innerHTML += '<option value="' + esc(ws.role) + '">' + esc(ws.role) + '</option>';
-        }
         document.getElementById('prov-edit-id').value = ws.id;
         document.getElementById('prov-employee').value = ws.employeeId;
         document.getElementById('prov-employee').disabled = true;
         document.getElementById('prov-name').value = ws.name;
-        
-        var deptSelect = document.getElementById('prov-dept');
-        if(ws.department) {
-          var dExists = false;
-          for(var i=0; i<deptSelect.options.length; i++) {
-            if(deptSelect.options[i].value === ws.department) { dExists = true; break; }
-          }
-          if(!dExists) deptSelect.innerHTML += '<option value="' + esc(ws.department) + '">' + esc(ws.department) + '</option>';
-          deptSelect.value = ws.department;
-          deptSelect.disabled = true;
-        } else {
-          deptSelect.value = '';
-          deptSelect.disabled = false;
-        }
-        
+        document.getElementById('prov-dept').value = ws.department || '';
         document.getElementById('prov-role').value = ws.role;
         document.getElementById('prov-login').value = ws.canLogin;
         document.getElementById('prov-status').value = ws.status;
-        document.getElementById('prov-userid').value = ws.userId || '';
-        document.getElementById('prov-password').value = ws.password || '';
         document.getElementById('prov-notes').value = ws.notes || '';
       }
     } else {
@@ -1252,14 +1175,10 @@ label: e.name, value: e.id}; }));
       document.getElementById('prov-employee').value = '';
       document.getElementById('prov-employee').disabled = false;
       document.getElementById('prov-name').value = '';
-      var deptSelect = document.getElementById('prov-dept');
-      deptSelect.value = '';
-      deptSelect.disabled = false;
+      document.getElementById('prov-dept').value = '';
       document.getElementById('prov-role').selectedIndex = 0;
       document.getElementById('prov-login').value = 'Yes';
       document.getElementById('prov-status').value = 'Active';
-      document.getElementById('prov-userid').value = '';
-      document.getElementById('prov-password').value = '';
       document.getElementById('prov-notes').value = '';
     }
   }
@@ -1274,12 +1193,7 @@ label: e.name, value: e.id}; }));
   
   function onProvEmployeeChange() {
     var empId = document.getElementById('prov-employee').value;
-    var deptSelect = document.getElementById('prov-dept');
-    if(!empId) {
-      deptSelect.value = '';
-      deptSelect.disabled = false;
-      return;
-    }
+    if(!empId) return;
     
     var workspaces = getEmpWorkspaces();
     var existing = workspaces.find(function(w) { return w.employeeId === empId; });
@@ -1293,19 +1207,7 @@ label: e.name, value: e.id}; }));
     var emp = members.find(function(m) { return m.id === empId; });
     if(emp) {
       document.getElementById('prov-name').value = emp.name + " Workspace";
-      var deptSelect = document.getElementById('prov-dept');
-      if(emp.department) {
-        var dExists = false;
-        for(var i=0; i<deptSelect.options.length; i++) {
-          if(deptSelect.options[i].value === emp.department) { dExists = true; break; }
-        }
-        if(!dExists) deptSelect.innerHTML += '<option value="' + esc(emp.department) + '">' + esc(emp.department) + '</option>';
-        deptSelect.value = emp.department;
-        deptSelect.disabled = true;
-      } else {
-        deptSelect.value = '';
-        deptSelect.disabled = false;
-      }
+      document.getElementById('prov-dept').value = emp.department || '';
     }
   }
   
@@ -1317,44 +1219,17 @@ label: e.name, value: e.id}; }));
     var role = document.getElementById('prov-role').value;
     var canLogin = document.getElementById('prov-login').value;
     var status = document.getElementById('prov-status').value;
-    var userId = document.getElementById('prov-userid').value.trim();
-    var password = document.getElementById('prov-password').value;
     var notes = document.getElementById('prov-notes').value.trim();
     
-    var sysDepts = getDepts().filter(function(d){ return d.status === 'Active'; });
-    if(sysDepts.length === 0) {
-      toast('Please create a department first.', 'error');
-      return;
-    }
-    if(!dept) {
-      toast('A valid Department is required.', 'error');
-      return;
-    }
     if(!employeeId || !name) {
       toast('Employee and Workspace Name are required.', 'error');
       return;
-    }
-    if(canLogin === 'Yes') {
-      if(!userId || !password) {
-        toast('User ID and Password are required when Can Login is Yes.', 'error');
-        return;
-      }
-    }
-    
-    var list = getEmpWorkspaces();
-    
-    // Validate User ID uniqueness
-    if(userId) {
-      var isDuplicate = list.some(function(w) { return w.userId === userId && w.id !== id; });
-      if(isDuplicate) {
-        toast('User ID is already taken by another workspace.', 'error');
-        return;
-      }
     }
     
     var members = state.members || [];
     var emp = members.find(function(m) { return m.id === employeeId; });
     
+    var list = getEmpWorkspaces();
     if(id) {
       var idx = list.findIndex(function(w) { return w.id === id; });
       if(idx > -1) {
@@ -1362,12 +1237,6 @@ label: e.name, value: e.id}; }));
         list[idx].role = role;
         list[idx].canLogin = canLogin;
         list[idx].status = status;
-        list[idx].userId = userId;
-        if (password) {
-          list[idx].password = password; // Only overwrite if provided, though required if canLogin
-        } else if (canLogin === 'No') {
-          list[idx].password = ''; // Clear if canLogin is No and empty
-        }
         list[idx].notes = notes;
         list[idx].lastUpdated = new Date().toISOString();
         saveEmpWorkspaces(list);
@@ -1382,8 +1251,6 @@ label: e.name, value: e.id}; }));
         role: role,
         canLogin: canLogin,
         status: status,
-        userId: userId,
-        password: password,
         notes: notes,
         createdDate: new Date().toISOString(),
         lastUpdated: new Date().toISOString()
@@ -1459,14 +1326,22 @@ label: e.name, value: e.id}; }));
         '<td style="padding:12px 16px;">' + badge + '</td>' +
         '<td style="padding:12px 16px; font-size:13px; color:var(--text-2);">' + dateStr + '</td>' +
         '<td style="padding:12px 16px; text-align:right;">' +
-          '<button class="btn btn-ghost btn-sm" style="border:1px solid var(--border);" onclick="window._ws.toggleEmpWorkspaceMenu(\'' + w.id + '\', this)">Options</button>' +
+          '<div class="dropdown" style="display:inline-block; position:relative;">' +
+            '<button class="btn btn-ghost btn-sm" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display===\'block\'?\'none\':\'block\'">Options</button>' +
+            '<div class="dropdown-menu" style="display:none; position:absolute; right:0; top:100%; background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:4px 0; min-width:140px; box-shadow:0 4px 12px rgba(0,0,0,0.1); z-index:100;">' +
+              '<div onclick="window._ws.openWorkspaceProvisioning(\'' + w.id + '\')" style="padding:8px 16px; font-size:13px; cursor:pointer; color:var(--text-1);">Edit Workspace</div>' +
+              '<div onclick="window._ws.toggleEmpWorkspace(\'' + w.id + '\')" style="padding:8px 16px; font-size:13px; cursor:pointer; color:var(--text-1);">' + (w.status==='Active'?'Disable Workspace':'Enable Workspace') + '</div>' +
+              '<div style="border-top:1px solid var(--border); margin:4px 0;"></div>' +
+              '<div onclick="window._ws.confirmDeleteEmpWorkspace(\'' + w.id + '\')" style="padding:8px 16px; font-size:13px; cursor:pointer; color:var(--error);">Delete Workspace</div>' +
+            '</div>' +
+          '</div>' +
         '</td>' +
       '</tr>';
     }).join('');
     
     // Also populate dept filter if needed
     if(elDept && elDept.options.length <= 1) {
-      var dlist = getDepts().filter(function(d){ return d.status === 'Active'; });
+      var dlist = (typeof getDepartments === 'function') ? getDepartments().filter(function(d){ return d.status==='Active';}) : [];
       elDept.innerHTML = '<option value="">All Depts</option>' + dlist.map(function(d){ return '<option value="'+esc(d.name)+'">'+esc(d.name)+'</option>';}).join('');
     }
   }
@@ -1476,120 +1351,21 @@ label: e.name, value: e.id}; }));
     var idx = list.findIndex(function(w) { return w.id === id; });
     if(idx > -1) {
       list[idx].status = list[idx].status === 'Active' ? 'Inactive' : 'Active';
-      var actionStr = list[idx].status === 'Active' ? 'Workspace Enabled' : 'Workspace Disabled';
-      
       saveEmpWorkspaces(list);
       toast('Workspace ' + list[idx].status.toLowerCase(), 'success');
       renderWorkspaceDirectory();
     }
   }
   
-  /* ══════════════════════════════════════════════════════════════════════════
-     Action Menu Portal
-     ══════════════════════════════════════════════════════════════════════════ */
-  function getEmpWsPortal() {
-    var el = document.getElementById('emp-ws-action-portal');
-    if (!el) {
-      el = document.createElement('div');
-      el.id = 'emp-ws-action-portal';
-      el.style.cssText = 'position:fixed; z-index:9999; display:none; background:var(--surface); border:1px solid var(--border); border-radius:8px; box-shadow:var(--shadow-md); min-width:180px; padding:4px 0;';
-      document.body.appendChild(el);
-    }
-    return el;
-  }
-
-  function wsMenuItem(label, color, disabled, onclick) {
-    var el = document.createElement('div');
-    el.style.cssText = 'padding:8px 16px; font-size:13px; font-weight:600; cursor:pointer; color:' + color + ';' + (disabled ? ' opacity:0.35; pointer-events:none;' : '');
-    el.textContent = label;
-    if (!disabled) {
-      el.addEventListener('mouseover', function () { el.style.background = 'var(--bg-2)'; });
-      el.addEventListener('mouseout', function () { el.style.background = 'transparent'; });
-      el.addEventListener('click', onclick);
-    }
-    return el;
-  }
-  function wsMenuDivider() {
-    var el = document.createElement('div');
-    el.style.cssText = 'height:1px; background:var(--border); margin:4px 0;';
-    return el;
-  }
-
-  function toggleEmpWorkspaceMenu(id, btn) {
-    var portal = getEmpWsPortal();
-    if (portal.dataset.activeId === id && portal.style.display === 'block') {
-      portal.style.display = 'none';
-      portal.dataset.activeId = '';
-      return;
-    }
-
-    var w = getEmpWorkspaces().find(function (x) { return x.id === id; });
-    if (!w) return;
-
-    portal.innerHTML = '';
-    portal.appendChild(wsMenuItem('Edit Workspace', 'var(--text-1)', false, function () { portal.style.display = 'none'; window._ws.openWorkspaceProvisioning(id); }));
-    
-    var user = window.VERDE_SESSION ? window.VERDE_SESSION.getUser() : null;
-    var isMgmt = user && ['SuperAdmin', 'Admin', 'CEO', 'Co-Founder'].indexOf(user.role) > -1;
-    if (isMgmt) {
-      portal.appendChild(wsMenuItem('Manage Permissions', 'var(--text-1)', false, function () { portal.style.display = 'none'; window._ws.openManagePermissions(id); }));
-    }
-
-    portal.appendChild(wsMenuItem(w.status === 'Active' ? 'Disable Workspace' : 'Enable Workspace', 'var(--text-1)', false, function () { portal.style.display = 'none'; window._ws.toggleEmpWorkspace(id); }));
-    portal.appendChild(wsMenuDivider());
-    portal.appendChild(wsMenuItem('Delete Workspace', 'var(--danger)', false, function () { portal.style.display = 'none'; window._ws.confirmDeleteEmpWorkspace(id); }));
-
-    var rect = btn.getBoundingClientRect();
-    portal.style.display = 'block';
-    portal.dataset.activeId = id;
-
-    var portalH = portal.offsetHeight;
-    var spaceBelow = window.innerHeight - rect.bottom;
-    var top = spaceBelow >= portalH ? rect.bottom + 4 : rect.top - portalH - 4;
-    var right = window.innerWidth - rect.right;
-    
-    portal.style.top  = Math.max(8, top) + 'px';
-    portal.style.right = Math.max(8, right) + 'px';
-    portal.style.left = 'auto';
-
-    setTimeout(function () {
-      function handler(ev) {
-        if (!portal.contains(ev.target) && ev.target !== btn) {
-          portal.style.display = 'none';
-          portal.dataset.activeId = '';
-          document.removeEventListener('click', handler);
-        }
-      }
-      document.addEventListener('click', handler);
-    }, 10);
-  }
-
   function confirmDeleteEmpWorkspace(id) {
-    var ws = getEmpWorkspaces().find(function(w) { return w.id === id; });
-    if(!ws) return;
-    
-    if (window.VerdeModal && window.VerdeModal.confirm) {
-      window.VerdeModal.confirm({
-        title: 'Delete Workspace',
-        body: '<p style="color:var(--text-2);">Are you sure you want to delete this workspace? This action cannot be undone.</p>',
-        confirmText: 'Delete Workspace',
-        isDanger: true,
-        onConfirm: function() {
-          deleteEmpWorkspace(id);
-        }
-      });
-    } else {
-      var body = '<div style="padding:16px 0; font-size:14px; color:var(--text-2);">Are you sure you want to delete this workspace? This action cannot be undone.</div>';
-      var footer = '<button class="btn btn-ghost" onclick="window._ws.closeModal(\'ws-m-del-emp-ws\')">Cancel</button>' +
-                   '<button class="btn btn-primary btn-danger" style="background:var(--danger);" onclick="window._ws.deleteEmpWorkspace(\'' + id + '\'); window._ws.closeModal(\'ws-m-del-emp-ws\');">Delete Workspace</button>';
-      openModal('ws-m-del-emp-ws', 'Delete Workspace', body, footer);
-    }
+    var body = '<div style="padding:16px 0; font-size:14px; color:var(--text-2);">Are you sure you want to delete this workspace? This action cannot be undone.</div>';
+    var footer = '<button class="btn btn-ghost" onclick="window._ws.closeModal(\'ws-m-del-emp-ws\')">Cancel</button>' +
+                 '<button class="btn btn-primary" style="background:var(--error);" onclick="window._ws.deleteEmpWorkspace(\'' + id + '\')">Delete</button>';
+    openModal('ws-m-del-emp-ws', 'Delete Workspace', body, footer);
   }
   
   function deleteEmpWorkspace(id) {
     var list = getEmpWorkspaces();
-    var targetWs = list.find(function(w) { return w.id === id; });
-    
     var next = list.filter(function(w) { return w.id !== id; });
     saveEmpWorkspaces(next);
     closeModal('ws-m-del-emp-ws');
@@ -1597,9 +1373,9 @@ label: e.name, value: e.id}; }));
     renderWorkspaceDirectory();
   }
 
-  /* ══════════════════════════════════════════════════════════════════════════
+  /* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
      15. SEARCH
-     ══════════════════════════════════════════════════════════════════════════ */
+     ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 
   function wireSearch() {
     var searchInput = document.querySelector('.ws-search input');
@@ -1637,18 +1413,18 @@ label: e.name, value: e.id}; }));
     });
   }
 
-  /* ══════════════════════════════════════════════════════════════════════════
+  /* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
      16. WIRE EDIT PROFILE BUTTON
-     ══════════════════════════════════════════════════════════════════════════ */
+     ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 
   function wireEditProfile() {
     var editBtn = document.querySelector('.ws-profile-header .btn-secondary');
     if (editBtn) editBtn.onclick = function () { openEditProfile(); };
   }
 
-  /* ══════════════════════════════════════════════════════════════════════════
+  /* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
      17. EXPOSE PUBLIC API
-     ══════════════════════════════════════════════════════════════════════════ */
+     ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 
   window._ws = {
     openCreateWorkspace: openCreateWorkspace,
@@ -1660,10 +1436,8 @@ label: e.name, value: e.id}; }));
     onProvEmployeeChange: onProvEmployeeChange,
     saveEmpWorkspace: saveEmpWorkspace,
     toggleEmpWorkspace: toggleEmpWorkspace,
-    toggleEmpWorkspaceMenu: toggleEmpWorkspaceMenu,
-    handleLogoUpload: handleLogoUpload,
-    openManagePermissions: openManagePermissions,
-    saveManagePermissions: saveManagePermissions,
+    confirmDeleteEmpWorkspace: confirmDeleteEmpWorkspace,
+    deleteEmpWorkspace: deleteEmpWorkspace,
     openCreateDept: openCreateDept,
     openViewDept: openViewDept,
     openEditDept: openEditDept,
@@ -1688,189 +1462,13 @@ label: e.name, value: e.id}; }));
     revokeAPIKey: revokeAPIKey,
     confirmRevokeKey: confirmRevokeKey,
     copyGeneratedKey: copyGeneratedKey,
-    saveInviteMember: saveInviteMember
+    saveInviteMember: saveInviteMember,
+    handleLogoUpload: handleLogoUpload
   };
 
-  /* ══════════════════════════════════════════════════════════════════════════
-     18. ADMIN PERMISSION MANAGEMENT
-     ══════════════════════════════════════════════════════════════════════════ */
-
-  var PERM_MODULES = [
-    { id: 'dashboard', name: 'Mission Control' },
-    { id: 'my-work', name: 'My Work' },
-    { id: 'crm', name: 'CRM & Sales' },
-    { id: 'projects', name: 'Projects' },
-    { id: 'tasks', name: 'Tasks' },
-    { id: 'team', name: 'Team' },
-    { id: 'finance', name: 'Finance' },
-    { id: 'marketing', name: 'Marketing' },
-    { id: 'ai-hub', name: 'AI Hub' },
-    { id: 'workspace', name: 'Workspace' },
-    { id: 'reports', name: 'Reports' },
-    { id: 'settings', name: 'Settings' }
-  ];
-
-  var PERM_ACTIONS = [
-    { id: 'projects_view', name: 'View Projects', group: 'Projects' },
-    { id: 'projects_create', name: 'Create Projects', group: 'Projects' },
-    { id: 'projects_edit', name: 'Edit Projects', group: 'Projects' },
-    { id: 'projects_delete', name: 'Delete Projects', group: 'Projects' },
-    
-    { id: 'tasks_view', name: 'View Tasks', group: 'Tasks' },
-    { id: 'tasks_create', name: 'Create Tasks', group: 'Tasks' },
-    { id: 'tasks_edit', name: 'Edit Tasks', group: 'Tasks' },
-    { id: 'tasks_delete', name: 'Delete Tasks', group: 'Tasks' },
-    { id: 'tasks_assign', name: 'Assign Tasks', group: 'Tasks' },
-    
-    { id: 'crm_view', name: 'View Leads', group: 'CRM' },
-    { id: 'crm_create', name: 'Create Leads', group: 'CRM' },
-    { id: 'crm_edit', name: 'Edit Leads', group: 'CRM' },
-    { id: 'crm_delete', name: 'Delete Leads', group: 'CRM' },
-    
-    { id: 'finance_view', name: 'View Finance', group: 'Finance' },
-    { id: 'finance_create', name: 'Create Transactions', group: 'Finance' },
-    { id: 'finance_edit', name: 'Edit Transactions', group: 'Finance' },
-    { id: 'finance_delete', name: 'Delete Transactions', group: 'Finance' },
-    
-    { id: 'team_view', name: 'View Team', group: 'Team' },
-    { id: 'team_add', name: 'Add Employees', group: 'Team' },
-    { id: 'team_edit', name: 'Edit Employees', group: 'Team' },
-    { id: 'team_remove', name: 'Remove Employees', group: 'Team' },
-    
-    { id: 'workspace_view', name: 'View Workspace', group: 'Workspace' },
-    { id: 'workspace_create', name: 'Create Workspace', group: 'Workspace' },
-    { id: 'workspace_edit', name: 'Edit Workspace', group: 'Workspace' },
-    { id: 'workspace_dept', name: 'Manage Departments', group: 'Workspace' },
-    { id: 'workspace_perms', name: 'Manage Permissions', group: 'Workspace' },
-    
-    { id: 'reports_view', name: 'View Reports', group: 'Reports' },
-    { id: 'reports_export', name: 'Export Reports', group: 'Reports' },
-    
-    { id: 'settings_view', name: 'View Settings', group: 'Settings' },
-    { id: 'settings_edit', name: 'Modify Settings', group: 'Settings' }
-  ];
-
-  function openManagePermissions(id) {
-    var user = window.VERDE_SESSION ? window.VERDE_SESSION.getUser() : null;
-    var isMgmt = user && ['SuperAdmin', 'Admin', 'CEO', 'Co-Founder'].indexOf(user.role) > -1;
-    if (!isMgmt) {
-      toast('Access Denied. Admin privileges required.', 'error');
-      return;
-    }
-
-    var w = getEmpWorkspaces().find(function (x) { return x.id === id; });
-    if (!w) return;
-
-    var modHtml = '';
-    PERM_MODULES.forEach(function(m) {
-      modHtml += '<label style="display:flex; justify-content:space-between; align-items:center; padding:12px; border:1px solid var(--border); border-radius:8px; cursor:pointer; margin-bottom:8px;">' +
-                 '<span style="font-weight:600; font-size:13px; color:var(--text-1);">' + m.name + '</span>' +
-                 '<input type="checkbox" id="perm-mod-' + m.id + '" value="' + m.id + '" style="accent-color:var(--primary); width:16px; height:16px; cursor:pointer;">' +
-                 '</label>';
-    });
-
-    var actHtml = '';
-    var lastGroup = '';
-    PERM_ACTIONS.forEach(function(a) {
-      if (a.group !== lastGroup) {
-        actHtml += '<div style="font-size:11px; font-weight:800; color:var(--text-3); text-transform:uppercase; margin-top:16px; margin-bottom:8px;">' + a.group + '</div>';
-        lastGroup = a.group;
-      }
-      actHtml += '<label style="display:flex; align-items:center; gap:12px; cursor:pointer; margin-bottom:8px;">' +
-                 '<input type="checkbox" id="perm-act-' + a.id + '" value="' + a.id + '" style="accent-color:var(--primary); width:14px; height:14px; cursor:pointer;">' +
-                 '<span style="font-weight:500; font-size:13px; color:var(--text-2);">' + a.name + '</span>' +
-                 '</label>';
-    });
-
-    var body = 
-      '<div style="margin-bottom:24px; padding:16px; background:var(--bg-2); border-radius:12px; border:1px solid var(--border);">' +
-        '<div style="font-size:14px; font-weight:800; color:var(--text-1); margin-bottom:4px;">' + esc(w.employeeName) + '</div>' +
-        '<div style="font-size:13px; font-weight:500; color:var(--text-2);">' + esc(w.name) + ' &bull; ' + esc(w.role) + '</div>' +
-      '</div>' +
-      '<div style="display:grid; grid-template-columns:1fr 1fr; gap:32px;">' +
-        '<div>' +
-          '<h3 style="font-size:13px; font-weight:800; color:var(--text-2); text-transform:uppercase; margin-bottom:16px;">Module Access</h3>' +
-          modHtml +
-        '</div>' +
-        '<div>' +
-          '<h3 style="font-size:13px; font-weight:800; color:var(--text-2); text-transform:uppercase; margin-bottom:16px;">Action Permissions</h3>' +
-          actHtml +
-        '</div>' +
-      '</div>';
-
-    var footer = '<button class="btn btn-ghost" onclick="window._ws.closeModal(\'ws-m-perms\')">Cancel</button>' +
-                 '<button class="btn btn-primary" onclick="window._ws.saveManagePermissions(\'' + id + '\')">Save Permissions</button>';
-
-    openModal('ws-m-perms', 'Manage Permissions', body, footer, '750px');
-
-    setTimeout(function() {
-      var allPerms = {};
-      try {
-        var raw = localStorage.getItem('verde_permissions');
-        if (raw) allPerms = JSON.parse(raw);
-      } catch(e) {}
-      
-      var uId = w.userId;
-      var userPerms = allPerms[uId];
-      if (!userPerms) {
-        userPerms = { modules: {}, actions: {} };
-        var isTargetMgmt = ['SuperAdmin', 'Admin', 'CEO', 'Co-Founder'].indexOf(w.role) > -1;
-        PERM_MODULES.forEach(function(m) { userPerms.modules[m.id] = isTargetMgmt; });
-        PERM_ACTIONS.forEach(function(a) { userPerms.actions[a.id] = isTargetMgmt; });
-        if (!isTargetMgmt) {
-          ['dashboard', 'my-work', 'tasks', 'projects'].forEach(function(m) { userPerms.modules[m] = true; });
-          ['tasks_view', 'tasks_edit', 'projects_view'].forEach(function(a) { userPerms.actions[a] = true; });
-        }
-      }
-
-      PERM_MODULES.forEach(function(m) {
-        var el = document.getElementById('perm-mod-' + m.id);
-        if (el) el.checked = userPerms.modules[m.id] === true;
-      });
-      PERM_ACTIONS.forEach(function(a) {
-        var el = document.getElementById('perm-act-' + a.id);
-        if (el) el.checked = userPerms.actions[a.id] === true;
-      });
-    }, 50);
-  }
-
-  function saveManagePermissions(id) {
-    var user = window.VERDE_SESSION ? window.VERDE_SESSION.getUser() : null;
-    var isMgmt = user && ['SuperAdmin', 'Admin', 'CEO', 'Co-Founder'].indexOf(user.role) > -1;
-    if (!isMgmt) {
-      toast('Access Denied. Admin privileges required.', 'error');
-      return;
-    }
-
-    var w = getEmpWorkspaces().find(function (x) { return x.id === id; });
-    if (!w) return;
-    
-    var userPerms = { modules: {}, actions: {} };
-    PERM_MODULES.forEach(function(m) {
-      var el = document.getElementById('perm-mod-' + m.id);
-      if (el) userPerms.modules[m.id] = el.checked;
-    });
-    PERM_ACTIONS.forEach(function(a) {
-      var el = document.getElementById('perm-act-' + a.id);
-      if (el) userPerms.actions[a.id] = el.checked;
-    });
-
-    var allPerms = {};
-    try {
-      var raw = localStorage.getItem('verde_permissions');
-      if (raw) allPerms = JSON.parse(raw);
-    } catch(e) {}
-    
-    allPerms[w.userId] = userPerms;
-    localStorage.setItem('verde_permissions', JSON.stringify(allPerms));
-    
-    closeModal('ws-m-perms');
-    toast('Permissions saved for ' + w.employeeName, 'success');
-  }
-
-  /* ══════════════════════════════════════════════════════════════════════════
-     19. INITIALIZATION
-     ══════════════════════════════════════════════════════════════════════════ */
+  /* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+     18. INITIALIZATION
+     ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 
   function init() {
     renderProfile();

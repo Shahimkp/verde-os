@@ -1318,4 +1318,13 @@
     }
   });
 
+  // --- ADDED FOR REAL NAVIGATION FROM MY WORK ---
+  setTimeout(function() {
+    var pendingId = localStorage.getItem('verde_pending_project_view');
+    if (pendingId && typeof window.openProjectDetails === 'function') {
+      window.openProjectDetails(pendingId);
+      localStorage.removeItem('verde_pending_project_view');
+    }
+  }, 100);
+
 })();

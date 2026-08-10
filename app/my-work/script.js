@@ -69,9 +69,12 @@
         historyElapsed = history.reduce((acc, s) => acc + (s.elapsedSeconds || 0), 0);
 
         const totalHours = (historyElapsed + currentSessionSeconds) / 3600;
-        if (focusEl) focusEl.textContent = totalHours.toFixed(1) + 'h';
+        
+        // Format to up to 2 decimal places to show short session increments, while keeping whole/half numbers clean (e.g. 2.5h, 0h, 0.02h)
+        const displayHours = Number(totalHours.toFixed(2));
+        if (focusEl) focusEl.textContent = displayHours + 'h';
       } catch(e) {
-        if (focusEl) focusEl.textContent = '0.0h';
+        if (focusEl) focusEl.textContent = '0h';
       }
 
       // C. MY TASKS TODAY & DUE TODAY

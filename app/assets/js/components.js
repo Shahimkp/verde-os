@@ -236,7 +236,7 @@
         </div>
         <a href="../create-project/index.html" class="dropdown-item">Create New Project</a>
         <a href="../finance/index.html" class="dropdown-item">Billing & Subscription</a>
-        <a href="../auth/index.html" class="dropdown-item" id="topbar-signout" style="color:var(--danger);">Sign Out</a>
+        <a href="#" onclick="if(window.VERDE_SESSION) { window.VERDE_SESSION.clearSession(); } return false;" class="dropdown-item" id="topbar-signout" style="color:var(--danger);">Sign Out</a>
       </div>
     </div>
   </div>

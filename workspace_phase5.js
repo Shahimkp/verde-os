@@ -1528,13 +1528,6 @@ label: e.name, value: e.id}; }));
 
     portal.innerHTML = '';
     portal.appendChild(wsMenuItem('Edit Workspace', 'var(--text-1)', false, function () { portal.style.display = 'none'; window._ws.openWorkspaceProvisioning(id); }));
-    
-    var user = window.VERDE_SESSION ? window.VERDE_SESSION.getUser() : null;
-    var isMgmt = user && ['SuperAdmin', 'Admin', 'CEO', 'Co-Founder'].indexOf(user.role) > -1;
-    if (isMgmt) {
-      portal.appendChild(wsMenuItem('Manage Permissions', 'var(--text-1)', false, function () { portal.style.display = 'none'; window._ws.openManagePermissions(id); }));
-    }
-
     portal.appendChild(wsMenuItem(w.status === 'Active' ? 'Disable Workspace' : 'Enable Workspace', 'var(--text-1)', false, function () { portal.style.display = 'none'; window._ws.toggleEmpWorkspace(id); }));
     portal.appendChild(wsMenuDivider());
     portal.appendChild(wsMenuItem('Delete Workspace', 'var(--danger)', false, function () { portal.style.display = 'none'; window._ws.confirmDeleteEmpWorkspace(id); }));
@@ -1661,9 +1654,8 @@ label: e.name, value: e.id}; }));
     saveEmpWorkspace: saveEmpWorkspace,
     toggleEmpWorkspace: toggleEmpWorkspace,
     toggleEmpWorkspaceMenu: toggleEmpWorkspaceMenu,
-    handleLogoUpload: handleLogoUpload,
-    openManagePermissions: openManagePermissions,
-    saveManagePermissions: saveManagePermissions,
+    confirmDeleteEmpWorkspace: confirmDeleteEmpWorkspace,
+    deleteEmpWorkspace: deleteEmpWorkspace,
     openCreateDept: openCreateDept,
     openViewDept: openViewDept,
     openEditDept: openEditDept,
@@ -1688,188 +1680,15 @@ label: e.name, value: e.id}; }));
     revokeAPIKey: revokeAPIKey,
     confirmRevokeKey: confirmRevokeKey,
     copyGeneratedKey: copyGeneratedKey,
-    saveInviteMember: saveInviteMember
+    saveInviteMember: saveInviteMember,
+    handleLogoUpload: handleLogoUpload,
+    
+    
+    
   };
 
   /* ══════════════════════════════════════════════════════════════════════════
-     18. ADMIN PERMISSION MANAGEMENT
-     ══════════════════════════════════════════════════════════════════════════ */
-
-  var PERM_MODULES = [
-    { id: 'dashboard', name: 'Mission Control' },
-    { id: 'my-work', name: 'My Work' },
-    { id: 'crm', name: 'CRM & Sales' },
-    { id: 'projects', name: 'Projects' },
-    { id: 'tasks', name: 'Tasks' },
-    { id: 'team', name: 'Team' },
-    { id: 'finance', name: 'Finance' },
-    { id: 'marketing', name: 'Marketing' },
-    { id: 'ai-hub', name: 'AI Hub' },
-    { id: 'workspace', name: 'Workspace' },
-    { id: 'reports', name: 'Reports' },
-    { id: 'settings', name: 'Settings' }
-  ];
-
-  var PERM_ACTIONS = [
-    { id: 'projects_view', name: 'View Projects', group: 'Projects' },
-    { id: 'projects_create', name: 'Create Projects', group: 'Projects' },
-    { id: 'projects_edit', name: 'Edit Projects', group: 'Projects' },
-    { id: 'projects_delete', name: 'Delete Projects', group: 'Projects' },
-    
-    { id: 'tasks_view', name: 'View Tasks', group: 'Tasks' },
-    { id: 'tasks_create', name: 'Create Tasks', group: 'Tasks' },
-    { id: 'tasks_edit', name: 'Edit Tasks', group: 'Tasks' },
-    { id: 'tasks_delete', name: 'Delete Tasks', group: 'Tasks' },
-    { id: 'tasks_assign', name: 'Assign Tasks', group: 'Tasks' },
-    
-    { id: 'crm_view', name: 'View Leads', group: 'CRM' },
-    { id: 'crm_create', name: 'Create Leads', group: 'CRM' },
-    { id: 'crm_edit', name: 'Edit Leads', group: 'CRM' },
-    { id: 'crm_delete', name: 'Delete Leads', group: 'CRM' },
-    
-    { id: 'finance_view', name: 'View Finance', group: 'Finance' },
-    { id: 'finance_create', name: 'Create Transactions', group: 'Finance' },
-    { id: 'finance_edit', name: 'Edit Transactions', group: 'Finance' },
-    { id: 'finance_delete', name: 'Delete Transactions', group: 'Finance' },
-    
-    { id: 'team_view', name: 'View Team', group: 'Team' },
-    { id: 'team_add', name: 'Add Employees', group: 'Team' },
-    { id: 'team_edit', name: 'Edit Employees', group: 'Team' },
-    { id: 'team_remove', name: 'Remove Employees', group: 'Team' },
-    
-    { id: 'workspace_view', name: 'View Workspace', group: 'Workspace' },
-    { id: 'workspace_create', name: 'Create Workspace', group: 'Workspace' },
-    { id: 'workspace_edit', name: 'Edit Workspace', group: 'Workspace' },
-    { id: 'workspace_dept', name: 'Manage Departments', group: 'Workspace' },
-    { id: 'workspace_perms', name: 'Manage Permissions', group: 'Workspace' },
-    
-    { id: 'reports_view', name: 'View Reports', group: 'Reports' },
-    { id: 'reports_export', name: 'Export Reports', group: 'Reports' },
-    
-    { id: 'settings_view', name: 'View Settings', group: 'Settings' },
-    { id: 'settings_edit', name: 'Modify Settings', group: 'Settings' }
-  ];
-
-  function openManagePermissions(id) {
-    var user = window.VERDE_SESSION ? window.VERDE_SESSION.getUser() : null;
-    var isMgmt = user && ['SuperAdmin', 'Admin', 'CEO', 'Co-Founder'].indexOf(user.role) > -1;
-    if (!isMgmt) {
-      toast('Access Denied. Admin privileges required.', 'error');
-      return;
-    }
-
-    var w = getEmpWorkspaces().find(function (x) { return x.id === id; });
-    if (!w) return;
-
-    var modHtml = '';
-    PERM_MODULES.forEach(function(m) {
-      modHtml += '<label style="display:flex; justify-content:space-between; align-items:center; padding:12px; border:1px solid var(--border); border-radius:8px; cursor:pointer; margin-bottom:8px;">' +
-                 '<span style="font-weight:600; font-size:13px; color:var(--text-1);">' + m.name + '</span>' +
-                 '<input type="checkbox" id="perm-mod-' + m.id + '" value="' + m.id + '" style="accent-color:var(--primary); width:16px; height:16px; cursor:pointer;">' +
-                 '</label>';
-    });
-
-    var actHtml = '';
-    var lastGroup = '';
-    PERM_ACTIONS.forEach(function(a) {
-      if (a.group !== lastGroup) {
-        actHtml += '<div style="font-size:11px; font-weight:800; color:var(--text-3); text-transform:uppercase; margin-top:16px; margin-bottom:8px;">' + a.group + '</div>';
-        lastGroup = a.group;
-      }
-      actHtml += '<label style="display:flex; align-items:center; gap:12px; cursor:pointer; margin-bottom:8px;">' +
-                 '<input type="checkbox" id="perm-act-' + a.id + '" value="' + a.id + '" style="accent-color:var(--primary); width:14px; height:14px; cursor:pointer;">' +
-                 '<span style="font-weight:500; font-size:13px; color:var(--text-2);">' + a.name + '</span>' +
-                 '</label>';
-    });
-
-    var body = 
-      '<div style="margin-bottom:24px; padding:16px; background:var(--bg-2); border-radius:12px; border:1px solid var(--border);">' +
-        '<div style="font-size:14px; font-weight:800; color:var(--text-1); margin-bottom:4px;">' + esc(w.employeeName) + '</div>' +
-        '<div style="font-size:13px; font-weight:500; color:var(--text-2);">' + esc(w.name) + ' &bull; ' + esc(w.role) + '</div>' +
-      '</div>' +
-      '<div style="display:grid; grid-template-columns:1fr 1fr; gap:32px;">' +
-        '<div>' +
-          '<h3 style="font-size:13px; font-weight:800; color:var(--text-2); text-transform:uppercase; margin-bottom:16px;">Module Access</h3>' +
-          modHtml +
-        '</div>' +
-        '<div>' +
-          '<h3 style="font-size:13px; font-weight:800; color:var(--text-2); text-transform:uppercase; margin-bottom:16px;">Action Permissions</h3>' +
-          actHtml +
-        '</div>' +
-      '</div>';
-
-    var footer = '<button class="btn btn-ghost" onclick="window._ws.closeModal(\'ws-m-perms\')">Cancel</button>' +
-                 '<button class="btn btn-primary" onclick="window._ws.saveManagePermissions(\'' + id + '\')">Save Permissions</button>';
-
-    openModal('ws-m-perms', 'Manage Permissions', body, footer, '750px');
-
-    setTimeout(function() {
-      var allPerms = {};
-      try {
-        var raw = localStorage.getItem('verde_permissions');
-        if (raw) allPerms = JSON.parse(raw);
-      } catch(e) {}
-      
-      var uId = w.userId;
-      var userPerms = allPerms[uId];
-      if (!userPerms) {
-        userPerms = { modules: {}, actions: {} };
-        var isTargetMgmt = ['SuperAdmin', 'Admin', 'CEO', 'Co-Founder'].indexOf(w.role) > -1;
-        PERM_MODULES.forEach(function(m) { userPerms.modules[m.id] = isTargetMgmt; });
-        PERM_ACTIONS.forEach(function(a) { userPerms.actions[a.id] = isTargetMgmt; });
-        if (!isTargetMgmt) {
-          ['dashboard', 'my-work', 'tasks', 'projects'].forEach(function(m) { userPerms.modules[m] = true; });
-          ['tasks_view', 'tasks_edit', 'projects_view'].forEach(function(a) { userPerms.actions[a] = true; });
-        }
-      }
-
-      PERM_MODULES.forEach(function(m) {
-        var el = document.getElementById('perm-mod-' + m.id);
-        if (el) el.checked = userPerms.modules[m.id] === true;
-      });
-      PERM_ACTIONS.forEach(function(a) {
-        var el = document.getElementById('perm-act-' + a.id);
-        if (el) el.checked = userPerms.actions[a.id] === true;
-      });
-    }, 50);
-  }
-
-  function saveManagePermissions(id) {
-    var user = window.VERDE_SESSION ? window.VERDE_SESSION.getUser() : null;
-    var isMgmt = user && ['SuperAdmin', 'Admin', 'CEO', 'Co-Founder'].indexOf(user.role) > -1;
-    if (!isMgmt) {
-      toast('Access Denied. Admin privileges required.', 'error');
-      return;
-    }
-
-    var w = getEmpWorkspaces().find(function (x) { return x.id === id; });
-    if (!w) return;
-    
-    var userPerms = { modules: {}, actions: {} };
-    PERM_MODULES.forEach(function(m) {
-      var el = document.getElementById('perm-mod-' + m.id);
-      if (el) userPerms.modules[m.id] = el.checked;
-    });
-    PERM_ACTIONS.forEach(function(a) {
-      var el = document.getElementById('perm-act-' + a.id);
-      if (el) userPerms.actions[a.id] = el.checked;
-    });
-
-    var allPerms = {};
-    try {
-      var raw = localStorage.getItem('verde_permissions');
-      if (raw) allPerms = JSON.parse(raw);
-    } catch(e) {}
-    
-    allPerms[w.userId] = userPerms;
-    localStorage.setItem('verde_permissions', JSON.stringify(allPerms));
-    
-    closeModal('ws-m-perms');
-    toast('Permissions saved for ' + w.employeeName, 'success');
-  }
-
-  /* ══════════════════════════════════════════════════════════════════════════
-     19. INITIALIZATION
+     18. INITIALIZATION
      ══════════════════════════════════════════════════════════════════════════ */
 
   function init() {

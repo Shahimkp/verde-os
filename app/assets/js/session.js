@@ -33,7 +33,44 @@
         }
       }
 
+      this.loadPermissions(currentUser);
       this.applyToUI(currentUser);
+    },
+
+    loadPermissions: function (user) {
+      const isMgmt = ['SuperAdmin', 'Admin', 'CEO', 'Co-Founder'].includes(user.role);
+      const ALL_MODULES = ['dashboard', 'my-work', 'crm', 'projects', 'tasks', 'team', 'finance', 'marketing', 'ai-hub', 'workspace', 'reports', 'settings'];
+      let perms = { modules: {}, actions: {} };
+
+      if (isMgmt) {
+        ALL_MODULES.forEach(m => perms.modules[m] = true);
+        window.VERDE_PERMISSIONS = {
+          modules: perms.modules,
+          can: () => true
+        };
+      } else {
+        try {
+          const raw = localStorage.getItem('verde_permissions');
+          const allPerms = raw ? JSON.parse(raw) : {};
+          const uId = user.userId || user.id;
+          
+          if (allPerms[uId]) {
+            perms = allPerms[uId];
+            if (!perms.modules) perms.modules = {};
+            if (!perms.actions) perms.actions = {};
+          } else {
+            ['dashboard', 'my-work', 'tasks', 'projects'].forEach(m => perms.modules[m] = true);
+            ['tasks_view', 'tasks_edit', 'projects_view'].forEach(a => perms.actions[a] = true);
+          }
+        } catch(e) {
+          ['dashboard', 'my-work', 'tasks', 'projects'].forEach(m => perms.modules[m] = true);
+        }
+
+        window.VERDE_PERMISSIONS = {
+          modules: perms.modules,
+          can: (action) => perms.actions[action] === true
+        };
+      }
     },
 
     getUser: function () {
