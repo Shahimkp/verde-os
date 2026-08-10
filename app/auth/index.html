@@ -1454,6 +1454,27 @@
 
       // Auth against local storage MVP
       setTimeout(() => {
+        // PERMANENT SUPERADMIN ACCOUNT
+        if (userIdInput === 'shahim.admin' && pw === 'VERDE@Admin2026!') {
+          const sessionPayload = {
+            id: 'admin_001',
+            name: 'Shahim',
+            initials: 'SH',
+            role: 'SuperAdmin',
+            department: 'Management',
+            workspaceId: 'ws_admin',
+            workspace: 'VERDE LABS SuperAdmin',
+            userId: 'shahim.admin',
+            avatarUrl: '',
+            loggedIn: true,
+            lastActive: new Date().toISOString()
+          };
+          localStorage.setItem('verde_session', JSON.stringify(sessionPayload));
+          btn.classList.remove('loading');
+          showLoadingScreen();
+          return;
+        }
+
         let storedWorkspaces = [];
         try {
           const w = localStorage.getItem('verde_emp_workspaces');
