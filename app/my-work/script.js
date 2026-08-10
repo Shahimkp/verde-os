@@ -21,18 +21,128 @@
       dateEl.textContent = d.toLocaleDateString('en-US', opts);
     }
 
-    // Identify KPI for Completed Today
-    let completedKpiValue = null;
-    document.querySelectorAll('.my-kpi-card').forEach(card => {
-      const label = card.querySelector('.my-kpi-label');
-      if (label && label.textContent.includes('Completed Today')) {
-        completedKpiValue = card.querySelector('.my-kpi-value');
+    // STATE KEYS
+    const TASKS_STATE_KEY = 'verde_mywork_tasks_state';
+    const SESSION_KEY = 'verde_mywork_focus_session';
+    const HISTORY_KEY = 'verde_mywork_focus_history';
+    const NOTES_KEY = 'verde_mywork_notes';
+
+    // ── KPI DASHBOARD CENTRAL UPDATER ──
+    function updateMyWorkDashboard() {
+      // Find DOM Elements safely
+      let tasksEl = null, dueEl = null, compEl = null, focusEl = null;
+      document.querySelectorAll('.my-kpi-card').forEach(card => {
+        const label = card.querySelector('.my-kpi-label');
+        const val = card.querySelector('.my-kpi-value');
+        if (!label || !val) return;
+        const text = label.textContent.trim().toLowerCase();
+        if (text === 'my tasks today') tasksEl = val;
+        else if (text === 'due today') dueEl = val;
+        else if (text === 'completed today') compEl = val;
+        else if (text === 'focus time') focusEl = val;
+      });
+
+      // A. COMPLETED TODAY
+      try {
+        const tasksState = JSON.parse(localStorage.getItem(TASKS_STATE_KEY)) || {};
+        let completedCount = 0;
+        // Count checkboxes directly mapped from state
+        // To prevent unbounded incrementing, we strictly count how many 'completed' values exist in state.
+        Object.values(tasksState).forEach(val => {
+          if (val === 'completed') completedCount++;
+        });
+        if (compEl) compEl.textContent = completedCount;
+      } catch(e) {
+        if (compEl) compEl.textContent = '0';
       }
-    });
+
+      // B. FOCUS TIME
+      try {
+        let currentSessionSeconds = 0;
+        const activeSession = JSON.parse(localStorage.getItem(SESSION_KEY));
+        if (activeSession && activeSession.status === 'active') {
+          currentSessionSeconds = Math.floor((Date.now() - activeSession.startedAt) / 1000);
+        }
+
+        let historyElapsed = 0;
+        const history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+        historyElapsed = history.reduce((acc, s) => acc + (s.elapsedSeconds || 0), 0);
+
+        const totalHours = (historyElapsed + currentSessionSeconds) / 3600;
+        if (focusEl) focusEl.textContent = totalHours.toFixed(1) + 'h';
+      } catch(e) {
+        if (focusEl) focusEl.textContent = '0.0h';
+      }
+
+      // C. MY TASKS TODAY & DUE TODAY
+      const today = new Date();
+      const todayIso = today.toISOString().split('T')[0];
+      
+      function isDueToday(task) {
+        if (!task.dueDate) return false;
+        const dd = String(task.dueDate).trim().toLowerCase();
+        if (dd === 'today') return true;
+        if (dd.includes(todayIso)) return true;
+        try {
+          const dt = new Date(task.dueDate);
+          if (!isNaN(dt.getTime())) {
+            return dt.getFullYear() === today.getFullYear() && 
+                   dt.getMonth() === today.getMonth() && 
+                   dt.getDate() === today.getDate();
+          }
+        } catch(e) {}
+        return false;
+      }
+
+      function isShahimTask(task) {
+        return (task.assignee === 'Shahim' || task.assigneeId === 'SH' || task.assigneeId === 'USR-001' || task.assigneeInitials === 'SH');
+      }
+
+      function processTasks(tasks) {
+        let myTasksCount = 0;
+        let dueTodayCount = 0;
+        
+        (tasks || []).forEach(t => {
+          if (t.status !== 'Archived' && isShahimTask(t)) {
+            const dueToday = isDueToday(t);
+            // My Tasks Today: Count all relevant tasks for Shahim today (whether due today or active today).
+            // Usually, if a task is due today, it's definitely Shahim's task today.
+            // If they are just open tasks, they might be included too, but to be strictly safe and not show 0, we count tasks due today.
+            if (dueToday) {
+               myTasksCount++;
+               if (t.status !== 'Completed') {
+                 dueTodayCount++;
+               }
+            }
+          }
+        });
+
+        if (tasksEl) tasksEl.textContent = myTasksCount;
+        if (dueEl) dueEl.textContent = dueTodayCount;
+      }
+
+      // Try fetching from the actual service layer first
+      if (window.VerdeServices && window.VerdeServices.Tasks && window.VerdeServices.Tasks.getTasks) {
+        window.VerdeServices.Tasks.getTasks().then(processTasks).catch(() => {
+           if (tasksEl) tasksEl.textContent = '0';
+           if (dueEl) dueEl.textContent = '0';
+        });
+      } else if (window.VerdeMockData && window.VerdeMockData.tasks) {
+        processTasks(window.VerdeMockData.tasks);
+      } else {
+        if (tasksEl) tasksEl.textContent = '0';
+        if (dueEl) dueEl.textContent = '0';
+      }
+    }
+
+    // Expose update function so other parts of the module can call it
+    window.updateMyWorkDashboard = updateMyWorkDashboard;
+
+    // Call initially
+    updateMyWorkDashboard();
+
 
     // 2. Checkbox interactions (Today's Focus)
-    // Persist tasks in localStorage specific to My Work
-    const TASKS_STATE_KEY = 'verde_mywork_tasks_state';
     let tasksState = {};
     try {
       tasksState = JSON.parse(localStorage.getItem(TASKS_STATE_KEY)) || {};
@@ -43,7 +153,7 @@
       const input = item.querySelector('.focus-check');
       
       if (input) {
-        // Restore state
+        // Restore DOM state
         if (tasksState[taskId] === 'completed') {
           input.checked = true;
           item.style.opacity = '0.5';
@@ -63,35 +173,19 @@
             this.style.textDecoration = 'line-through';
             this.dataset.status = 'completed';
             tasksState[taskId] = 'completed';
-            if (completedKpiValue) {
-              const currentVal = parseInt(completedKpiValue.textContent) || 0;
-              completedKpiValue.textContent = currentVal + 1;
-            }
           } else {
             this.style.opacity = '1';
             this.style.textDecoration = 'none';
             this.dataset.status = 'pending';
             tasksState[taskId] = 'pending';
-            if (completedKpiValue) {
-              const currentVal = parseInt(completedKpiValue.textContent) || 0;
-              completedKpiValue.textContent = Math.max(0, currentVal - 1);
-            }
           }
           localStorage.setItem(TASKS_STATE_KEY, JSON.stringify(tasksState));
+          
+          // Trigger central dashboard update!
+          updateMyWorkDashboard();
         });
       }
     });
-
-    // Recalculate KPI on load based on persisted state
-    if (completedKpiValue) {
-      let count = 0;
-      Object.values(tasksState).forEach(val => { if(val === 'completed') count++; });
-      // Combine with mock initial value of 4 + user completed ones
-      // Wait, let's just make it exact to how many are checked right now.
-      let checkedCount = 0;
-      document.querySelectorAll('.focus-check').forEach(chk => { if(chk.checked) checkedCount++; });
-      completedKpiValue.textContent = checkedCount;
-    }
 
     // 3. Search Functionality
     const searchInput = document.querySelector('.my-search input');
@@ -151,11 +245,7 @@
     }
 
     // 5. Focus Session Persistence & Timer Logic
-    const SESSION_KEY = 'verde_mywork_focus_session';
-    const HISTORY_KEY = 'verde_mywork_focus_history';
-    
     let timerInterval = null;
-    let baseTimerSeconds = 6322; // 1h 45m 22s mock baseline
     
     function getFocusHistory() {
       try {
@@ -179,19 +269,12 @@
         return null;
       }
     }
-
-    function calculateTotalElapsedHistory() {
-      const history = getFocusHistory();
-      return history.reduce((total, session) => total + (session.elapsedSeconds || 0), 0);
-    }
     
     function updateTimerUI(activeSession) {
-      let currentSessionSeconds = 0;
+      let displaySeconds = 0;
       if (activeSession) {
-        currentSessionSeconds = Math.floor((Date.now() - activeSession.startedAt) / 1000);
+        displaySeconds = Math.floor((Date.now() - activeSession.startedAt) / 1000);
       }
-      
-      const displaySeconds = baseTimerSeconds + currentSessionSeconds;
       
       const hrs = Math.floor(displaySeconds / 3600).toString().padStart(2, '0');
       const mins = Math.floor((displaySeconds % 3600) / 60).toString().padStart(2, '0');
@@ -202,22 +285,12 @@
         timerEl.textContent = `${hrs}:${mins}:${secs}`;
       }
       
-      // Update Focus Time KPI (Base 2.5h + history elapsed + current session elapsed)
-      document.querySelectorAll('.my-kpi-card').forEach(card => {
-        const label = card.querySelector('.my-kpi-label');
-        if (label && label.textContent.includes('Focus Time')) {
-          const valEl = card.querySelector('.my-kpi-value');
-          if (valEl) {
-            const baseHours = 2.5;
-            const historyElapsed = calculateTotalElapsedHistory();
-            const totalHours = baseHours + ((historyElapsed + currentSessionSeconds) / 3600);
-            valEl.textContent = totalHours.toFixed(1) + 'h';
-          }
-        }
-      });
+      // Update the KPI dashboard to reflect elapsed Focus Time
+      updateMyWorkDashboard();
     }
 
-    const focusBtn = Array.from(document.querySelectorAll('.btn')).find(b => b.textContent.includes('Start Focus Session'));
+    // Safely find the focus button regardless of its current text state
+    const focusBtn = Array.from(document.querySelectorAll('.btn')).find(b => b.textContent.includes('Focus Session'));
     
     // Resume session on page load if active
     let activeSession = getActiveSession();
@@ -226,13 +299,25 @@
       focusBtn.classList.remove('btn-primary');
       focusBtn.classList.add('btn-danger');
       updateTimerUI(activeSession);
+      if (timerInterval) clearInterval(timerInterval);
       timerInterval = setInterval(() => updateTimerUI(getActiveSession()), 1000);
+    } else if (focusBtn) {
+      focusBtn.textContent = 'Start Focus Session';
+      focusBtn.classList.remove('btn-danger');
+      focusBtn.classList.add('btn-primary');
+      updateTimerUI(null);
     } else {
       updateTimerUI(null);
     }
 
     if (focusBtn) {
-      focusBtn.addEventListener('click', function() {
+      // Avoid duplicate listeners
+      const newFocusBtn = focusBtn.cloneNode(true);
+      if (focusBtn.parentNode) {
+        focusBtn.parentNode.replaceChild(newFocusBtn, focusBtn);
+      }
+      
+      newFocusBtn.addEventListener('click', function() {
         let currentSession = getActiveSession();
         
         if (!currentSession) {
@@ -271,62 +356,136 @@
           
           if (timerInterval) clearInterval(timerInterval);
           updateTimerUI(null);
+          
+          // One final KPI update to lock in the completed session
+          updateMyWorkDashboard();
         }
       });
     }
 
-    // 6. View Project Buttons
-    document.querySelectorAll('.proj-card').forEach(card => {
-      const viewBtn = card.querySelector('.btn');
-      const titleEl = card.querySelector('.proj-title');
-      if (viewBtn && titleEl) {
-        const projectName = titleEl.textContent.trim();
-        viewBtn.setAttribute('data-project', projectName.toLowerCase().replace(/\s+/g, '-'));
+    // 6. My Projects — Dynamic Rendering from Real Data
+    function renderMyProjects(allProjects, allTasks) {
+      const grid = document.getElementById('my-projects-grid');
+      if (!grid) return;
+
+      // Filter to only Shahim's projects (team array includes 'SH')
+      // Also ensuring we check the detailedTeam objects if the simple array is not present or full
+      const myProjects = (allProjects || []).filter(p => {
+        if (p.isDeleted || p.isArchived) return false;
         
-        viewBtn.addEventListener('click', function(e) {
-          e.stopPropagation();
-          
-          let foundProject = null;
-          if (window.VerdeMockData && window.VerdeMockData.projects) {
-            foundProject = window.VerdeMockData.projects.find(p => p.name.includes(projectName) || projectName.includes(p.name));
-          }
-          
-          if (foundProject) {
-            localStorage.setItem('verde_pending_project_view', foundProject.id);
+        const inSimpleTeam = Array.isArray(p.team) && (p.team.includes('SH') || p.team.includes('Shahim'));
+        const inDetailedTeam = Array.isArray(p.detailedTeam) && p.detailedTeam.some(m => m.id === 'SH' || m.id === 'Shahim');
+        
+        return inSimpleTeam || inDetailedTeam;
+      });
+
+      // Clear existing content
+      grid.innerHTML = '';
+
+      if (myProjects.length === 0) {
+        grid.innerHTML = '<div style="grid-column:1/-1;color:var(--text-3);font-size:14px;padding:24px 0;text-align:center;">No projects assigned yet.</div>';
+        return;
+      }
+
+      myProjects.forEach(project => {
+        const progress = typeof project.progress === 'number' ? project.progress : 0;
+        const dueLabel = project.dueDate || 'Not set';
+        const name = project.name || 'Unnamed Project';
+
+        // Determine progress bar colour
+        let barColor = '';
+        if (progress >= 80) barColor = 'background:var(--success);';
+        else if (progress >= 50) barColor = '';               // default primary colour
+        else if (progress >= 30) barColor = 'background:var(--warning);';
+        else if (progress < 30) barColor = 'background:var(--danger);';
+
+        // Find the next open task for this project (first non-completed task)
+        const nextTask = (allTasks || []).find(t =>
+          (t.projectId === project.id || t.project === project.name || t.project === project.client) &&
+          t.status !== 'Completed'
+        );
+        const nextLabel = nextTask ? nextTask.title : 'Not set';
+
+        // Build card HTML matching the exact existing template
+        const card = document.createElement('div');
+        card.className = 'proj-card';
+        card.dataset.projectId = project.id;
+        card.innerHTML = `
+          <div>
+            <div class="proj-title">${name}</div>
+            <div class="proj-due">Due: ${dueLabel}</div>
+          </div>
+          <div class="proj-progress">
+            <div class="proj-prog-label"><span>Progress</span> <span>${progress}%</span></div>
+            <div class="proj-prog-bar">
+              <div class="proj-prog-fill" style="width: ${progress}%; ${barColor}"></div>
+            </div>
+          </div>
+          <div class="proj-next">Next: ${nextLabel}</div>
+          <button class="btn btn-ghost btn-sm proj-view-btn"
+            style="border:1px solid var(--border); width:100%; margin-top:4px;">View Project</button>
+        `;
+
+        // Attach View Project click handler using real project ID
+        const viewBtn = card.querySelector('.proj-view-btn');
+        if (viewBtn) {
+          viewBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            localStorage.setItem('verde_pending_project_view', project.id);
             const a = document.createElement('a');
             a.href = '../projects/index.html';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-          } else {
-            if (window.VerdeToast) {
-              window.VerdeToast.warning("Project record not found: " + projectName);
-            }
-          }
+          });
+        }
+
+        grid.appendChild(card);
+      });
+    }
+
+    // Load real project data and render
+    function loadAndRenderProjects() {
+      if (window.VerdeServices && window.VerdeServices.Projects && window.VerdeServices.Tasks) {
+        Promise.all([
+          window.VerdeServices.Projects.getProjects(),
+          window.VerdeServices.Tasks.getTasks()
+        ]).then(([projects, tasks]) => {
+          renderMyProjects(projects, tasks);
+        }).catch(err => {
+          console.error("Failed to fetch data for My Projects:", err);
+          renderMyProjects([], []);
         });
+      } else {
+        // Fallback if services fail
+        const projects = window.VerdeMockData && window.VerdeMockData.projects ? window.VerdeMockData.projects : [];
+        const tasks    = window.VerdeMockData && window.VerdeMockData.tasks    ? window.VerdeMockData.tasks    : [];
+        renderMyProjects(projects, tasks);
       }
-    });
+    }
+    
+    // Call load once directly
+    loadAndRenderProjects();
 
     // 7. Personal Notes
     const notesInput = document.querySelector('.notes-input');
     const clearNotesBtn = Array.from(document.querySelectorAll('.btn')).find(b => b.textContent.includes('Clear'));
-    const STORAGE_KEY = 'verde_mywork_notes';
     
     if (notesInput) {
-      const savedNote = localStorage.getItem(STORAGE_KEY);
+      const savedNote = localStorage.getItem(NOTES_KEY);
       if (savedNote) {
         notesInput.value = savedNote;
       }
       
       notesInput.addEventListener('input', function() {
-        localStorage.setItem(STORAGE_KEY, this.value);
+        localStorage.setItem(NOTES_KEY, this.value);
       });
     }
     
     if (clearNotesBtn && notesInput) {
       clearNotesBtn.addEventListener('click', function() {
         notesInput.value = '';
-        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(NOTES_KEY);
       });
     }
 
