@@ -927,63 +927,289 @@
       }
     },
 
-    // 5. FINANCE SERVICE (GET/POST /api/v1/finance)
+    // 5. FINANCE SERVICE (LOCAL STORAGE BACKED)
     Finance: {
+      STORAGE_KEY: 'verde_os_finance_transactions',
+      _getStorage: function () {
+        var raw = localStorage.getItem(this.STORAGE_KEY);
+        if (!raw) {
+          var initialSeed = window.VerdeMockData ? window.VerdeMockData.invoices : [];
+          localStorage.setItem(this.STORAGE_KEY, JSON.stringify(initialSeed));
+          return initialSeed;
+        }
+        try { return JSON.parse(raw); } catch (e) { return []; }
+      },
+      _saveStorage: function (list) {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(list));
+      },
       getInvoices: function () {
-        return mockAsyncResponse(window.VerdeMockData ? window.VerdeMockData.invoices : []);
+        var list = this._getStorage().filter(function(i) { return !i.isDeleted; });
+        return mockAsyncResponse(list);
       },
       createTransaction: function (txData) {
-        return mockAsyncResponse({ id: 'INV-' + Date.now(), success: true });
+        var list = this._getStorage();
+        var now = new Date().toISOString();
+        var newTx = {
+          id: txData.id || ('INV-' + Math.floor(1000 + Math.random() * 9000)),
+          invoiceNumber: txData.invoiceNumber || ('INV-' + Math.floor(1000 + Math.random() * 9000)),
+          client: txData.client || 'Unknown',
+          description: txData.description || 'Service',
+          amount: parseFloat(txData.amount || 0),
+          type: txData.type || 'Income',
+          status: txData.status || 'Completed',
+          date: txData.date || now.split('T')[0],
+          createdAt: now
+        };
+        list.unshift(newTx);
+        this._saveStorage(list);
+        if (window.VerdeServices.Notifications) {
+          window.VerdeServices.Notifications.addNotification('Finance Update', newTx.type + ' recorded: $' + newTx.amount);
+        }
+        return mockAsyncResponse(newTx);
+      },
+      deleteTransaction: function (id) {
+        var list = this._getStorage();
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].id === id) {
+            list[i].isDeleted = true;
+            this._saveStorage(list);
+            return mockAsyncResponse({ success: true });
+          }
+        }
+        return mockAsyncResponse(null);
       }
     },
 
-    // 6. REPORTS SERVICE (GET/POST /api/v1/reports)
+    // 6. MEETINGS/CALENDAR SERVICE (LOCAL STORAGE BACKED)
+    Meetings: {
+      STORAGE_KEY: 'verde_os_meetings',
+      _getStorage: function () {
+        var raw = localStorage.getItem(this.STORAGE_KEY);
+        if (!raw) {
+          var initialSeed = window.VerdeMockData ? window.VerdeMockData.meetings : [];
+          localStorage.setItem(this.STORAGE_KEY, JSON.stringify(initialSeed));
+          return initialSeed;
+        }
+        try { return JSON.parse(raw); } catch (e) { return []; }
+      },
+      _saveStorage: function (list) {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(list));
+      },
+      getMeetings: function () {
+        var list = this._getStorage().filter(function(m) { return !m.isDeleted; });
+        return mockAsyncResponse(list);
+      },
+      createMeeting: function (data) {
+        var list = this._getStorage();
+        var newMtg = {
+          id: data.id || ('MTG-' + Math.floor(1000 + Math.random() * 9000)),
+          client: data.client || 'Internal',
+          title: data.title || data.purpose || 'Meeting',
+          purpose: data.purpose || data.title || 'Meeting',
+          date: data.date || new Date().toISOString().split('T')[0],
+          time: data.time || '10:00 AM',
+          status: data.status || 'Scheduled',
+          createdAt: new Date().toISOString()
+        };
+        list.unshift(newMtg);
+        this._saveStorage(list);
+        if (window.VerdeServices.Notifications) {
+          window.VerdeServices.Notifications.addNotification('Meeting Scheduled', newMtg.title + ' on ' + newMtg.date);
+        }
+        return mockAsyncResponse(newMtg);
+      },
+      updateMeeting: function(id, data) {
+        var list = this._getStorage();
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].id === id) {
+            for (var k in data) {
+              if (data.hasOwnProperty(k)) list[i][k] = data[k];
+            }
+            this._saveStorage(list);
+            return mockAsyncResponse(list[i]);
+          }
+        }
+        return mockAsyncResponse(null);
+      },
+      deleteMeeting: function (id) {
+        var list = this._getStorage();
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].id === id) {
+            list[i].isDeleted = true;
+            this._saveStorage(list);
+            return mockAsyncResponse({ success: true });
+          }
+        }
+        return mockAsyncResponse(null);
+      }
+    },
+
+    // 7. REPORTS SERVICE (LOCAL STORAGE BACKED)
     Reports: {
+      STORAGE_KEY: 'verde_os_reports',
+      _getStorage: function () {
+        var raw = localStorage.getItem(this.STORAGE_KEY);
+        if (!raw) {
+          var initialSeed = window.VerdeMockData ? window.VerdeMockData.reports : [];
+          localStorage.setItem(this.STORAGE_KEY, JSON.stringify(initialSeed));
+          return initialSeed;
+        }
+        try { return JSON.parse(raw); } catch (e) { return []; }
+      },
+      _saveStorage: function (list) {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(list));
+      },
       getReports: function () {
-        return mockAsyncResponse(window.VerdeMockData ? window.VerdeMockData.reports : []);
+        return mockAsyncResponse(this._getStorage());
       },
       generateReport: function (name, category) {
-        return mockAsyncResponse({ id: 'REP-' + Date.now(), name: name, category: category, status: 'Ready' });
+        var list = this._getStorage();
+        var newRep = {
+          id: 'REP-' + Date.now(),
+          name: name,
+          category: category,
+          author: window.VERDE_SESSION ? window.VERDE_SESSION.getUser().name : 'System',
+          generatedDate: new Date().toISOString().split('T')[0],
+          status: 'Ready'
+        };
+        list.unshift(newRep);
+        this._saveStorage(list);
+        if (window.VerdeServices.Notifications) {
+          window.VerdeServices.Notifications.addNotification('Report Generated', name + ' is ready.');
+        }
+        return mockAsyncResponse(newRep);
       }
     },
 
-    // 7. TEAM SERVICE (GET/POST /api/v1/team)
+    // 8. TEAM SERVICE (LOCAL STORAGE BACKED)
     Team: {
-      getMembers: function () {
-        const stored = localStorage.getItem('verde_os_team_employees');
-        if (stored) {
-            return mockAsyncResponse(JSON.parse(stored));
+      STORAGE_KEY: 'verde_os_team_employees',
+      _getStorage: function () {
+        var raw = localStorage.getItem(this.STORAGE_KEY);
+        if (!raw) {
+          var initialSeed = window.VerdeMockData ? window.VerdeMockData.employees : [];
+          localStorage.setItem(this.STORAGE_KEY, JSON.stringify(initialSeed));
+          return initialSeed;
         }
-        return mockAsyncResponse(window.VerdeMockData ? window.VerdeMockData.employees : []);
+        try { return JSON.parse(raw); } catch (e) { return []; }
+      },
+      _saveStorage: function (list) {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(list));
+      },
+      getMembers: function () {
+        return mockAsyncResponse(this._getStorage().filter(function(m) { return !m.isDeleted; }));
       },
       inviteMember: function (email, role) {
-        return mockAsyncResponse({ email: email, role: role, success: true });
+        var list = this._getStorage();
+        var newMem = {
+          id: 'EMP-' + Math.floor(1000 + Math.random() * 9000),
+          name: email.split('@')[0],
+          email: email,
+          role: role || 'Employee',
+          department: 'General',
+          initials: email.substring(0,2).toUpperCase(),
+          avatarBg: 'var(--primary)',
+          status: 'Invited',
+          workload: '0%'
+        };
+        list.push(newMem);
+        this._saveStorage(list);
+        return mockAsyncResponse(newMem);
       }
     },
 
-    // 8. MARKETING SERVICE (GET/POST /api/v1/marketing)
+    // 9. MARKETING SERVICE (LOCAL STORAGE BACKED)
     Marketing: {
+      STORAGE_KEY: 'verde_os_marketing',
+      _getStorage: function () {
+        var raw = localStorage.getItem(this.STORAGE_KEY);
+        if (!raw) {
+          var initialSeed = [
+            { id: 'MK-1', name: 'Q4 Enterprise SaaS Targeting', platform: 'Google Ads', budget: '$15,000', status: 'Running', perf: '+12%' },
+            { id: 'MK-2', name: 'Product Update Walkthroughs', platform: 'Instagram', budget: '$4,500', status: 'Running', perf: '+8%' },
+            { id: 'MK-3', name: 'B2B Networking Lead Gen', platform: 'LinkedIn', budget: '$12,000', status: 'Draft', perf: '--' }
+          ];
+          localStorage.setItem(this.STORAGE_KEY, JSON.stringify(initialSeed));
+          return initialSeed;
+        }
+        try { return JSON.parse(raw); } catch (e) { return []; }
+      },
+      _saveStorage: function (list) {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(list));
+      },
       getCampaigns: function () {
-        return mockAsyncResponse([
-          { name: 'Q4 Enterprise SaaS Targeting', platform: 'Google Ads', budget: '$15,000', status: 'Running', perf: '+12%' },
-          { name: 'Product Update Walkthroughs', platform: 'Instagram', budget: '$4,500', status: 'Running', perf: '+8%' },
-          { name: 'B2B Networking Lead Gen', platform: 'LinkedIn', budget: '$12,000', status: 'Draft', perf: '--' }
-        ]);
+        return mockAsyncResponse(this._getStorage());
       }
     },
 
-    // 9. AI HUB SERVICE (GET/POST /api/v1/ai)
+    // 10. AI HUB SERVICE (DYNAMIC GENERATION)
     Ai: {
       getInsights: function () {
-        return mockAsyncResponse([
-          'Vertex Systems client has been inactive for 14 days.',
-          'Project "BlueWave CRM Portal" milestone due in 3 days.',
-          'Revenue forecast for Q4 projected at +18% growth.'
-        ]);
+        return new Promise(function(resolve) {
+          // Gather data to generate insights
+          var p1 = window.VerdeServices.Tasks ? window.VerdeServices.Tasks.getTasks() : Promise.resolve([]);
+          var p2 = window.VerdeServices.Projects ? window.VerdeServices.Projects.getProjects() : Promise.resolve([]);
+          var p3 = window.VerdeServices.Crm ? window.VerdeServices.Crm.getClients() : Promise.resolve([]);
+          var p4 = window.VerdeServices.Finance ? window.VerdeServices.Finance.getInvoices() : Promise.resolve([]);
+          
+          Promise.all([p1, p2, p3, p4]).then(function(results) {
+            var tasks = results[0] || [];
+            var projects = results[1] || [];
+            var clients = results[2] || [];
+            var finances = results[3] || [];
+            
+            var insights = [];
+            
+            // Task Insight
+            var overdue = tasks.filter(t => t.status !== 'Completed' && t.dueDate && new Date(t.dueDate) < new Date()).length;
+            if (overdue > 0) {
+              insights.push(overdue + ' task' + (overdue > 1 ? 's are' : ' is') + ' currently overdue.');
+            } else {
+              var upcoming = tasks.filter(t => t.status !== 'Completed').length;
+              insights.push('You have ' + upcoming + ' pending tasks in your pipeline.');
+            }
+            
+            // Project Insight
+            var atRisk = projects.filter(p => p.status === 'At Risk').length;
+            if (atRisk > 0) {
+              insights.push(atRisk + ' project' + (atRisk > 1 ? 's are' : ' is') + ' marked as "At Risk".');
+            } else {
+              var active = projects.filter(p => p.status === 'Active').length;
+              insights.push(active + ' active projects are progressing steadily.');
+            }
+            
+            // Client Insight
+            var newClients = clients.filter(c => c.createdAt && new Date(c.createdAt) > new Date(Date.now() - 30*24*60*60*1000)).length;
+            if (newClients > 0) {
+              insights.push(newClients + ' new client' + (newClients > 1 ? 's' : '') + ' onboarded in the last 30 days.');
+            }
+            
+            // Finance Insight
+            var pendingInv = finances.filter(f => f.type === 'Income' && f.status === 'Processing').length;
+            if (pendingInv > 0) {
+              insights.push(pendingInv + ' income invoice' + (pendingInv > 1 ? 's are' : ' is') + ' currently processing.');
+            }
+            
+            if (insights.length < 3) {
+              insights.push('Revenue forecast for Q4 projected at +18% growth based on historical trends.');
+            }
+            if (insights.length < 3) {
+              insights.push('Consider scheduling a review meeting for clients with no active projects.');
+            }
+            
+            resolve(insights.slice(0, 4));
+          }).catch(function() {
+            resolve([
+              'System is analyzing data to provide insights.',
+              'Ensure all tasks and projects are up to date.',
+              'Schedule client check-ins regularly.'
+            ]);
+          });
+        });
       }
     },
 
-    // 10. WORKSPACE & SETTINGS SERVICES (GET/PUT /api/v1/workspace)
+    // 11. WORKSPACE & SETTINGS SERVICES
     Workspace: {
       getWorkspaceInfo: function () {
         return mockAsyncResponse(window.VerdeState ? window.VerdeState.get('workspace') : {});

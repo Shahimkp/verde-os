@@ -16,16 +16,7 @@
   var teamModalSearch = '';
   var teamModalSelected = [];
   
-  var MOCK_EMPLOYEES = [
-    { id: 'Shahim', name: 'Shahim', department: 'Engineering', role: 'AI Engineer', workload: 'Projects: 2', availability: '🟢' },
-    { id: 'Midhul', name: 'Midhul', department: 'Engineering', role: 'Frontend Developer', workload: 'Projects: 1', availability: '🟢' },
-    { id: 'Nihal', name: 'Nihal', department: 'Engineering', role: 'Backend Developer', workload: 'Projects: 4', availability: '🟡' },
-    { id: 'Akhil', name: 'Akhil', department: 'Design', role: 'UI Designer', workload: 'Projects: 6', availability: '🔴' },
-    { id: 'Sarah', name: 'Sarah', department: 'Management', role: 'Product Manager', workload: 'Projects: 3', availability: '🟢' },
-    { id: 'Alex', name: 'Alex', department: 'Marketing', role: 'Marketing Lead', workload: 'Projects: 2', availability: '🟢' },
-    { id: 'John', name: 'John', department: 'Sales', role: 'Account Executive', workload: 'Projects: 5', availability: '🟡' },
-    { id: 'Emma', name: 'Emma', department: 'Finance', role: 'Financial Analyst', workload: 'Projects: 1', availability: '🟢' }
-  ];
+  // Removed MOCK_EMPLOYEES, now using VerdeServices.Team
 
   window.switchProjTab = function(tabId) {
     document.querySelectorAll('.proj-tab').forEach(function(el) { el.classList.remove('active'); });
@@ -651,43 +642,51 @@
     var listEl = document.getElementById('team-modal-list');
     listEl.innerHTML = '';
     
-    // In future, pull from Team module. For now, use MOCK_EMPLOYEES
     var existingTeamIds = currentProjectData && currentProjectData.team ? currentProjectData.team : [];
     
-    var filtered = MOCK_EMPLOYEES.filter(function(emp) {
-      if (existingTeamIds.includes(emp.id)) return false; // Hide already assigned members
-      if (teamModalFilter !== 'All' && emp.department !== teamModalFilter) return false;
-      if (teamModalSearch) {
-        var matchName = emp.name.toLowerCase().includes(teamModalSearch);
-        var matchRole = emp.role.toLowerCase().includes(teamModalSearch);
-        var matchDept = emp.department.toLowerCase().includes(teamModalSearch);
-        if (!matchName && !matchRole && !matchDept) return false;
-      }
-      return true;
-    });
-    
-    if(filtered.length === 0) {
-      listEl.innerHTML = '<div style="color:var(--text-3); font-size:13px; text-align:center; padding:24px 0;">No matching employees found.</div>';
-      return;
+    if (window.VerdeServices && window.VerdeServices.Team) {
+      window.VerdeServices.Team.getMembers().then(function(allEmployees) {
+        var filtered = allEmployees.filter(function(emp) {
+          if (existingTeamIds.includes(emp.id)) return false; // Hide already assigned members
+          if (teamModalFilter !== 'All' && emp.department !== teamModalFilter) return false;
+          if (teamModalSearch) {
+            var nameStr = (emp.name || '').toLowerCase();
+            var roleStr = (emp.role || '').toLowerCase();
+            var deptStr = (emp.department || '').toLowerCase();
+            if (!nameStr.includes(teamModalSearch) && !roleStr.includes(teamModalSearch) && !deptStr.includes(teamModalSearch)) return false;
+          }
+          return true;
+        });
+        
+        if(filtered.length === 0) {
+          listEl.innerHTML = '<div style="color:var(--text-3); font-size:13px; text-align:center; padding:24px 0;">No matching employees found.</div>';
+          return;
+        }
+        
+        filtered.forEach(function(emp) {
+          var isSelected = teamModalSelected.includes(emp.id);
+          var borderStyle = isSelected ? 'border:1px solid var(--primary); background:var(--primary-light, rgba(0,200,83,0.05));' : 'border:1px solid transparent; background:var(--bg-1);';
+          var checkHtml = isSelected ? '<div style="color:var(--primary); font-size:16px;">✓</div>' : '<div style="width:16px; height:16px; border:1px solid var(--border); border-radius:4px;"></div>';
+          var avail = emp.availability || '🟢';
+          var name = emp.name || 'Unknown';
+          var dept = emp.department || 'General';
+          var role = emp.role || 'Member';
+          var workload = emp.workload || 'Projects: 0';
+          
+          var html = '<div class="proj-box" style="padding:12px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; ' + borderStyle + '" onclick="toggleEmployeeSelection(\'' + emp.id + '\')">' +
+            '<div style="display:flex; align-items:center; gap:12px;">' +
+              '<div class="proj-avatar" style="width:36px; height:36px; font-size:12px;">' + name.substring(0,2).toUpperCase() + '</div>' +
+              '<div>' +
+                '<div style="font-size:13px; font-weight:700;">' + avail + ' ' + name + ' <span style="font-weight:500; color:var(--text-3);">(' + dept + ')</span></div>' +
+                '<div style="font-size:11px; color:var(--text-2); margin-top:2px;">' + role + ' &bull; ' + workload + '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div>' + checkHtml + '</div>' +
+          '</div>';
+          listEl.innerHTML += html;
+        });
+      });
     }
-    
-    filtered.forEach(function(emp) {
-      var isSelected = teamModalSelected.includes(emp.id);
-      var borderStyle = isSelected ? 'border:1px solid var(--primary); background:var(--primary-light, rgba(0,200,83,0.05));' : 'border:1px solid transparent; background:var(--bg-1);';
-      var checkHtml = isSelected ? '<div style="color:var(--primary); font-size:16px;">✓</div>' : '<div style="width:16px; height:16px; border:1px solid var(--border); border-radius:4px;"></div>';
-      
-      var html = '<div class="proj-box" style="padding:12px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; ' + borderStyle + '" onclick="toggleEmployeeSelection(\'' + emp.id + '\')">' +
-        '<div style="display:flex; align-items:center; gap:12px;">' +
-          '<div class="proj-avatar" style="width:36px; height:36px; font-size:12px;">' + emp.name.substring(0,2).toUpperCase() + '</div>' +
-          '<div>' +
-            '<div style="font-size:13px; font-weight:700;">' + emp.availability + ' ' + emp.name + ' <span style="font-weight:500; color:var(--text-3);">(' + emp.department + ')</span></div>' +
-            '<div style="font-size:11px; color:var(--text-2); margin-top:2px;">' + emp.role + ' &bull; ' + emp.workload + '</div>' +
-          '</div>' +
-        '</div>' +
-        '<div>' + checkHtml + '</div>' +
-      '</div>';
-      listEl.innerHTML += html;
-    });
   };
 
   window.toggleEmployeeSelection = function(id) {

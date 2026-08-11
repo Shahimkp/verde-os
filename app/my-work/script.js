@@ -130,6 +130,8 @@
 
         if (tasksEl) tasksEl.textContent = myTasksCount;
         if (dueEl) dueEl.textContent = dueTodayCount;
+        
+        renderTasks(tasks); // Render lists dynamically
       }
 
       // Try fetching from the actual service layer first
@@ -149,54 +151,117 @@
     // Expose update function so other parts of the module can call it
     window.updateMyWorkDashboard = updateMyWorkDashboard;
 
-    // Call initially
-    updateMyWorkDashboard();
-
-
-    // 2. Checkbox interactions (Today's Focus)
-    let tasksState = {};
-    try {
-      tasksState = JSON.parse(localStorage.getItem(TASKS_STATE_KEY)) || {};
-    } catch(e) {}
-
-    document.querySelectorAll('.my-list-item').forEach((item, index) => {
-      const taskId = 'task_' + index; // simplistic ID for DOM elements
-      const input = item.querySelector('.focus-check');
+    // 2. Render Tasks Dynamically
+    function renderTasks(tasks) {
+      const todayIso = new Date().toISOString().split('T')[0];
+      const today = new Date();
       
-      if (input) {
-        // Restore DOM state
-        if (tasksState[taskId] === 'completed') {
-          input.checked = true;
-          item.style.opacity = '0.5';
-          item.style.textDecoration = 'line-through';
-          item.dataset.status = 'completed';
-        }
-        
-        item.addEventListener('click', function(e) {
-          if (e.target.closest('.btn')) return; // Ignore buttons
-
-          if (e.target.tagName !== 'INPUT') {
-            input.checked = !input.checked;
-          }
+      const tasksList = document.getElementById('my-work-tasks-list');
+      const deadlinesList = document.getElementById('my-work-deadlines-list');
+      
+      if (!tasksList || !deadlinesList) return;
+      
+      tasksList.innerHTML = '';
+      deadlinesList.innerHTML = '';
+      
+      // We only care about our tasks
+      const myTasks = (tasks || []).filter(t => {
+        if (t.status === 'Archived') return false;
+        const n = userName.toLowerCase();
+        return (t.assignee && t.assignee.toLowerCase().includes(n)) ||
+               (t.assigneeId && (t.assigneeId === userInitials || t.assigneeId === userId)) ||
+               (t.assigneeInitials && t.assigneeInitials === userInitials);
+      });
+      
+      // Render Today's Focus (Pending Tasks)
+      const focusTasks = myTasks.filter(t => t.status !== 'Completed');
+      if (focusTasks.length === 0) {
+        tasksList.innerHTML = '<div style="color:var(--text-3); font-size:14px; padding:16px;">No tasks for today! Enjoy your focus time.</div>';
+      } else {
+        focusTasks.slice(0, 8).forEach(t => {
+          const isCritical = t.priority === 'Critical';
+          const isHigh = t.priority === 'High';
+          const badgeClass = isCritical ? 'badge-critical' : (isHigh ? 'badge-high' : 'badge-medium');
           
-          if (input.checked) {
-            this.style.opacity = '0.5';
-            this.style.textDecoration = 'line-through';
-            this.dataset.status = 'completed';
-            tasksState[taskId] = 'completed';
-          } else {
-            this.style.opacity = '1';
-            this.style.textDecoration = 'none';
-            this.dataset.status = 'pending';
-            tasksState[taskId] = 'pending';
-          }
-          localStorage.setItem(TASKS_STATE_KEY, JSON.stringify(tasksState));
+          const item = document.createElement('div');
+          item.className = 'my-list-item';
+          item.dataset.taskId = t.id;
+          item.innerHTML = `
+            <div class="my-list-content">
+              <input type="checkbox" class="focus-check" />
+              <div>
+                <div class="my-item-text">${t.title}</div>
+                <div class="my-item-sub">${t.project || 'General'} • ${t.estimatedHours ? t.estimatedHours + 'h' : '30m'}</div>
+              </div>
+            </div>
+            <span class="badge ${badgeClass}">${t.priority}</span>
+          `;
           
-          // Trigger central dashboard update!
-          updateMyWorkDashboard();
+          // Wire up checkbox
+          const check = item.querySelector('.focus-check');
+          item.addEventListener('click', function(e) {
+            if (e.target.closest('.btn')) return;
+            if (e.target.tagName !== 'INPUT') {
+              check.checked = !check.checked;
+            }
+            if (check.checked) {
+              this.style.opacity = '0.5';
+              this.style.textDecoration = 'line-through';
+              if (window.VerdeServices && window.VerdeServices.Tasks) {
+                window.VerdeServices.Tasks.updateTask(t.id, { status: 'Completed' }).then(updateMyWorkDashboard);
+              }
+            } else {
+              this.style.opacity = '1';
+              this.style.textDecoration = 'none';
+            }
+          });
+          tasksList.appendChild(item);
         });
       }
-    });
+      
+      // Render Upcoming Deadlines
+      const dueTasks = myTasks.filter(t => t.status !== 'Completed' && t.dueDate).sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate));
+      if (dueTasks.length === 0) {
+        deadlinesList.innerHTML = '<div style="color:var(--text-3); font-size:14px; padding:16px;">No upcoming deadlines!</div>';
+      } else {
+        dueTasks.slice(0, 5).forEach(t => {
+          let dueStr = t.dueDate;
+          let dotClass = '';
+          let textStyle = '';
+          try {
+            const dt = new Date(t.dueDate);
+            if (!isNaN(dt.getTime())) {
+              if (dt < today && dt.toDateString() !== today.toDateString()) {
+                dueStr = 'Overdue';
+                dotClass = 'danger';
+                textStyle = 'color:var(--danger); font-weight:700;';
+              } else if (dt.toDateString() === today.toDateString()) {
+                dueStr = 'Due Today';
+                dotClass = 'warning';
+                textStyle = 'color:var(--warning); font-weight:700;';
+              } else {
+                dueStr = 'Due ' + dt.toLocaleDateString();
+              }
+            }
+          } catch(e) {}
+          
+          const dItem = document.createElement('div');
+          dItem.className = 'timeline-item';
+          dItem.innerHTML = `
+            <div class="timeline-dot ${dotClass}"></div>
+            <div class="timeline-content">
+              <div class="timeline-title">${t.title}</div>
+              <div class="timeline-meta" style="${textStyle}">${dueStr}</div>
+              <div class="timeline-meta">Priority: ${t.priority}</div>
+            </div>
+          `;
+          deadlinesList.appendChild(dItem);
+        });
+      }
+    }
+
+    // Call initially
+    updateMyWorkDashboard();
 
     // 3. Search Functionality
     const searchInput = document.querySelector('.my-search input');

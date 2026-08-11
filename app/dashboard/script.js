@@ -142,7 +142,7 @@
       // Check if this date has events
       var dateStr = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
       if (eventDates.indexOf(dateStr) !== -1) cls += ' has-event';
-      html += '<div class="' + cls + '">' + d + '</div>';
+      html += '<div class="' + cls + '" data-date="' + dateStr + '">' + d + '</div>';
     }
 
     // Fill remaining cells
@@ -158,6 +158,7 @@
   function initCalendarNav() {
     var prevBtn = document.getElementById('mc-cal-prev');
     var nextBtn = document.getElementById('mc-cal-next');
+    var grid = document.getElementById('mc-cal-grid');
 
     if (prevBtn) {
       prevBtn.addEventListener('click', function (e) {
@@ -178,22 +179,30 @@
         renderCalendar(y, m, collectEventDates());
       });
     }
+
+    if (grid) {
+      grid.addEventListener('click', function (e) {
+        var dayEl = e.target.closest('.mc-cal-day:not(.fade)');
+        if (dayEl) {
+          grid.querySelectorAll('.mc-cal-day').forEach(function(el) { el.classList.remove('active'); });
+          dayEl.classList.add('active');
+        }
+      });
+    }
   }
 
   // Collect event dates from tasks and meetings for calendar dots
   function collectEventDates() {
     var dates = [];
     try {
-      // From tasks
-      if (window.VerdeServices && window.VerdeServices.Tasks) {
-        // We'll collect asynchronously later; for now return what we cached
-      }
-      // From mock meetings
-      if (window.VerdeMockData && window.VerdeMockData.meetings) {
-        window.VerdeMockData.meetings.forEach(function (m) {
-          if (m.date) {
+      // From tasks in storage
+      var rawTasks = localStorage.getItem('verde_os_tasks');
+      if (rawTasks) {
+        var tList = JSON.parse(rawTasks);
+        (tList || []).forEach(function(t) {
+          if (t.dueDate && t.status !== 'Completed' && t.status !== 'Archived') {
             try {
-              var dt = new Date(m.date);
+              var dt = new Date(t.dueDate);
               if (!isNaN(dt.getTime())) {
                 dates.push(dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0'));
               }
@@ -201,6 +210,20 @@
           }
         });
       }
+
+      // From meetings
+      var rawM = localStorage.getItem('verde_os_meetings');
+      var mList = rawM ? JSON.parse(rawM) : (window.VerdeMockData ? window.VerdeMockData.meetings : []);
+      (mList || []).forEach(function (m) {
+        if (m.date) {
+          try {
+            var dm = new Date(m.date);
+            if (!isNaN(dm.getTime())) {
+              dates.push(dm.getFullYear() + '-' + String(dm.getMonth() + 1).padStart(2, '0') + '-' + String(dm.getDate()).padStart(2, '0'));
+            }
+          } catch(e) {}
+        }
+      });
     } catch(e) {}
     return dates;
   }
@@ -450,11 +473,36 @@
     }
 
     container.innerHTML = topTasks.map(function(t) {
-      return '<div class="mc-pinned-task">' +
-        '<div class="mc-pinned-check"></div>' +
-        '<div class="mc-pinned-title">' + esc(t.title || t.name || 'Untitled') + '</div>' +
+      var isDone = t.status === 'Completed';
+      var checkCls = isDone ? 'mc-pinned-check checked' : 'mc-pinned-check';
+      var titleStyle = isDone ? 'text-decoration:line-through;color:var(--text-3);' : '';
+      return '<div class="mc-pinned-task" data-id="' + esc(t.id) + '" style="cursor:pointer;">' +
+        '<div class="' + checkCls + '"></div>' +
+        '<div class="mc-pinned-title" style="' + titleStyle + '">' + esc(t.title || t.name || 'Untitled') + '</div>' +
       '</div>';
     }).join('');
+
+    container.querySelectorAll('.mc-pinned-task').forEach(function(item) {
+      item.addEventListener('click', function() {
+        var taskId = this.getAttribute('data-id');
+        var check = this.querySelector('.mc-pinned-check');
+        var title = this.querySelector('.mc-pinned-title');
+        if (check && taskId && window.VerdeServices && window.VerdeServices.Tasks) {
+          var isChecked = check.classList.contains('checked');
+          var newStatus = isChecked ? 'To Do' : 'Completed';
+          if (!isChecked) {
+            check.classList.add('checked');
+            if (title) { title.style.textDecoration = 'line-through'; title.style.color = 'var(--text-3)'; }
+          } else {
+            check.classList.remove('checked');
+            if (title) { title.style.textDecoration = 'none'; title.style.color = 'var(--text-1)'; }
+          }
+          window.VerdeServices.Tasks.updateTask(taskId, { status: newStatus }).then(function() {
+            syncHeroAndMission();
+          }).catch(function() {});
+        }
+      });
+    });
   }
 
   // ══════════════════════════════════════════════════════════════════════════
@@ -465,43 +513,58 @@
     var heroMeetingsEl = document.getElementById('mc-stat-meetings');
     if (!listEl) return;
 
-    var allMeetings = [];
-
-    // Source 1: VerdeMockData.meetings (global meeting records)
-    if (window.VerdeMockData && window.VerdeMockData.meetings) {
-      window.VerdeMockData.meetings.forEach(function(m) {
+    function processAndRender(baseMeetings) {
+      var allMeetings = [];
+      (baseMeetings || []).forEach(function(m) {
         allMeetings.push({
           time: m.time || '\u2014',
-          title: m.purpose || 'Meeting',
+          title: m.purpose || m.title || 'Meeting',
           sub: m.client || '',
           status: m.status || 'Confirmed'
         });
       });
+
+      if (window.VerdeServices && window.VerdeServices.Crm) {
+        window.VerdeServices.Crm.getLeads().then(function(leads) {
+          (leads || []).forEach(function(lead) {
+            if (lead.meetings && lead.meetings.length > 0) {
+              lead.meetings.forEach(function(m) {
+                if (m.status !== 'Completed' && m.status !== 'Cancelled') {
+                  allMeetings.push({
+                    time: m.time || '\u2014',
+                    title: m.notes || m.purpose || 'Meeting',
+                    sub: lead.company || lead.name || '',
+                    status: m.status || 'Scheduled'
+                  });
+                }
+              });
+            }
+          });
+          renderMeetingsList(allMeetings, listEl, heroMeetingsEl);
+        }).catch(function() {
+          renderMeetingsList(allMeetings, listEl, heroMeetingsEl);
+        });
+      } else {
+        renderMeetingsList(allMeetings, listEl, heroMeetingsEl);
+      }
     }
 
-    // Source 2: CRM Lead meetings (if any exist)
-    if (window.VerdeServices && window.VerdeServices.Crm) {
-      window.VerdeServices.Crm.getLeads().then(function(leads) {
-        (leads || []).forEach(function(lead) {
-          if (lead.meetings && lead.meetings.length > 0) {
-            lead.meetings.forEach(function(m) {
-              if (m.status !== 'Completed' && m.status !== 'Cancelled') {
-                allMeetings.push({
-                  time: m.time || '\u2014',
-                  title: m.notes || m.purpose || 'Meeting',
-                  sub: lead.company || lead.name || '',
-                  status: m.status || 'Scheduled'
-                });
-              }
-            });
-          }
-        });
-        renderMeetingsList(allMeetings, listEl, heroMeetingsEl);
+    if (window.VerdeServices && window.VerdeServices.Meetings) {
+      window.VerdeServices.Meetings.getMeetings().then(function(mtgs) {
+        if (mtgs && mtgs.length > 0) {
+          processAndRender(mtgs);
+        } else if (window.VerdeMockData && window.VerdeMockData.meetings) {
+          processAndRender(window.VerdeMockData.meetings);
+        } else {
+          processAndRender([]);
+        }
       }).catch(function() {
-        renderMeetingsList(allMeetings, listEl, heroMeetingsEl);
+        processAndRender(window.VerdeMockData ? window.VerdeMockData.meetings : []);
       });
+    } else if (window.VerdeMockData && window.VerdeMockData.meetings) {
+      processAndRender(window.VerdeMockData.meetings);
     } else {
-      renderMeetingsList(allMeetings, listEl, heroMeetingsEl);
+      processAndRender([]);
     }
   }
 

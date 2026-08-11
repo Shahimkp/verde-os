@@ -10,13 +10,8 @@
   let currentFilter = 'All';
   let currentSearch = '';
   
-  // Teams Mock if VerdeServices.Team is not fully implemented
-  const teamMock = [
-    { id: 'SH', name: 'Shahim', role: 'AI Engineer' },
-    { id: 'MI', name: 'Midhul', role: 'Frontend Developer' },
-    { id: 'NH', name: 'Nihal', role: 'Backend Developer' },
-    { id: 'AM', name: 'Ameen', role: 'Project Manager' }
-  ];
+  // Dynamic Team Members loaded from VerdeServices
+  let teamMembers = [];
 
   function getAvatar(id) {
     if (!id || id === 'Unassigned') return { initials: '?', color: 'var(--text-3)' };
@@ -546,8 +541,8 @@
         // Populate assignees
         const selAssignee = document.getElementById('selTaskAssignee');
         selAssignee.innerHTML = '<option value="Unassigned">Unassigned</option>';
-        teamMock.forEach(m => {
-          selAssignee.innerHTML += `<option value="${m.id}">${m.name} - ${m.role}</option>`;
+        teamMembers.forEach(m => {
+          selAssignee.innerHTML += `<option value="${m.id}">${m.name} - ${m.role || 'Member'}</option>`;
         });
         if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('tasks_assign')) {
           selAssignee.disabled = true;
@@ -991,6 +986,10 @@
 
   // ── INITIALIZATION ──
   function initTasksWorkspace() {
+    if (window.VerdeServices && window.VerdeServices.Team) {
+       window.VerdeServices.Team.getMembers().then(members => { teamMembers = members || []; });
+    }
+
     // ── EVENT DELEGATION FOR TASKS MODULE ──
     if (!window._verdeTasksEventsBound) {
       document.addEventListener('click', function(e) {
@@ -1073,8 +1072,10 @@
        });
     }
     const fEmp = document.getElementById('filter-employee');
-    if (fEmp) {
-       teamMock.forEach(m => fEmp.innerHTML += `<option value="${m.id}">${m.name}</option>`);
+    if (fEmp && window.VerdeServices && window.VerdeServices.Team) {
+       window.VerdeServices.Team.getMembers().then(members => {
+         members.forEach(m => fEmp.innerHTML += `<option value="${m.id}">${m.name}</option>`);
+       });
     }
     
     // Bind advanced filters changes
