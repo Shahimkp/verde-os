@@ -566,9 +566,9 @@
               <button class="btn btn-primary" onclick="window.showCreateLeadModal()">+ New Lead</button>
               <button class="btn btn-primary" style="background:var(--text-1); color:var(--bg);"
                 onclick="window.showCreateClientModal()">+ New Client</button>
-              <button class="btn btn-ghost" style="background:var(--bg); border:1px solid var(--border);">Schedule
+              <button class="btn btn-ghost" id="btn-schedule-meeting" style="background:var(--bg); border:1px solid var(--border);" onclick="window.showScheduleMeetingModal()">Schedule
                 Meeting</button>
-              <button class="btn btn-ghost" style="background:var(--bg); border:1px solid var(--border);">Create
+              <button class="btn btn-ghost" id="btn-create-proposal" style="background:var(--bg); border:1px solid var(--border);" onclick="window.showCreateProposalModal()">Create
                 Proposal</button>
             </div>
           </header>
@@ -576,23 +576,23 @@
           <!-- 2. KPI Cards (Max 5) -->
           <section class="crm-kpi-grid">
             <div class="crm-kpi-card">
-              <div class="crm-kpi-value">42</div>
+              <div class="crm-kpi-value">0</div>
               <div class="crm-kpi-label">Total Leads</div>
             </div>
             <div class="crm-kpi-card">
-              <div class="crm-kpi-value">18</div>
+              <div class="crm-kpi-value">0</div>
               <div class="crm-kpi-label">Active Clients</div>
             </div>
             <div class="crm-kpi-card">
-              <div class="crm-kpi-value">12</div>
+              <div class="crm-kpi-value">0</div>
               <div class="crm-kpi-label">Deals in Progress</div>
             </div>
             <div class="crm-kpi-card">
-              <div class="crm-kpi-value">₹2.4Cr</div>
+              <div class="crm-kpi-value">₹0L</div>
               <div class="crm-kpi-label">Pipeline Value</div>
             </div>
             <div class="crm-kpi-card">
-              <div class="crm-kpi-value" style="color:var(--primary);">4</div>
+              <div class="crm-kpi-value" id="crm-kpi-meetings-today" style="color:var(--primary);">0</div>
               <div class="crm-kpi-label">Meetings Today</div>
             </div>
           </section>
@@ -606,7 +606,7 @@
             <button class="crm-tab" data-target="tab-activity" style="padding:12px 0; border-bottom:2px solid transparent; font-weight:600; color:var(--text-3); background:transparent; border-top:none; border-left:none; border-right:none; cursor:pointer; transition:color 0.2s;">Activity</button>
           </div>
 
-          <!-- Tab Content: Leads -->
+          <!-- Tab 1: Leads -->
           <div id="tab-leads" class="crm-tab-content" style="display:block;">
             <!-- 3. Sales Pipeline (Horizontal Kanban) -->
             <section class="crm-section">
@@ -625,10 +625,10 @@
               </div>
             </div>
 
-            <div class="crm-kanban" id="crm-kanban-board">
+            <div class="crm-kanban-board">
               <!-- Stage 1: New Lead -->
               <div class="crm-kanban-col" data-stage="New Lead">
-                <div class="crm-kanban-col-header">
+                <div class="crm-kanban-col-header" style="border-bottom-color:var(--text-3);">
                   <span>New Lead</span>
                   <span class="badge badge-neutral" id="count-new-lead">0</span>
                 </div>
@@ -638,7 +638,7 @@
 
               <!-- Stage 2: Qualified -->
               <div class="crm-kanban-col" data-stage="Qualified">
-                <div class="crm-kanban-col-header">
+                <div class="crm-kanban-col-header" style="border-bottom-color:var(--primary);">
                   <span>Qualified</span>
                   <span class="badge badge-neutral" id="count-qualified">0</span>
                 </div>
@@ -648,7 +648,7 @@
 
               <!-- Stage 3: Proposal Sent -->
               <div class="crm-kanban-col" data-stage="Proposal Sent">
-                <div class="crm-kanban-col-header">
+                <div class="crm-kanban-col-header" style="border-bottom-color:var(--warning);">
                   <span>Proposal Sent</span>
                   <span class="badge badge-neutral" id="count-proposal-sent">0</span>
                 </div>
@@ -658,7 +658,7 @@
 
               <!-- Stage 4: Negotiation -->
               <div class="crm-kanban-col" data-stage="Negotiation">
-                <div class="crm-kanban-col-header" style="border-bottom-color:var(--warning);">
+                <div class="crm-kanban-col-header" style="border-bottom-color:var(--warning-dark, #b45309);">
                   <span>Negotiation</span>
                   <span class="badge badge-neutral" id="count-negotiation">0</span>
                 </div>
@@ -670,7 +670,7 @@
               <div class="crm-kanban-col" data-stage="Won">
                 <div class="crm-kanban-col-header" style="border-bottom-color:var(--success);">
                   <span>Won</span>
-                  <span class="badge badge-success" id="count-won">0</span>
+                  <span class="badge badge-neutral" id="count-won">0</span>
                 </div>
                 <div class="crm-kanban-cards-container" id="kanban-Won"
                   ></div>
@@ -687,11 +687,47 @@
               </div>
             </div>
           </section>
+
+          <!-- Overview Split Grid (Today's Meetings & Recent Activity) -->
+          <div class="crm-grid-half" style="margin-top:24px;">
+            <!-- Today's Meetings Overview -->
+            <section class="crm-section" style="margin-bottom:0;">
+              <div class="crm-section-header" style="display:flex; justify-content:space-between; align-items:center;">
+                <h2 class="crm-section-title">Today's Meetings</h2>
+                <button class="btn btn-ghost btn-sm" style="color:var(--primary); font-weight:600;" onclick="window.showScheduleMeetingModal()">+ Schedule</button>
+              </div>
+              <div class="crm-table-container">
+                <table class="table-enterprise">
+                  <thead>
+                    <tr>
+                      <th>Meeting / Client</th>
+                      <th>Time</th>
+                      <th>Host</th>
+                      <th style="text-align:right;">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="crm-today-meetings-body">
+                    <!-- Dynamically populated by script.js -->
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <!-- Recent Activity Overview -->
+            <section class="crm-section" style="margin-bottom:0;">
+              <div class="crm-section-header">
+                <h2 class="crm-section-title">Recent Activity</h2>
+              </div>
+              <div class="crm-table-container crm-activity-list" id="crm-activity-feed-list">
+                <!-- Dynamically populated by script.js -->
+              </div>
+            </section>
+          </div>
           </div>
 
-          <!-- Tab Content: Clients -->
+          <!-- Tab 2: Clients -->
           <div id="tab-clients" class="crm-tab-content" style="display:none;">
-            <!-- 4. Client Directory -->
+            <!-- Client Directory -->
             <section class="crm-section">
               <div class="crm-section-header">
                 <h2 class="crm-section-title">Client Directory</h2>
@@ -722,10 +758,6 @@
                       <div class="verde-select-option" data-value="archived" onclick="window.selectCustomOption(this, 'Archived Clients')">Archived Clients</div>
                     </div>
                   </div>
-                  <button class="btn btn-ghost btn-sm"
-                    style="background:var(--surface); border:1px solid var(--border);">Filter</button>
-                  <button class="btn btn-ghost btn-sm"
-                    style="background:var(--surface); border:1px solid var(--border);">Sort</button>
                 </div>
               </div>
 
@@ -745,229 +777,125 @@
                   <!-- Dynamic rows will be rendered here -->
                 </tbody>
               </table>
-              <div style="display:flex; justify-content:space-between; align-items:center; padding-top:16px;">
-                <div style="color:var(--text-3); font-size:0.875rem;">Showing 1 - 5 of 18</div>
-                <div style="display:flex; gap:8px;">
-                  <button class="btn btn-ghost btn-sm" disabled style="border:1px solid var(--border);">Prev</button>
-                  <button class="btn btn-ghost btn-sm" style="border:1px solid var(--border);">Next</button>
-                </div>
-              </div>
             </div>
-
-            <!-- UX States (Hidden by default) -->
-            <div style="display:none;" class="empty-state">
-              <div class="empty-state-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="9" cy="7" r="4"></circle>
-                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                </svg>
-              </div>
-              <div class="empty-state-title">No Clients Found</div>
-              <div class="empty-state-desc">You don't have any clients matching the current filters.</div>
-              <button class="btn btn-primary" style="margin-top:16px;">+ Add Client</button>
-            </div>
-
-            <div style="display:none; margin-top:24px;" class="skeleton-table"></div>
-
-            <div style="display:none; margin-top:24px;" class="alert alert-danger">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="8" x2="12" y2="12"></line>
-                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-              </svg>
-              <span>Failed to load clients. Please try again.</span>
-            </div>
-
-            <div style="display:none; margin-top:24px;" class="alert alert-success">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-              </svg>
-              <span>Client data successfully exported.</span>
-            </div>
-        </div>
-        </section>
-
-        <!-- 5 & 6. Meetings & Recent Activity -->
-        <div class="crm-grid-half">
-
-          <!-- 5. Today's Meetings -->
-          <section class="crm-section" style="margin-bottom:0;">
-            <div class="crm-section-header">
-              <h2 class="crm-section-title">Today's Meetings</h2>
-            </div>
-            <div class="crm-table-container">
-              <div class="crm-table-toolbar" style="display:flex; justify-content:space-between; margin-bottom:16px;">
-                <div class="crm-search"
-                  style="width: 100%; max-width: 200px; border-color: transparent; background: var(--bg-2); display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:8px;">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    style="color:var(--text-3)">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                  </svg>
-                  <input type="text" placeholder="Search..."
-                    style="border:none; background:transparent; outline:none; width:100%;" />
-                </div>
-                <div style="display:flex; gap:8px; align-items:center;">
-                  <button class="btn btn-ghost btn-sm"
-                    style="background:var(--surface); border:1px solid var(--border);">Filter</button>
-                  <button class="btn btn-ghost btn-sm"
-                    style="background:var(--surface); border:1px solid var(--border);">Sort</button>
-                </div>
-              </div>
-              <table class="table-enterprise">
-                <thead>
-                  <tr>
-                    <th>Client</th>
-                    <th>Time</th>
-                    <th>Purpose</th>
-                    <th style="text-align:right;">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Elena Rodriguez</td>
-                    <td>10:00 AM</td>
-                    <td>Design Review</td>
-                    <td style="text-align:right;"><span class="badge-status badge-closed">Completed</span></td>
-                  </tr>
-                  <tr>
-                    <td>Marcus Thorne</td>
-                    <td>2:00 PM</td>
-                    <td>Project Kickoff</td>
-                    <td style="text-align:right;"><span class="badge-status badge-active">Upcoming</span></td>
-                  </tr>
-                  <tr>
-                    <td>Sarah Jenkins</td>
-                    <td>4:30 PM</td>
-                    <td>Quarterly Sync</td>
-                    <td style="text-align:right;"><span class="badge-status badge-active">Upcoming</span></td>
-                  </tr>
-                </tbody>
-              </table>
-              <div style="display:flex; justify-content:space-between; align-items:center; padding-top:16px;">
-                <div style="color:var(--text-3); font-size:0.875rem;">Showing 1 - 3 of 3</div>
-                <div style="display:flex; gap:8px;">
-                  <button class="btn btn-ghost btn-sm" disabled style="border:1px solid var(--border);">Prev</button>
-                  <button class="btn btn-ghost btn-sm" disabled style="border:1px solid var(--border);">Next</button>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- 6. Recent Activity -->
-          <section class="crm-section" style="margin-bottom:0;">
-            <div class="crm-section-header">
-              <h2 class="crm-section-title">Recent Activity</h2>
-            </div>
-            <div class="crm-table-container crm-activity-list">
-
-              <div class="crm-activity-item">
-                <div class="crm-activity-content">
-                  <div class="crm-activity-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2">
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                      <polyline points="14 2 14 8 20 8"></polyline>
-                      <line x1="16" y1="13" x2="8" y2="13"></line>
-                      <line x1="16" y1="17" x2="8" y2="17"></line>
-                      <polyline points="10 9 9 9 8 9"></polyline>
-                    </svg>
-                  </div>
-                  <div class="crm-activity-text">Proposal Sent to Cabo Travels</div>
-                </div>
-                <div class="crm-activity-time">10:45 AM</div>
-              </div>
-
-              <div class="crm-activity-item">
-                <div class="crm-activity-content">
-                  <div class="crm-activity-icon" style="color:var(--success);">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
-                      <line x1="9" y1="9" x2="9.01" y2="9"></line>
-                      <line x1="15" y1="9" x2="15.01" y2="9"></line>
-                    </svg>
-                  </div>
-                  <div class="crm-activity-text">Deal Won: Vertex Systems Software Suite</div>
-                </div>
-                <div class="crm-activity-time">Yesterday</div>
-              </div>
-
-              <div class="crm-activity-item">
-                <div class="crm-activity-content">
-                  <div class="crm-activity-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2">
-                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                      <line x1="16" y1="2" x2="16" y2="6"></line>
-                      <line x1="8" y1="2" x2="8" y2="6"></line>
-                      <line x1="3" y1="10" x2="21" y2="10"></line>
-                    </svg>
-                  </div>
-                  <div class="crm-activity-text">Meeting Completed: BlueWave Tech</div>
-                </div>
-                <div class="crm-activity-time">Aug 14</div>
-              </div>
-
-              <div class="crm-activity-item">
-                <div class="crm-activity-content">
-                  <div class="crm-activity-icon" style="color:var(--primary);">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2">
-                      <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                      <circle cx="9" cy="7" r="4"></circle>
-                      <line x1="19" y1="8" x2="19" y2="14"></line>
-                      <line x1="22" y1="11" x2="16" y2="11"></line>
-                    </svg>
-                  </div>
-                  <div class="crm-activity-text">New Client Added: GreenLeaf</div>
-                </div>
-                <div class="crm-activity-time">Aug 12</div>
-              </div>
-
-              <div class="crm-activity-item">
-                <div class="crm-activity-content">
-                  <div class="crm-activity-icon" style="color:var(--primary);">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2">
-                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                      <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                    </svg>
-                  </div>
-                  <div class="crm-activity-text">Lead Created: Vertex Systems</div>
-                </div>
-                <div class="crm-activity-time">Jul 30</div>
-              </div>
-
-              <div class="crm-activity-item">
-                <div class="crm-activity-content">
-                  <div class="crm-activity-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2">
-                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                    </svg>
-                  </div>
-                  <div class="crm-activity-text">Email Sent to Sarah Jenkins</div>
-                </div>
-                <div class="crm-activity-time">Jul 28</div>
-              </div>
-
-            </div>
-            </div>
-          </section>
+            </section>
           </div>
 
-        </div>
+          <!-- Tab 3: Meetings -->
+          <div id="tab-meetings" class="crm-tab-content" style="display:none;">
+            <section class="crm-section">
+              <div class="crm-section-header" style="display:flex; justify-content:space-between; align-items:center;">
+                <h2 class="crm-section-title">Meetings & Engagements</h2>
+                <button class="btn btn-primary" onclick="window.showScheduleMeetingModal()">+ Schedule Meeting</button>
+              </div>
 
-    </div>
+              <div class="crm-table-container">
+                <div class="crm-table-toolbar" style="display:flex; justify-content:space-between; margin-bottom:16px;">
+                  <div class="crm-search"
+                    style="width: 300px; border-color: transparent; background: var(--bg-2); display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:8px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                      style="color:var(--text-3)">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="crm-meetings-search" placeholder="Search meetings..."
+                      style="border:none; background:transparent; outline:none; width:100%;" />
+                  </div>
+                  <div style="display:flex; gap:12px; align-items:center;">
+                    <select id="crm-meetings-filter" class="form-input" style="padding:6px 12px; font-size:12px; height:auto; width:auto;">
+                      <option value="all">All Meetings</option>
+                      <option value="today">Today's Meetings</option>
+                      <option value="upcoming">Upcoming</option>
+                      <option value="completed">Completed</option>
+                    </select>
+                  </div>
+                </div>
+
+                <table class="table-enterprise">
+                  <thead>
+                    <tr>
+                      <th>Title & Purpose</th>
+                      <th>Client / Account</th>
+                      <th>Date & Time</th>
+                      <th>Duration</th>
+                      <th>Host / Owner</th>
+                      <th>Status</th>
+                      <th style="text-align:right;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="crm-all-meetings-body">
+                    <!-- Dynamically populated by script.js -->
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+
+          <!-- Tab 4: Proposals -->
+          <div id="tab-proposals" class="crm-tab-content" style="display:none;">
+            <section class="crm-section">
+              <div class="crm-section-header" style="display:flex; justify-content:space-between; align-items:center;">
+                <h2 class="crm-section-title">Proposals & Quotes</h2>
+                <button class="btn btn-primary" onclick="window.showCreateProposalModal()">+ Create Proposal</button>
+              </div>
+
+              <div class="crm-table-container">
+                <div class="crm-table-toolbar" style="display:flex; justify-content:space-between; margin-bottom:16px;">
+                  <div class="crm-search"
+                    style="width: 300px; border-color: transparent; background: var(--bg-2); display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:8px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                      style="color:var(--text-3)">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="crm-proposals-search" placeholder="Search proposals..."
+                      style="border:none; background:transparent; outline:none; width:100%;" />
+                  </div>
+                  <div style="display:flex; gap:12px; align-items:center;">
+                    <select id="crm-proposals-filter" class="form-input" style="padding:6px 12px; font-size:12px; height:auto; width:auto;">
+                      <option value="all">All Proposals</option>
+                      <option value="Sent">Sent</option>
+                      <option value="Accepted">Accepted</option>
+                      <option value="Draft">Draft</option>
+                      <option value="Under Review">Under Review</option>
+                    </select>
+                  </div>
+                </div>
+
+                <table class="table-enterprise">
+                  <thead>
+                    <tr>
+                      <th>Proposal Title</th>
+                      <th>Client / Account</th>
+                      <th>Value (₹)</th>
+                      <th>Valid Until</th>
+                      <th>Prepared By</th>
+                      <th>Status</th>
+                      <th style="text-align:right;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="crm-all-proposals-body">
+                    <!-- Dynamically populated by script.js -->
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+
+          <!-- Tab 5: Activity -->
+          <div id="tab-activity" class="crm-tab-content" style="display:none;">
+            <section class="crm-section">
+              <div class="crm-section-header">
+                <h2 class="crm-section-title">Sales & CRM Activity Feed</h2>
+              </div>
+              <div class="crm-table-container crm-activity-list" id="crm-full-activity-feed" style="padding:16px;">
+                <!-- Dynamically populated by script.js -->
+              </div>
+            </section>
+          </div>
+        </div>
     </main>
 
   </div>
