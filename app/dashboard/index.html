@@ -215,7 +215,7 @@
                       <span class="badge badge-danger" style="font-size:10px;padding:2px 6px;">3 Due</span>
                     </div>
                     <div>
-                      <div class="mc-health-value">12</div>
+                      <div class="mc-health-value" id="dashboard-kpi-invoices">12</div>
                       <div class="mc-health-label">Invoices</div>
                     </div>
                   </div>
@@ -433,16 +433,33 @@
 
           </div> <!-- /mc-main-content -->
 
+          <!-- PULL BAR: Sidebar Toggle -->
+          <div class="mc-sidebar-pull" id="mc-sidebar-pull" title="Toggle sidebar">
+            <div class="mc-pull-indicator">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+            </div>
+          </div>
+
           <!-- ==========================================
                RIGHT SIDEBAR COLUMN
                ========================================== -->
-          <aside class="mc-right-sidebar">
+          <aside class="mc-right-sidebar" id="mc-right-sidebar">
 
             <!-- Calendar Widget -->
             <div>
               <div class="mc-sidebar-title">
                 <span>Calendar</span>
-                <span id="mc-cal-month" style="font-size:11px;font-weight:600;color:var(--text-3);">July 2026</span>
+                <span style="display:flex;align-items:center;gap:6px;">
+                  <button class="mc-cal-nav" id="mc-cal-prev" title="Previous month" style="background:none;border:1px solid var(--border);border-radius:4px;width:20px;height:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-3);padding:0;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                  </button>
+                  <span id="mc-cal-month" style="font-size:11px;font-weight:600;color:var(--text-3);min-width:70px;text-align:center;">July 2026</span>
+                  <button class="mc-cal-nav" id="mc-cal-next" title="Next month" style="background:none;border:1px solid var(--border);border-radius:4px;width:20px;height:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-3);padding:0;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </button>
+                </span>
               </div>
               <div class="mc-calendar">
                 <div class="mc-cal-header">
