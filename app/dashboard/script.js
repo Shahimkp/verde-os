@@ -615,12 +615,16 @@
         var clientKpiEl = document.getElementById('dashboard-kpi-clients');
         if (clientKpiEl) clientKpiEl.textContent = activeClients;
 
-        var revKpiEl = document.getElementById('dashboard-kpi-revenue');
-        if (revKpiEl) revKpiEl.textContent = '\u20b9' + (totalRevenue / 100000).toFixed(1) + 'L';
+        // If finance invoices are not yet populated, use CRM revenue
+        var rawFin = localStorage.getItem('verde_finance_invoices');
+        if (!rawFin) {
+          var revKpiEl = document.getElementById('dashboard-kpi-revenue');
+          if (revKpiEl) revKpiEl.textContent = '\u20b9' + (totalRevenue / 100000).toFixed(1) + 'L';
 
-        var heroRevEl = document.getElementById('mc-stat-revenue');
-        if (heroRevEl) {
-          heroRevEl.innerHTML = '\u20b9' + (totalRevenue / 100000).toFixed(1) + 'L this month \u00b7 ' + activeClients + ' active client' + (activeClients !== 1 ? 's' : '');
+          var heroRevEl = document.getElementById('mc-stat-revenue');
+          if (heroRevEl) {
+            heroRevEl.innerHTML = '\u20b9' + (totalRevenue / 100000).toFixed(1) + 'L this month \u00b7 ' + activeClients + ' active client' + (activeClients !== 1 ? 's' : '');
+          }
         }
       }).catch(function() {});
     }
@@ -664,7 +668,7 @@
               return '<div class="mc-avatar">' + esc(m) + '</div>';
             }).join('');
 
-            var html = '<div class="mc-project-card">' +
+            var html = '<div class="mc-project-card" style="cursor:pointer;" onclick="localStorage.setItem(\'verde_pending_project_view\',\'' + esc(p.id) + '\'); window.location.href=\'../projects/index.html\';">' +
               '<div>' +
                 '<div class="mc-project-title">' + esc(p.name) + '</div>' +
                 '<div class="mc-project-client">' + esc(p.client || '') + '</div>' +
@@ -686,63 +690,272 @@
         }
 
         // Team Activity Feed
-        var activityFeedEl = document.getElementById('dashboard-recent-activity');
-        if (activityFeedEl) {
-          activityFeedEl.innerHTML = '';
-          var allActivities = [];
-          projects.forEach(function(p) {
-            if (p.activities) {
-              p.activities.forEach(function(a) {
-                allActivities.push({
-                  projName: p.name,
-                  action: a.action,
-                  details: a.details,
-                  user: a.user,
-                  date: new Date(a.date)
-                });
-              });
-            }
-          });
-
-          allActivities.sort(function(a, b) { return b.date.getTime() - a.date.getTime(); });
-          var recentActs = allActivities.slice(0, 5);
-
-          if (recentActs.length === 0) {
-            activityFeedEl.innerHTML = '<div class="mc-activity-item"><div style="font-size:12px;color:var(--text-3);">No recent activity</div></div>';
-          } else {
-            var bgColors = ['#6366F1', '#EC4899', '#F59E0B', '#10B981', '#8B5CF6'];
-            recentActs.forEach(function(act, idx) {
-              var timeStr = act.date.toLocaleDateString() + ' ' + act.date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-              var initials = act.user ? act.user.substring(0,2).toUpperCase() : '??';
-              var color = bgColors[idx % bgColors.length];
-
-              var html = '<div class="mc-activity-item">' +
-                '<div class="mc-avatar" style="width:32px;height:32px;font-size:11px;background:' + color + ';color:#fff;">' + initials + '</div>' +
-                '<div>' +
-                  '<div class="mc-activity-text"><strong>' + esc(act.user) + '</strong>: ' + esc(act.action) + ' on <strong>' + esc(act.projName) + '</strong></div>' +
-                  '<div class="mc-activity-time">' + timeStr + (act.details ? ' \u2022 ' + esc(act.details) : '') + '</div>' +
-                '</div>' +
-              '</div>';
-              activityFeedEl.innerHTML += html;
-            });
-          }
-        }
+        syncTeamActivity(projects);
       }).catch(function() {});
     }
   }
 
-  // Sync finance data for invoices KPI
+  function syncTeamActivity(projectsList) {
+    var activityFeedEl = document.getElementById('dashboard-recent-activity');
+    if (!activityFeedEl) return;
+
+    var allActivities = [];
+
+    // 1. Projects activities
+    (projectsList || []).forEach(function(p) {
+      if (p.activities) {
+        p.activities.forEach(function(a) {
+          allActivities.push({
+            target: p.name,
+            action: a.action,
+            details: a.details,
+            user: a.user || 'Team',
+            date: new Date(a.date || Date.now())
+          });
+        });
+      }
+    });
+
+    // 2. CRM Leads & Clients activities
+    try {
+      var rawLeads = localStorage.getItem('verde_os_crm_leads');
+      if (rawLeads) {
+        var leads = JSON.parse(rawLeads);
+        (leads || []).forEach(function(l) {
+          (l.activities || []).forEach(function(a) {
+            allActivities.push({
+              target: l.company || l.name,
+              action: a.action,
+              details: a.details,
+              user: a.user || 'Team',
+              date: new Date(a.date || Date.now())
+            });
+          });
+        });
+      }
+    } catch(e) {}
+
+    // 3. Fallback seeds if fresh environment
+    if (allActivities.length === 0) {
+      allActivities = [
+        { user: 'Midhul', action: 'uploaded homepage design', target: 'Cabo Travels', details: 'Phase 1 deliverable', date: new Date(Date.now() - 10 * 60 * 1000) },
+        { user: 'Ameen', action: 'added a new lead', target: 'BlueWave Tech', details: '\u20b93.2L value', date: new Date(Date.now() - 25 * 60 * 1000) },
+        { user: 'Nihal', action: 'completed SEO audit', target: 'Vertex Systems', details: 'Full report generated', date: new Date(Date.now() - 60 * 60 * 1000) },
+        { user: 'Finance', action: 'Payment received', target: 'GreenLeaf', details: '\u20b985,000 cleared', date: new Date(Date.now() - 120 * 60 * 1000) },
+        { user: 'Shahim', action: 'Proposal approved', target: 'Vertex Systems', details: 'Contract signed', date: new Date(Date.now() - 180 * 60 * 1000) }
+      ];
+    }
+
+    allActivities.sort(function(a, b) { return b.date.getTime() - a.date.getTime(); });
+    var recentActs = allActivities.slice(0, 5);
+
+    var bgColors = ['#6366F1', '#EC4899', '#F59E0B', '#10B981', '#8B5CF6'];
+    activityFeedEl.innerHTML = recentActs.map(function(act, idx) {
+      var diffMs = Date.now() - act.date.getTime();
+      var diffMins = Math.floor(diffMs / 60000);
+      var timeStr = diffMins < 1 ? 'Just now' : (diffMins < 60 ? diffMins + ' min ago' : (Math.floor(diffMins / 60) + ' hour' + (Math.floor(diffMins/60) > 1 ? 's' : '') + ' ago'));
+      var initials = act.user ? act.user.substring(0,2).toUpperCase() : '??';
+      var color = bgColors[idx % bgColors.length];
+
+      return '<div class="mc-activity-item">' +
+        '<div class="mc-avatar" style="width:32px;height:32px;font-size:11px;background:' + color + ';color:#fff;">' + initials + '</div>' +
+        '<div>' +
+          '<div class="mc-activity-text"><strong>' + esc(act.user) + '</strong>: ' + esc(act.action) + ' on <strong>' + esc(act.target) + '</strong></div>' +
+          '<div class="mc-activity-time">' + timeStr + (act.details ? ' \u2022 ' + esc(act.details) : '') + '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  // Sync finance data for invoices & revenue KPI
   function syncDashboardWithFinance() {
     if (!canAccessModule('finance') && !isSuperAdmin()) return;
     try {
-      var finData = localStorage.getItem('verde_os_finance_transactions');
-      if (finData) {
-        var transactions = JSON.parse(finData);
-        var invoiceCount = transactions.filter(function(t) { return t.type === 'Income' || t.invoiceNumber; }).length;
-        var invEl = document.getElementById('dashboard-kpi-invoices');
-        if (invEl && invoiceCount > 0) invEl.textContent = invoiceCount;
+      var totalRevenue = 0;
+      var pendingInvoiceCount = 0;
+
+      // 1. Primary: Check verde_finance_invoices from Finance module
+      var rawInvoices = localStorage.getItem('verde_finance_invoices');
+      if (rawInvoices) {
+        var invoices = JSON.parse(rawInvoices);
+        invoices.forEach(function(inv) {
+          if (inv.status === 'Paid') {
+            totalRevenue += (inv.total || 0);
+          } else if (inv.status !== 'Cancelled') {
+            pendingInvoiceCount++;
+          }
+        });
+      }
+
+      // 2. Secondary: Fallback to transactions store
+      if (totalRevenue === 0) {
+        var finData = localStorage.getItem('verde_os_finance_transactions');
+        if (finData) {
+          var transactions = JSON.parse(finData);
+          transactions.forEach(function(t) {
+            if (t.type === 'Income' && t.status === 'Completed') {
+              totalRevenue += (t.amount || 0);
+            }
+          });
+          if (pendingInvoiceCount === 0) {
+            pendingInvoiceCount = transactions.filter(function(t) { return t.status === 'Processing' || t.status === 'Pending'; }).length;
+          }
+        }
+      }
+
+      // 3. Fallback to mock data if uninitialized
+      if (totalRevenue === 0 && window.VerdeMockData && window.VerdeMockData.invoices) {
+        window.VerdeMockData.invoices.forEach(function(inv) {
+          if (inv.type === 'Income' && inv.status === 'Completed') totalRevenue += (inv.amount * 85 || 0);
+        });
+        pendingInvoiceCount = 3;
+      }
+
+      var invEl = document.getElementById('dashboard-kpi-invoices');
+      if (invEl) invEl.textContent = pendingInvoiceCount;
+
+      var revKpiEl = document.getElementById('dashboard-kpi-revenue');
+      var revLakhs = (totalRevenue / 100000).toFixed(1);
+      if (revKpiEl && totalRevenue > 0) revKpiEl.textContent = '\u20b9' + revLakhs + 'L';
+
+      var heroRevEl = document.getElementById('mc-stat-revenue');
+      if (heroRevEl && totalRevenue > 0) {
+        heroRevEl.innerHTML = '\u20b9' + revLakhs + 'L this month \u00b7 <span style="color:var(--success);">\u219112%</span> vs last month';
       }
     } catch(e) {}
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // PART 9 — PENDING APPROVALS
+  // ══════════════════════════════════════════════════════════════════════════
+  function syncPendingApprovals() {
+    var container = document.getElementById('dashboard-pending-approvals');
+    var badge = document.getElementById('dashboard-approvals-count');
+    if (!container) return;
+
+    var approvals = [];
+
+    // 1. Invoices needing approval
+    try {
+      var rawInvoices = localStorage.getItem('verde_finance_invoices');
+      if (rawInvoices) {
+        var invoices = JSON.parse(rawInvoices);
+        invoices.filter(function(inv) { return inv.status === 'Overdue' || inv.status === 'Sent' || inv.status === 'Draft'; }).forEach(function(inv) {
+          approvals.push({
+            id: inv.id || inv.invoiceNumber,
+            type: 'invoice',
+            title: 'Invoice ' + (inv.invoiceNumber || '#INV-1001'),
+            sub: '\u20b9' + (inv.total || 85000).toLocaleString('en-IN') + ' \u00b7 ' + (inv.clientName || 'Client'),
+            invoiceNumber: inv.invoiceNumber
+          });
+        });
+      }
+    } catch(e) {}
+
+    // 2. Leave requests from notifications
+    try {
+      var rawNotifs = localStorage.getItem('verde_os_notifications');
+      var notifs = rawNotifs ? JSON.parse(rawNotifs) : (window.VerdeMockData ? window.VerdeMockData.notifications : []);
+      (notifs || []).filter(function(n) { return !n.read && (n.type === 'alert' || (n.title && n.title.toLowerCase().includes('leave'))); }).forEach(function(n) {
+        approvals.push({
+          id: n.id,
+          type: 'leave',
+          title: n.title || 'Leave Request',
+          sub: n.subtitle || n.desc || 'Pending approval'
+        });
+      });
+    } catch(e) {}
+
+    // 3. Fallback seeds if no active approvals
+    if (approvals.length === 0 && !localStorage.getItem('verde_approvals_cleared')) {
+      approvals = [
+        { id: 'appr-1', type: 'invoice', title: 'Invoice #VL-0042', sub: '\u20b985,000 \u00b7 Cabo Travels', invoiceNumber: 'INV-1001' },
+        { id: 'appr-2', type: 'leave', title: 'Leave Request', sub: 'Midhul \u00b7 July 30 \u2014 31' },
+        { id: 'appr-3', type: 'budget', title: 'Budget Increase', sub: 'Marketing Campaign \u00b7 +\u20b915,000' }
+      ];
+    }
+
+    if (badge) badge.textContent = approvals.length;
+
+    if (approvals.length === 0) {
+      container.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:20px 0;text-align:center;">No pending approvals \u2714</div>';
+      return;
+    }
+
+    container.innerHTML = approvals.map(function(item) {
+      var iconColor = item.type === 'invoice' ? 'background:var(--success-50);color:var(--success);' : (item.type === 'leave' ? 'background:var(--primary-light);color:var(--primary);' : 'background:var(--warning-50);color:var(--warning);');
+      var iconSvg = item.type === 'invoice' ? '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>' : (item.type === 'leave' ? '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>' : '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>');
+
+      return '<div class="mc-approval-item" data-appr-id="' + esc(item.id) + '" data-appr-type="' + esc(item.type) + '">' +
+        '<div class="mc-approval-icon" style="' + iconColor + '">' + iconSvg + '</div>' +
+        '<div class="mc-approval-info">' +
+          '<div class="mc-approval-title">' + esc(item.title) + '</div>' +
+          '<div class="mc-approval-sub">' + esc(item.sub) + '</div>' +
+        '</div>' +
+        '<div class="mc-approval-actions">' +
+          '<button class="mc-btn-sm mc-btn-approve">Approve</button>' +
+          '<button class="mc-btn-sm mc-btn-reject">Reject</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    // Attach click actions
+    container.querySelectorAll('.mc-approval-item').forEach(function(el) {
+      var id = el.getAttribute('data-appr-id');
+      var type = el.getAttribute('data-appr-type');
+      var approveBtn = el.querySelector('.mc-btn-approve');
+      var rejectBtn = el.querySelector('.mc-btn-reject');
+
+      if (approveBtn) {
+        approveBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          if (type === 'invoice') {
+            try {
+              var raw = localStorage.getItem('verde_finance_invoices');
+              if (raw) {
+                var invs = JSON.parse(raw);
+                invs.forEach(function(i) { if (i.id === id || i.invoiceNumber === id) i.status = 'Paid'; });
+                localStorage.setItem('verde_finance_invoices', JSON.stringify(invs));
+              }
+            } catch(err) {}
+          }
+          if (window.VerdeToast) window.VerdeToast.success('Approved successfully');
+          el.remove();
+          var remaining = container.querySelectorAll('.mc-approval-item').length;
+          if (badge) badge.textContent = remaining;
+          if (remaining === 0) {
+            localStorage.setItem('verde_approvals_cleared', '1');
+            container.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:20px 0;text-align:center;">No pending approvals \u2714</div>';
+          }
+          syncDashboardWithFinance();
+        });
+      }
+
+      if (rejectBtn) {
+        rejectBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          if (type === 'invoice') {
+            try {
+              var raw = localStorage.getItem('verde_finance_invoices');
+              if (raw) {
+                var invs = JSON.parse(raw);
+                invs.forEach(function(i) { if (i.id === id || i.invoiceNumber === id) i.status = 'Cancelled'; });
+                localStorage.setItem('verde_finance_invoices', JSON.stringify(invs));
+              }
+            } catch(err) {}
+          }
+          if (window.VerdeToast) window.VerdeToast.info('Item rejected');
+          el.remove();
+          var remaining = container.querySelectorAll('.mc-approval-item').length;
+          if (badge) badge.textContent = remaining;
+          if (remaining === 0) {
+            localStorage.setItem('verde_approvals_cleared', '1');
+            container.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:20px 0;text-align:center;">No pending approvals \u2714</div>';
+          }
+          syncDashboardWithFinance();
+        });
+      }
+    });
   }
 
   // ══════════════════════════════════════════════════════════════════════════
@@ -810,13 +1023,8 @@
 
     // Pending Approvals (admin-only)
     if (!isSuperAdmin()) {
-      var approvalSections = document.querySelectorAll('.mc-section-title');
-      approvalSections.forEach(function(t) {
-        if (t.textContent.trim() === 'Pending Approvals') {
-          var sec3 = t.closest('section');
-          if (sec3) sec3.style.display = 'none';
-        }
-      });
+      var apprSec = document.getElementById('mc-approvals-section');
+      if (apprSec) apprSec.style.display = 'none';
     }
   }
 
@@ -856,18 +1064,30 @@
   }
 
   // ══════════════════════════════════════════════════════════════════════════
+  // REFRESH ALL DASHBOARD DATA (CROSS-MODULE SYNC)
+  // ══════════════════════════════════════════════════════════════════════════
+  function refreshAllDashboardData() {
+    updateGreeting();
+    updateHeroDate();
+    syncHeroAndMission();
+    syncMeetings();
+    syncDashboardWithProjects();
+    syncDashboardWithCRM();
+    syncDashboardWithTasks();
+    syncDashboardWithFinance();
+    syncHoursWorked();
+    syncTeamPerformance();
+    syncPendingApprovals();
+    applyPermissions();
+  }
+  window.refreshMissionControl = refreshAllDashboardData;
+
+  // ══════════════════════════════════════════════════════════════════════════
   // INITIALIZATION
   // ══════════════════════════════════════════════════════════════════════════
   function init() {
     // Part 1: Sidebar toggle
     initSidebarToggle();
-
-    // Part 2: User greeting + date
-    updateGreeting();
-    updateHeroDate();
-    updateClock();
-    updateTopbarDate();
-    updateFooterTime();
 
     // UI interactions
     initTaskTabs();
@@ -879,24 +1099,30 @@
     // Part 11: Quick Notes
     initQuickNotes();
 
-    // Part 3-5, 9, 10: Data sync
-    syncHeroAndMission();
-    syncMeetings();
-    syncDashboardWithProjects();
-    syncDashboardWithCRM();
-    syncDashboardWithTasks();
-    syncDashboardWithFinance();
-    syncHoursWorked();
-    syncTeamPerformance();
+    // Refresh all data
+    refreshAllDashboardData();
 
-    // Part 12: Permissions
-    applyPermissions();
+    // Live Clock & Periodic updates
+    updateClock();
+    updateTopbarDate();
+    updateFooterTime();
 
-    // Timers
     setInterval(updateClock, 1000);
     setInterval(updateGreeting, 60000);
     setInterval(updateFooterTime, 60000);
     setInterval(syncHoursWorked, 1000);
+
+    // Cross-Module Auto Sync Listeners
+    window.addEventListener('focus', refreshAllDashboardData);
+    document.addEventListener('visibilitychange', function() {
+      if (!document.hidden) refreshAllDashboardData();
+    });
+    window.addEventListener('storage', function() {
+      refreshAllDashboardData();
+    });
+    if (window.VerdeState && typeof window.VerdeState.subscribe === 'function') {
+      window.VerdeState.subscribe('*', refreshAllDashboardData);
+    }
   }
 
   // Run when DOM is ready
