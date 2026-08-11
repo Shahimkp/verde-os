@@ -329,7 +329,9 @@
   };
 
   // Handlers
-  window.showAddMilestoneForm = function() { document.getElementById('add-milestone-form').style.display = 'block'; };
+  window.showAddMilestoneForm = function() {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('projects_edit')) { if (window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
+    document.getElementById('add-milestone-form').style.display = 'block'; };
   window.hideAddMilestoneForm = function() { 
     document.getElementById('add-milestone-form').style.display = 'none';
     document.getElementById('ms-title').value = '';
@@ -339,6 +341,7 @@
   };
 
   window.submitMilestone = function() {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('projects_edit')) { if (window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     var title = document.getElementById('ms-title').value;
     if (!title) return;
     var data = {
@@ -369,6 +372,7 @@
   };
 
   window.editMilestone = function(id) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('projects_edit')) { if (window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     document.getElementById('ms-view-title-wrap-' + id).style.display = 'none';
     document.getElementById('ms-view-desc-' + id).style.display = 'none';
     document.getElementById('ms-view-meta-' + id).style.display = 'none';
@@ -385,6 +389,7 @@
   };
 
   window.saveMilestone = function(id) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('projects_edit')) { if (window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     if(window.VerdeServices && window.VerdeServices.Projects) {
       window.VerdeServices.Projects.getProjectById(currentProjectId).then(function(p) {
         var milestones = p.milestones || [];
@@ -407,6 +412,7 @@
   };
 
   window.markMilestoneInProgress = function(id) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('projects_edit')) { if (window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     if(window.VerdeServices && window.VerdeServices.Projects) {
       window.VerdeServices.Projects.getProjectById(currentProjectId).then(function(p) {
         var milestones = p.milestones || [];
@@ -424,6 +430,7 @@
   };
 
   window.completeMilestone = function(id) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('projects_edit')) { if (window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     if(window.VerdeServices && window.VerdeServices.Projects) {
       window.VerdeServices.Projects.getProjectById(currentProjectId).then(function(p) {
         var milestones = p.milestones || [];
@@ -449,6 +456,7 @@
   };
 
   window.deleteMilestone = function(id) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('projects_delete')) { if (window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     if(window.VerdeServices && window.VerdeServices.Projects) {
       window.VerdeServices.Projects.getProjectById(currentProjectId).then(function(p) {
         var milestones = p.milestones || [];
@@ -490,6 +498,7 @@
   };
 
   window.deleteFile = function(id) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('projects_delete')) { if (window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     if(window.VerdeServices && window.VerdeServices.Projects) {
       window.VerdeServices.Projects.getProjectById(currentProjectId).then(function(p) {
         var files = p.files || [];
@@ -511,6 +520,7 @@
   };
 
   window.submitNote = function() {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('projects_edit')) { if (window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     var text = document.getElementById('new-note-text').value;
     if (!text) return;
     if(window.VerdeServices && window.VerdeServices.Projects) {
@@ -529,6 +539,7 @@
   };
 
   window.deleteNote = function(id) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('projects_delete')) { if (window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     if(window.VerdeServices && window.VerdeServices.Projects) {
       window.VerdeServices.Projects.getProjectById(currentProjectId).then(function(p) {
         var notes = p.internalNotes || [];
@@ -551,6 +562,7 @@
   };
 
   window.saveNote = function(id) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('projects_edit')) { if (window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     var newText = document.getElementById('note-edit-' + id).value;
     if(window.VerdeServices && window.VerdeServices.Projects) {
       window.VerdeServices.Projects.getProjectById(currentProjectId).then(function(p) {
@@ -596,6 +608,7 @@
   };
 
   window.openTeamModal = function() {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('projects_edit')) { if (window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     teamModalFilter = 'All';
     teamModalSearch = '';
     teamModalSelected = [];
@@ -949,6 +962,7 @@
   };
 
   window.saveProjectEdits = function() {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('projects_edit')) { if (window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     if (!currentProjectId || !window.VerdeServices || !window.VerdeServices.Projects) return;
     
     var status = document.getElementById('edit-proj-status').value;
@@ -1001,6 +1015,7 @@
   };
 
   window.deleteCurrentProject = function() {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('projects_delete')) { if (window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     if (!currentProjectId) return;
     if (window.VerdeModal) {
       window.VerdeModal.delete('Delete Project', 'Are you sure you want to delete this project? It will be moved to the trash.', function() {
@@ -1021,6 +1036,7 @@
   };
 
   window.archiveCurrentProject = function() {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('projects_edit')) { if (window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     if (!currentProjectId) return;
     if (window.VerdeModal) {
       window.VerdeModal.confirm({
@@ -1047,6 +1063,7 @@
   };
   
   window.reopenProject = function() {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('projects_edit')) { if (window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     if (!currentProjectId || !currentProjectData) return;
     if (window.VerdeModal) {
       window.VerdeModal.confirm({
@@ -1071,6 +1088,7 @@
   };
 
   window.duplicateCurrentProject = function() {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('projects_create')) { if (window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     if (!currentProjectData || !window.VerdeServices || !window.VerdeServices.Projects) return;
     if (window.VerdeModal) {
       window.VerdeModal.confirm({
@@ -1109,6 +1127,7 @@
   };
 
   window.restoreProject = function() {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('projects_edit')) { if (window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     if (!currentProjectId) return;
     if (window.VerdeServices && window.VerdeServices.Projects) {
       var activities = currentProjectData ? (currentProjectData.activities || []) : [];
@@ -1125,6 +1144,7 @@
   };
 
   window.markProjectCompleted = function() {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('projects_edit')) { if (window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     if (!currentProjectId) return;
     if (window.VerdeServices && window.VerdeServices.Projects) {
       var activities = currentProjectData ? (currentProjectData.activities || []) : [];
@@ -1141,6 +1161,7 @@
   };
 
   window.closeProject = function() {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('projects_edit')) { if (window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     var pPanel = document.getElementById('projPanel');
     var pOverlay = document.getElementById('projOverlay');
     if(pPanel) pPanel.classList.remove('active');

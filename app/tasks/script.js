@@ -432,6 +432,7 @@
             dropdown.querySelector('.qm-open').onclick = () => { openTaskDrawer(taskId); dropdown.remove(); };
             dropdown.querySelector('.qm-edit').onclick = () => { openCreateModal(taskId); dropdown.remove(); };
             dropdown.querySelector('.qm-dup').onclick = () => { 
+               if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('tasks_create')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; } 
                window.VerdeServices.Tasks.getTaskById(taskId).then(t => {
                   let d = Object.assign({}, t);
                   delete d.id;
@@ -443,12 +444,14 @@
                });
             };
             dropdown.querySelector('.qm-done').onclick = () => {
+               if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('tasks_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
                window.VerdeServices.Tasks.updateTask(taskId, {status: 'Completed'}).then(nt => {
                   renderTasks();
                   if(nt.projectId) updateProjectProgressFromTasks(nt.projectId);
                });
             };
             dropdown.querySelector('.qm-archive').onclick = () => {
+               if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('tasks_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
                window.VerdeServices.Tasks.updateTask(taskId, {status: 'Archived'}).then(nt => {
                   renderTasks();
                   if(nt.projectId) updateProjectProgressFromTasks(nt.projectId);
@@ -456,6 +459,7 @@
             };
             dropdown.querySelectorAll('.qm-move').forEach(b => {
                b.onclick = () => {
+                  if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('tasks_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
                   const col = b.getAttribute('data-col');
                   window.VerdeServices.Tasks.updateTask(taskId, {status: col}).then(nt => {
                      renderTasks();
@@ -464,6 +468,7 @@
                };
             });
             dropdown.querySelector('.qm-del').onclick = () => {
+               if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('tasks_delete')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
                if(confirm('Delete task?')) {
                  window.VerdeServices.Tasks.deleteTask(taskId, false).then(() => renderTasks());
                }
@@ -523,6 +528,8 @@
   let editingTaskId = null;
 
   function openCreateModal(taskId) {
+    if (taskId && window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('tasks_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
+    if (!taskId && window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('tasks_create')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     editingTaskId = taskId || null;
     const modal = document.getElementById('create-task-modal');
     const titleEl = document.getElementById('task-modal-title');
@@ -542,6 +549,11 @@
         teamMock.forEach(m => {
           selAssignee.innerHTML += `<option value="${m.id}">${m.name} - ${m.role}</option>`;
         });
+        if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('tasks_assign')) {
+          selAssignee.disabled = true;
+        } else {
+          selAssignee.disabled = false;
+        }
         
         // Populate Dependencies
         const depSelect = document.getElementById('selTaskDependencies');
@@ -599,6 +611,8 @@
 
   function saveTask(e) {
     if (e && e.preventDefault) e.preventDefault();
+    if (editingTaskId && window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('tasks_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
+    if (!editingTaskId && window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('tasks_create')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     const depSelect = document.getElementById('selTaskDependencies');
     const deps = Array.from(depSelect.selectedOptions).map(opt => opt.value);
     

@@ -1336,6 +1336,7 @@
 
   // ── EXPORT UTILITIES ── //
   window.exportAnalyticsCSV = function() {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('reports_export')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     var thead = document.getElementById('mkt-an-report-thead');
     var tbody = document.getElementById('mkt-an-report-tbody');
     var csv = [];
@@ -1366,6 +1367,7 @@
   };
 
   window.exportAnalyticsJSON = function() {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('reports_export')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     var type = document.getElementById('mkt-an-report-type').value;
     var data = [];
     if(type === 'campaign') {
@@ -1386,6 +1388,7 @@
   };
 
   window.exportSummaryReport = function() {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('reports_export')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     window.print(); // Easy summary report export for UI bounds
   };
 

@@ -203,6 +203,11 @@
 
   // Launch Project
   window.launchProject = function () {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('projects_create')) {
+      if (window.VerdeToast) window.VerdeToast.error('Access Denied. You do not have permission to perform this action.');
+      return;
+    }
+
     var btn = document.getElementById('btnLaunch');
     if (btn) {
       btn.disabled = true;

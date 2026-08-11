@@ -297,14 +297,33 @@
   }
 
   function getEmployees() {
+    var base = null;
     var stored = localStorage.getItem('verde_api_members');
-    if (stored) { try { return JSON.parse(stored); } catch(e) {} }
-    return [
-      { id: 'mem-1', name: 'Shahim' },
-      { id: 'mem-2', name: 'Midhul' },
-      { id: 'mem-3', name: 'Ameen' },
-      { id: 'mem-4', name: 'Nihal' }
-    ];
+    if (stored) { try { base = JSON.parse(stored); } catch(e) {} }
+    if (!base) {
+      base = [
+        { id: 'mem-1', name: 'Shahim' },
+        { id: 'mem-2', name: 'Midhul' },
+        { id: 'mem-3', name: 'Ameen' },
+        { id: 'mem-4', name: 'Nihal' }
+      ];
+    }
+    // Merge team employees from the Team module's authoritative source
+    var teamStored = localStorage.getItem('verde_os_team_employees');
+    if (teamStored) {
+      try {
+        var teamEmps = JSON.parse(teamStored);
+        var existingNames = {};
+        base.forEach(function(e) { existingNames[e.name.toLowerCase()] = true; });
+        teamEmps.forEach(function(te) {
+          if (te.name && !existingNames[te.name.toLowerCase()]) {
+            base.push({ id: te.id, name: te.name });
+            existingNames[te.name.toLowerCase()] = true;
+          }
+        });
+      } catch(e) {}
+    }
+    return base;
   }
 
   function renderDepartments() {
@@ -373,6 +392,7 @@
   }
 
   function openCreateDept() {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('workspace_dept')) { if(window.toast) toast('Access Denied', 'error'); return; }
     var emps = getEmployees();
     var empOpts = [{label:'-- Select Manager --', value:''}].concat(emps.map(function(e) { 
   return {label: e.name, value: e.id}; }));
@@ -417,6 +437,7 @@
   }
 
   function toggleDeptStatus(id, newStatus) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('workspace_dept')) { if(window.toast) toast('Access Denied', 'error'); return; }
     var list = getDepts();
     var d = list.find(function(x) { return x.id === id; });
     if(d) {
@@ -429,6 +450,7 @@
   }
 
   function openEditDept(id) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('workspace_dept')) { if(window.toast) toast('Access Denied', 'error'); return; }
     var d = getDepts().find(function (x) { return x.id === id; });
     if (!d) return;
     var emps = getEmployees();
@@ -460,6 +482,7 @@ label: e.name, value: e.id}; }));
   }
 
   function saveDept() {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('workspace_dept')) { if(window.toast) toast('Access Denied', 'error'); return; }
     var name = val('dp-name');
     if (!name || name.trim() === '') { toast('Department name is required', 'error'); return; }
     
@@ -497,6 +520,7 @@ label: e.name, value: e.id}; }));
   }
 
   function deleteDept(id) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('workspace_dept')) { if(window.toast) toast('Access Denied', 'error'); return; }
     openModal('ws-m-confirm', 'Delete Department',
       '<div style="font-size:14px;color:var(--text-2);">Are you sure you want to delete this department? This action cannot be undone.</div>',
       '<button class="btn btn-ghost" onclick="window._ws.closeModal(\'ws-m-confirm\')">Cancel</button>' +
@@ -940,6 +964,7 @@ label: e.name, value: e.id}; }));
      ══════════════════════════════════════════════════════════════════════════ */
 
   function openInviteMemberModal() {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('workspace_perms')) { if(window.toast) toast('Access Denied', 'error'); return; }
     var body =
       row2(
         fieldHTML('Full Name', inputHTML('mem-name', ''), true),
@@ -983,6 +1008,7 @@ label: e.name, value: e.id}; }));
 
   // Manage Permissions modal
   function openManagePermissions() {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('workspace_perms')) { if(window.toast) toast('Access Denied', 'error'); return; }
     var body = state.members.map(function (m) {
       return '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);">' +
         '<div style="display:flex;align-items:center;gap:12px;">' +
@@ -1088,6 +1114,7 @@ label: e.name, value: e.id}; }));
   }
 
   function openCreateWorkspace(id) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('workspace_create')) { if(window.toast) toast('Access Denied', 'error'); return; }
     var list = getWorkspaces();
     var ws = { name: '', description: '', type: 'Team', visibility: 'Internal', storage: '50', status: 'Active' };
     var isEdit = false;
@@ -1146,14 +1173,29 @@ label: e.name, value: e.id}; }));
   }
   
   function openWorkspaceProvisioning(editId) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('workspace_edit')) { if(window.toast) toast('Access Denied', 'error'); return; }
     var dv = document.getElementById('ws-dashboard-view');
     var pv = document.getElementById('ws-provisioning-view');
     if(dv) dv.style.display = 'none';
     if(pv) pv.style.display = 'block';
     
-    // Populate employees
+    // Populate employees — merge state.members with Team module employees
     var empSelect = document.getElementById('prov-employee');
-    var members = state.members || [];
+    var members = state.members ? state.members.slice() : [];
+    var teamStored = localStorage.getItem('verde_os_team_employees');
+    if (teamStored) {
+      try {
+        var teamEmps = JSON.parse(teamStored);
+        var existingNames = {};
+        members.forEach(function(m) { existingNames[m.name.toLowerCase()] = true; });
+        teamEmps.forEach(function(te) {
+          if (te.name && !existingNames[te.name.toLowerCase()]) {
+            members.push({ id: te.id, name: te.name, email: te.email || '', role: te.role || 'Employee', status: te.status || 'Active' });
+            existingNames[te.name.toLowerCase()] = true;
+          }
+        });
+      } catch(e) {}
+    }
     var depts = getDepts().filter(function(d){ return d.status === 'Active'; });
     empSelect.innerHTML = '<option value="">Select Employee...</option>' + members.map(function(m) {
       return '<option value="' + esc(m.id) + '">' + esc(m.name) + '</option>';
@@ -1291,6 +1333,10 @@ label: e.name, value: e.id}; }));
     
     var members = state.members || [];
     var emp = members.find(function(m) { return m.id === empId; });
+    if (!emp) {
+      var ts = localStorage.getItem('verde_os_team_employees');
+      if (ts) { try { var te = JSON.parse(ts); emp = te.find(function(t) { return t.id === empId; }); } catch(e) {} }
+    }
     if(emp) {
       document.getElementById('prov-name').value = emp.name + " Workspace";
       var deptSelect = document.getElementById('prov-dept');
@@ -1354,6 +1400,10 @@ label: e.name, value: e.id}; }));
     
     var members = state.members || [];
     var emp = members.find(function(m) { return m.id === employeeId; });
+    if (!emp) {
+      var ts = localStorage.getItem('verde_os_team_employees');
+      if (ts) { try { var te = JSON.parse(ts); emp = te.find(function(t) { return t.id === employeeId; }); } catch(e) {} }
+    }
     
     if(id) {
       var idx = list.findIndex(function(w) { return w.id === id; });
@@ -1565,6 +1615,7 @@ label: e.name, value: e.id}; }));
   }
 
   function confirmDeleteEmpWorkspace(id) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('workspace_edit')) { if(window.toast) toast('Access Denied', 'error'); return; }
     var ws = getEmpWorkspaces().find(function(w) { return w.id === id; });
     if(!ws) return;
     
@@ -1587,6 +1638,7 @@ label: e.name, value: e.id}; }));
   }
   
   function deleteEmpWorkspace(id) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('workspace_edit')) { if(window.toast) toast('Access Denied', 'error'); return; }
     var list = getEmpWorkspaces();
     var targetWs = list.find(function(w) { return w.id === id; });
     
@@ -1751,9 +1803,7 @@ label: e.name, value: e.id}; }));
   ];
 
   function openManagePermissions(id) {
-    var user = window.VERDE_SESSION ? window.VERDE_SESSION.getUser() : null;
-    var isMgmt = user && ['SuperAdmin', 'Admin', 'CEO', 'Co-Founder'].indexOf(user.role) > -1;
-    if (!isMgmt) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('workspace_perms')) {
       toast('Access Denied. Admin privileges required.', 'error');
       return;
     }
@@ -1835,9 +1885,7 @@ label: e.name, value: e.id}; }));
   }
 
   function saveManagePermissions(id) {
-    var user = window.VERDE_SESSION ? window.VERDE_SESSION.getUser() : null;
-    var isMgmt = user && ['SuperAdmin', 'Admin', 'CEO', 'Co-Founder'].indexOf(user.role) > -1;
-    if (!isMgmt) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('workspace_perms')) {
       toast('Access Denied. Admin privileges required.', 'error');
       return;
     }

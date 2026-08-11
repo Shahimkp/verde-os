@@ -362,6 +362,7 @@
   }
 
   window.openMarkAttendanceModal = function(recordId = null) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('team_add')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     let editRecord = null;
     if (recordId) {
       editRecord = teamAttendance.find(r => r.id === recordId);
@@ -485,6 +486,7 @@
   };
 
   window.deleteAttendanceRecord = function(recordId) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('team_remove')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     if (window.VerdeModal && window.VerdeModal.delete) {
       window.VerdeModal.delete(
         'Delete Record',
@@ -619,6 +621,8 @@
   }
 
     window.openAddEmployeeModal = function(editEmpId = null) {
+      if (editEmpId && window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('team_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
+      if (!editEmpId && window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('team_add')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     let editEmp = null;
     if (editEmpId) {
         editEmp = teamEmployees.find(e => e.id === editEmpId);
@@ -1325,6 +1329,7 @@
   };
 
   window.deleteEmployee = function(empId) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('team_remove')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     const emp = teamEmployees.find(e => e.id === empId);
     if (!emp) return;
 
@@ -1369,6 +1374,7 @@
   };
 
   window.openLeaveModal = function(recordId = null) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('team_add')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     let editRecord = null;
     if (recordId) {
       editRecord = teamLeaves.find(r => r.id === recordId);
@@ -1519,6 +1525,7 @@
   };
 
   window.deleteLeaveRecord = function(recordId) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('team_remove')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     if (window.VerdeModal && window.VerdeModal.delete) {
       window.VerdeModal.delete(
         'Delete Request',
@@ -1535,6 +1542,7 @@
   };
 
   window.approveLeave = function(recordId) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('team_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     const record = teamLeaves.find(r => r.id === recordId);
     if (record) {
       record.status = 'Approved';
@@ -1546,6 +1554,7 @@
   };
 
   window.rejectLeave = function(recordId) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('team_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     const record = teamLeaves.find(r => r.id === recordId);
     if (record) {
       record.status = 'Rejected';
@@ -1568,6 +1577,7 @@
   };
 
   window.openPayrollModal = function() {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('team_add')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     const currentMonth = new Date().toISOString().substring(0, 7);
     let empOptions = teamEmployees.map(e => {
         let defaultBasic = e.salary ? e.salary : 0;
@@ -1700,6 +1710,7 @@
   };
 
   window.editPayrollModal = function(recordId) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('team_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     const editRecord = teamPayroll.find(r => r.id === recordId);
     if (!editRecord || editRecord.status === 'Paid') return;
 
@@ -1803,6 +1814,7 @@
   };
 
   window.markPayrollPaid = function(recordId) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('team_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     const record = teamPayroll.find(r => r.id === recordId);
     if (record && record.status !== 'Paid') {
       record.status = 'Paid';
@@ -1814,6 +1826,7 @@
   };
 
   window.deletePayrollRecord = function(recordId) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('team_remove')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     if (window.VerdeModal && window.VerdeModal.delete) {
       window.VerdeModal.delete(
         'Delete Payroll',

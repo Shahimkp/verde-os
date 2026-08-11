@@ -49,6 +49,18 @@
       });
     }
 
+    // 1.5 Enforce Sidebar Permissions
+    if (window.VERDE_PERMISSIONS && window.VERDE_PERMISSIONS.modules) {
+      document.querySelectorAll('.sidebar-item').forEach(function(item) {
+        const page = item.getAttribute('data-page');
+        let mod = page;
+        if (mod === 'global') mod = 'settings';
+        if (mod && window.VERDE_PERMISSIONS.modules[mod] === false) {
+          item.style.display = 'none';
+        }
+      });
+    }
+
     // 2. Dynamic Active Page Matching & Breadcrumb Generation
     const currentPath = window.location.pathname.toLowerCase();
     const topbarPageTitle = document.getElementById('topbar-page-title');
@@ -233,6 +245,18 @@
       });
 
       function navigateTo(url, isPopState = false) {
+        if (window.VERDE_PERMISSIONS && window.VERDE_PERMISSIONS.modules) {
+          const match = url.match(/\/app\/([^/]+)\//);
+          if (match) {
+            let mod = match[1];
+            if (mod === 'global') mod = 'settings';
+            if (window.VERDE_PERMISSIONS.modules[mod] === false) {
+              if (window.VerdeToast) window.VerdeToast.error('Access Denied: You do not have permission to access this module.');
+              return;
+            }
+          }
+        }
+
         if (window.VERDE_APP && typeof window.VERDE_APP.clearIntervals === 'function') {
           window.VERDE_APP.clearIntervals();
         }

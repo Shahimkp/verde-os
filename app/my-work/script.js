@@ -9,9 +9,13 @@
     // 1. Dynamic Greeting & Date
     const h = new Date().getHours();
     const greeting = h < 12 ? 'Good Morning' : h < 17 ? 'Good Afternoon' : 'Good Evening';
+    const currentUser = window.VERDE_SESSION ? window.VERDE_SESSION.getUser() : null;
+    const userName = (currentUser && currentUser.name) ? currentUser.name.split(' ')[0] : 'User';
+    const userInitials = (currentUser && currentUser.initials) ? currentUser.initials : '';
+    const userId = currentUser ? (currentUser.userId || currentUser.id || '') : '';
     const greetingEl = document.querySelector('.my-header-title');
     if (greetingEl) {
-      greetingEl.textContent = greeting + ', Shahim 👋';
+      greetingEl.textContent = greeting + ', ' + userName + ' 👋';
     }
 
     const d = new Date();
@@ -97,8 +101,12 @@
         return false;
       }
 
-      function isShahimTask(task) {
-        return (task.assignee === 'Shahim' || task.assigneeId === 'SH' || task.assigneeId === 'USR-001' || task.assigneeInitials === 'SH');
+      function isMyTask(task) {
+        if (currentUser && currentUser.role === 'SuperAdmin') return true;
+        var n = userName.toLowerCase();
+        return (task.assignee && task.assignee.toLowerCase().includes(n)) ||
+               (task.assigneeId && (task.assigneeId === userInitials || task.assigneeId === userId)) ||
+               (task.assigneeInitials && task.assigneeInitials === userInitials);
       }
 
       function processTasks(tasks) {
@@ -106,7 +114,7 @@
         let dueTodayCount = 0;
         
         (tasks || []).forEach(t => {
-          if (t.status !== 'Archived' && isShahimTask(t)) {
+          if (t.status !== 'Archived' && isMyTask(t)) {
             const dueToday = isDueToday(t);
             // My Tasks Today: Count all relevant tasks for Shahim today (whether due today or active today).
             // Usually, if a task is due today, it's definitely Shahim's task today.
@@ -327,7 +335,7 @@
           // START SESSION
           currentSession = {
             id: 'fs_' + Date.now(),
-            user: 'Shahim',
+            user: userName,
             status: 'active',
             startedAt: Date.now(),
             elapsedSeconds: 0
@@ -371,13 +379,14 @@
       const grid = document.getElementById('my-projects-grid');
       if (!grid) return;
 
-      // Filter to only Shahim's projects (team array includes 'SH')
-      // Also ensuring we check the detailedTeam objects if the simple array is not present or full
+      // Filter to current user's projects (team array includes user initials or name)
       const myProjects = (allProjects || []).filter(p => {
         if (p.isDeleted || p.isArchived) return false;
+        // SuperAdmin sees all projects
+        if (currentUser && currentUser.role === 'SuperAdmin') return true;
         
-        const inSimpleTeam = Array.isArray(p.team) && (p.team.includes('SH') || p.team.includes('Shahim'));
-        const inDetailedTeam = Array.isArray(p.detailedTeam) && p.detailedTeam.some(m => m.id === 'SH' || m.id === 'Shahim');
+        const inSimpleTeam = Array.isArray(p.team) && (p.team.includes(userInitials) || p.team.includes(userName));
+        const inDetailedTeam = Array.isArray(p.detailedTeam) && p.detailedTeam.some(m => m.id === userInitials || m.id === userName);
         
         return inSimpleTeam || inDetailedTeam;
       });

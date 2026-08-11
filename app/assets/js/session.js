@@ -19,30 +19,43 @@
   };
 
   window.VERDE_SESSION = {
-    init: function () {
+    initCore: function () {
+      const path = window.location.pathname;
+      const isAuthPage = path.includes('/auth/');
+      
       const stored = localStorage.getItem('verde_session');
-      let currentUser = DEFAULT_USER;
+      let currentUser = null;
 
-      if (!stored) {
-        localStorage.setItem('verde_session', JSON.stringify(DEFAULT_USER));
-      } else {
+      if (stored) {
         try {
           currentUser = JSON.parse(stored);
-        } catch (e) {
-          currentUser = DEFAULT_USER;
-        }
+        } catch (e) {}
       }
 
-      this.loadPermissions(currentUser);
-      this.applyToUI(currentUser);
+      if (!currentUser && !isAuthPage) {
+        window.location.href = '../auth/index.html';
+        return null;
+      }
+
+      if (currentUser) {
+        this.loadPermissions(currentUser);
+        this.enforceGlobalPermissions();
+      }
+      return currentUser;
+    },
+
+    initUI: function (currentUser) {
+      if (currentUser) {
+        this.applyToUI(currentUser);
+      }
     },
 
     loadPermissions: function (user) {
-      const isMgmt = ['SuperAdmin', 'Admin', 'CEO', 'Co-Founder'].includes(user.role);
+      const isSuperAdmin = user.role === 'SuperAdmin';
       const ALL_MODULES = ['dashboard', 'my-work', 'crm', 'projects', 'tasks', 'team', 'finance', 'marketing', 'ai-hub', 'workspace', 'reports', 'settings'];
       let perms = { modules: {}, actions: {} };
 
-      if (isMgmt) {
+      if (isSuperAdmin) {
         ALL_MODULES.forEach(m => perms.modules[m] = true);
         window.VERDE_PERMISSIONS = {
           modules: perms.modules,
@@ -70,6 +83,24 @@
           modules: perms.modules,
           can: (action) => perms.actions[action] === true
         };
+      }
+    },
+
+    enforceGlobalPermissions: function () {
+      const path = window.location.pathname;
+      if (path.includes('/auth/')) return;
+
+      const p = window.VERDE_PERMISSIONS;
+      if (!p) return;
+
+      const match = path.match(/\/app\/([^/]+)\//);
+      if (match) {
+        let mod = match[1];
+        if (mod === 'global') mod = 'settings';
+        
+        if (p.modules[mod] === false) {
+          window.location.href = '../dashboard/index.html';
+        }
       }
     },
 
@@ -103,12 +134,14 @@
     }
   };
 
+  const currentUser = window.VERDE_SESSION.initCore();
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () {
-      window.VERDE_SESSION.init();
+      window.VERDE_SESSION.initUI(currentUser);
     });
   } else {
-    window.VERDE_SESSION.init();
+    window.VERDE_SESSION.initUI(currentUser);
   }
 })();
 

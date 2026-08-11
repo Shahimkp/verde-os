@@ -48,6 +48,7 @@
   }
 
   function saveSettings() {
+  if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('settings_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
   }
 
@@ -230,6 +231,7 @@
   };
 
   window.importAppSettings = function (e) {
+  if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('settings_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     var file = e.target.files[0];
     if (!file) return;
 
@@ -253,6 +255,7 @@
   };
 
   window.resetAppSettings = function () {
+  if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('settings_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     if (window.VerdeModal) {
       window.VerdeModal.confirm('Reset Settings', 'Are you sure you want to reset all administration settings to factory defaults? This cannot be undone.', function () {
         settings = Object.assign({}, defaults);
@@ -480,6 +483,7 @@
   };
 
   window.saveRole = function() {
+  if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('settings_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     var id = document.getElementById('role-id').value;
     var name = document.getElementById('role-name').value;
     var desc = document.getElementById('role-desc').value;
@@ -538,6 +542,7 @@
   };
 
   window.deleteRole = function(id) {
+  if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('settings_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     if (window.VerdeModal) {
       window.VerdeModal.confirm('Delete Role', 'Are you sure you want to delete this role? This will not affect active users immediately, but they will lose permissions.', function() {
         roles = roles.filter(r => r.id !== id);
@@ -600,6 +605,7 @@
   };
 
   window.saveUserRole = function() {
+  if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('settings_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     var id = document.getElementById('assign-id').value;
     var empId = document.getElementById('assign-employee').value;
     var roleId = document.getElementById('assign-role').value;
@@ -643,6 +649,7 @@
   };
 
   window.removeUserRole = function(id) {
+  if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('settings_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     if (window.VerdeModal) {
       window.VerdeModal.confirm('Remove Assignment', 'Are you sure you want to remove this role assignment? The employee will lose access.', function() {
         userRoles = userRoles.filter(u => u.id !== id);
@@ -839,6 +846,7 @@ window.openNotifTemplateModal = function(id = null, duplicate = false) {
 };
 
 window.saveNotifTemplate = function() {
+  if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('settings_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
   const id = document.getElementById('notif-tpl-id').value;
   const title = document.getElementById('notif-tpl-title').value.trim();
   const category = document.getElementById('notif-tpl-category').value.trim();
@@ -868,6 +876,7 @@ window.saveNotifTemplate = function() {
 };
 
 window.deleteNotifTemplate = function(id) {
+  if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('settings_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
   if (window.VerdeModal && window.VerdeModal.confirm) {
     window.VerdeModal.confirm('Delete Template', 'Are you sure you want to delete this template?', () => {
       notifData.templates = notifData.templates.filter(x => x.id !== id);
@@ -913,6 +922,7 @@ window.renderNotifChannels = function() {
 };
 
 window.updateChannel = function(idx, field, val) {
+  if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('settings_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
   notifData.channels[idx][field] = val;
   saveNotifData();
   if (window.VerdeToast) window.VerdeToast.show('Channel settings updated.', 'success');
@@ -937,6 +947,7 @@ window.renderNotifEvents = function() {
 };
 
 window.updateEvent = function(idx, val) {
+  if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('settings_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
   notifData.events[idx].enabled = val;
   saveNotifData();
   if (window.VerdeToast) window.VerdeToast.show('Event settings updated.', 'success');
@@ -955,6 +966,7 @@ window.renderNotifDelivery = function() {
 };
 
 window.saveNotifDelivery = function() {
+  if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('settings_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
   const radios = document.getElementsByName('notif-delivery');
   let val = 'Instant';
   radios.forEach(r => { if(r.checked) val = r.value; });
@@ -1025,6 +1037,7 @@ window.resendNotifHistory = function(id) {
 };
 
 window.deleteNotifHistory = function(id) {
+  if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('settings_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
   if (window.VerdeModal && window.VerdeModal.confirm) {
     window.VerdeModal.confirm('Delete History', 'Are you sure you want to delete this record?', () => {
       notifData.history = notifData.history.filter(x => x.id !== id);

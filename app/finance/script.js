@@ -459,6 +459,7 @@
 
   /* ── Add Line Item ── */
   window.addInvoiceLineItem = function () {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('finance_create')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     var tbody = document.getElementById('inv-items-body');
     if (!tbody) return;
     var idx = tbody.querySelectorAll('tr').length;
@@ -560,6 +561,7 @@
 
   /* ── CREATE INVOICE ── */
   window.openCreateInvoice = function () {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('finance_create')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     var body = buildInvoiceFormBody();
     window.VerdeModal.confirm({
       title: 'Create Invoice',
@@ -602,6 +604,7 @@
 
   /* ── EDIT INVOICE ── */
   window.editInvoice = function (id) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('finance_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     // Close menu
     var menu = document.getElementById('inv-menu-' + id);
     if (menu) menu.style.display = 'none';
@@ -711,6 +714,7 @@
 
   /* ── DUPLICATE INVOICE ── */
   window.duplicateInvoice = function (id) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('finance_create')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     var menu = document.getElementById('inv-menu-' + id);
     if (menu) menu.style.display = 'none';
 
@@ -732,23 +736,25 @@
   };
 
   /* ── UPDATE STATUS ── */
-  window.updateInvoiceStatus = function (id, newStatus) {
+  window.updateInvoiceStatus = function (id, status) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('finance_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     var menu = document.getElementById('inv-menu-' + id);
     if (menu) menu.style.display = 'none';
 
     var inv = financeInvoices.find(function (i) { return i.id === id; });
     if (!inv) return;
 
-    inv.status = newStatus;
+    inv.status = status;
     saveInvoices();
     renderInvoicesKPI();
     renderInvoicesTable();
     window.refreshDashboardKPIs();
-    window.VerdeToast.success('Invoice ' + inv.invoiceNumber + ' marked as ' + newStatus + '.');
+    window.VerdeToast.success('Invoice ' + inv.invoiceNumber + ' marked as ' + status + '.');
   };
 
   /* ── DELETE INVOICE ── */
   window.deleteInvoice = function (id) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('finance_delete')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     var menu = document.getElementById('inv-menu-' + id);
     if (menu) menu.style.display = 'none';
 
@@ -1162,6 +1168,7 @@
 
   /* ── RECORD PAYMENT ── */
   window.openRecordPayment = function () {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('finance_create')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     var body = buildPayFormBody();
     window.VerdeModal.confirm({
       title: 'Record Payment',
@@ -1195,6 +1202,7 @@
 
   /* ── EDIT PAYMENT ── */
   window.editPayment = function (id) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('finance_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     var pay = financePayments.find(function (p) { return p.id === id; });
     if (!pay) return;
 
@@ -1268,6 +1276,7 @@
 
   /* ── UPDATE STATUS ── */
   window.updatePaymentStatus = function (id, newStatus) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('finance_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     var pay = financePayments.find(function (p) { return p.id === id; });
     if (!pay) return;
     pay.status = newStatus;
@@ -1279,6 +1288,7 @@
 
   /* ── DELETE PAYMENT ── */
   window.deletePayment = function (id) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('finance_delete')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     var pay = financePayments.find(function (p) { return p.id === id; });
     if (!pay) return;
     window.VerdeModal.delete('Delete Payment', 'Are you sure you want to permanently delete <strong>' + pay.paymentId + '</strong>? This action cannot be undone.', function () {
@@ -1668,6 +1678,7 @@
 
   /* ── CREATE EXPENSE ── */
   window.openCreateExpense = function () {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('finance_create')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     var body = buildExpenseFormBody();
     window.VerdeModal.confirm({
       title: 'Add Expense',
@@ -1710,6 +1721,7 @@
 
   /* ── EDIT EXPENSE ── */
   window.editExpense = function (id) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('finance_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     var menu = document.getElementById('exp-menu-' + id);
     if (menu) menu.style.display = 'none';
 
@@ -1790,6 +1802,7 @@
 
   /* ── UPLOAD RECEIPT ── */
   window.uploadExpenseReceipt = function (id) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('finance_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     var menu = document.getElementById('exp-menu-' + id);
     if (menu) menu.style.display = 'none';
 
@@ -1825,14 +1838,15 @@
   };
 
   /* ── UPDATE STATUS ── */
-  window.updateExpenseStatus = function (id, newStatus) {
+  window.updateExpenseStatus = function (id, status) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('finance_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     var menu = document.getElementById('exp-menu-' + id);
     if (menu) menu.style.display = 'none';
 
     var exp = financeExpenses.find(function (e) { return e.id === id; });
     if (!exp) return;
 
-    exp.status = newStatus;
+    exp.status = status;
     saveExpenses();
     window.renderExpensesKPI();
     window.renderExpensesTable();
@@ -1842,6 +1856,7 @@
 
   /* ── DELETE EXPENSE ── */
   window.deleteExpense = function (id) {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('finance_delete')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     var menu = document.getElementById('exp-menu-' + id);
     if (menu) menu.style.display = 'none';
 
@@ -2079,6 +2094,7 @@
 
   /* ── EXPORT CSV ── */
   window.exportReportCSV = function () {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('reports_export')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     var rows = buildRows(loadAll(), getFilters());
     var lines = ['Date,Type,Reference,Client/Vendor,Amount,Status'];
     rows.forEach(function(r){ lines.push([r.date,'"'+r.type+'"',r.ref,'"'+(r.party||'').replace(/"/g,'""')+'"',r.amount,r.status].join(',')); });
@@ -2090,6 +2106,7 @@
 
   /* ── EXPORT EXCEL (TSV) ── */
   window.exportReportExcel = function () {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('reports_export')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     var rows = buildRows(loadAll(), getFilters());
     var lines = ['Date\tType\tReference\tClient/Vendor\tAmount (INR)\tStatus'];
     rows.forEach(function(r){ lines.push([r.date,r.type,r.ref,r.party,r.amount,r.status].join('\t')); });
@@ -2101,6 +2118,7 @@
 
   /* ── EXPORT PDF (print popup) ── */
   window.exportReportPDF = function () {
+    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('reports_export')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     var rows = buildRows(loadAll(), getFilters());
     var trs = rows.map(function(r){
       return '<tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">'+fmtDate(r.date)+'</td><td style="padding:6px 8px;">'+r.type+'</td><td style="padding:6px 8px;font-weight:700;">'+r.ref+'</td><td style="padding:6px 8px;">'+r.party+'</td><td style="padding:6px 8px;font-weight:800;text-align:right;">'+fmtMoney(r.amount)+'</td><td style="padding:6px 8px;">'+r.status+'</td></tr>';
