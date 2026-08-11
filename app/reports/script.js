@@ -1,6 +1,6 @@
 /* ==========================================================================
    VERDE OS — REPORTS & ANALYTICS MODULE CONTROLLER
-   Full Data-Driven Executive Intelligence Engine
+   Pure Data-Driven Executive Intelligence Engine (Read-Only Synchronization)
    ========================================================================== */
 
 (function () {
@@ -23,7 +23,8 @@
     clients: [],
     employees: [],
     invoices: [],
-    expenses: []
+    expenses: [],
+    marketing: []
   };
 
   /* ── Permissions & Session Helpers ── */
@@ -59,16 +60,28 @@
     return d.innerHTML;
   }
 
+  function parseAmount(val) {
+    if (typeof val === 'number') return isNaN(val) ? 0 : val;
+    if (!val) return 0;
+    var clean = String(val).replace(/[^0-9.-]+/g, '');
+    var num = parseFloat(clean);
+    return isNaN(num) ? 0 : num;
+  }
+
   function fmtMoney(n) {
-    return '₹' + Number(n || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 });
+    var num = parseAmount(n);
+    return '₹' + Math.round(num).toLocaleString('en-IN');
   }
 
   function fmtLakhs(n) {
-    var l = (Number(n || 0) / 100000).toFixed(1);
-    return '₹' + l + 'L';
+    var num = parseAmount(n);
+    if (Math.abs(num) >= 100000) {
+      return '₹' + (num / 100000).toFixed(1) + 'L';
+    }
+    return fmtMoney(num);
   }
 
-  /* ── Date Filtering Helper ── */
+  /* ── Strict Date Range Filtering ── */
   function isDateInRange(dateInput, range) {
     if (!dateInput || range === 'all') return true;
     var d = new Date(dateInput);
@@ -97,7 +110,7 @@
     return true;
   }
 
-  /* ── Data Loaders from Real VERDE OS Store ── */
+  /* ── Real Data Loader Across VERDE OS Modules ── */
   function loadAllData() {
     var pTasks = (window.VerdeServices && window.VerdeServices.Tasks)
       ? window.VerdeServices.Tasks.getTasks()
@@ -115,53 +128,128 @@
       ? window.VerdeServices.Crm.getClients()
       : Promise.resolve(JSON.parse(localStorage.getItem('verde_os_crm_clients') || '[]'));
 
-    var pTeam = (window.VerdeServices && window.VerdeServices.Team)
-      ? window.VerdeServices.Team.getEmployees()
+    var pTeam = (window.VerdeServices && window.VerdeServices.Team && typeof window.VerdeServices.Team.getMembers === 'function')
+      ? window.VerdeServices.Team.getMembers()
       : Promise.resolve(JSON.parse(localStorage.getItem('verde_os_team_employees') || '[]'));
 
-    return Promise.all([pTasks, pProjects, pLeads, pClients, pTeam]).then(function (results) {
+    var pMarketing = (window.VerdeServices && window.VerdeServices.Marketing && typeof window.VerdeServices.Marketing.getCampaigns === 'function')
+      ? window.VerdeServices.Marketing.getCampaigns()
+      : Promise.resolve(JSON.parse(localStorage.getItem('verde_os_marketing') || '[]'));
+
+    return Promise.all([pTasks, pProjects, pLeads, pClients, pTeam, pMarketing]).then(function (results) {
       cachedData.tasks = results[0] || [];
       cachedData.projects = results[1] || [];
       cachedData.leads = results[2] || [];
       cachedData.clients = results[3] || [];
       cachedData.employees = results[4] || [];
+      cachedData.marketing = results[5] || [];
 
-      // Finance Invoices
+      // 1. Finance Invoices & Transactions
+      var invList = [];
       try {
         var rawInvs = localStorage.getItem('verde_finance_invoices');
-        cachedData.invoices = rawInvs ? JSON.parse(rawInvs) : [];
-      } catch (e) {
-        cachedData.invoices = [];
-      }
+        if (rawInvs) invList = JSON.parse(rawInvs);
+      } catch (e) {}
 
-      // Finance Expenses
+      var txList = [];
+      try {
+        var rawTx = localStorage.getItem('verde_os_finance_transactions');
+        if (rawTx) txList = JSON.parse(rawTx);
+      } catch (e) {}
+
+      // Normalize Finance Invoices
+      var allInvoices = [];
+      invList.forEach(function(inv) {
+        allInvoices.push({
+          id: inv.id || inv.invoiceNumber,
+          invoiceNumber: inv.invoiceNumber || inv.id,
+          clientName: inv.clientName || inv.client || 'Client',
+          total: parseAmount(inv.total || inv.amount || 0),
+          status: inv.status || 'Paid',
+          type: inv.type || 'Income',
+          issueDate: inv.issueDate || inv.date || new Date().toISOString(),
+          dueDate: inv.dueDate || inv.date || ''
+        });
+      });
+
+      txList.forEach(function(tx) {
+        if (tx.type === 'Income' && !allInvoices.some(function(i) { return i.id === tx.id; })) {
+          allInvoices.push({
+            id: tx.id || ('TX-' + Date.now()),
+            invoiceNumber: tx.invoiceNumber || tx.id,
+            clientName: tx.client || 'Client',
+            total: parseAmount(tx.amount || tx.total || 0),
+            status: tx.status === 'Completed' ? 'Paid' : (tx.status || 'Pending'),
+            type: 'Income',
+            issueDate: tx.date || new Date().toISOString(),
+            dueDate: tx.date || ''
+          });
+        }
+      });
+
+      cachedData.invoices = allInvoices;
+
+      // 2. Finance Expenses
+      var expList = [];
       try {
         var rawExps = localStorage.getItem('verde_finance_expenses');
-        cachedData.expenses = rawExps ? JSON.parse(rawExps) : [];
-      } catch (e) {
-        cachedData.expenses = [];
-      }
+        if (rawExps) expList = JSON.parse(rawExps);
+      } catch (e) {}
 
-      // Fallback seeds if fresh environment
-      if (cachedData.invoices.length === 0 && window.VerdeMockData && window.VerdeMockData.invoices) {
-        cachedData.invoices = window.VerdeMockData.invoices.map(function(inv) {
-          return {
-            id: inv.id,
-            invoiceNumber: inv.invoiceNumber || inv.id,
-            clientName: inv.client || 'Client',
-            total: (inv.amount || 1000) * 85,
-            status: inv.status || 'Paid',
-            issueDate: inv.date || new Date().toISOString()
-          };
-        });
-      }
+      txList.forEach(function(tx) {
+        if (tx.type === 'Expense' && !expList.some(function(e) { return e.id === tx.id; })) {
+          expList.push({
+            id: tx.id || ('EXP-' + Date.now()),
+            category: tx.category || tx.description || 'Operating Expense',
+            vendor: tx.client || tx.vendor || 'Supplier',
+            total: parseAmount(tx.amount || tx.total || 0),
+            date: tx.date || new Date().toISOString(),
+            status: tx.status === 'Completed' ? 'Approved' : (tx.status || 'Approved')
+          });
+        }
+      });
+
+      cachedData.expenses = expList;
 
       return cachedData;
     });
   }
 
+  /* ── Metric Calculation Helpers ── */
+  function getPaidRevenue(invoices, range) {
+    var sum = 0;
+    invoices.forEach(function(inv) {
+      var isPaid = inv.status === 'Paid' || inv.status === 'Completed' || (inv.type === 'Income' && inv.status !== 'Pending' && inv.status !== 'Draft');
+      if (isPaid && isDateInRange(inv.issueDate, range)) {
+        sum += (inv.total || 0);
+      }
+    });
+    return sum;
+  }
+
+  function getOutstandingReceivables(invoices, range) {
+    var sum = 0;
+    invoices.forEach(function(inv) {
+      var isUnpaid = inv.status !== 'Paid' && inv.status !== 'Completed' && inv.status !== 'Cancelled';
+      if (isUnpaid && isDateInRange(inv.issueDate, range)) {
+        sum += (inv.total || 0);
+      }
+    });
+    return sum;
+  }
+
+  function getOperationalExpenses(expenses, range) {
+    var sum = 0;
+    expenses.forEach(function(e) {
+      if (e.status !== 'Rejected' && isDateInRange(e.date, range)) {
+        sum += parseAmount(e.total || e.amount || 0);
+      }
+    });
+    return sum;
+  }
+
   /* ══════════════════════════════════════════════════════════════════════════
-     1. EXECUTIVE KPI SUMMARY CALCULATOR
+     1. EXECUTIVE KPI SUMMARY CALCULATOR (PER CATEGORY & DATE RANGE)
      ══════════════════════════════════════════════════════════════════════════ */
   function renderKPIs() {
     var k1Val = document.getElementById('rep-kpi-1-val');
@@ -177,41 +265,44 @@
 
     var range = currentDateRange;
 
-    // Filtered data in range
-    var filteredTasks = cachedData.tasks.filter(function(t) { return isDateInRange(t.createdAt || t.dueDate, range); });
-    var filteredProjects = cachedData.projects.filter(function(p) { return isDateInRange(p.createdAt || p.dueDate, range) && !p.isDeleted; });
-    var filteredLeads = cachedData.leads.filter(function(l) { return isDateInRange(l.createdAt || l.date, range); });
-    var filteredClients = cachedData.clients.filter(function(c) { return isDateInRange(c.createdAt || c.since, range); });
-    var filteredInvoices = cachedData.invoices.filter(function(i) { return isDateInRange(i.issueDate || i.date, range); });
+    // Filter datasets by range
+    var fltTasks = cachedData.tasks.filter(function(t) { return !t.isDeleted && isDateInRange(t.createdAt || t.dueDate, range); });
+    var fltProjects = cachedData.projects.filter(function(p) { return !p.isDeleted && isDateInRange(p.createdAt || p.dueDate || p.startDate, range); });
+    var fltLeads = cachedData.leads.filter(function(l) { return !l.isDeleted && isDateInRange(l.createdAt || l.date, range); });
+    var fltClients = cachedData.clients.filter(function(c) { return !c.isDeleted && isDateInRange(c.createdAt || c.since, range); });
+    var employees = cachedData.employees.filter(function(e) { return !e.isDeleted; });
 
-    // Category-specific KPI presentation
+    // ── REVENUE / FINANCE CATEGORY ──
     if (currentCategory === 'revenue' || currentCategory === 'finance') {
-      var totalRev = filteredInvoices.reduce(function(sum, i) { return i.status === 'Paid' ? sum + (i.total || 0) : sum; }, 0);
-      var totalPending = filteredInvoices.reduce(function(sum, i) { return i.status !== 'Paid' && i.status !== 'Cancelled' ? sum + (i.total || 0) : sum; }, 0);
-      var totalExp = cachedData.expenses.reduce(function(sum, e) { return sum + (e.total || 0); }, 0);
+      var totalRev = getPaidRevenue(cachedData.invoices, range);
+      var totalPending = getOutstandingReceivables(cachedData.invoices, range);
+      var totalExp = getOperationalExpenses(cachedData.expenses, range);
       var netProfit = totalRev - totalExp;
 
-      k1Val.textContent = totalRev > 0 ? fmtLakhs(totalRev) : '₹0';
+      k1Val.textContent = fmtLakhs(totalRev);
       k1Val.style.color = 'var(--success)';
       k1Lbl.textContent = 'Total Revenue';
 
-      k2Val.textContent = totalPending > 0 ? fmtLakhs(totalPending) : '₹0';
+      k2Val.textContent = fmtLakhs(totalPending);
       k2Val.style.color = 'var(--warning)';
       k2Lbl.textContent = 'Outstanding Receivables';
 
-      k3Val.textContent = totalExp > 0 ? fmtLakhs(totalExp) : '₹0';
+      k3Val.textContent = fmtLakhs(totalExp);
       k3Val.style.color = 'var(--danger)';
       k3Lbl.textContent = 'Operational Expenses';
 
-      k4Val.textContent = netProfit !== 0 ? fmtLakhs(netProfit) : '₹0';
+      k4Val.textContent = fmtLakhs(netProfit);
       k4Val.style.color = netProfit >= 0 ? 'var(--primary)' : 'var(--danger)';
       k4Lbl.textContent = 'Net Operating Margin';
 
+    // ── PROJECTS CATEGORY ──
     } else if (currentCategory === 'projects') {
-      var totalPrj = filteredProjects.length;
-      var completedPrj = filteredProjects.filter(function(p) { return p.status === 'Completed'; }).length;
-      var activePrj = filteredProjects.filter(function(p) { return p.status !== 'Completed' && !p.isArchived; }).length;
-      var successRate = totalPrj > 0 ? Math.round((completedPrj / totalPrj) * 100) : 100;
+      var totalPrj = fltProjects.length;
+      var completedPrj = fltProjects.filter(function(p) { return p.status === 'Completed' || p.progress === 100; }).length;
+      var activePrj = fltProjects.filter(function(p) {
+        return p.status === 'Active' || p.status === 'In Progress' || p.status === 'At Risk' || p.status === 'On Track' || p.status === 'Review' || (!p.status && p.progress < 100);
+      }).length;
+      var successRate = totalPrj > 0 ? Math.round((completedPrj / totalPrj) * 100) : 0;
 
       k1Val.textContent = activePrj;
       k1Val.style.color = 'var(--primary)';
@@ -227,12 +318,14 @@
 
       k4Val.textContent = totalPrj;
       k4Val.style.color = 'var(--text-1)';
-      k4Lbl.textContent = 'Total Managed';
+      k4Lbl.textContent = 'Total Managed Projects';
 
+    // ── SALES / CRM CATEGORY ──
     } else if (currentCategory === 'sales') {
-      var totalLds = filteredLeads.length;
-      var wonLds = filteredLeads.filter(function(l) { return l.stage === 'Won' || l.status === 'Won'; }).length;
-      var pipelineVal = filteredLeads.reduce(function(sum, l) { return sum + (l.value || 0); }, 0);
+      var totalLds = fltLeads.length;
+      var wonLds = fltLeads.filter(function(l) { return l.stage === 'Won' || l.status === 'Won'; }).length;
+      var activePipelineLeads = fltLeads.filter(function(l) { return l.stage !== 'Won' && l.stage !== 'Lost'; });
+      var pipelineVal = activePipelineLeads.reduce(function(sum, l) { return sum + parseAmount(l.value || l.dealValue || 0); }, 0);
       var convRate = totalLds > 0 ? Math.round((wonLds / totalLds) * 100) : 0;
 
       k1Val.textContent = totalLds;
@@ -247,71 +340,98 @@
       k3Val.style.color = 'var(--info)';
       k3Lbl.textContent = 'Lead Conversion Rate';
 
-      k4Val.textContent = pipelineVal > 0 ? fmtLakhs(pipelineVal) : '₹0';
+      k4Val.textContent = fmtLakhs(pipelineVal);
       k4Val.style.color = 'var(--primary)';
-      k4Lbl.textContent = 'Pipeline Value';
+      k4Lbl.textContent = 'Active Pipeline Value';
 
-    } else if (currentCategory === 'team' || currentCategory === 'productivity') {
-      var totalTsk = filteredTasks.length;
-      var doneTsk = filteredTasks.filter(function(t) { return t.status === 'Completed'; }).length;
-      var overdueTsk = filteredTasks.filter(function(t) {
+    // ── PRODUCTIVITY CATEGORY ──
+    } else if (currentCategory === 'productivity') {
+      var totalTsk = fltTasks.length;
+      var doneTsk = fltTasks.filter(function(t) { return t.status === 'Completed'; }).length;
+      var activeTsk = fltTasks.filter(function(t) { return t.status !== 'Completed' && t.status !== 'Archived'; }).length;
+      var overdueTsk = fltTasks.filter(function(t) {
         if (!t.dueDate || t.status === 'Completed') return false;
-        return new Date(t.dueDate) < new Date();
+        var d = new Date(t.dueDate);
+        return !isNaN(d.getTime()) && d < new Date();
       }).length;
-      var prodRate = totalTsk > 0 ? Math.round((doneTsk / totalTsk) * 100) : 0;
+      var compRate = totalTsk > 0 ? Math.round((doneTsk / totalTsk) * 100) : 0;
 
-      k1Val.textContent = cachedData.employees.filter(function(e) { return e.status === 'Active'; }).length;
+      k1Val.textContent = activeTsk;
       k1Val.style.color = 'var(--primary)';
-      k1Lbl.textContent = 'Active Team Members';
+      k1Lbl.textContent = 'Active Deliverables';
 
       k2Val.textContent = doneTsk;
       k2Val.style.color = 'var(--success)';
-      k2Lbl.textContent = 'Completed Deliverables';
+      k2Lbl.textContent = 'Completed Tasks';
 
       k3Val.textContent = overdueTsk;
       k3Val.style.color = overdueTsk > 0 ? 'var(--danger)' : 'var(--success)';
       k3Lbl.textContent = 'Overdue Tasks';
 
-      k4Val.textContent = prodRate + '%';
+      k4Val.textContent = compRate + '%';
       k4Val.style.color = 'var(--warning)';
-      k4Lbl.textContent = 'Team Throughput Velocity';
+      k4Lbl.textContent = 'Throughput Velocity';
 
+    // ── TEAM CATEGORY ──
+    } else if (currentCategory === 'team') {
+      var activeEmp = employees.filter(function(e) { return e.status !== 'Inactive'; }).length;
+      var departments = {};
+      employees.forEach(function(e) { if (e.department) departments[e.department] = true; });
+      var deptCount = Object.keys(departments).length;
+
+      var totalDone = fltTasks.filter(function(t) { return t.status === 'Completed'; }).length;
+      var totalAssigned = fltTasks.length;
+      var teamProd = totalAssigned > 0 ? Math.round((totalDone / totalAssigned) * 100) : 0;
+
+      k1Val.textContent = activeEmp;
+      k1Val.style.color = 'var(--primary)';
+      k1Lbl.textContent = 'Active Team Members';
+
+      k2Val.textContent = deptCount;
+      k2Val.style.color = 'var(--info)';
+      k2Lbl.textContent = 'Operational Departments';
+
+      k3Val.textContent = totalDone;
+      k3Val.style.color = 'var(--success)';
+      k3Lbl.textContent = 'Completed Deliverables';
+
+      k4Val.textContent = teamProd + '%';
+      k4Val.style.color = 'var(--warning)';
+      k4Lbl.textContent = 'Department Productivity';
+
+    // ── DEFAULT GENERAL OVERVIEW (ALL) ──
     } else {
-      // Default Business Overview (All)
-      var rev = cachedData.invoices.reduce(function(sum, i) { return i.status === 'Paid' ? sum + (i.total || 0) : sum; }, 0);
-      if (rev === 0) {
-        rev = cachedData.clients.reduce(function(sum, c) { return sum + (c.revenue || 0); }, 0);
-      }
-      var totalP = cachedData.projects.filter(function(p) { return !p.isDeleted; }).length;
-      var compP = cachedData.projects.filter(function(p) { return p.status === 'Completed'; }).length;
-      var pRate = totalP > 0 ? Math.round((compP / totalP) * 100) : 94;
+      var revAll = getPaidRevenue(cachedData.invoices, range);
+      var totalPrjAll = fltProjects.length;
+      var compPrjAll = fltProjects.filter(function(p) { return p.status === 'Completed' || p.progress === 100; }).length;
+      var pSuccess = totalPrjAll > 0 ? Math.round((compPrjAll / totalPrjAll) * 100) : 0;
 
-      var totalT = cachedData.tasks.length;
-      var doneT = cachedData.tasks.filter(function(t) { return t.status === 'Completed'; }).length;
-      var tRate = totalT > 0 ? Math.round((doneT / totalT) * 100) : 87;
+      var totalTskAll = fltTasks.length;
+      var doneTskAll = fltTasks.filter(function(t) { return t.status === 'Completed'; }).length;
+      var tVelocity = totalTskAll > 0 ? Math.round((doneTskAll / totalTskAll) * 100) : 0;
 
-      var actCli = cachedData.clients.filter(function(c) { return c.status === 'Active'; }).length;
+      var actCliAll = fltClients.filter(function(c) { return c.status === 'Active' || !c.status; }).length;
 
-      k1Val.textContent = rev > 0 ? fmtLakhs(rev) : '+18.4%';
+      k1Val.textContent = fmtLakhs(revAll);
       k1Val.style.color = 'var(--success)';
       k1Lbl.textContent = 'Revenue Volume';
 
-      k2Val.textContent = pRate + '%';
+      k2Val.textContent = pSuccess + '%';
       k2Val.style.color = 'var(--primary)';
       k2Lbl.textContent = 'Project Success Rate';
 
-      k3Val.textContent = actCli > 0 ? actCli + ' Active' : '98.2%';
+      k3Val.textContent = actCliAll + ' Active';
       k3Val.style.color = 'var(--info)';
       k3Lbl.textContent = 'Client Retention';
 
-      k4Val.textContent = tRate + '%';
+      k4Val.textContent = tVelocity + '%';
       k4Val.style.color = 'var(--warning)';
       k4Lbl.textContent = 'Team Productivity';
     }
   }
 
   /* ══════════════════════════════════════════════════════════════════════════
-     2. ANALYTICS CHARTS RENDERER
+     2. ANALYTICS CHARTS RENDERER (REAL DATA ONLY)
      ══════════════════════════════════════════════════════════════════════════ */
   function renderCharts() {
     var c1Bars = document.getElementById('rep-chart-1-bars');
@@ -321,25 +441,34 @@
 
     if (!c1Bars || !c2Bars || !c3Bars || !c4Bars) return;
 
-    // 1. Revenue Trend Chart
-    var months = ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'];
-    var revValues = [35000, 48000, 52000, 85000, 68000, 95000];
-    // Scale against real invoices if available
-    var paidInvs = cachedData.invoices.filter(function(i) { return i.status === 'Paid'; });
-    if (paidInvs.length > 0) {
-      var totalRev = paidInvs.reduce(function(sum, i) { return sum + (i.total || 0); }, 0);
-      revValues = [
-        Math.round(totalRev * 0.4),
-        Math.round(totalRev * 0.55),
-        Math.round(totalRev * 0.7),
-        Math.round(totalRev * 0.85),
-        Math.round(totalRev * 0.9),
-        totalRev
-      ];
+    var now = new Date();
+    var monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    // 1. Revenue Trend Chart (Real monthly sum across last 6 months)
+    var months = [];
+    var revValues = [];
+    for (var i = 5; i >= 0; i--) {
+      var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      var mIdx = d.getMonth();
+      var yIdx = d.getFullYear();
+      months.push(monthNames[mIdx]);
+
+      var mRev = 0;
+      cachedData.invoices.forEach(function(inv) {
+        var isPaid = inv.status === 'Paid' || inv.status === 'Completed' || (inv.type === 'Income' && inv.status !== 'Pending');
+        if (isPaid && inv.issueDate) {
+          var idt = new Date(inv.issueDate);
+          if (!isNaN(idt.getTime()) && idt.getFullYear() === yIdx && idt.getMonth() === mIdx) {
+            mRev += (inv.total || 0);
+          }
+        }
+      });
+      revValues.push(mRev);
     }
-    var maxRev = Math.max.apply(null, revValues) * 1.15 || 100000;
+
+    var maxRev = Math.max.apply(null, revValues);
     c1Bars.innerHTML = revValues.map(function(val, idx) {
-      var pct = Math.max(10, Math.round((val / maxRev) * 100));
+      var pct = maxRev > 0 ? Math.max(6, Math.round((val / (maxRev * 1.15)) * 100)) : 6;
       return '<div class="chart-bar-wrap">' +
         '<div class="chart-bar-tooltip">' + fmtMoney(val) + '</div>' +
         '<div class="chart-bar" style="height:' + pct + '%; width:100%;"></div>' +
@@ -347,55 +476,55 @@
       '</div>';
     }).join('');
 
-    // 2. Project Completion Status
+    // 2. Project Completion Status (Real counts)
     var prjStages = ['Planning', 'In Progress', 'Review', 'Completed'];
     var prjCounts = [
-      cachedData.projects.filter(function(p) { return p.status === 'Planning'; }).length || 2,
-      cachedData.projects.filter(function(p) { return p.status === 'In Progress'; }).length || 5,
-      cachedData.projects.filter(function(p) { return p.status === 'Review'; }).length || 3,
-      cachedData.projects.filter(function(p) { return p.status === 'Completed'; }).length || 6
+      cachedData.projects.filter(function(p) { return !p.isDeleted && (p.status === 'Planning' || p.status === 'Draft'); }).length,
+      cachedData.projects.filter(function(p) { return !p.isDeleted && (p.status === 'Active' || p.status === 'In Progress' || p.status === 'On Track'); }).length,
+      cachedData.projects.filter(function(p) { return !p.isDeleted && (p.status === 'At Risk' || p.status === 'Review'); }).length,
+      cachedData.projects.filter(function(p) { return !p.isDeleted && (p.status === 'Completed' || p.progress === 100); }).length
     ];
-    var maxPrj = Math.max.apply(null, prjCounts) * 1.2 || 10;
+    var maxPrj = Math.max.apply(null, prjCounts);
     c2Bars.innerHTML = prjCounts.map(function(cnt, idx) {
-      var pct = Math.max(10, Math.round((cnt / maxPrj) * 100));
+      var pct = maxPrj > 0 ? Math.max(6, Math.round((cnt / (maxPrj * 1.15)) * 100)) : 6;
       return '<div class="chart-bar-wrap">' +
-        '<div class="chart-bar-tooltip">' + cnt + ' projects</div>' +
+        '<div class="chart-bar-tooltip">' + cnt + ' project' + (cnt !== 1 ? 's' : '') + '</div>' +
         '<div class="chart-bar" style="height:' + pct + '%; background:var(--info-10); border-color:var(--info); width:100%;"></div>' +
         '<div class="chart-bar-label">' + prjStages[idx] + '</div>' +
       '</div>';
     }).join('');
 
-    // 3. Sales Pipeline Breakdown
+    // 3. Sales Pipeline Breakdown (Real counts)
     var salesStages = ['Lead', 'Contacted', 'Proposal', 'Won'];
     var salesCounts = [
-      cachedData.leads.filter(function(l) { return l.stage === 'Lead' || l.stage === 'New'; }).length || 4,
-      cachedData.leads.filter(function(l) { return l.stage === 'Contacted'; }).length || 3,
-      cachedData.leads.filter(function(l) { return l.stage === 'Proposal Sent' || l.stage === 'Negotiation'; }).length || 5,
-      cachedData.leads.filter(function(l) { return l.stage === 'Won'; }).length || 7
+      cachedData.leads.filter(function(l) { return !l.isDeleted && (l.stage === 'Lead' || l.stage === 'New'); }).length,
+      cachedData.leads.filter(function(l) { return !l.isDeleted && l.stage === 'Contacted'; }).length,
+      cachedData.leads.filter(function(l) { return !l.isDeleted && (l.stage === 'Proposal' || l.stage === 'Proposal Sent' || l.stage === 'Negotiation'); }).length,
+      cachedData.leads.filter(function(l) { return !l.isDeleted && (l.stage === 'Won' || l.status === 'Won'); }).length
     ];
-    var maxSales = Math.max.apply(null, salesCounts) * 1.2 || 10;
+    var maxSales = Math.max.apply(null, salesCounts);
     c3Bars.innerHTML = salesCounts.map(function(cnt, idx) {
-      var pct = Math.max(10, Math.round((cnt / maxSales) * 100));
+      var pct = maxSales > 0 ? Math.max(6, Math.round((cnt / (maxSales * 1.15)) * 100)) : 6;
       return '<div class="chart-bar-wrap">' +
-        '<div class="chart-bar-tooltip">' + cnt + ' deals</div>' +
+        '<div class="chart-bar-tooltip">' + cnt + ' deal' + (cnt !== 1 ? 's' : '') + '</div>' +
         '<div class="chart-bar" style="height:' + pct + '%; background:var(--success-10); border-color:var(--success); width:100%;"></div>' +
         '<div class="chart-bar-label">' + salesStages[idx] + '</div>' +
       '</div>';
     }).join('');
 
-    // 4. Task Velocity & Volume
+    // 4. Task Velocity & Volume (Real counts)
     var taskTypes = ['Critical', 'High', 'Medium', 'Done'];
     var taskCounts = [
-      cachedData.tasks.filter(function(t) { return t.priority === 'Critical' && t.status !== 'Completed'; }).length || 2,
-      cachedData.tasks.filter(function(t) { return t.priority === 'High' && t.status !== 'Completed'; }).length || 4,
-      cachedData.tasks.filter(function(t) { return (t.priority === 'Medium' || !t.priority) && t.status !== 'Completed'; }).length || 6,
-      cachedData.tasks.filter(function(t) { return t.status === 'Completed'; }).length || 12
+      cachedData.tasks.filter(function(t) { return !t.isDeleted && t.priority === 'Critical' && t.status !== 'Completed'; }).length,
+      cachedData.tasks.filter(function(t) { return !t.isDeleted && t.priority === 'High' && t.status !== 'Completed'; }).length,
+      cachedData.tasks.filter(function(t) { return !t.isDeleted && (t.priority === 'Medium' || t.priority === 'Low' || !t.priority) && t.status !== 'Completed'; }).length,
+      cachedData.tasks.filter(function(t) { return !t.isDeleted && t.status === 'Completed'; }).length
     ];
-    var maxTasks = Math.max.apply(null, taskCounts) * 1.2 || 15;
+    var maxTasks = Math.max.apply(null, taskCounts);
     c4Bars.innerHTML = taskCounts.map(function(cnt, idx) {
-      var pct = Math.max(10, Math.round((cnt / maxTasks) * 100));
+      var pct = maxTasks > 0 ? Math.max(6, Math.round((cnt / (maxTasks * 1.15)) * 100)) : 6;
       return '<div class="chart-bar-wrap">' +
-        '<div class="chart-bar-tooltip">' + cnt + ' tasks</div>' +
+        '<div class="chart-bar-tooltip">' + cnt + ' task' + (cnt !== 1 ? 's' : '') + '</div>' +
         '<div class="chart-bar" style="height:' + pct + '%; background:var(--warning-10); border-color:var(--warning); width:100%;"></div>' +
         '<div class="chart-bar-label">' + taskTypes[idx] + '</div>' +
       '</div>';
@@ -409,10 +538,16 @@
     var now = new Date();
     var dateStr = now.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
 
-    var totalRev = cachedData.invoices.reduce(function(sum, i) { return sum + (i.total || 0); }, 0);
-    var activePrjCount = cachedData.projects.filter(function(p) { return !p.isDeleted; }).length;
-    var activeLeadsCount = cachedData.leads.length;
-    var activeEmpCount = cachedData.employees.length;
+    var range = currentDateRange;
+
+    // Filtered subsets by active date range
+    var invoices = cachedData.invoices.filter(function(i) { return isDateInRange(i.issueDate, range); });
+    var projects = cachedData.projects.filter(function(p) { return !p.isDeleted && isDateInRange(p.createdAt || p.dueDate || p.startDate, range); });
+    var leads = cachedData.leads.filter(function(l) { return !l.isDeleted && isDateInRange(l.createdAt || l.date, range); });
+    var clients = cachedData.clients.filter(function(c) { return !c.isDeleted && isDateInRange(c.createdAt || c.since, range); });
+    var tasks = cachedData.tasks.filter(function(t) { return !t.isDeleted && isDateInRange(t.createdAt || t.dueDate, range); });
+    var expenses = cachedData.expenses.filter(function(e) { return isDateInRange(e.date, range); });
+    var employees = cachedData.employees.filter(function(e) { return !e.isDeleted; });
 
     return [
       {
@@ -424,10 +559,10 @@
         lastUpdated: dateStr,
         status: 'Ready',
         badgeClass: 'badge-success',
-        recordsCount: cachedData.invoices.length || 5,
-        description: 'Comprehensive breakdown of all issued invoices, cleared client payments, and outstanding balances.',
+        recordsCount: invoices.length,
+        description: 'Comprehensive breakdown of all issued invoices, cleared client payments, and outstanding balances in the selected period.',
         getData: function() {
-          return cachedData.invoices.map(function(inv) {
+          return invoices.map(function(inv) {
             return {
               'Invoice ID': inv.invoiceNumber || inv.id,
               'Client': inv.clientName || 'Client',
@@ -445,20 +580,20 @@
         category: 'Sales',
         categoryKey: 'sales',
         generatedBy: getUserName(),
-        lastUpdated: 'Aug 08, 2026',
+        lastUpdated: dateStr,
         status: 'Ready',
         badgeClass: 'badge-primary',
-        recordsCount: activeLeadsCount || 8,
-        description: 'Analysis of inbound enterprise leads, conversion funnel progression, and projected deal value.',
+        recordsCount: leads.length,
+        description: 'Analysis of inbound enterprise leads, conversion funnel progression, and projected deal value in the selected period.',
         getData: function() {
-          return cachedData.leads.map(function(l) {
+          return leads.map(function(l) {
             return {
-              'Company / Name': l.company || l.name,
-              'Contact': l.email || l.phone || '—',
+              'Company / Name': l.company || l.name || l.clientName || 'Lead',
+              'Contact': l.email || l.phone || l.owner || '—',
               'Stage': l.stage || 'Lead',
-              'Value': fmtMoney(l.value),
+              'Value': fmtMoney(l.value || l.dealValue || 0),
               'Probability': (l.probability || 70) + '%',
-              'Assigned To': l.assignedTo || 'Sales Team'
+              'Assigned To': l.assignedTo || l.owner || 'Sales Team'
             };
           });
         }
@@ -468,21 +603,21 @@
         name: 'Project Milestones & Delivery Performance',
         category: 'Projects',
         categoryKey: 'projects',
-        generatedBy: 'Ameen',
-        lastUpdated: 'Aug 05, 2026',
+        generatedBy: 'System Auto',
+        lastUpdated: dateStr,
         status: 'Ready',
         badgeClass: 'badge-info',
-        recordsCount: activePrjCount || 6,
+        recordsCount: projects.length,
         description: 'Tracking client project progress, milestone completions, assigned engineering teams, and upcoming deadlines.',
         getData: function() {
-          return cachedData.projects.map(function(p) {
+          return projects.map(function(p) {
             return {
               'Project': p.name,
               'Client': p.client || '—',
               'Progress': (p.progress || 0) + '%',
               'Due Date': p.dueDate || '—',
               'Status': p.status || 'In Progress',
-              'Team': (p.team || []).join(', ') || 'Team'
+              'Team': Array.isArray(p.team) ? p.team.join(', ') : (p.team || 'Team')
             };
           });
         }
@@ -492,18 +627,33 @@
         name: 'Marketing & Campaign Performance Audit',
         category: 'Marketing',
         categoryKey: 'sales',
-        generatedBy: 'Midhul',
-        lastUpdated: 'Jul 28, 2026',
+        generatedBy: 'System Auto',
+        lastUpdated: dateStr,
         status: 'Ready',
         badgeClass: 'badge-warning',
-        recordsCount: 4,
-        description: 'Overview of multi-channel client acquisition campaigns, SEO rankings, and conversion ROI.',
+        recordsCount: cachedData.marketing.length > 0 ? cachedData.marketing.length : leads.length,
+        description: 'Overview of multi-channel client acquisition campaigns, marketing channels, and conversion ROI.',
         getData: function() {
-          return [
-            { 'Campaign': 'Enterprise Inbound SEO', 'Channel': 'Organic Search', 'Leads': '14', 'Spend': '₹25,000', 'ROI': '+340%' },
-            { 'Campaign': 'LinkedIn B2B Outreach', 'Channel': 'Social Paid', 'Leads': '9', 'Spend': '₹18,000', 'ROI': '+210%' },
-            { 'Campaign': 'Referral Partner Program', 'Channel': 'Partnerships', 'Leads': '6', 'Spend': '₹10,000', 'ROI': '+480%' }
-          ];
+          if (cachedData.marketing.length > 0) {
+            return cachedData.marketing.map(function(m) {
+              return {
+                'Campaign': m.name || m.title,
+                'Platform': m.platform || 'Digital Ads',
+                'Budget': m.budget || '—',
+                'Status': m.status || 'Active',
+                'Performance': m.perf || '+10%'
+              };
+            });
+          }
+          return leads.map(function(l) {
+            return {
+              'Lead / Account': l.company || l.name || l.clientName || 'Lead',
+              'Acquisition Source': l.source || 'Direct Outreach',
+              'Estimated Value': fmtMoney(l.value || l.dealValue || 0),
+              'Current Stage': l.stage || 'New',
+              'Status': l.status || 'Active'
+            };
+          });
         }
       },
       {
@@ -512,21 +662,25 @@
         category: 'Team',
         categoryKey: 'team',
         generatedBy: 'System Auto',
-        lastUpdated: 'Aug 01, 2026',
+        lastUpdated: dateStr,
         status: 'Ready',
         badgeClass: 'badge-neutral',
-        recordsCount: activeEmpCount || 8,
+        recordsCount: employees.length,
         description: 'Individual employee task completions, focus hours logged, and departmental workload distribution.',
         getData: function() {
-          return cachedData.employees.map(function(emp) {
-            var empTasks = cachedData.tasks.filter(function(t) {
-              return t.assignee && t.assignee.toLowerCase().includes((emp.name || '').toLowerCase());
+          return employees.map(function(emp) {
+            var empTasks = tasks.filter(function(t) {
+              return (t.assignee && t.assignee.toLowerCase().includes((emp.name || '').toLowerCase())) ||
+                     (t.assigneeId && t.assigneeId === emp.initials) ||
+                     (t.assigneeInitials && t.assigneeInitials === emp.initials);
             });
+            var doneTasks = empTasks.filter(function(t) { return t.status === 'Completed'; });
             return {
               'Employee': emp.name,
               'Department': emp.department || 'General',
               'Role': emp.role || 'Team Member',
-              'Active Tasks': empTasks.length,
+              'Active Tasks': empTasks.length - doneTasks.length,
+              'Completed Tasks': doneTasks.length,
               'Status': emp.status || 'Active'
             };
           });
@@ -538,21 +692,18 @@
         category: 'Finance',
         categoryKey: 'finance',
         generatedBy: 'Finance Dept',
-        lastUpdated: 'Jul 31, 2026',
+        lastUpdated: dateStr,
         status: 'Ready',
         badgeClass: 'badge-success',
-        recordsCount: cachedData.expenses.length || 5,
+        recordsCount: expenses.length,
         description: 'Detailed operating expenses, software vendor subscriptions, payroll allocations, and gross profit margins.',
         getData: function() {
-          return (cachedData.expenses.length > 0 ? cachedData.expenses : [
-            { id: 'EXP-101', category: 'Cloud Infrastructure (AWS/GCP)', total: 18500, date: '2026-07-20', status: 'Approved' },
-            { id: 'EXP-102', category: 'Design Software Subscriptions', total: 12000, date: '2026-07-22', status: 'Approved' },
-            { id: 'EXP-103', category: 'Office Utilities & Operations', total: 14500, date: '2026-07-25', status: 'Approved' }
-          ]).map(function(exp) {
+          return expenses.map(function(exp) {
             return {
               'Expense Item': exp.category || exp.description || 'Expense',
+              'Vendor': exp.vendor || 'Supplier',
               'Date': exp.date || '—',
-              'Amount': fmtMoney(exp.total || exp.amount),
+              'Amount': fmtMoney(exp.total || exp.amount || 0),
               'Status': exp.status || 'Approved'
             };
           });
@@ -567,13 +718,13 @@
         lastUpdated: dateStr,
         status: 'Ready',
         badgeClass: 'badge-danger',
-        recordsCount: cachedData.tasks.length || 10,
+        recordsCount: tasks.length,
         description: 'Risk assessment of overdue project deliverables, blocked milestones, and high-priority assignments.',
         getData: function() {
-          return cachedData.tasks.map(function(t) {
+          return tasks.map(function(t) {
             return {
               'Task': t.title || t.name,
-              'Assignee': t.assignee || 'Unassigned',
+              'Assignee': t.assignee || t.assigneeId || 'Unassigned',
               'Priority': t.priority || 'Medium',
               'Due Date': t.dueDate || '—',
               'Status': t.status || 'Pending'
@@ -587,18 +738,18 @@
         category: 'Revenue',
         categoryKey: 'revenue',
         generatedBy: 'Finance Dept',
-        lastUpdated: 'Aug 04, 2026',
+        lastUpdated: dateStr,
         status: 'Ready',
         badgeClass: 'badge-success',
-        recordsCount: cachedData.clients.length || 6,
+        recordsCount: clients.length,
         description: 'Comprehensive audit of all registered active clients, contract values, and outstanding invoices.',
         getData: function() {
-          return cachedData.clients.map(function(c) {
+          return clients.map(function(c) {
             return {
-              'Client Name': c.name || c.company,
-              'Contact Email': c.email || '—',
+              'Client Name': c.company || c.name,
+              'Contact Email': c.email || c.contactPerson || '—',
               'Status': c.status || 'Active',
-              'Lifetime Value': fmtMoney(c.revenue || 85000),
+              'Lifetime Value': fmtMoney(c.revenue || c.totalRevenue || 0),
               'Since': c.since || '2026'
             };
           });
@@ -631,9 +782,14 @@
       return true;
     });
 
-    // 2. Category Filter
+    // 2. Category Filter (Supports category grouping)
     if (currentCategory !== 'all') {
       allReports = allReports.filter(function(r) {
+        if (currentCategory === 'revenue') return r.categoryKey === 'revenue' || r.categoryKey === 'finance';
+        if (currentCategory === 'finance') return r.categoryKey === 'finance' || r.categoryKey === 'revenue';
+        if (currentCategory === 'sales') return r.categoryKey === 'sales' || r.category.toLowerCase() === 'marketing';
+        if (currentCategory === 'productivity') return r.categoryKey === 'productivity' || r.categoryKey === 'team';
+        if (currentCategory === 'team') return r.categoryKey === 'team' || r.categoryKey === 'productivity';
         return r.categoryKey === currentCategory || r.category.toLowerCase() === currentCategory.toLowerCase();
       });
     }
@@ -720,17 +876,7 @@
       var raw = localStorage.getItem(RECENT_KEY);
       if (raw) return JSON.parse(raw);
     } catch(e) {}
-
-    // Seed defaults
-    var defaults = [
-      { id: 'rec-1', name: 'Monthly Revenue Report', date: 'Generated Aug 01, 2026', category: 'Revenue' },
-      { id: 'rec-2', name: 'Client Growth Report', date: 'Generated Jul 28, 2026', category: 'Sales' },
-      { id: 'rec-3', name: 'Project Performance Report', date: 'Generated Jul 15, 2026', category: 'Projects' },
-      { id: 'rec-4', name: 'SEO Performance Report', date: 'Generated Jul 10, 2026', category: 'Marketing' },
-      { id: 'rec-5', name: 'Team Productivity Report', date: 'Generated Jul 01, 2026', category: 'Team' }
-    ];
-    localStorage.setItem(RECENT_KEY, JSON.stringify(defaults));
-    return defaults;
+    return [];
   }
 
   function saveRecentReports(list) {
@@ -743,7 +889,7 @@
 
     var list = getRecentReports();
     if (list.length === 0) {
-      container.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:24px;text-align:center;">No recent reports</div>';
+      container.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:24px;text-align:center;">No recent generated reports</div>';
       return;
     }
 
@@ -818,7 +964,7 @@
     if (sumEl) sumEl.textContent = 'Total records: ' + data.length + ' · Period: ' + currentDateRange.toUpperCase();
 
     if (data.length === 0) {
-      bodyEl.innerHTML = '<div style="padding:40px; text-align:center; color:var(--text-3); font-weight:600;">No records found for this report domain.</div>';
+      bodyEl.innerHTML = '<div style="padding:40px; text-align:center; color:var(--text-3); font-weight:600;">No records found in this reporting domain for the selected period.</div>';
     } else {
       var headers = Object.keys(data[0]);
       var tableHtml = '<div style="margin-bottom:16px; font-size:13px; color:var(--text-2);">' + esc(report.description) + '</div>' +
@@ -853,7 +999,7 @@
     var rows = typeof rep.getData === 'function' ? rep.getData() : [];
 
     if (rows.length === 0) {
-      if (window.VerdeToast) window.VerdeToast.warning('No data available to export');
+      if (window.VerdeToast) window.VerdeToast.warning('No data available to export for ' + reportName);
       return;
     }
 
@@ -890,6 +1036,10 @@
      ══════════════════════════════════════════════════════════════════════════ */
   function openGenerateModal() {
     var modal = document.getElementById('rep-generate-modal');
+    var typeSelect = document.getElementById('rep-gen-type');
+    if (typeSelect && currentCategory !== 'all') {
+      typeSelect.value = currentCategory;
+    }
     if (modal) modal.style.display = 'flex';
   }
 
@@ -904,16 +1054,15 @@
     var nameInput = document.getElementById('rep-gen-name');
 
     var type = typeSelect ? typeSelect.value : 'revenue';
-    var period = periodSelect ? periodSelect.value : 'month';
     var customName = nameInput && nameInput.value.trim() ? nameInput.value.trim() : null;
 
     var typeLabels = {
-      revenue: 'Revenue & Invoicing Audit',
-      projects: 'Projects Delivery Report',
-      sales: 'Sales & CRM Conversion Report',
-      productivity: 'Task Velocity Audit',
-      team: 'Team Performance & Workload',
-      finance: 'Comprehensive Financial Statement'
+      revenue: 'Monthly Revenue & Invoicing Audit',
+      projects: 'Project Milestones & Delivery Performance',
+      sales: 'Client Growth & CRM Pipeline Report',
+      productivity: 'Critical Tasks & Overdue Risk Assessment',
+      team: 'Team Velocity & Workload Allocation',
+      finance: 'Financial Cashflow & Expense Breakdown'
     };
 
     var finalName = customName || (typeLabels[type] || 'Enterprise Audit Report');
@@ -1088,7 +1237,7 @@
     if (exportPrint) exportPrint.addEventListener('click', printActiveReport);
     if (exportExcel) exportExcel.addEventListener('click', function() { exportGenericCSV('Monthly Revenue & Invoicing Audit'); });
     if (exportCsv) exportCsv.addEventListener('click', function() { exportGenericCSV('Monthly Revenue & Invoicing Audit'); });
-    if (exportHeader) exportHeader.addEventListener('click', function() { exportGenericCSV('Enterprise Intelligence Report'); });
+    if (exportHeader) exportHeader.addEventListener('click', function() { exportGenericCSV('Monthly Revenue & Invoicing Audit'); });
 
     // 7. Modals
     var genBtn = document.getElementById('rep-generate-btn');
