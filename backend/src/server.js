@@ -5,6 +5,11 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 
 const healthRoutes = require('./routes/health.routes');
+const orgRoutes = require('./routes/organizations.routes');
+const userRoutes = require('./routes/users.routes');
+const clientRoutes = require('./routes/clients.routes');
+const projectRoutes = require('./routes/projects.routes');
+const taskRoutes = require('./routes/tasks.routes');
 const errorHandler = require('./middleware/errorHandler');
 const notFound = require('./middleware/notFound');
 
@@ -22,6 +27,11 @@ if (process.env.NODE_ENV === 'development') {
 
 // Routes
 app.use('/api/health', healthRoutes);
+app.use('/api/organizations', orgRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/clients', clientRoutes);
+app.use('/api/projects', projectRoutes);
+app.use('/api/tasks', taskRoutes);
 
 // Handle undefined routes
 app.use(notFound);
