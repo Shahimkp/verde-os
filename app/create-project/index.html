@@ -450,41 +450,9 @@
               <div class="wiz-card-subtitle">Allocate execution team members to the project</div>
 
               <!-- Execution Team (Single Full-Width Section) -->
-              <div class="tr-grid">
-                <div class="tm-card active" onclick="toggleTeamMember(this)" data-member="SH" data-name="Shahim">
-                  <div class="tm-av" style="background:var(--primary);">SH</div>
-                  <div class="tm-info">
-                    <div class="tm-name">Shahim</div>
-                    <div class="tm-role">CEO · Executive Lead</div>
-                    <div class="tm-workload" style="font-size:11px; color:var(--text-3); margin-top:2px;">Workload: 100% (4 Active Projects)</div>
-                  </div>
-                </div>
-
-                <div class="tm-card active" onclick="toggleTeamMember(this)" data-member="MI" data-name="Midhul">
-                  <div class="tm-av" style="background:var(--success);">MI</div>
-                  <div class="tm-info">
-                    <div class="tm-name">Midhul</div>
-                    <div class="tm-role">Full Stack Developer</div>
-                    <div class="tm-workload" style="font-size:11px; color:var(--text-3); margin-top:2px;">Workload: 85% (3 Active Projects)</div>
-                  </div>
-                </div>
-
-                <div class="tm-card" onclick="toggleTeamMember(this)" data-member="AM" data-name="Ameen">
-                  <div class="tm-av" style="background:var(--warning);">AM</div>
-                  <div class="tm-info">
-                    <div class="tm-name">Ameen</div>
-                    <div class="tm-role">UI/UX Designer</div>
-                    <div class="tm-workload" style="font-size:11px; color:var(--text-3); margin-top:2px;">Workload: 60% (2 Active Projects)</div>
-                  </div>
-                </div>
-
-                <div class="tm-card" onclick="toggleTeamMember(this)" data-member="NH" data-name="Nihal">
-                  <div class="tm-av" style="background:var(--text-3);">NH</div>
-                  <div class="tm-info">
-                    <div class="tm-name">Nihal</div>
-                    <div class="tm-role">Marketing Executive</div>
-                    <div class="tm-workload" style="font-size:11px; color:var(--text-3); margin-top:2px;">Workload: 45% (1 Active Project)</div>
-                  </div>
+              <div class="tr-grid" id="project-team-members">
+                <div style="grid-column: 1 / -1; padding: 24px; text-align: center; color: var(--text-3); font-size: 14px;">
+                  Loading team members...
                 </div>
               </div>
             </div>

@@ -19,7 +19,7 @@
 
   var selectedType = 'Website Development';
   var selectedOwner = 'Shahim';
-  var selectedTeam = ['SH', 'MI'];
+  var selectedTeam = [];
 
   // Render Stepper Header
   function renderStepper() {
@@ -145,6 +145,13 @@
   // Step 4 Team Member Selection
   window.toggleTeamMember = function (element) {
     element.classList.toggle('active');
+    var empId = element.getAttribute('data-member');
+    if (element.classList.contains('active')) {
+      if (selectedTeam.indexOf(empId) === -1) selectedTeam.push(empId);
+    } else {
+      var idx = selectedTeam.indexOf(empId);
+      if (idx > -1) selectedTeam.splice(idx, 1);
+    }
   };
 
   // Step 5 Review Population
@@ -182,7 +189,7 @@
       category: selectedType,
       dueDate: document.getElementById('inpDate') ? document.getElementById('inpDate').value : '',
       budget: parseFloat(document.getElementById('inpBudget') ? document.getElementById('inpBudget').value : 0),
-      team: ['SH'],
+      team: selectedTeam,
       isDraft: true
     };
 
@@ -220,7 +227,7 @@
       category: selectedType,
       dueDate: document.getElementById('inpDate') ? document.getElementById('inpDate').value : '2026-08-30',
       budget: parseFloat(document.getElementById('inpBudget') ? document.getElementById('inpBudget').value : 25000),
-      team: ['SH', 'MI']
+      team: selectedTeam
     };
     if (currentClientId) payload.clientId = currentClientId;
 
@@ -340,6 +347,49 @@
     }
   }
 
+  function loadTeamMembers() {
+    var container = document.getElementById('project-team-members');
+    if (!container) return;
+
+    if (window.VerdeServices && window.VerdeServices.Team && typeof window.VerdeServices.Team.getMembers === 'function') {
+      window.VerdeServices.Team.getMembers().then(function(members) {
+        if (!members || members.length === 0) {
+          container.innerHTML = '<div style="grid-column: 1 / -1; padding: 24px; text-align: center; color: var(--text-3); font-size: 14px;">No team members available.</div>';
+          return;
+        }
+
+        var html = '';
+        members.forEach(function(m) {
+          var isActive = selectedTeam.indexOf(m.id) > -1 ? ' active' : '';
+          var role = m.role || m.department || 'Team Member';
+          var name = m.name || m.displayName || 'Unknown';
+          var initials = m.initials || name.substring(0, 2).toUpperCase();
+          var bg = m.avatarBg || 'var(--primary)';
+          var workStr = '';
+          if (m.workload || m.activeProjects !== undefined) {
+              workStr = 'Workload: ' + (m.workload || '0%') + (m.activeProjects !== undefined ? ' (' + m.activeProjects + ' Active Projects)' : '');
+          }
+
+          html += '<div class="tm-card' + isActive + '" onclick="toggleTeamMember(this)" data-member="' + m.id + '" data-name="' + name + '">';
+          html += '  <div class="tm-av" style="background:' + bg + ';">' + initials + '</div>';
+          html += '  <div class="tm-info">';
+          html += '    <div class="tm-name">' + name + '</div>';
+          html += '    <div class="tm-role">' + role + '</div>';
+          if (workStr) {
+            html += '    <div class="tm-workload" style="font-size:11px; color:var(--text-3); margin-top:2px;">' + workStr + '</div>';
+          }
+          html += '  </div>';
+          html += '</div>';
+        });
+        container.innerHTML = html;
+      }).catch(function(e) {
+        container.innerHTML = '<div style="grid-column: 1 / -1; padding: 24px; text-align: center; color: var(--danger); font-size: 14px;">Unable to load team members.</div>';
+      });
+    } else {
+        container.innerHTML = '<div style="grid-column: 1 / -1; padding: 24px; text-align: center; color: var(--danger); font-size: 14px;">Unable to load team members.</div>';
+    }
+  }
+
   // Init
   function initWizard() {
     setupClientDropdown();
@@ -362,6 +412,7 @@
       });
     }
 
+    loadTeamMembers();
     renderStepper();
   }
 

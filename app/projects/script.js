@@ -820,6 +820,15 @@
           }
         }
         
+        // --- Member UI Restriction ---
+        var isAdmin = window.VERDE_PERMISSIONS && window.VERDE_PERMISSIONS.can('projects_edit');
+        if (!isAdmin) {
+          if (editBtn) editBtn.style.display = 'none';
+          if (archiveBtn) archiveBtn.style.display = 'none';
+          var deleteBtn = document.querySelector('button[onclick="deleteCurrentProject()"]');
+          if (deleteBtn) deleteBtn.style.display = 'none';
+        }
+        
         // Load Client Data
         if (proj.clientId && window.VerdeServices.Crm) {
            window.VerdeServices.Crm.getClientById(proj.clientId).then(function(clientData) {
@@ -1160,7 +1169,6 @@
   };
 
   window.closeProject = function() {
-    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('projects_edit')) { if (window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     var pPanel = document.getElementById('projPanel');
     var pOverlay = document.getElementById('projOverlay');
     if(pPanel) pPanel.classList.remove('active');
