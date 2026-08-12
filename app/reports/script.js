@@ -431,104 +431,369 @@
   }
 
   /* ══════════════════════════════════════════════════════════════════════════
-     2. ANALYTICS CHARTS RENDERER (REAL DATA ONLY)
+     2. ANALYTICS CHARTS RENDERER (EXECUTIVE REAL DATA VISUALIZATIONS)
      ══════════════════════════════════════════════════════════════════════════ */
   function renderCharts() {
-    var c1Bars = document.getElementById('rep-chart-1-bars');
-    var c2Bars = document.getElementById('rep-chart-2-bars');
-    var c3Bars = document.getElementById('rep-chart-3-bars');
-    var c4Bars = document.getElementById('rep-chart-4-bars');
+    var range = currentDateRange;
 
-    if (!c1Bars || !c2Bars || !c3Bars || !c4Bars) return;
+    // Filtered data subsets by active range
+    var invoices = cachedData.invoices;
+    var projects = cachedData.projects.filter(function(p) { return !p.isDeleted && isDateInRange(p.createdAt || p.dueDate || p.startDate, range); });
+    var leads = cachedData.leads.filter(function(l) { return !l.isDeleted && isDateInRange(l.createdAt || l.date, range); });
+    var tasks = cachedData.tasks.filter(function(t) { return !t.isDeleted && isDateInRange(t.createdAt || t.dueDate, range); });
 
-    var now = new Date();
-    var monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    // ──────────────────────────────────────────────────────────────────────────
+    // 1. REVENUE TREND (INTERACTIVE SVG LINE & AREA CHART)
+    // ──────────────────────────────────────────────────────────────────────────
+    var c1Body = document.getElementById('rep-chart-1-body');
+    var c1Total = document.getElementById('rep-c1-total');
+    var c1Avg = document.getElementById('rep-c1-avg');
+    var c1Growth = document.getElementById('rep-c1-growth');
 
-    // 1. Revenue Trend Chart (Real monthly sum across last 6 months)
-    var months = [];
-    var revValues = [];
-    for (var i = 5; i >= 0; i--) {
-      var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      var mIdx = d.getMonth();
-      var yIdx = d.getFullYear();
-      months.push(monthNames[mIdx]);
+    if (c1Body) {
+      var now = new Date();
+      var monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      var months = [];
+      var revValues = [];
 
-      var mRev = 0;
-      cachedData.invoices.forEach(function(inv) {
-        var isPaid = inv.status === 'Paid' || inv.status === 'Completed' || (inv.type === 'Income' && inv.status !== 'Pending');
-        if (isPaid && inv.issueDate) {
-          var idt = new Date(inv.issueDate);
-          if (!isNaN(idt.getTime()) && idt.getFullYear() === yIdx && idt.getMonth() === mIdx) {
-            mRev += (inv.total || 0);
+      for (var i = 5; i >= 0; i--) {
+        var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        var mIdx = d.getMonth();
+        var yIdx = d.getFullYear();
+        months.push({ label: monthNames[mIdx], month: mIdx, year: yIdx });
+
+        var mRev = 0;
+        invoices.forEach(function(inv) {
+          var isPaid = inv.status === 'Paid' || inv.status === 'Completed' || (inv.type === 'Income' && inv.status !== 'Pending');
+          if (isPaid && inv.issueDate) {
+            var idt = new Date(inv.issueDate);
+            if (!isNaN(idt.getTime()) && idt.getFullYear() === yIdx && idt.getMonth() === mIdx) {
+              mRev += (inv.total || 0);
+            }
           }
+        });
+        revValues.push(mRev);
+      }
+
+      var total6Mo = revValues.reduce(function(sum, v) { return sum + v; }, 0);
+      var avg6Mo = Math.round(total6Mo / 6);
+      var firstMo = revValues[0];
+      var lastMo = revValues[5];
+      var growthPct = firstMo > 0 ? Math.round(((lastMo - firstMo) / firstMo) * 100) : (lastMo > 0 ? '+100%' : '0%');
+      if (typeof growthPct === 'number') growthPct = (growthPct >= 0 ? '+' : '') + growthPct + '%';
+
+      if (c1Total) c1Total.textContent = fmtLakhs(total6Mo);
+      if (c1Avg) c1Avg.textContent = fmtLakhs(avg6Mo);
+      if (c1Growth) {
+        c1Growth.textContent = growthPct;
+        c1Growth.style.color = (parseInt(growthPct, 10) >= 0 || growthPct === '0%') ? 'var(--primary)' : 'var(--danger)';
+      }
+
+      var maxRev = Math.max.apply(null, revValues);
+      if (maxRev === 0) {
+        c1Body.innerHTML = '<div class="rep-chart-empty">' +
+          '<svg class="rep-chart-empty-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>' +
+          '<div class="rep-chart-empty-text">No revenue recorded for this period</div>' +
+          '<div class="rep-chart-empty-sub">Paid invoice settlements will appear here.</div>' +
+        '</div>';
+      } else {
+        // Build SVG Chart Geometry
+        var svgW = 460;
+        var svgH = 150;
+        var padL = 45;
+        var padR = 20;
+        var padT = 15;
+        var padB = 25;
+        var chartW = svgW - padL - padR;
+        var chartH = svgH - padT - padB;
+
+        var yMax = Math.ceil(maxRev * 1.15);
+        var stepX = chartW / 5;
+
+        var points = revValues.map(function(val, idx) {
+          var x = padL + (idx * stepX);
+          var y = padT + chartH - ((val / yMax) * chartH);
+          return { x: x, y: y, val: val, label: months[idx].label };
+        });
+
+        // Path generators
+        var lineD = 'M ' + points[0].x + ' ' + points[0].y;
+        for (var p = 1; p < points.length; p++) {
+          var prev = points[p - 1];
+          var curr = points[p];
+          var cp1x = prev.x + (curr.x - prev.x) / 2;
+          var cp1y = prev.y;
+          var cp2x = prev.x + (curr.x - prev.x) / 2;
+          var cp2y = curr.y;
+          lineD += ' C ' + cp1x + ' ' + cp1y + ', ' + cp2x + ' ' + cp2y + ', ' + curr.x + ' ' + curr.y;
         }
-      });
-      revValues.push(mRev);
+
+        var areaD = lineD + ' L ' + points[points.length - 1].x + ' ' + (padT + chartH) + ' L ' + points[0].x + ' ' + (padT + chartH) + ' Z';
+
+        // Y-axis grid ticks
+        var yTicks = [0, Math.round(yMax / 2), yMax];
+        var gridLinesHtml = yTicks.map(function(tVal) {
+          var yPos = padT + chartH - ((tVal / yMax) * chartH);
+          return '<line x1="' + padL + '" y1="' + yPos + '" x2="' + (svgW - padR) + '" y2="' + yPos + '" stroke="var(--border-subtle)" stroke-width="1" stroke-dasharray="3,3" />' +
+            '<text x="' + (padL - 8) + '" y="' + (yPos + 3) + '" fill="var(--text-3)" font-size="9" font-weight="700" text-anchor="end">' + fmtLakhs(tVal) + '</text>';
+        }).join('');
+
+        // X-axis text labels & interactive points
+        var elementsHtml = points.map(function(pt, idx) {
+          return '<text x="' + pt.x + '" y="' + (svgH - 4) + '" fill="var(--text-3)" font-size="10" font-weight="700" text-anchor="middle">' + pt.label + '</text>' +
+            '<circle class="rep-chart-point" data-idx="' + idx + '" data-label="' + pt.label + '" data-val="' + fmtMoney(pt.val) + '" cx="' + pt.x + '" cy="' + pt.y + '" r="4.5" fill="var(--surface)" stroke="var(--primary)" stroke-width="2.5" />';
+        }).join('');
+
+        var svgHtml = '<div class="rep-svg-wrap">' +
+          '<div id="rep-c1-tooltip" class="rep-tooltip-pill" style="display:none; opacity:0;"></div>' +
+          '<svg class="rep-svg-chart" viewBox="0 0 ' + svgW + ' ' + svgH + '">' +
+            '<defs>' +
+              '<linearGradient id="repRevGrad" x1="0" y1="0" x2="0" y2="1">' +
+                '<stop offset="0%" stop-color="var(--primary)" stop-opacity="0.32" />' +
+                '<stop offset="100%" stop-color="var(--primary)" stop-opacity="0.0" />' +
+              '</linearGradient>' +
+            '</defs>' +
+            gridLinesHtml +
+            '<path d="' + areaD + '" fill="url(#repRevGrad)" />' +
+            '<path d="' + lineD + '" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />' +
+            elementsHtml +
+          '</svg>' +
+        '</div>';
+
+        c1Body.innerHTML = svgHtml;
+
+        // Tooltip interaction
+        var tooltip = document.getElementById('rep-c1-tooltip');
+        var wrap = c1Body.querySelector('.rep-svg-wrap');
+        if (tooltip && wrap) {
+          wrap.querySelectorAll('.rep-chart-point').forEach(function(pt) {
+            pt.addEventListener('mouseenter', function() {
+              var lbl = this.getAttribute('data-label');
+              var val = this.getAttribute('data-val');
+              var cx = parseFloat(this.getAttribute('cx'));
+              var cy = parseFloat(this.getAttribute('cy'));
+              var pctX = (cx / svgW) * 100;
+              var pctY = (cy / svgH) * 100;
+
+              tooltip.innerHTML = lbl + ' · ' + val;
+              tooltip.style.left = pctX + '%';
+              tooltip.style.top = pctY + '%';
+              tooltip.style.display = 'block';
+              tooltip.style.opacity = '1';
+            });
+            pt.addEventListener('mouseleave', function() {
+              tooltip.style.opacity = '0';
+              tooltip.style.display = 'none';
+            });
+          });
+        }
+      }
     }
 
-    var maxRev = Math.max.apply(null, revValues);
-    c1Bars.innerHTML = revValues.map(function(val, idx) {
-      var pct = maxRev > 0 ? Math.max(6, Math.round((val / (maxRev * 1.15)) * 100)) : 6;
-      return '<div class="chart-bar-wrap">' +
-        '<div class="chart-bar-tooltip">' + fmtMoney(val) + '</div>' +
-        '<div class="chart-bar" style="height:' + pct + '%; width:100%;"></div>' +
-        '<div class="chart-bar-label">' + months[idx] + '</div>' +
-      '</div>';
-    }).join('');
+    // ──────────────────────────────────────────────────────────────────────────
+    // 2. PROJECT COMPLETION (STATUS DISTRIBUTION BARS)
+    // ──────────────────────────────────────────────────────────────────────────
+    var c2Body = document.getElementById('rep-chart-2-body');
+    var c2Total = document.getElementById('rep-c2-total');
+    var c2Active = document.getElementById('rep-c2-active');
+    var c2Comp = document.getElementById('rep-c2-comp');
 
-    // 2. Project Completion Status (Real counts)
-    var prjStages = ['Planning', 'In Progress', 'Review', 'Completed'];
-    var prjCounts = [
-      cachedData.projects.filter(function(p) { return !p.isDeleted && (p.status === 'Planning' || p.status === 'Draft'); }).length,
-      cachedData.projects.filter(function(p) { return !p.isDeleted && (p.status === 'Active' || p.status === 'In Progress' || p.status === 'On Track'); }).length,
-      cachedData.projects.filter(function(p) { return !p.isDeleted && (p.status === 'At Risk' || p.status === 'Review'); }).length,
-      cachedData.projects.filter(function(p) { return !p.isDeleted && (p.status === 'Completed' || p.progress === 100); }).length
-    ];
-    var maxPrj = Math.max.apply(null, prjCounts);
-    c2Bars.innerHTML = prjCounts.map(function(cnt, idx) {
-      var pct = maxPrj > 0 ? Math.max(6, Math.round((cnt / (maxPrj * 1.15)) * 100)) : 6;
-      return '<div class="chart-bar-wrap">' +
-        '<div class="chart-bar-tooltip">' + cnt + ' project' + (cnt !== 1 ? 's' : '') + '</div>' +
-        '<div class="chart-bar" style="height:' + pct + '%; background:var(--info-10); border-color:var(--info); width:100%;"></div>' +
-        '<div class="chart-bar-label">' + prjStages[idx] + '</div>' +
-      '</div>';
-    }).join('');
+    if (c2Body) {
+      var totalPrj = projects.length;
+      var prjPlanning = projects.filter(function(p) { return p.status === 'Planning' || p.status === 'Draft'; }).length;
+      var prjActive = projects.filter(function(p) { return p.status === 'Active' || p.status === 'In Progress' || p.status === 'On Track'; }).length;
+      var prjReview = projects.filter(function(p) { return p.status === 'At Risk' || p.status === 'Review'; }).length;
+      var prjCompleted = projects.filter(function(p) { return p.status === 'Completed' || p.progress === 100; }).length;
 
-    // 3. Sales Pipeline Breakdown (Real counts)
-    var salesStages = ['Lead', 'Contacted', 'Proposal', 'Won'];
-    var salesCounts = [
-      cachedData.leads.filter(function(l) { return !l.isDeleted && (l.stage === 'Lead' || l.stage === 'New'); }).length,
-      cachedData.leads.filter(function(l) { return !l.isDeleted && l.stage === 'Contacted'; }).length,
-      cachedData.leads.filter(function(l) { return !l.isDeleted && (l.stage === 'Proposal' || l.stage === 'Proposal Sent' || l.stage === 'Negotiation'); }).length,
-      cachedData.leads.filter(function(l) { return !l.isDeleted && (l.stage === 'Won' || l.status === 'Won'); }).length
-    ];
-    var maxSales = Math.max.apply(null, salesCounts);
-    c3Bars.innerHTML = salesCounts.map(function(cnt, idx) {
-      var pct = maxSales > 0 ? Math.max(6, Math.round((cnt / (maxSales * 1.15)) * 100)) : 6;
-      return '<div class="chart-bar-wrap">' +
-        '<div class="chart-bar-tooltip">' + cnt + ' deal' + (cnt !== 1 ? 's' : '') + '</div>' +
-        '<div class="chart-bar" style="height:' + pct + '%; background:var(--success-10); border-color:var(--success); width:100%;"></div>' +
-        '<div class="chart-bar-label">' + salesStages[idx] + '</div>' +
-      '</div>';
-    }).join('');
+      if (c2Total) c2Total.textContent = totalPrj;
+      if (c2Active) c2Active.textContent = prjActive + prjReview;
+      if (c2Comp) c2Comp.textContent = prjCompleted;
 
-    // 4. Task Velocity & Volume (Real counts)
-    var taskTypes = ['Critical', 'High', 'Medium', 'Done'];
-    var taskCounts = [
-      cachedData.tasks.filter(function(t) { return !t.isDeleted && t.priority === 'Critical' && t.status !== 'Completed'; }).length,
-      cachedData.tasks.filter(function(t) { return !t.isDeleted && t.priority === 'High' && t.status !== 'Completed'; }).length,
-      cachedData.tasks.filter(function(t) { return !t.isDeleted && (t.priority === 'Medium' || t.priority === 'Low' || !t.priority) && t.status !== 'Completed'; }).length,
-      cachedData.tasks.filter(function(t) { return !t.isDeleted && t.status === 'Completed'; }).length
-    ];
-    var maxTasks = Math.max.apply(null, taskCounts);
-    c4Bars.innerHTML = taskCounts.map(function(cnt, idx) {
-      var pct = maxTasks > 0 ? Math.max(6, Math.round((cnt / (maxTasks * 1.15)) * 100)) : 6;
-      return '<div class="chart-bar-wrap">' +
-        '<div class="chart-bar-tooltip">' + cnt + ' task' + (cnt !== 1 ? 's' : '') + '</div>' +
-        '<div class="chart-bar" style="height:' + pct + '%; background:var(--warning-10); border-color:var(--warning); width:100%;"></div>' +
-        '<div class="chart-bar-label">' + taskTypes[idx] + '</div>' +
-      '</div>';
-    }).join('');
+      if (totalPrj === 0) {
+        c2Body.innerHTML = '<div class="rep-chart-empty">' +
+          '<svg class="rep-chart-empty-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>' +
+          '<div class="rep-chart-empty-text">No project activity available for this period</div>' +
+          '<div class="rep-chart-empty-sub">Active projects and delivery milestones will appear here.</div>' +
+        '</div>';
+      } else {
+        var stages = [
+          { name: 'Completed', count: prjCompleted, color: 'var(--success)', pct: Math.round((prjCompleted / totalPrj) * 100) },
+          { name: 'In Progress / Active', count: prjActive, color: 'var(--primary)', pct: Math.round((prjActive / totalPrj) * 100) },
+          { name: 'Review / At Risk', count: prjReview, color: 'var(--warning)', pct: Math.round((prjReview / totalPrj) * 100) },
+          { name: 'Planning & Draft', count: prjPlanning, color: '#94a3b8', pct: Math.round((prjPlanning / totalPrj) * 100) }
+        ];
+
+        c2Body.innerHTML = '<div class="rep-stage-list">' +
+          stages.map(function(st) {
+            return '<div class="rep-stage-item">' +
+              '<div class="rep-stage-header">' +
+                '<span class="rep-stage-name"><span class="rep-stage-dot" style="background:' + st.color + ';"></span>' + st.name + '</span>' +
+                '<span class="rep-stage-values">' + st.count + ' (' + st.pct + '%)</span>' +
+              '</div>' +
+              '<div class="rep-stage-bar-track">' +
+                '<div class="rep-stage-bar-fill" style="width:' + st.pct + '%; background:' + st.color + ';"></div>' +
+              '</div>' +
+            '</div>';
+          }).join('') +
+        '</div>';
+      }
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // 3. SALES PERFORMANCE (PIPELINE STAGE BARS)
+    // ──────────────────────────────────────────────────────────────────────────
+    var c3Body = document.getElementById('rep-chart-3-body');
+    var c3Pipe = document.getElementById('rep-c3-pipe');
+    var c3Won = document.getElementById('rep-c3-won');
+    var c3Rate = document.getElementById('rep-c3-rate');
+
+    if (c3Body) {
+      var totalLds = leads.length;
+      var stageNew = leads.filter(function(l) { return l.stage === 'New' || l.stage === 'Lead' || (!l.stage && !l.status); });
+      var stageContacted = leads.filter(function(l) { return l.stage === 'Contacted'; });
+      var stageProposal = leads.filter(function(l) { return l.stage === 'Proposal' || l.stage === 'Proposal Sent' || l.stage === 'Negotiation'; });
+      var stageWon = leads.filter(function(l) { return l.stage === 'Won' || l.status === 'Won'; });
+
+      var activePipeSum = 0;
+      stageNew.concat(stageContacted, stageProposal).forEach(function(l) { activePipeSum += parseAmount(l.value || l.dealValue || 0); });
+
+      var wonSum = 0;
+      stageWon.forEach(function(l) { wonSum += parseAmount(l.value || l.dealValue || 0); });
+
+      var winRate = totalLds > 0 ? Math.round((stageWon.length / totalLds) * 100) : 0;
+
+      if (c3Pipe) c3Pipe.textContent = fmtLakhs(activePipeSum);
+      if (c3Won) c3Won.textContent = fmtLakhs(wonSum);
+      if (c3Rate) c3Rate.textContent = winRate + '%';
+
+      if (totalLds === 0) {
+        c3Body.innerHTML = '<div class="rep-chart-empty">' +
+          '<svg class="rep-chart-empty-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>' +
+          '<div class="rep-chart-empty-text">No CRM pipeline records available for this period</div>' +
+          '<div class="rep-chart-empty-sub">Lead conversions and stage progression will appear here.</div>' +
+        '</div>';
+      } else {
+        var pipeStages = [
+          { name: 'Deals Closed (Won)', list: stageWon, color: 'var(--success)' },
+          { name: 'Proposal & Negotiation', list: stageProposal, color: 'var(--primary)' },
+          { name: 'Contacted', list: stageContacted, color: 'var(--warning)' },
+          { name: 'New Leads', list: stageNew, color: 'var(--info)' }
+        ];
+
+        c3Body.innerHTML = '<div class="rep-stage-list">' +
+          pipeStages.map(function(st) {
+            var val = st.list.reduce(function(sum, l) { return sum + parseAmount(l.value || l.dealValue || 0); }, 0);
+            var pct = totalLds > 0 ? Math.round((st.list.length / totalLds) * 100) : 0;
+            return '<div class="rep-stage-item">' +
+              '<div class="rep-stage-header">' +
+                '<span class="rep-stage-name"><span class="rep-stage-dot" style="background:' + st.color + ';"></span>' + st.name + '</span>' +
+                '<span class="rep-stage-values">' + st.list.length + ' leads · ' + fmtMoney(val) + '</span>' +
+              '</div>' +
+              '<div class="rep-stage-bar-track">' +
+                '<div class="rep-stage-bar-fill" style="width:' + pct + '%; background:' + st.color + ';"></div>' +
+              '</div>' +
+            '</div>';
+          }).join('') +
+        '</div>';
+      }
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // 4. TASK COMPLETION (WEEKLY GROUPED ACTIVITY BARS)
+    // ──────────────────────────────────────────────────────────────────────────
+    var c4Body = document.getElementById('rep-chart-4-body');
+    var c4Total = document.getElementById('rep-c4-total');
+    var c4Comp = document.getElementById('rep-c4-comp');
+    var c4Pending = document.getElementById('rep-c4-pending');
+
+    if (c4Body) {
+      var totalTsk = tasks.length;
+      var doneTsk = tasks.filter(function(t) { return t.status === 'Completed'; }).length;
+      var pendingTsk = totalTsk - doneTsk;
+
+      if (c4Total) c4Total.textContent = totalTsk;
+      if (c4Comp) c4Comp.textContent = doneTsk;
+      if (c4Pending) c4Pending.textContent = pendingTsk;
+
+      if (totalTsk === 0) {
+        c4Body.innerHTML = '<div class="rep-chart-empty">' +
+          '<svg class="rep-chart-empty-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>' +
+          '<div class="rep-chart-empty-text">No task activity recorded for this period</div>' +
+          '<div class="rep-chart-empty-sub">Completed and active tasks will display here.</div>' +
+        '</div>';
+      } else {
+        var days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        // Distribute real tasks across the 7 weekly buckets by date or proportional sequence
+        var dayStats = days.map(function(day, dIdx) {
+          var dDone = 0;
+          var dOpen = 0;
+          tasks.forEach(function(t, tIdx) {
+            var dt = t.dueDate || t.createdAt;
+            if (dt) {
+              var dObj = new Date(dt);
+              if (!isNaN(dObj.getTime())) {
+                var dayNum = (dObj.getDay() + 6) % 7; // Convert Sun=0 to Mon=0
+                if (dayNum === dIdx) {
+                  if (t.status === 'Completed') dDone++;
+                  else dOpen++;
+                }
+              }
+            } else if (tIdx % 7 === dIdx) {
+              if (t.status === 'Completed') dDone++;
+              else dOpen++;
+            }
+          });
+          return { day: day, done: dDone, open: dOpen, total: dDone + dOpen };
+        });
+
+        var maxDayTasks = Math.max.apply(null, dayStats.map(function(s) { return Math.max(s.done, s.open); })) * 1.2 || 4;
+
+        c4Body.innerHTML = '<div style="position:relative; width:100%;">' +
+          '<div id="rep-c4-tooltip" class="rep-tooltip-pill" style="display:none; opacity:0;"></div>' +
+          '<div style="display:flex; justify-content:flex-end; gap:16px; margin-bottom:12px; font-size:11px; font-weight:700; color:var(--text-3);">' +
+            '<span style="display:flex; align-items:center; gap:6px;"><span style="width:8px; height:8px; border-radius:2px; background:var(--success);"></span> Completed (' + doneTsk + ')</span>' +
+            '<span style="display:flex; align-items:center; gap:6px;"><span style="width:8px; height:8px; border-radius:2px; background:var(--primary);"></span> Open (' + pendingTsk + ')</span>' +
+          '</div>' +
+          '<div class="rep-weekly-grid">' +
+            dayStats.map(function(st, dIdx) {
+              var hDone = Math.max(6, Math.round((st.done / maxDayTasks) * 100));
+              var hOpen = Math.max(6, Math.round((st.open / maxDayTasks) * 100));
+              return '<div class="rep-weekly-col">' +
+                '<div class="rep-weekly-bars">' +
+                  '<div class="rep-wbar rep-wbar-done" data-day="' + st.day + '" data-done="' + st.done + '" data-open="' + st.open + '" style="height:' + (st.done > 0 ? hDone : 4) + '%; background:var(--success); opacity:' + (st.done > 0 ? '1' : '0.2') + ';"></div>' +
+                  '<div class="rep-wbar rep-wbar-open" data-day="' + st.day + '" data-done="' + st.done + '" data-open="' + st.open + '" style="height:' + (st.open > 0 ? hOpen : 4) + '%; background:var(--primary); opacity:' + (st.open > 0 ? '1' : '0.2') + ';"></div>' +
+                '</div>' +
+                '<div class="rep-weekly-label">' + st.day + '</div>' +
+              '</div>';
+            }).join('') +
+          '</div>' +
+        '</div>';
+
+        // Tooltip interaction
+        var wTooltip = document.getElementById('rep-c4-tooltip');
+        if (wTooltip) {
+          c4Body.querySelectorAll('.rep-wbar').forEach(function(bar) {
+            bar.addEventListener('mouseenter', function() {
+              var day = this.getAttribute('data-day');
+              var done = this.getAttribute('data-done');
+              var open = this.getAttribute('data-open');
+              var rect = this.getBoundingClientRect();
+              var bodyRect = c4Body.getBoundingClientRect();
+
+              wTooltip.innerHTML = day + ' · ' + done + ' Done, ' + open + ' Open';
+              wTooltip.style.left = (rect.left - bodyRect.left + rect.width / 2) + 'px';
+              wTooltip.style.top = (rect.top - bodyRect.top) + 'px';
+              wTooltip.style.display = 'block';
+              wTooltip.style.opacity = '1';
+            });
+            bar.addEventListener('mouseleave', function() {
+              wTooltip.style.opacity = '0';
+              wTooltip.style.display = 'none';
+            });
+          });
+        }
+      }
+    }
   }
 
   /* ══════════════════════════════════════════════════════════════════════════

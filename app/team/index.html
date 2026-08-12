@@ -500,7 +500,7 @@
               <button class="btn btn-ghost" style="background:var(--surface); border:1px solid var(--border);">
                 Status
               </button>
-              <button class="btn btn-primary" onclick="window.openAddEmployeeModal && window.openAddEmployeeModal()">+ Add Employee</button>
+              <button class="btn btn-primary" onclick="window.openAddEmployeeModal && window.openAddEmployeeModal()">+ Add Member</button>
             </div>
           </header>
 
@@ -515,19 +515,19 @@
           <!-- 2. KPI Cards (Max 4) -->
           <section class="team-kpi-grid">
             <div class="team-kpi-card">
-              <div class="team-kpi-value">42</div>
+              <div class="team-kpi-value" id="kpi-total-employees">-</div>
               <div class="team-kpi-label">Total Employees</div>
             </div>
             <div class="team-kpi-card">
-              <div class="team-kpi-value" style="color:var(--success);">38</div>
+              <div class="team-kpi-value" id="kpi-online-now" style="color:var(--success);">-</div>
               <div class="team-kpi-label">Online Now</div>
             </div>
             <div class="team-kpi-card">
-              <div class="team-kpi-value" style="color:var(--warning);">4</div>
+              <div class="team-kpi-value" id="kpi-on-leave" style="color:var(--warning);">-</div>
               <div class="team-kpi-label">On Leave</div>
             </div>
             <div class="team-kpi-card">
-              <div class="team-kpi-value" style="color:var(--primary);">94%</div>
+              <div class="team-kpi-value" id="kpi-avg-productivity" style="color:var(--primary);">-</div>
               <div class="team-kpi-label">Average Productivity</div>
             </div>
           </section>

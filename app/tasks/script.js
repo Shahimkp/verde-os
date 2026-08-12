@@ -542,7 +542,7 @@
         const selAssignee = document.getElementById('selTaskAssignee');
         selAssignee.innerHTML = '<option value="Unassigned">Unassigned</option>';
         teamMembers.forEach(m => {
-          selAssignee.innerHTML += `<option value="${m.id}">${m.name} - ${m.role || 'Member'}</option>`;
+          selAssignee.innerHTML += `<option value="${m.id}">${m.displayName || m.name}</option>`;
         });
         if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('tasks_assign')) {
           selAssignee.disabled = true;
@@ -986,8 +986,8 @@
 
   // ── INITIALIZATION ──
   function initTasksWorkspace() {
-    if (window.VerdeServices && window.VerdeServices.Team) {
-       window.VerdeServices.Team.getMembers().then(members => { teamMembers = members || []; });
+    if (window.VerdeServices && window.VerdeServices.Identity) {
+       window.VerdeServices.Identity.resolveUsers().then(members => { teamMembers = members || []; });
     }
 
     // ── EVENT DELEGATION FOR TASKS MODULE ──
@@ -1072,9 +1072,9 @@
        });
     }
     const fEmp = document.getElementById('filter-employee');
-    if (fEmp && window.VerdeServices && window.VerdeServices.Team) {
-       window.VerdeServices.Team.getMembers().then(members => {
-         members.forEach(m => fEmp.innerHTML += `<option value="${m.id}">${m.name}</option>`);
+    if (fEmp && window.VerdeServices && window.VerdeServices.Identity) {
+       window.VerdeServices.Identity.resolveUsers().then(members => {
+         members.forEach(m => fEmp.innerHTML += `<option value="${m.id}">${m.displayName || m.name}</option>`);
        });
     }
     

@@ -75,7 +75,7 @@
     ];
     if (window.VerdeServices.Projects) promises.push(window.VerdeServices.Projects.getProjects());
     else promises.push(Promise.resolve([]));
-    if (window.VerdeServices.Team) promises.push(window.VerdeServices.Team.getMembers());
+    if (window.VerdeServices.Identity) promises.push(window.VerdeServices.Identity.resolveUsers());
     else promises.push(Promise.resolve([]));
 
     Promise.all(promises).then(function(results) {
@@ -709,12 +709,10 @@
 
     var teamOptionsHtml = '';
     var currentUser = window.VERDE_SESSION ? window.VERDE_SESSION.getUser().name : 'Shahim';
-    var teamList = currentEmployees.length > 0 ? currentEmployees : [
-      { name: 'Shahim' }, { name: 'Midhul' }, { name: 'Ameen' }, { name: 'Nihal' }
-    ];
+    var teamList = currentEmployees || [];
     teamList.forEach(function(t) {
       var isSel = (t.name === currentUser) ? 'selected' : '';
-      teamOptionsHtml += '<option value="' + t.name + '" ' + isSel + '>' + t.name + '</option>';
+      teamOptionsHtml += '<option value="' + t.name + '" ' + isSel + '>' + (t.displayName || t.name) + '</option>';
     });
 
     var todayStr = new Date().toISOString().split('T')[0];
@@ -927,12 +925,10 @@
 
     var teamOptionsHtml = '';
     var currentUser = window.VERDE_SESSION ? window.VERDE_SESSION.getUser().name : 'Shahim';
-    var teamList = currentEmployees.length > 0 ? currentEmployees : [
-      { name: 'Shahim' }, { name: 'Midhul' }, { name: 'Ameen' }, { name: 'Nihal' }
-    ];
+    var teamList = currentEmployees || [];
     teamList.forEach(function(t) {
       var isSel = (t.name === currentUser) ? 'selected' : '';
-      teamOptionsHtml += '<option value="' + t.name + '" ' + isSel + '>' + t.name + '</option>';
+      teamOptionsHtml += '<option value="' + t.name + '" ' + isSel + '>' + (t.displayName || t.name) + '</option>';
     });
 
     var futureDate = new Date();
@@ -1124,6 +1120,12 @@
     var overlay = document.createElement('div');
     overlay.className = 'modal-overlay active';
 
+    var teamOptionsHtml = '';
+    var teamList = currentEmployees || [];
+    teamList.forEach(function(t) {
+      teamOptionsHtml += '<option value="' + t.name + '">' + (t.displayName || t.name) + '</option>';
+    });
+
     var formHtml = 
       '<div class="modal-content" style="max-width:600px;">' +
         '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">' +
@@ -1196,10 +1198,7 @@
             '<div>' +
               '<label style="display:block; font-size:12px; font-weight:600; color:var(--text-3); margin-bottom:4px;">Assigned Salesperson</label>' +
               '<select id="new-lead-assigned" class="form-input">' +
-                '<option value="Shahim">Shahim</option>' +
-                '<option value="Nihal">Nihal</option>' +
-                '<option value="Midhul">Midhul</option>' +
-                '<option value="Ameen">Ameen</option>' +
+                teamOptionsHtml +
               '</select>' +
             '</div>' +
             '<div>' +

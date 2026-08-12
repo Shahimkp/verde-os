@@ -87,6 +87,110 @@
       }
     },
 
+    // 1.5. UNIFIED IDENTITY SERVICE
+    Identity: {
+      resolveUsers: function() {
+        var pMembers = (window.VerdeServices && window.VerdeServices.Team && typeof window.VerdeServices.Team.getMembers === 'function')
+          ? window.VerdeServices.Team.getMembers()
+          : Promise.resolve([]);
+          
+        return pMembers.then(function(employees) {
+          var users = [];
+
+          function addUser(u) {
+            var email = (u.email || '').toLowerCase();
+            var name = u.name || u.contactPerson || u.contact || 'Unknown';
+            var id = u.id || u.userId || ('USR-' + Math.random().toString(36).substr(2, 9));
+            
+            var type = 'Workspace Member';
+            if (u.id && String(u.id).indexOf('EMP-') === 0) type = 'Employee';
+            else if (u.employeeId) type = 'Employee';
+            else if (u.role === 'SuperAdmin' || u.role === 'Admin') type = 'Admin';
+
+            var existing = null;
+            for (var i = 0; i < users.length; i++) {
+              if (email && users[i].email === email) {
+                existing = users[i];
+                break;
+              }
+              if (users[i].name.toLowerCase() === name.toLowerCase()) {
+                existing = users[i];
+                break;
+              }
+            }
+
+            if (existing) {
+              // Merge richer Employee details into existing user
+              if (type === 'Employee') {
+                existing.type = 'Employee';
+                existing.employeeId = u.employeeId || id;
+                if (u.role && u.role !== 'User' && u.role !== 'Admin' && u.role !== 'SuperAdmin') existing.role = u.role;
+                if (u.department) existing.department = u.department;
+                if (u.avatarBg) existing.avatarBg = u.avatarBg;
+                if (u.initials) existing.initials = u.initials;
+                if (email && !existing.email) existing.email = email;
+              } else if (type === 'Admin') {
+                // Admin roles shouldn't overwrite Employee display roles, but they upgrade technical type if it was just User
+                if (!existing.employeeId) {
+                  existing.type = 'Admin';
+                  if (u.role) existing.role = u.role;
+                }
+              }
+              return;
+            }
+            
+            // New Person
+            users.push({
+              id: id,
+              name: name,
+              email: email || '',
+              role: u.role || 'User',
+              department: u.department || 'General',
+              initials: u.initials || name.substring(0, 2).toUpperCase(),
+              avatarBg: u.avatarBg || 'var(--primary)',
+              type: type,
+              employeeId: type === 'Employee' ? (u.employeeId || id) : null,
+              isDeleted: !!u.isDeleted
+            });
+          }
+
+          // 1. Add currently authenticated user first (from session)
+          if (window.VERDE_SESSION && typeof window.VERDE_SESSION.getUser === 'function') {
+            var currentUser = window.VERDE_SESSION.getUser();
+            if (currentUser) addUser(currentUser);
+          }
+          
+          // 2. Add API/Workspace Members
+          var wsRaw = localStorage.getItem('verde_api_members');
+          if (wsRaw) {
+             try {
+               var wsMembers = JSON.parse(wsRaw);
+               if (Array.isArray(wsMembers)) {
+                 wsMembers.forEach(function(wm) { addUser(wm); });
+               }
+             } catch(e) {}
+          }
+          
+          // 3. Add HR Employees
+          (employees || []).forEach(function(emp) {
+            addUser(emp);
+          });
+
+          // Generate displayName for final canonical output
+          var validUsers = users.filter(function(u) { return !u.isDeleted; });
+          validUsers.forEach(function(u) {
+            if (u.type === 'Employee' && u.role && u.role !== 'User' && u.role !== 'Admin' && u.role !== 'SuperAdmin') {
+              u.displayName = u.name + ' — ' + u.role;
+            } else {
+              u.displayName = u.name;
+            }
+          });
+          
+          return validUsers;
+        });
+      }
+    },
+
     // 2. CRM SERVICE (LOCAL STORAGE BACKED REST TARGET: /api/v1/crm)
     Crm: {
       LEADS_KEY: 'verde_os_crm_leads',
@@ -304,6 +408,91 @@
             list[i].updatedAt = new Date().toISOString();
             this._saveClients(list);
             return mockAsyncResponse({success: true});
+          }
+        }
+        return mockAsyncResponse(null);
+      },
+
+      // PROPOSALS MANAGEMENT
+      PROPOSALS_KEY: 'verde_os_crm_proposals',
+
+      _getProposalsStorage: function() {
+        var raw = localStorage.getItem(this.PROPOSALS_KEY);
+        if (!raw) {
+          var initialSeed = [
+            { id: 'PROP-001', title: 'Website Redesign Proposal', client: 'Cabo Travels', leadId: 'LD-004', value: 1550000, validUntil: '2026-09-15', status: 'Sent', assignedTo: 'Midhul', notes: 'Complete frontend revamp with booking engine integration.', createdAt: '2026-08-01T10:00:00Z', updatedAt: '2026-08-01T10:00:00Z' },
+            { id: 'PROP-002', title: 'Brand Identity Package', client: 'GreenLeaf', leadId: 'LD-003', value: 850000, validUntil: '2026-09-01', status: 'Sent', assignedTo: 'Shahim', notes: 'Logo design, typography guide, and brand collateral.', createdAt: '2026-08-05T14:30:00Z', updatedAt: '2026-08-05T14:30:00Z' },
+            { id: 'PROP-003', title: 'Enterprise Software Suite', client: 'Vertex Systems', leadId: 'LD-001', value: 3400000, validUntil: '2026-08-30', status: 'Accepted', assignedTo: 'Shahim', notes: 'Custom ERP and workflow automation.', createdAt: '2026-07-20T11:00:00Z', updatedAt: '2026-07-20T11:00:00Z' }
+          ];
+          localStorage.setItem(this.PROPOSALS_KEY, JSON.stringify(initialSeed));
+          return initialSeed;
+        }
+        try { return JSON.parse(raw); } catch (e) { return []; }
+      },
+
+      _saveProposals: function(list) {
+        localStorage.setItem(this.PROPOSALS_KEY, JSON.stringify(list));
+      },
+
+      getProposals: function() {
+        var list = this._getProposalsStorage().filter(function(p) { return !p.isDeleted; });
+        return mockAsyncResponse(list);
+      },
+
+      getProposalById: function(id) {
+        var list = this._getProposalsStorage();
+        var match = list.filter(function(p) { return p.id === id && !p.isDeleted; })[0];
+        return mockAsyncResponse(match || null);
+      },
+
+      createProposal: function(data) {
+        var list = this._getProposalsStorage();
+        var now = new Date().toISOString();
+        var newProp = {
+          id: data.id || ('PROP-' + Math.floor(1000 + Math.random() * 9000)),
+          title: data.title || 'Proposal',
+          client: data.client || 'Unknown',
+          leadId: data.leadId || null,
+          clientId: data.clientId || null,
+          value: parseFloat(data.value || 0),
+          validUntil: data.validUntil || '',
+          status: data.status || 'Sent',
+          assignedTo: data.assignedTo || 'Unassigned',
+          notes: data.notes || '',
+          createdAt: now,
+          updatedAt: now
+        };
+        list.unshift(newProp);
+        this._saveProposals(list);
+        if (window.VerdeServices.Notifications) {
+          window.VerdeServices.Notifications.addNotification('Proposal Created', newProp.title + ' for ' + newProp.client + ' (₹' + newProp.value.toLocaleString('en-IN') + ')');
+        }
+        return mockAsyncResponse(newProp);
+      },
+
+      updateProposal: function(id, data) {
+        var list = this._getProposalsStorage();
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].id === id) {
+            for (var k in data) {
+              if (data.hasOwnProperty(k)) list[i][k] = data[k];
+            }
+            list[i].updatedAt = new Date().toISOString();
+            this._saveProposals(list);
+            return mockAsyncResponse(list[i]);
+          }
+        }
+        return mockAsyncResponse(null);
+      },
+
+      deleteProposal: function(id) {
+        var list = this._getProposalsStorage();
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].id === id) {
+            list[i].isDeleted = true;
+            list[i].updatedAt = new Date().toISOString();
+            this._saveProposals(list);
+            return mockAsyncResponse({ success: true });
           }
         }
         return mockAsyncResponse(null);
@@ -1008,7 +1197,12 @@
           purpose: data.purpose || data.title || 'Meeting',
           date: data.date || new Date().toISOString().split('T')[0],
           time: data.time || '10:00 AM',
+          duration: data.duration || '30 min',
+          owner: data.owner || (window.VERDE_SESSION ? window.VERDE_SESSION.getUser().name : 'Shahim'),
+          notes: data.notes || '',
           status: data.status || 'Scheduled',
+          leadId: data.leadId || null,
+          clientId: data.clientId || null,
           createdAt: new Date().toISOString()
         };
         list.unshift(newMtg);

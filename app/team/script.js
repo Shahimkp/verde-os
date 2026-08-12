@@ -130,13 +130,31 @@
       grid.appendChild(card);
     });
 
-    const valEls = document.querySelectorAll('.kpi-val');
-    valEls.forEach(el => {
-        const labelEl = el.parentElement ? el.parentElement.querySelector('.kpi-label') : null;
-        if(labelEl && labelEl.textContent.includes('Total Employees')) {
-            el.textContent = teamEmployees.length;
-        }
-    });
+    // Update KPI Cards
+    const totalEl = document.getElementById('kpi-total-employees');
+    const onlineEl = document.getElementById('kpi-online-now');
+    const leaveEl = document.getElementById('kpi-on-leave');
+    const prodEl = document.getElementById('kpi-avg-productivity');
+
+    if (totalEl) {
+      totalEl.textContent = teamEmployees.length;
+    }
+    
+    if (onlineEl || leaveEl) {
+      let onlineCount = 0;
+      let leaveCount = 0;
+      teamEmployees.forEach(emp => {
+        const status = (emp.status || 'Active').toLowerCase();
+        if (status === 'online' || status === 'active') onlineCount++;
+        else if (status === 'on leave') leaveCount++;
+      });
+      if (onlineEl) onlineEl.textContent = onlineCount;
+      if (leaveEl) leaveEl.textContent = leaveCount;
+    }
+    
+    if (prodEl) {
+      prodEl.textContent = '94%'; // Mock average productivity
+    }
   }
 
   function renderAttendanceKPIs() {

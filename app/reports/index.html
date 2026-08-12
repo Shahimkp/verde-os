@@ -181,7 +181,12 @@
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 24px;
-      margin-bottom: 64px;
+      margin-bottom: 48px;
+    }
+    @media (max-width: 900px) {
+      .rep-charts-grid {
+        grid-template-columns: 1fr;
+      }
     }
     .rep-chart-card {
       background: var(--surface);
@@ -191,46 +196,224 @@
       display: flex;
       flex-direction: column;
       transition: transform 250ms ease, box-shadow 250ms ease;
+      overflow: hidden;
+      min-height: 310px;
     }
     .rep-chart-card:hover {
       transform: translateY(-1px);
       box-shadow: var(--shadow-md);
     }
     .rep-chart-header {
-      padding: 24px;
+      padding: 18px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid var(--border-subtle);
+      background: var(--surface);
     }
     .rep-chart-title {
       font-size: 15px;
       font-weight: 800;
       color: var(--text-1);
+      letter-spacing: -0.2px;
     }
     .rep-chart-meta {
-      font-size: 12px;
-      font-weight: 600;
+      font-size: 11px;
+      font-weight: 700;
       color: var(--text-3);
+      background: var(--bg-2);
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--border-subtle);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
-    .rep-chart-placeholder {
-      height: 220px;
-      padding: 24px;
+    .rep-chart-summary {
+      padding: 10px 24px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+    .rep-chart-stat {
+      display: flex;
+      flex-direction: column;
+    }
+    .rep-chart-stat-val {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-1);
+    }
+    .rep-chart-stat-lbl {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .rep-chart-body {
+      padding: 20px 24px 24px 24px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+
+    /* SVG Line/Area Chart */
+    .rep-svg-wrap {
+      width: 100%;
+      height: 180px;
+      position: relative;
+    }
+    .rep-svg-chart {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+    .rep-chart-point {
+      cursor: pointer;
+      transition: r 0.2s cubic-bezier(0.4, 0, 0.2, 1), stroke-width 0.2s ease;
+    }
+    .rep-chart-point:hover {
+      r: 6;
+      stroke-width: 3;
+    }
+
+    /* Distribution Progress Bars (Projects & Pipeline) */
+    .rep-stage-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+    .rep-stage-item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .rep-stage-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+    .rep-stage-name {
+      font-weight: 700;
+      color: var(--text-1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .rep-stage-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .rep-stage-values {
+      font-weight: 600;
+      color: var(--text-2);
+    }
+    .rep-stage-bar-track {
+      width: 100%;
+      height: 8px;
+      background: var(--bg-2);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+    .rep-stage-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Weekly Activity Grouped Bars */
+    .rep-weekly-grid {
       display: flex;
       align-items: flex-end;
-      gap: 16px;
-      background-image: 
-        linear-gradient(to right, var(--border-subtle) 1px, transparent 1px),
-        linear-gradient(to top, var(--border-subtle) 1px, transparent 1px);
-      background-size: 100% 40px;
-      background-position: left bottom;
+      justify-content: space-between;
+      height: 160px;
+      gap: 8px;
+      padding-top: 10px;
+      border-bottom: 1px solid var(--border-subtle);
     }
-    .chart-bar {
+    .rep-weekly-col {
       flex: 1;
-      background: var(--primary-10);
-      border-top: 2px solid var(--primary);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      justify-content: flex-end;
+      position: relative;
+    }
+    .rep-weekly-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 120px;
+      width: 100%;
+      justify-content: center;
+    }
+    .rep-wbar {
+      width: 10px;
       border-radius: 4px 4px 0 0;
       transition: height 0.5s ease;
+      cursor: pointer;
+      position: relative;
+    }
+    .rep-wbar:hover {
+      filter: brightness(1.15);
+    }
+    .rep-weekly-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-3);
+      margin-top: 8px;
+    }
+
+    /* Interactive Floating Tooltip */
+    .rep-tooltip-pill {
+      position: absolute;
+      background: var(--text-1);
+      color: var(--surface);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      pointer-events: none;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+      white-space: nowrap;
+      z-index: 50;
+      transform: translate(-50%, -100%);
+      margin-top: -10px;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+
+    /* Empty state */
+    .rep-chart-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 36px 16px;
+      color: var(--text-3);
+      text-align: center;
+      gap: 8px;
+    }
+    .rep-chart-empty-icon {
+      opacity: 0.4;
+      margin-bottom: 4px;
+    }
+    .rep-chart-empty-text {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-2);
+    }
+    .rep-chart-empty-sub {
+      font-size: 11px;
+      color: var(--text-3);
     }
 
     /* Split Grids */
@@ -608,59 +791,103 @@
           <!-- 4. Analytics -->
           <section class="rep-charts-grid">
             
-            <div class="rep-chart-card">
+            <!-- 1. Revenue Trend -->
+            <div class="rep-chart-card" id="rep-chart-1-card">
               <div class="rep-chart-header">
                 <div class="rep-chart-title" id="rep-chart-1-title">Revenue Trend</div>
                 <div class="rep-chart-meta" id="rep-chart-1-meta">Last 6 Months</div>
               </div>
-              <div class="rep-chart-placeholder" id="rep-chart-1-bars">
-                <div class="chart-bar" style="height: 30%;"></div>
-                <div class="chart-bar" style="height: 45%;"></div>
-                <div class="chart-bar" style="height: 40%;"></div>
-                <div class="chart-bar" style="height: 70%;"></div>
-                <div class="chart-bar" style="height: 85%;"></div>
-                <div class="chart-bar" style="height: 95%;"></div>
+              <div class="rep-chart-summary" id="rep-chart-1-summary">
+                <div class="rep-chart-stat">
+                  <div class="rep-chart-stat-val" id="rep-c1-total" style="color:var(--success);">₹0</div>
+                  <div class="rep-chart-stat-lbl">6-Mo Total</div>
+                </div>
+                <div class="rep-chart-stat">
+                  <div class="rep-chart-stat-val" id="rep-c1-avg">₹0</div>
+                  <div class="rep-chart-stat-lbl">Monthly Avg</div>
+                </div>
+                <div class="rep-chart-stat">
+                  <div class="rep-chart-stat-val" id="rep-c1-growth" style="color:var(--primary);">0%</div>
+                  <div class="rep-chart-stat-lbl">Trend</div>
+                </div>
+              </div>
+              <div class="rep-chart-body" id="rep-chart-1-body">
+                <!-- Dynamically rendered Line/Area SVG Chart -->
               </div>
             </div>
 
-            <div class="rep-chart-card">
+            <!-- 2. Project Completion -->
+            <div class="rep-chart-card" id="rep-chart-2-card">
               <div class="rep-chart-header">
                 <div class="rep-chart-title" id="rep-chart-2-title">Project Completion</div>
                 <div class="rep-chart-meta" id="rep-chart-2-meta">Status Overview</div>
               </div>
-              <div class="rep-chart-placeholder" id="rep-chart-2-bars">
-                <div class="chart-bar" style="height: 50%; background:var(--info-10); border-color:var(--info);"></div>
-                <div class="chart-bar" style="height: 60%; background:var(--info-10); border-color:var(--info);"></div>
-                <div class="chart-bar" style="height: 75%; background:var(--info-10); border-color:var(--info);"></div>
-                <div class="chart-bar" style="height: 90%; background:var(--info-10); border-color:var(--info);"></div>
-                <div class="chart-bar" style="height: 80%; background:var(--info-10); border-color:var(--info);"></div>
-                <div class="chart-bar" style="height: 95%; background:var(--info-10); border-color:var(--info);"></div>
+              <div class="rep-chart-summary" id="rep-chart-2-summary">
+                <div class="rep-chart-stat">
+                  <div class="rep-chart-stat-val" id="rep-c2-total">0</div>
+                  <div class="rep-chart-stat-lbl">Total Projects</div>
+                </div>
+                <div class="rep-chart-stat">
+                  <div class="rep-chart-stat-val" id="rep-c2-active" style="color:var(--primary);">0</div>
+                  <div class="rep-chart-stat-lbl">In Progress</div>
+                </div>
+                <div class="rep-chart-stat">
+                  <div class="rep-chart-stat-val" id="rep-c2-comp" style="color:var(--success);">0</div>
+                  <div class="rep-chart-stat-lbl">Completed</div>
+                </div>
+              </div>
+              <div class="rep-chart-body" id="rep-chart-2-body">
+                <!-- Dynamically rendered Status Distribution Bars -->
               </div>
             </div>
 
-            <div class="rep-chart-card">
+            <!-- 3. Sales Performance -->
+            <div class="rep-chart-card" id="rep-chart-3-card">
               <div class="rep-chart-header">
                 <div class="rep-chart-title" id="rep-chart-3-title">Sales Performance</div>
                 <div class="rep-chart-meta" id="rep-chart-3-meta">Pipeline Breakdown</div>
               </div>
-              <div class="rep-chart-placeholder" id="rep-chart-3-bars">
-                <div class="chart-bar" style="height: 20%; background:var(--success-10); border-color:var(--success);"></div>
-                <div class="chart-bar" style="height: 45%; background:var(--success-10); border-color:var(--success);"></div>
-                <div class="chart-bar" style="height: 85%; background:var(--success-10); border-color:var(--success);"></div>
-                <div class="chart-bar" style="height: 65%; background:var(--success-10); border-color:var(--success);"></div>
+              <div class="rep-chart-summary" id="rep-chart-3-summary">
+                <div class="rep-chart-stat">
+                  <div class="rep-chart-stat-val" id="rep-c3-pipe" style="color:var(--primary);">₹0</div>
+                  <div class="rep-chart-stat-lbl">Active Pipeline</div>
+                </div>
+                <div class="rep-chart-stat">
+                  <div class="rep-chart-stat-val" id="rep-c3-won" style="color:var(--success);">₹0</div>
+                  <div class="rep-chart-stat-lbl">Won Deals</div>
+                </div>
+                <div class="rep-chart-stat">
+                  <div class="rep-chart-stat-val" id="rep-c3-rate" style="color:var(--info);">0%</div>
+                  <div class="rep-chart-stat-lbl">Win Rate</div>
+                </div>
+              </div>
+              <div class="rep-chart-body" id="rep-chart-3-body">
+                <!-- Dynamically rendered Pipeline Funnel/Stage Bars -->
               </div>
             </div>
 
-            <div class="rep-chart-card">
+            <!-- 4. Task Completion -->
+            <div class="rep-chart-card" id="rep-chart-4-card">
               <div class="rep-chart-header">
                 <div class="rep-chart-title" id="rep-chart-4-title">Task Completion</div>
-                <div class="rep-chart-meta" id="rep-chart-4-meta">Weekly Volume</div>
+                <div class="rep-chart-meta" id="rep-chart-4-meta">Weekly Activity</div>
               </div>
-              <div class="rep-chart-placeholder" id="rep-chart-4-bars">
-                <div class="chart-bar" style="height: 70%; background:var(--warning-10); border-color:var(--warning);"></div>
-                <div class="chart-bar" style="height: 65%; background:var(--warning-10); border-color:var(--warning);"></div>
-                <div class="chart-bar" style="height: 85%; background:var(--warning-10); border-color:var(--warning);"></div>
-                <div class="chart-bar" style="height: 95%; background:var(--warning-10); border-color:var(--warning);"></div>
+              <div class="rep-chart-summary" id="rep-chart-4-summary">
+                <div class="rep-chart-stat">
+                  <div class="rep-chart-stat-val" id="rep-c4-total">0</div>
+                  <div class="rep-chart-stat-lbl">Total Tasks</div>
+                </div>
+                <div class="rep-chart-stat">
+                  <div class="rep-chart-stat-val" id="rep-c4-comp" style="color:var(--success);">0</div>
+                  <div class="rep-chart-stat-lbl">Done</div>
+                </div>
+                <div class="rep-chart-stat">
+                  <div class="rep-chart-stat-val" id="rep-c4-pending" style="color:var(--warning);">0</div>
+                  <div class="rep-chart-stat-lbl">Pending</div>
+                </div>
+              </div>
+              <div class="rep-chart-body" id="rep-chart-4-body">
+                <!-- Dynamically rendered Weekly/Priority Grouped Activity Bars -->
               </div>
             </div>
 

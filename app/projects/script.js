@@ -644,8 +644,8 @@
     
     var existingTeamIds = currentProjectData && currentProjectData.team ? currentProjectData.team : [];
     
-    if (window.VerdeServices && window.VerdeServices.Team) {
-      window.VerdeServices.Team.getMembers().then(function(allEmployees) {
+    if (window.VerdeServices && window.VerdeServices.Identity) {
+      window.VerdeServices.Identity.resolveUsers().then(function(allEmployees) {
         var filtered = allEmployees.filter(function(emp) {
           if (existingTeamIds.includes(emp.id)) return false; // Hide already assigned members
           if (teamModalFilter !== 'All' && emp.department !== teamModalFilter) return false;

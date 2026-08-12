@@ -1,12 +1,12 @@
 /* ==========================================================================
    VERDE OS — MISSION CONTROL: EXECUTIVE COMMAND CENTER SCRIPT
-   Personalized, data-driven dashboard using existing VERDE OS services.
+   Pure Data-Driven Dashboard Synchronization & Cross-Module Intelligence
    ========================================================================== */
 
 (function () {
   'use strict';
 
-  // ── Helpers ──
+  // ── Session & Permission Helpers ──
   function getUser() {
     if (window.VERDE_SESSION && window.VERDE_SESSION.getUser) {
       return window.VERDE_SESSION.getUser();
@@ -17,7 +17,7 @@
   function getUserFirstName() {
     var user = getUser();
     if (user && user.name) return user.name.split(' ')[0];
-    return 'User';
+    return 'Executive';
   }
 
   function getUserId() {
@@ -47,21 +47,41 @@
   }
 
   function esc(s) {
-    if (!s) return '';
+    if (s === undefined || s === null) return '';
     var d = document.createElement('div');
     d.textContent = String(s);
     return d.innerHTML;
   }
 
+  function parseAmount(val) {
+    if (typeof val === 'number') return isNaN(val) ? 0 : val;
+    if (!val) return 0;
+    var clean = String(val).replace(/[^0-9.-]+/g, '');
+    var num = parseFloat(clean);
+    return isNaN(num) ? 0 : num;
+  }
+
+  function fmtMoney(n) {
+    var num = parseAmount(n);
+    return '₹' + Math.round(num).toLocaleString('en-IN');
+  }
+
+  function fmtLakhs(n) {
+    var num = parseAmount(n);
+    if (Math.abs(num) >= 100000) {
+      return '₹' + (num / 100000).toFixed(1) + 'L';
+    }
+    return fmtMoney(num);
+  }
+
   // ══════════════════════════════════════════════════════════════════════════
-  // PART 1 — RIGHT SIDEBAR PULL BAR
+  // PART 1 — RIGHT SIDEBAR PULL BAR & COLLAPSE
   // ══════════════════════════════════════════════════════════════════════════
   function initSidebarToggle() {
     var pullBar = document.getElementById('mc-sidebar-pull');
     var layout = document.querySelector('.mc-dashboard-layout');
     if (!pullBar || !layout) return;
 
-    // Restore collapsed state from session
     var wasCollapsed = sessionStorage.getItem('verde_mc_sidebar_collapsed') === '1';
     if (wasCollapsed) {
       layout.classList.add('mc-sidebar-collapsed');
@@ -75,7 +95,7 @@
   }
 
   // ══════════════════════════════════════════════════════════════════════════
-  // PART 2 — AUTHENTICATED USER GREETING
+  // PART 2 — AUTHENTICATED USER GREETING & DATES
   // ══════════════════════════════════════════════════════════════════════════
   function updateGreeting() {
     var h = new Date().getHours();
@@ -84,7 +104,7 @@
     else if (h < 17) greeting = 'Good Afternoon';
 
     var el = document.getElementById('mc-hero-greeting');
-    if (el) el.textContent = greeting + ', ' + getUserFirstName() + ' \ud83d\udc4b';
+    if (el) el.textContent = greeting + ', ' + getUserFirstName() + ' 👋';
   }
 
   function updateHeroDate() {
@@ -93,11 +113,38 @@
       weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
     });
     var el = document.getElementById('mc-hero-date');
-    if (el) el.textContent = dateStr + ' \u00b7 Your daily intelligence briefing';
+    if (el) el.textContent = dateStr + ' · Your daily intelligence briefing';
+  }
+
+  function updateClock() {
+    var clockEl = document.getElementById('mc-clock');
+    if (clockEl) {
+      clockEl.textContent = new Date().toLocaleTimeString('en-US', {
+        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
+      });
+    }
+  }
+
+  function updateTopbarDate() {
+    var dateEl = document.querySelector('.topbar-date');
+    if (dateEl) {
+      dateEl.textContent = new Date().toLocaleDateString('en-US', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+      });
+    }
+  }
+
+  function updateFooterTime() {
+    var el = document.getElementById('mc-footer-time');
+    if (el) {
+      el.textContent = new Date().toLocaleTimeString('en-US', {
+        hour: '2-digit', minute: '2-digit', hour12: true
+      });
+    }
   }
 
   // ══════════════════════════════════════════════════════════════════════════
-  // PART 7 — CALENDAR (with prev/next navigation)
+  // PART 3 — CALENDAR & EVENT DOTS
   // ══════════════════════════════════════════════════════════════════════════
   var calViewYear, calViewMonth;
 
@@ -139,7 +186,6 @@
     for (var d = 1; d <= daysInMonth; d++) {
       var cls = 'mc-cal-day';
       if (year === todayYear && month === todayMonth && d === todayDate) cls += ' active';
-      // Check if this date has events
       var dateStr = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
       if (eventDates.indexOf(dateStr) !== -1) cls += ' has-event';
       html += '<div class="' + cls + '" data-date="' + dateStr + '">' + d + '</div>';
@@ -191,11 +237,9 @@
     }
   }
 
-  // Collect event dates from tasks and meetings for calendar dots
   function collectEventDates() {
     var dates = [];
     try {
-      // From tasks in storage
       var rawTasks = localStorage.getItem('verde_os_tasks');
       if (rawTasks) {
         var tList = JSON.parse(rawTasks);
@@ -211,7 +255,6 @@
         });
       }
 
-      // From meetings
       var rawM = localStorage.getItem('verde_os_meetings');
       var mList = rawM ? JSON.parse(rawM) : (window.VerdeMockData ? window.VerdeMockData.meetings : []);
       (mList || []).forEach(function (m) {
@@ -228,227 +271,167 @@
     return dates;
   }
 
-  // ── Live Clock ──
-  function updateClock() {
-    var clockEl = document.getElementById('mc-clock');
-    if (clockEl) {
-      clockEl.textContent = new Date().toLocaleTimeString('en-US', {
-        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
-      });
-    }
-  }
-
-  // ── Topbar Date ──
-  function updateTopbarDate() {
-    var dateEl = document.querySelector('.topbar-date');
-    if (dateEl) {
-      dateEl.textContent = new Date().toLocaleDateString('en-US', {
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-      });
-    }
-  }
-
-  // ── Footer Time ──
-  function updateFooterTime() {
-    var el = document.getElementById('mc-footer-time');
-    if (el) {
-      el.textContent = new Date().toLocaleTimeString('en-US', {
-        hour: '2-digit', minute: '2-digit', hour12: true
-      });
-    }
-  }
-
-  // ── Task Tab Switching ──
-  function initTaskTabs() {
-    var tabs = document.querySelectorAll('.mc-task-tab');
-    var panels = document.querySelectorAll('.mc-tasks-panel');
-    tabs.forEach(function (tab) {
-      tab.addEventListener('click', function () {
-        var target = this.getAttribute('data-tab');
-        tabs.forEach(function (t) { t.classList.remove('active'); });
-        this.classList.add('active');
-        panels.forEach(function (p) { p.classList.remove('active'); });
-        var targetPanel = document.querySelector('.mc-tasks-panel[data-panel="' + target + '"]');
-        if (targetPanel) targetPanel.classList.add('active');
-      });
-    });
-  }
-
   // ══════════════════════════════════════════════════════════════════════════
-  // PARTS 3-5, 9, 10 — TASK DATA SYNC: Hero Stats, Mission, AI, Critical, Focus
+  // PART 4 — REAL TASKS: HERO STATS, TODAY'S MISSION, AI RECOMMENDATION
   // ══════════════════════════════════════════════════════════════════════════
   function syncHeroAndMission() {
     var userName = getUserFirstName();
     var userId = getUserId();
     var userInitials = getUserInitials();
 
-    if (window.VerdeServices && window.VerdeServices.Tasks) {
-      window.VerdeServices.Tasks.getTasks().then(function (tasks) {
-        tasks = tasks || [];
-        var now = new Date();
-        var todayIso = now.toISOString().split('T')[0];
+    var pTasks = (window.VerdeServices && window.VerdeServices.Tasks)
+      ? window.VerdeServices.Tasks.getTasks()
+      : Promise.resolve(JSON.parse(localStorage.getItem('verde_os_tasks') || '[]'));
 
-        function isDueToday(t) {
-          if (!t.dueDate) return false;
-          var dd = String(t.dueDate).trim().toLowerCase();
-          if (dd === 'today') return true;
-          if (dd.includes(todayIso)) return true;
-          try {
-            var dt = new Date(t.dueDate);
-            if (!isNaN(dt.getTime())) {
-              return dt.getFullYear() === now.getFullYear() &&
-                     dt.getMonth() === now.getMonth() &&
-                     dt.getDate() === now.getDate();
-            }
-          } catch(e) {}
-          return false;
-        }
+    var pProjects = (window.VerdeServices && window.VerdeServices.Projects)
+      ? window.VerdeServices.Projects.getProjects()
+      : Promise.resolve(JSON.parse(localStorage.getItem('verde_os_projects') || '[]'));
 
-        function isOverdue(t) {
-          if (!t.dueDate || t.status === 'Completed' || t.status === 'Archived') return false;
-          var dd = String(t.dueDate).trim().toLowerCase();
-          if (dd === 'today' || dd === 'tomorrow') return false;
-          try {
-            var dt = new Date(t.dueDate);
-            if (!isNaN(dt.getTime())) {
-              var todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-              return dt < todayStart;
-            }
-          } catch(e) {}
-          return false;
-        }
+    Promise.all([pTasks, pProjects]).then(function (results) {
+      var tasks = (results[0] || []).filter(function(t) { return !t.isDeleted && !t.isArchived && t.status !== 'Archived'; });
+      var projects = (results[1] || []).filter(function(p) { return !p.isDeleted && !p.isArchived; });
 
-        function isMyTask(t) {
-          if (isSuperAdmin()) return true;
-          var n = userName.toLowerCase();
-          return (t.assignee && t.assignee.toLowerCase().includes(n)) ||
-                 (t.assigneeId && (t.assigneeId === userInitials || t.assigneeId === userId)) ||
-                 (t.assigneeInitials && t.assigneeInitials === userInitials);
-        }
+      var now = new Date();
+      var todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      var todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
 
-        var myTasks = tasks.filter(function(t) {
-          return !t.isArchived && t.status !== 'Archived' && isMyTask(t);
-        });
-        var completedTasks = myTasks.filter(function(t) { return t.status === 'Completed'; });
-        var activeTasks = myTasks.filter(function(t) { return t.status !== 'Completed'; });
-        var dueTodayTasks = activeTasks.filter(isDueToday);
-        var overdueTasks = activeTasks.filter(isOverdue);
-        var criticalTasks = activeTasks.filter(function(t) {
-          return t.priority === 'Critical' || t.priority === 'High';
-        });
-
-        // PART 4 — Today's Focus
-        var focusEl = document.getElementById('mc-stat-focus');
-        if (focusEl) {
-          if (overdueTasks.length > 0) {
-            focusEl.textContent = overdueTasks.length + ' overdue task' + (overdueTasks.length > 1 ? 's' : '') + ' need attention';
-          } else if (dueTodayTasks.length > 0) {
-            focusEl.textContent = dueTodayTasks.length + ' task' + (dueTodayTasks.length > 1 ? 's' : '') + ' due today';
-          } else if (activeTasks.length > 0) {
-            focusEl.textContent = activeTasks.length + ' active task' + (activeTasks.length > 1 ? 's' : '') + ' in progress';
-          } else {
-            focusEl.textContent = 'No tasks due today \u2714';
+      function isDueToday(t) {
+        if (!t.dueDate) return false;
+        var dd = String(t.dueDate).trim().toLowerCase();
+        if (dd === 'today') return true;
+        try {
+          var dt = new Date(t.dueDate);
+          if (!isNaN(dt.getTime())) {
+            return dt >= todayStart && dt <= todayEnd;
           }
-        }
-
-        // PART 5 — Critical Section
-        var critEl = document.getElementById('mc-stat-critical');
-        if (critEl) {
-          var topCritical = overdueTasks.length > 0 ? overdueTasks[0]
-            : (criticalTasks.length > 0 ? criticalTasks[0] : null);
-          if (topCritical) {
-            var label = esc(topCritical.title || topCritical.name || 'Task');
-            critEl.textContent = label + (isOverdue(topCritical) ? ' (overdue)' : ' needs attention');
-          } else {
-            critEl.textContent = 'No critical items \u2714';
-          }
-        }
-
-        // PART 9 — Today's Mission
-        var total = myTasks.length;
-        var done = completedTasks.length;
-        var remaining = total - done;
-        var pct = total > 0 ? Math.round((done / total) * 100) : 0;
-
-        var pctEl = document.getElementById('mc-progress-pct');
-        if (pctEl) pctEl.textContent = pct + '%';
-        var ringEl = document.getElementById('mc-progress-ring');
-        if (ringEl) ringEl.style.setProperty('--percentage', pct);
-
-        var doneEl = document.getElementById('mc-tasks-done');
-        if (doneEl) doneEl.innerHTML = done + '<span style="font-size:14px;color:var(--text-3);font-weight:600;">/' + total + '</span>';
-
-        var remEl = document.getElementById('mc-tasks-remaining');
-        if (remEl) remEl.textContent = remaining;
-
-        var prodEl = document.getElementById('mc-productivity');
-        if (prodEl) prodEl.textContent = pct;
-
-        // PART 10 — AI Recommendation
-        var aiEl = document.getElementById('mc-ai-text');
-        if (aiEl) {
-          var rec = '';
-          if (overdueTasks.length > 0) {
-            rec = 'Focus on <strong>' + esc(overdueTasks[0].title || overdueTasks[0].name) + '</strong> first \u2014 it\'s overdue and needs immediate attention.';
-            if (overdueTasks.length > 1) {
-              rec += ' You have ' + (overdueTasks.length - 1) + ' more overdue task' + (overdueTasks.length > 2 ? 's' : '') + ' to address.';
-            }
-          } else if (dueTodayTasks.length > 0) {
-            rec = 'Prioritize <strong>' + esc(dueTodayTasks[0].title || dueTodayTasks[0].name) + '</strong> \u2014 it\'s due today.';
-            if (dueTodayTasks.length > 1) {
-              rec += ' Then tackle the ' + (dueTodayTasks.length - 1) + ' other task' + (dueTodayTasks.length > 2 ? 's' : '') + ' due today.';
-            }
-          } else if (criticalTasks.length > 0) {
-            rec = 'Your next priority is <strong>' + esc(criticalTasks[0].title || criticalTasks[0].name) + '</strong> \u2014 marked as ' + esc(criticalTasks[0].priority) + ' priority.';
-          } else if (activeTasks.length > 0) {
-            rec = 'You\'re on track! Continue with <strong>' + esc(activeTasks[0].title || activeTasks[0].name) + '</strong>. No urgent deadlines right now.';
-          } else {
-            rec = 'All clear! No pending tasks. Great time to plan ahead or review upcoming projects.';
-          }
-          aiEl.innerHTML = '<strong>AI RECOMMENDATION</strong><br>' + rec;
-        }
-
-        // Pinned Tasks — top 4 high-priority active tasks
-        renderPinnedTasks(activeTasks);
-
-        // Collect task due dates for calendar event dots
-        var taskDates = [];
-        tasks.forEach(function(t) {
-          if (t.dueDate && t.status !== 'Completed' && t.status !== 'Archived') {
-            try {
-              var dt = new Date(t.dueDate);
-              if (!isNaN(dt.getTime())) {
-                taskDates.push(dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0'));
-              }
-            } catch(e) {}
-          }
-        });
-        // Re-render calendar with event dots
-        var allEventDates = taskDates.concat(collectEventDates());
-        renderCalendar(calViewYear, calViewMonth, allEventDates);
-
-      }).catch(function() {
-        // Safe fallback — show zeros
-        safeSetText('mc-stat-focus', 'No task data available');
-        safeSetText('mc-stat-critical', 'No critical items');
-        safeSetText('mc-progress-pct', '0%');
-        safeSetText('mc-tasks-remaining', '0');
-        safeSetText('mc-productivity', '0');
-      });
-    } else {
-      // No services available — use mock data if present
-      if (window.VerdeMockData && window.VerdeMockData.tasks) {
-        safeSetText('mc-stat-focus', window.VerdeMockData.tasks.length + ' tasks loaded');
+        } catch(e) {}
+        return false;
       }
-    }
+
+      function isOverdue(t) {
+        if (!t.dueDate || t.status === 'Completed') return false;
+        var dd = String(t.dueDate).trim().toLowerCase();
+        if (dd === 'today' || dd === 'tomorrow') return false;
+        try {
+          var dt = new Date(t.dueDate);
+          if (!isNaN(dt.getTime())) {
+            return dt < todayStart;
+          }
+        } catch(e) {}
+        return false;
+      }
+
+      function isMyTask(t) {
+        if (isSuperAdmin()) return true;
+        var n = userName.toLowerCase();
+        return (t.assignee && t.assignee.toLowerCase().includes(n)) ||
+               (t.assigneeId && (t.assigneeId === userInitials || t.assigneeId === userId)) ||
+               (t.assigneeInitials && t.assigneeInitials === userInitials);
+      }
+
+      var relevantTasks = tasks.filter(isMyTask);
+      var completedTasks = relevantTasks.filter(function(t) { return t.status === 'Completed'; });
+      var activeTasks = relevantTasks.filter(function(t) { return t.status !== 'Completed'; });
+      var dueTodayTasks = activeTasks.filter(isDueToday);
+      var overdueTasks = activeTasks.filter(isOverdue);
+      var criticalTasks = activeTasks.filter(function(t) {
+        return t.priority === 'Critical' || t.priority === 'High';
+      });
+
+      // ── 1. Today's Focus (Hero Card 1) ──
+      var focusEl = document.getElementById('mc-stat-focus');
+      if (focusEl) {
+        if (overdueTasks.length > 0) {
+          focusEl.textContent = overdueTasks.length + ' overdue deliverable' + (overdueTasks.length > 1 ? 's' : '') + ' require attention';
+        } else if (dueTodayTasks.length > 0) {
+          focusEl.textContent = dueTodayTasks.length + ' client deliverable' + (dueTodayTasks.length > 1 ? 's' : '') + ' due today';
+        } else if (activeTasks.length > 0) {
+          focusEl.textContent = activeTasks.length + ' active task' + (activeTasks.length > 1 ? 's' : '') + ' in progress';
+        } else {
+          focusEl.textContent = 'All deliverables on schedule ✔';
+        }
+      }
+
+      // ── 2. Critical Items (Hero Card 2) ──
+      var critEl = document.getElementById('mc-stat-critical');
+      if (critEl) {
+        var topCriticalTask = overdueTasks.length > 0 ? overdueTasks[0] : (criticalTasks.length > 0 ? criticalTasks[0] : null);
+        var overdueProjects = projects.filter(function(p) {
+          if (!p.dueDate || p.status === 'Completed' || p.progress === 100) return false;
+          var pd = new Date(p.dueDate);
+          return !isNaN(pd.getTime()) && pd < todayStart;
+        });
+
+        if (overdueProjects.length > 0) {
+          critEl.textContent = esc(overdueProjects[0].name) + ' project overdue';
+        } else if (topCriticalTask) {
+          var tTitle = esc(topCriticalTask.title || topCriticalTask.name || 'Task');
+          critEl.textContent = tTitle + (isOverdue(topCriticalTask) ? ' (overdue)' : ' requires review');
+        } else {
+          critEl.textContent = 'No critical risks detected ✔';
+        }
+      }
+
+      // ── 3. Today's Mission ──
+      var total = relevantTasks.length;
+      var done = completedTasks.length;
+      var remaining = total - done;
+      var pct = total > 0 ? Math.round((done / total) * 100) : 0;
+
+      var pctEl = document.getElementById('mc-progress-pct');
+      if (pctEl) pctEl.textContent = pct + '%';
+
+      var ringEl = document.getElementById('mc-progress-ring');
+      if (ringEl) ringEl.style.setProperty('--percentage', pct);
+
+      var doneEl = document.getElementById('mc-tasks-done');
+      if (doneEl) doneEl.innerHTML = done + '<span style="font-size:14px;color:var(--text-3);font-weight:600;">/' + total + '</span>';
+
+      var remEl = document.getElementById('mc-tasks-remaining');
+      if (remEl) remEl.textContent = remaining;
+
+      var prodEl = document.getElementById('mc-productivity');
+      if (prodEl) prodEl.textContent = pct;
+
+      // ── 4. AI Recommendation (Pure Data Intelligence) ──
+      var aiEl = document.getElementById('mc-ai-text');
+      if (aiEl) {
+        var rec = '';
+        if (overdueTasks.length > 0) {
+          rec = 'Focus on <strong>' + esc(overdueTasks[0].title || overdueTasks[0].name) + '</strong> first — it is overdue and needs immediate resolution.';
+          if (overdueTasks.length > 1) {
+            rec += ' There are ' + (overdueTasks.length - 1) + ' additional overdue items in the queue.';
+          }
+        } else if (dueTodayTasks.length > 0) {
+          rec = 'Prioritize <strong>' + esc(dueTodayTasks[0].title || dueTodayTasks[0].name) + '</strong> — scheduled for completion today.';
+          if (dueTodayTasks.length > 1) {
+            rec += ' Complete the remaining ' + (dueTodayTasks.length - 1) + ' deliverables before end of day.';
+          }
+        } else if (criticalTasks.length > 0) {
+          rec = 'High priority focus: <strong>' + esc(criticalTasks[0].title || criticalTasks[0].name) + '</strong> (' + esc(criticalTasks[0].priority) + ' priority deliverable).';
+        } else if (activeTasks.length > 0) {
+          rec = 'Deliverables on track! Continue execution on <strong>' + esc(activeTasks[0].title || activeTasks[0].name) + '</strong>.';
+        } else {
+          rec = 'All tasks completed! Review active project milestones or plan upcoming client sprints.';
+        }
+        aiEl.innerHTML = '<strong>AI RECOMMENDATION</strong><br>' + rec;
+      }
+
+      // ── 5. Pinned Tasks ──
+      renderPinnedTasks(activeTasks);
+
+      // ── 6. Event Dots for Calendar ──
+      var allEventDates = collectEventDates();
+      renderCalendar(calViewYear, calViewMonth, allEventDates);
+
+    }).catch(function() {
+      var focusEl = document.getElementById('mc-stat-focus');
+      if (focusEl) focusEl.textContent = 'All deliverables on schedule ✔';
+      var critEl = document.getElementById('mc-stat-critical');
+      if (critEl) critEl.textContent = 'No critical risks detected ✔';
+    });
   }
 
-  function safeSetText(id, text) {
-    var el = document.getElementById(id);
-    if (el) el.textContent = text;
-  }
-
-  // ── Pinned Tasks ──
   function renderPinnedTasks(activeTasks) {
     var container = document.getElementById('mc-pinned-tasks');
     var countEl = document.getElementById('mc-pinned-count');
@@ -468,7 +451,7 @@
     if (countEl) countEl.textContent = topTasks.length + ' task' + (topTasks.length !== 1 ? 's' : '');
 
     if (topTasks.length === 0) {
-      container.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:12px 0;">No pending tasks</div>';
+      container.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:12px 0;">No active deliverables pinned</div>';
       return;
     }
 
@@ -506,202 +489,214 @@
   }
 
   // ══════════════════════════════════════════════════════════════════════════
-  // PART 6 — MEETINGS (from mock data + CRM leads)
+  // PART 5 — MEETINGS SYNCHRONIZATION
   // ══════════════════════════════════════════════════════════════════════════
   function syncMeetings() {
     var listEl = document.getElementById('mc-meetings-list');
     var heroMeetingsEl = document.getElementById('mc-stat-meetings');
     if (!listEl) return;
 
-    function processAndRender(baseMeetings) {
+    var pMeetings = (window.VerdeServices && window.VerdeServices.Meetings)
+      ? window.VerdeServices.Meetings.getMeetings()
+      : Promise.resolve(JSON.parse(localStorage.getItem('verde_os_meetings') || '[]'));
+
+    var pLeads = (window.VerdeServices && window.VerdeServices.Crm)
+      ? window.VerdeServices.Crm.getLeads()
+      : Promise.resolve(JSON.parse(localStorage.getItem('verde_os_crm_leads') || '[]'));
+
+    Promise.all([pMeetings, pLeads]).then(function(results) {
+      var baseMeetings = results[0] || [];
+      var leads = results[1] || [];
+
       var allMeetings = [];
-      (baseMeetings || []).forEach(function(m) {
-        allMeetings.push({
-          time: m.time || '\u2014',
-          title: m.purpose || m.title || 'Meeting',
-          sub: m.client || '',
-          status: m.status || 'Confirmed'
-        });
+      baseMeetings.forEach(function(m) {
+        if (m.status !== 'Completed' && m.status !== 'Cancelled') {
+          allMeetings.push({
+            time: m.time || '10:00',
+            title: m.purpose || m.title || 'Meeting',
+            sub: m.client || m.attendees || 'Team',
+            status: m.status || 'Confirmed',
+            date: m.date || ''
+          });
+        }
       });
 
-      if (window.VerdeServices && window.VerdeServices.Crm) {
-        window.VerdeServices.Crm.getLeads().then(function(leads) {
-          (leads || []).forEach(function(lead) {
-            if (lead.meetings && lead.meetings.length > 0) {
-              lead.meetings.forEach(function(m) {
-                if (m.status !== 'Completed' && m.status !== 'Cancelled') {
-                  allMeetings.push({
-                    time: m.time || '\u2014',
-                    title: m.notes || m.purpose || 'Meeting',
-                    sub: lead.company || lead.name || '',
-                    status: m.status || 'Scheduled'
-                  });
-                }
+      leads.forEach(function(lead) {
+        if (lead.meetings && lead.meetings.length > 0) {
+          lead.meetings.forEach(function(m) {
+            if (m.status !== 'Completed' && m.status !== 'Cancelled') {
+              allMeetings.push({
+                time: m.time || '14:00',
+                title: m.notes || m.purpose || 'Client Discussion',
+                sub: lead.company || lead.name || 'Client',
+                status: m.status || 'Scheduled',
+                date: m.date || ''
               });
             }
           });
-          renderMeetingsList(allMeetings, listEl, heroMeetingsEl);
-        }).catch(function() {
-          renderMeetingsList(allMeetings, listEl, heroMeetingsEl);
-        });
-      } else {
-        renderMeetingsList(allMeetings, listEl, heroMeetingsEl);
-      }
-    }
-
-    if (window.VerdeServices && window.VerdeServices.Meetings) {
-      window.VerdeServices.Meetings.getMeetings().then(function(mtgs) {
-        if (mtgs && mtgs.length > 0) {
-          processAndRender(mtgs);
-        } else if (window.VerdeMockData && window.VerdeMockData.meetings) {
-          processAndRender(window.VerdeMockData.meetings);
-        } else {
-          processAndRender([]);
         }
-      }).catch(function() {
-        processAndRender(window.VerdeMockData ? window.VerdeMockData.meetings : []);
       });
-    } else if (window.VerdeMockData && window.VerdeMockData.meetings) {
-      processAndRender(window.VerdeMockData.meetings);
-    } else {
-      processAndRender([]);
-    }
-  }
 
-  function renderMeetingsList(meetings, listEl, heroEl) {
-    var topMeetings = meetings.slice(0, 4);
+      var topMeetings = allMeetings.slice(0, 4);
 
-    // Hero stat
-    if (heroEl) {
-      if (topMeetings.length > 0) {
-        heroEl.textContent = topMeetings.length + ' scheduled meeting' + (topMeetings.length > 1 ? 's' : '');
-      } else {
-        heroEl.textContent = 'No meetings scheduled';
-      }
-    }
-
-    if (!listEl) return;
-
-    if (topMeetings.length === 0) {
-      listEl.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:12px 0;">No upcoming meetings</div>';
-      return;
-    }
-
-    listEl.innerHTML = topMeetings.map(function(m) {
-      return '<div class="mc-meeting-item">' +
-        '<div class="mc-meeting-time">' + esc(m.time) + '</div>' +
-        '<div>' +
-          '<div class="mc-meeting-title">' + esc(m.title) + '</div>' +
-          '<div class="mc-meeting-sub">' + esc(m.sub) + '</div>' +
-        '</div>' +
-      '</div>';
-    }).join('');
-  }
-
-  // ══════════════════════════════════════════════════════════════════════════
-  // PART 8 — COMPANY HEALTH (CRM + Projects + Tasks + Finance sync)
-  // ══════════════════════════════════════════════════════════════════════════
-  function syncDashboardWithCRM() {
-    if (!canAccessModule('crm') && !isSuperAdmin()) return;
-    if (window.VerdeServices && window.VerdeServices.Crm) {
-      Promise.all([
-        window.VerdeServices.Crm.getClients(),
-        window.VerdeServices.Crm.getLeads()
-      ]).then(function(results) {
-        var clients = results[0] || [];
-        var activeClients = clients.filter(function(c) { return c.status === 'Active'; }).length;
-        var totalRevenue = clients.reduce(function(sum, c) { return sum + (c.revenue || 0); }, 0);
-
-        var clientKpiEl = document.getElementById('dashboard-kpi-clients');
-        if (clientKpiEl) clientKpiEl.textContent = activeClients;
-
-        // If finance invoices are not yet populated, use CRM revenue
-        var rawFin = localStorage.getItem('verde_finance_invoices');
-        if (!rawFin) {
-          var revKpiEl = document.getElementById('dashboard-kpi-revenue');
-          if (revKpiEl) revKpiEl.textContent = '\u20b9' + (totalRevenue / 100000).toFixed(1) + 'L';
-
-          var heroRevEl = document.getElementById('mc-stat-revenue');
-          if (heroRevEl) {
-            heroRevEl.innerHTML = '\u20b9' + (totalRevenue / 100000).toFixed(1) + 'L this month \u00b7 ' + activeClients + ' active client' + (activeClients !== 1 ? 's' : '');
-          }
+      if (heroMeetingsEl) {
+        if (topMeetings.length === 0) {
+          heroMeetingsEl.textContent = 'No meetings scheduled for today';
+        } else if (topMeetings.length === 1) {
+          heroMeetingsEl.textContent = '1 scheduled — ' + topMeetings[0].time + ' ' + topMeetings[0].title;
+        } else {
+          heroMeetingsEl.textContent = topMeetings.length + ' scheduled — ' + topMeetings[0].time + ' ' + topMeetings[0].title + ', ' + topMeetings[1].time + ' ' + topMeetings[1].title;
         }
-      }).catch(function() {});
+      }
+
+      if (topMeetings.length === 0) {
+        listEl.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:12px 0;">No upcoming meetings scheduled</div>';
+        return;
+      }
+
+      listEl.innerHTML = topMeetings.map(function(m) {
+        return '<div class="mc-meeting-item">' +
+          '<div class="mc-meeting-time">' + esc(m.time) + '</div>' +
+          '<div>' +
+            '<div class="mc-meeting-title">' + esc(m.title) + '</div>' +
+            '<div class="mc-meeting-sub">' + esc(m.sub) + '</div>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }).catch(function() {
+      if (heroMeetingsEl) heroMeetingsEl.textContent = 'No meetings scheduled for today';
+      listEl.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:12px 0;">No upcoming meetings scheduled</div>';
+    });
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // PART 6 — FINANCE & REVENUE (STRICT SOURCE OF TRUTH)
+  // ══════════════════════════════════════════════════════════════════════════
+  function syncDashboardWithFinance() {
+    if (!canAccessModule('finance') && !isSuperAdmin()) return;
+
+    var totalRevenue = 0;
+    var pendingInvoiceCount = 0;
+
+    // 1. Primary: Invoices store
+    try {
+      var rawInvoices = localStorage.getItem('verde_finance_invoices');
+      if (rawInvoices) {
+        var invoices = JSON.parse(rawInvoices);
+        invoices.forEach(function(inv) {
+          var isPaid = inv.status === 'Paid' || inv.status === 'Completed';
+          if (isPaid) {
+            totalRevenue += parseAmount(inv.total || inv.amount || 0);
+          } else if (inv.status !== 'Cancelled') {
+            pendingInvoiceCount++;
+          }
+        });
+      }
+    } catch(e) {}
+
+    // 2. Secondary: Transactions store
+    try {
+      var rawTx = localStorage.getItem('verde_os_finance_transactions');
+      if (rawTx) {
+        var transactions = JSON.parse(rawTx);
+        transactions.forEach(function(t) {
+          if (t.type === 'Income' && t.status === 'Completed' && totalRevenue === 0) {
+            totalRevenue += parseAmount(t.amount || 0);
+          }
+          if (t.type === 'Income' && (t.status === 'Processing' || t.status === 'Pending') && pendingInvoiceCount === 0) {
+            pendingInvoiceCount++;
+          }
+        });
+      }
+    } catch(e) {}
+
+    var invEl = document.getElementById('dashboard-kpi-invoices');
+    if (invEl) invEl.textContent = pendingInvoiceCount;
+
+    var revKpiEl = document.getElementById('dashboard-kpi-revenue');
+    if (revKpiEl) revKpiEl.textContent = fmtLakhs(totalRevenue);
+
+    var heroRevEl = document.getElementById('mc-stat-revenue');
+    if (heroRevEl) {
+      heroRevEl.innerHTML = fmtLakhs(totalRevenue) + ' this month · <span style="color:var(--success);">Settled Revenue</span>';
     }
   }
-  window.syncDashboardWithCRM = syncDashboardWithCRM;
 
-  function syncDashboardWithTasks() {
-    if (window.VerdeServices && window.VerdeServices.Tasks) {
-      window.VerdeServices.Tasks.getTasks().then(function(tasks) {
-        if (!tasks) return;
-        var kpiTasks = document.getElementById('dashboard-kpi-tasks');
-        if (kpiTasks) kpiTasks.textContent = tasks.length;
-      }).catch(function() {});
-    }
-  }
-  window.syncDashboardWithTasks = syncDashboardWithTasks;
-
+  // ══════════════════════════════════════════════════════════════════════════
+  // PART 7 — PROJECTS & CRM SYNC (COMPANY HEALTH & ACTIVE PROJECTS)
+  // ══════════════════════════════════════════════════════════════════════════
   function syncDashboardWithProjects() {
     if (window.VerdeServices && window.VerdeServices.Projects) {
       window.VerdeServices.Projects.getProjects().then(function(projects) {
-        if (!projects) return;
-
+        projects = projects || [];
         var activeProjects = projects.filter(function(p) { return !p.isDeleted && !p.isArchived; });
-        var numActive = activeProjects.length;
 
         var kpiEl = document.getElementById('dashboard-kpi-projects');
-        if (kpiEl) kpiEl.textContent = numActive;
+        if (kpiEl) kpiEl.textContent = activeProjects.length;
 
-        // Active Projects cards (top 4)
         var projListEl = document.getElementById('dashboard-active-projects');
         if (projListEl) {
-          projListEl.innerHTML = '';
-          var topProjects = activeProjects.slice(0, 4);
-          topProjects.forEach(function(p) {
-            var pct = p.progress || 0;
-            var color = pct > 80 ? 'var(--success)' : (pct > 40 ? 'var(--primary)' : 'var(--warning)');
-            var badgeText = p.status === 'Completed' ? 'Done' : (pct > 80 ? 'On Track' : (pct > 40 ? 'In Progress' : 'Review'));
-            var badgeClass = p.status === 'Completed' ? 'badge-success' : (pct > 80 ? 'badge-success' : (pct > 40 ? 'badge-primary' : 'badge-warning'));
+          if (activeProjects.length === 0) {
+            projListEl.innerHTML = '<div style="padding:24px; text-align:center; color:var(--text-3); font-size:13px;">No active projects available</div>';
+          } else {
+            var topProjects = activeProjects.slice(0, 4);
+            projListEl.innerHTML = topProjects.map(function(p) {
+              var pct = p.progress || 0;
+              var color = pct > 80 ? 'var(--success)' : (pct > 40 ? 'var(--primary)' : 'var(--warning)');
+              var badgeText = p.status === 'Completed' ? 'Done' : (pct > 80 ? 'On Track' : (pct > 40 ? 'In Progress' : 'Review'));
+              var badgeClass = p.status === 'Completed' ? 'badge-success' : (pct > 80 ? 'badge-success' : (pct > 40 ? 'badge-primary' : 'badge-warning'));
 
-            var avatarsHtml = (p.team || ['SH']).map(function(m) {
-              return '<div class="mc-avatar">' + esc(m) + '</div>';
+              var avatarsHtml = (Array.isArray(p.team) ? p.team : ['SH']).map(function(m) {
+                return '<div class="mc-avatar">' + esc(m) + '</div>';
+              }).join('');
+
+              return '<div class="mc-project-card" style="cursor:pointer;" onclick="localStorage.setItem(\'verde_pending_project_view\',\'' + esc(p.id) + '\'); window.location.href=\'../projects/index.html\';">' +
+                '<div>' +
+                  '<div class="mc-project-title">' + esc(p.name) + '</div>' +
+                  '<div class="mc-project-client">' + esc(p.client || 'Client') + '</div>' +
+                '</div>' +
+                '<div class="mc-project-meta">' +
+                  '<span style="color:' + color + ';font-weight:700;">' + pct + '%</span>' +
+                  '<span style="color:var(--text-3);">' + esc(p.dueDate || 'Ongoing') + '</span>' +
+                '</div>' +
+                '<div class="mc-project-bar">' +
+                  '<div class="mc-project-bar-fill" style="width:' + pct + '%;background:' + color + ';"></div>' +
+                '</div>' +
+                '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+                  '<div class="mc-avatars">' + avatarsHtml + '</div>' +
+                  '<span class="badge ' + badgeClass + '">' + badgeText + '</span>' +
+                '</div>' +
+              '</div>';
             }).join('');
-
-            var html = '<div class="mc-project-card" style="cursor:pointer;" onclick="localStorage.setItem(\'verde_pending_project_view\',\'' + esc(p.id) + '\'); window.location.href=\'../projects/index.html\';">' +
-              '<div>' +
-                '<div class="mc-project-title">' + esc(p.name) + '</div>' +
-                '<div class="mc-project-client">' + esc(p.client || '') + '</div>' +
-              '</div>' +
-              '<div class="mc-project-meta">' +
-                '<span style="color:' + color + ';font-weight:700;">' + pct + '%</span>' +
-                '<span style="color:var(--text-3);">' + esc(p.dueDate || 'N/A') + '</span>' +
-              '</div>' +
-              '<div class="mc-project-bar">' +
-                '<div class="mc-project-bar-fill" style="width:' + pct + '%;background:' + color + ';"></div>' +
-              '</div>' +
-              '<div style="display:flex;justify-content:space-between;align-items:center;">' +
-                '<div class="mc-avatars">' + avatarsHtml + '</div>' +
-                '<span class="badge ' + badgeClass + '">' + badgeText + '</span>' +
-              '</div>' +
-            '</div>';
-            projListEl.innerHTML += html;
-          });
+          }
         }
 
-        // Team Activity Feed
         syncTeamActivity(projects);
       }).catch(function() {});
     }
   }
 
+  function syncDashboardWithCRM() {
+    if (!canAccessModule('crm') && !isSuperAdmin()) return;
+    if (window.VerdeServices && window.VerdeServices.Crm) {
+      window.VerdeServices.Crm.getClients().then(function(clients) {
+        clients = clients || [];
+        var activeClients = clients.filter(function(c) { return !c.isDeleted && (c.status === 'Active' || !c.status); }).length;
+        var clientKpiEl = document.getElementById('dashboard-kpi-clients');
+        if (clientKpiEl) clientKpiEl.textContent = activeClients;
+      }).catch(function() {});
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // PART 8 — TEAM ACTIVITY FEED
+  // ══════════════════════════════════════════════════════════════════════════
   function syncTeamActivity(projectsList) {
     var activityFeedEl = document.getElementById('dashboard-recent-activity');
     if (!activityFeedEl) return;
 
     var allActivities = [];
 
-    // 1. Projects activities
     (projectsList || []).forEach(function(p) {
       if (p.activities) {
         p.activities.forEach(function(a) {
@@ -716,7 +711,6 @@
       }
     });
 
-    // 2. CRM Leads & Clients activities
     try {
       var rawLeads = localStorage.getItem('verde_os_crm_leads');
       if (rawLeads) {
@@ -735,15 +729,9 @@
       }
     } catch(e) {}
 
-    // 3. Fallback seeds if fresh environment
     if (allActivities.length === 0) {
-      allActivities = [
-        { user: 'Midhul', action: 'uploaded homepage design', target: 'Cabo Travels', details: 'Phase 1 deliverable', date: new Date(Date.now() - 10 * 60 * 1000) },
-        { user: 'Ameen', action: 'added a new lead', target: 'BlueWave Tech', details: '\u20b93.2L value', date: new Date(Date.now() - 25 * 60 * 1000) },
-        { user: 'Nihal', action: 'completed SEO audit', target: 'Vertex Systems', details: 'Full report generated', date: new Date(Date.now() - 60 * 60 * 1000) },
-        { user: 'Finance', action: 'Payment received', target: 'GreenLeaf', details: '\u20b985,000 cleared', date: new Date(Date.now() - 120 * 60 * 1000) },
-        { user: 'Shahim', action: 'Proposal approved', target: 'Vertex Systems', details: 'Contract signed', date: new Date(Date.now() - 180 * 60 * 1000) }
-      ];
+      activityFeedEl.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:24px;text-align:center;">No recent audit activity recorded</div>';
+      return;
     }
 
     allActivities.sort(function(a, b) { return b.date.getTime() - a.date.getTime(); });
@@ -761,68 +749,10 @@
         '<div class="mc-avatar" style="width:32px;height:32px;font-size:11px;background:' + color + ';color:#fff;">' + initials + '</div>' +
         '<div>' +
           '<div class="mc-activity-text"><strong>' + esc(act.user) + '</strong>: ' + esc(act.action) + ' on <strong>' + esc(act.target) + '</strong></div>' +
-          '<div class="mc-activity-time">' + timeStr + (act.details ? ' \u2022 ' + esc(act.details) : '') + '</div>' +
+          '<div class="mc-activity-time">' + timeStr + (act.details ? ' • ' + esc(act.details) : '') + '</div>' +
         '</div>' +
       '</div>';
     }).join('');
-  }
-
-  // Sync finance data for invoices & revenue KPI
-  function syncDashboardWithFinance() {
-    if (!canAccessModule('finance') && !isSuperAdmin()) return;
-    try {
-      var totalRevenue = 0;
-      var pendingInvoiceCount = 0;
-
-      // 1. Primary: Check verde_finance_invoices from Finance module
-      var rawInvoices = localStorage.getItem('verde_finance_invoices');
-      if (rawInvoices) {
-        var invoices = JSON.parse(rawInvoices);
-        invoices.forEach(function(inv) {
-          if (inv.status === 'Paid') {
-            totalRevenue += (inv.total || 0);
-          } else if (inv.status !== 'Cancelled') {
-            pendingInvoiceCount++;
-          }
-        });
-      }
-
-      // 2. Secondary: Fallback to transactions store
-      if (totalRevenue === 0) {
-        var finData = localStorage.getItem('verde_os_finance_transactions');
-        if (finData) {
-          var transactions = JSON.parse(finData);
-          transactions.forEach(function(t) {
-            if (t.type === 'Income' && t.status === 'Completed') {
-              totalRevenue += (t.amount || 0);
-            }
-          });
-          if (pendingInvoiceCount === 0) {
-            pendingInvoiceCount = transactions.filter(function(t) { return t.status === 'Processing' || t.status === 'Pending'; }).length;
-          }
-        }
-      }
-
-      // 3. Fallback to mock data if uninitialized
-      if (totalRevenue === 0 && window.VerdeMockData && window.VerdeMockData.invoices) {
-        window.VerdeMockData.invoices.forEach(function(inv) {
-          if (inv.type === 'Income' && inv.status === 'Completed') totalRevenue += (inv.amount * 85 || 0);
-        });
-        pendingInvoiceCount = 3;
-      }
-
-      var invEl = document.getElementById('dashboard-kpi-invoices');
-      if (invEl) invEl.textContent = pendingInvoiceCount;
-
-      var revKpiEl = document.getElementById('dashboard-kpi-revenue');
-      var revLakhs = (totalRevenue / 100000).toFixed(1);
-      if (revKpiEl && totalRevenue > 0) revKpiEl.textContent = '\u20b9' + revLakhs + 'L';
-
-      var heroRevEl = document.getElementById('mc-stat-revenue');
-      if (heroRevEl && totalRevenue > 0) {
-        heroRevEl.innerHTML = '\u20b9' + revLakhs + 'L this month \u00b7 <span style="color:var(--success);">\u219112%</span> vs last month';
-      }
-    } catch(e) {}
   }
 
   // ══════════════════════════════════════════════════════════════════════════
@@ -835,56 +765,49 @@
 
     var approvals = [];
 
-    // 1. Invoices needing approval
     try {
       var rawInvoices = localStorage.getItem('verde_finance_invoices');
       if (rawInvoices) {
         var invoices = JSON.parse(rawInvoices);
-        invoices.filter(function(inv) { return inv.status === 'Overdue' || inv.status === 'Sent' || inv.status === 'Draft'; }).forEach(function(inv) {
+        invoices.filter(function(inv) { return inv.status === 'Sent' || inv.status === 'Draft' || inv.status === 'Overdue'; }).forEach(function(inv) {
           approvals.push({
             id: inv.id || inv.invoiceNumber,
             type: 'invoice',
-            title: 'Invoice ' + (inv.invoiceNumber || '#INV-1001'),
-            sub: '\u20b9' + (inv.total || 85000).toLocaleString('en-IN') + ' \u00b7 ' + (inv.clientName || 'Client'),
+            title: 'Invoice ' + (inv.invoiceNumber || inv.id),
+            sub: fmtMoney(inv.total || inv.amount || 0) + ' · ' + (inv.clientName || 'Client'),
             invoiceNumber: inv.invoiceNumber
           });
         });
       }
     } catch(e) {}
 
-    // 2. Leave requests from notifications
     try {
       var rawNotifs = localStorage.getItem('verde_os_notifications');
-      var notifs = rawNotifs ? JSON.parse(rawNotifs) : (window.VerdeMockData ? window.VerdeMockData.notifications : []);
-      (notifs || []).filter(function(n) { return !n.read && (n.type === 'alert' || (n.title && n.title.toLowerCase().includes('leave'))); }).forEach(function(n) {
-        approvals.push({
-          id: n.id,
-          type: 'leave',
-          title: n.title || 'Leave Request',
-          sub: n.subtitle || n.desc || 'Pending approval'
+      if (rawNotifs) {
+        var notifs = JSON.parse(rawNotifs);
+        notifs.filter(function(n) { return !n.read && (n.type === 'alert' || (n.title && n.title.toLowerCase().includes('leave'))); }).forEach(function(n) {
+          approvals.push({
+            id: n.id,
+            type: 'leave',
+            title: n.title || 'Leave Request',
+            sub: n.subtitle || n.desc || 'Pending administrative review'
+          });
         });
-      });
+      }
     } catch(e) {}
-
-    // 3. Fallback seeds if no active approvals
-    if (approvals.length === 0 && !localStorage.getItem('verde_approvals_cleared')) {
-      approvals = [
-        { id: 'appr-1', type: 'invoice', title: 'Invoice #VL-0042', sub: '\u20b985,000 \u00b7 Cabo Travels', invoiceNumber: 'INV-1001' },
-        { id: 'appr-2', type: 'leave', title: 'Leave Request', sub: 'Midhul \u00b7 July 30 \u2014 31' },
-        { id: 'appr-3', type: 'budget', title: 'Budget Increase', sub: 'Marketing Campaign \u00b7 +\u20b915,000' }
-      ];
-    }
 
     if (badge) badge.textContent = approvals.length;
 
     if (approvals.length === 0) {
-      container.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:20px 0;text-align:center;">No pending approvals \u2714</div>';
+      container.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:20px 0;text-align:center;">No pending approvals ✔</div>';
       return;
     }
 
     container.innerHTML = approvals.map(function(item) {
-      var iconColor = item.type === 'invoice' ? 'background:var(--success-50);color:var(--success);' : (item.type === 'leave' ? 'background:var(--primary-light);color:var(--primary);' : 'background:var(--warning-50);color:var(--warning);');
-      var iconSvg = item.type === 'invoice' ? '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>' : (item.type === 'leave' ? '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>' : '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>');
+      var iconColor = item.type === 'invoice' ? 'background:var(--success-50);color:var(--success);' : 'background:var(--primary-light);color:var(--primary);';
+      var iconSvg = item.type === 'invoice'
+        ? '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>'
+        : '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>';
 
       return '<div class="mc-approval-item" data-appr-id="' + esc(item.id) + '" data-appr-type="' + esc(item.type) + '">' +
         '<div class="mc-approval-icon" style="' + iconColor + '">' + iconSvg + '</div>' +
@@ -899,7 +822,6 @@
       '</div>';
     }).join('');
 
-    // Attach click actions
     container.querySelectorAll('.mc-approval-item').forEach(function(el) {
       var id = el.getAttribute('data-appr-id');
       var type = el.getAttribute('data-appr-type');
@@ -924,8 +846,7 @@
           var remaining = container.querySelectorAll('.mc-approval-item').length;
           if (badge) badge.textContent = remaining;
           if (remaining === 0) {
-            localStorage.setItem('verde_approvals_cleared', '1');
-            container.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:20px 0;text-align:center;">No pending approvals \u2714</div>';
+            container.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:20px 0;text-align:center;">No pending approvals ✔</div>';
           }
           syncDashboardWithFinance();
         });
@@ -949,8 +870,7 @@
           var remaining = container.querySelectorAll('.mc-approval-item').length;
           if (badge) badge.textContent = remaining;
           if (remaining === 0) {
-            localStorage.setItem('verde_approvals_cleared', '1');
-            container.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:20px 0;text-align:center;">No pending approvals \u2714</div>';
+            container.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:20px 0;text-align:center;">No pending approvals ✔</div>';
           }
           syncDashboardWithFinance();
         });
@@ -959,7 +879,59 @@
   }
 
   // ══════════════════════════════════════════════════════════════════════════
-  // PART 11 — QUICK NOTES (per-user persistence)
+  // PART 10 — TEAM PERFORMANCE
+  // ══════════════════════════════════════════════════════════════════════════
+  function syncTeamPerformance() {
+    var grid = document.getElementById('mc-performance-grid');
+    if (!grid) return;
+    if (!canAccessModule('team') && !isSuperAdmin()) return;
+
+    var pTeam = (window.VerdeServices && window.VerdeServices.Team && typeof window.VerdeServices.Team.getMembers === 'function')
+      ? window.VerdeServices.Team.getMembers()
+      : Promise.resolve(JSON.parse(localStorage.getItem('verde_os_team_employees') || '[]'));
+
+    var pTasks = (window.VerdeServices && window.VerdeServices.Tasks)
+      ? window.VerdeServices.Tasks.getTasks()
+      : Promise.resolve(JSON.parse(localStorage.getItem('verde_os_tasks') || '[]'));
+
+    Promise.all([pTeam, pTasks]).then(function(results) {
+      var teamEmps = (results[0] || []).filter(function(e) { return !e.isDeleted && e.status !== 'Inactive'; });
+      var tasks = results[1] || [];
+
+      if (teamEmps.length === 0) {
+        grid.innerHTML = '<div style="grid-column:1/-1; padding:16px; text-align:center; color:var(--text-3); font-size:12px;">No active team members registered</div>';
+        return;
+      }
+
+      var bgColors = ['var(--primary)', '#6366F1', '#EC4899', '#F59E0B', '#10B981', '#8B5CF6'];
+      grid.innerHTML = teamEmps.slice(0, 4).map(function(emp, i) {
+        var empTasks = tasks.filter(function(t) {
+          return (t.assignee && t.assignee.toLowerCase().includes((emp.name || '').toLowerCase())) ||
+                 (t.assigneeId && t.assigneeId === emp.initials) ||
+                 (t.assigneeInitials && t.assigneeInitials === emp.initials);
+        });
+        var doneTasks = empTasks.filter(function(t) { return t.status === 'Completed'; }).length;
+        var prodPct = empTasks.length > 0 ? Math.round((doneTasks / empTasks.length) * 100) : 100;
+        var initials = emp.initials || (emp.name || '??').split(' ').map(function(w) { return w[0]; }).join('').substring(0, 2).toUpperCase();
+        var bgColor = bgColors[i % bgColors.length];
+
+        return '<div class="mc-perf-card">' +
+          '<div class="mc-perf-avatar" style="background:' + bgColor + ';">' + initials + '</div>' +
+          '<div style="flex: 1;">' +
+            '<div class="mc-perf-name" style="margin-bottom: 4px;">' + esc(emp.name) + '</div>' +
+            '<div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-3);">' +
+              '<span>' + esc(emp.department || 'General') + '</span>' +
+              '<span>' + doneTasks + '/' + empTasks.length + ' tasks</span>' +
+              '<span style="color: var(--success); font-weight: 700;">' + prodPct + '%</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }).catch(function() {});
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // PART 11 — QUICK NOTES (PER-USER PERSISTENCE)
   // ══════════════════════════════════════════════════════════════════════════
   function initQuickNotes() {
     var textarea = document.getElementById('mc-quick-note');
@@ -976,7 +948,7 @@
   }
 
   // ══════════════════════════════════════════════════════════════════════════
-  // FOCUS/WORK ACTIVITY — Hours Worked sync with My Work module
+  // PART 12 — HOURS WORKED
   // ══════════════════════════════════════════════════════════════════════════
   function syncHoursWorked() {
     try {
@@ -1001,27 +973,23 @@
       }
     } catch(e) {}
   }
-  window.syncDashboardWithMyWork = syncHoursWorked;
 
   // ══════════════════════════════════════════════════════════════════════════
-  // PART 12 — PERMISSION AWARENESS
+  // PART 13 — ROLE PERMISSION APPLICATION
   // ══════════════════════════════════════════════════════════════════════════
   function applyPermissions() {
-    // Company Health (finance-related)
     var healthSection = document.querySelector('.mc-health-grid');
     if (healthSection && !canAccessModule('finance') && !isSuperAdmin()) {
       var sec = healthSection.closest('section');
       if (sec) sec.style.display = 'none';
     }
 
-    // Team Performance
     var perfGrid = document.getElementById('mc-performance-grid');
     if (perfGrid && !canAccessModule('team') && !isSuperAdmin()) {
       var sec2 = perfGrid.closest('section');
       if (sec2) sec2.style.display = 'none';
     }
 
-    // Pending Approvals (admin-only)
     if (!isSuperAdmin()) {
       var apprSec = document.getElementById('mc-approvals-section');
       if (apprSec) apprSec.style.display = 'none';
@@ -1029,42 +997,7 @@
   }
 
   // ══════════════════════════════════════════════════════════════════════════
-  // TEAM PERFORMANCE — from existing team data
-  // ══════════════════════════════════════════════════════════════════════════
-  function syncTeamPerformance() {
-    var grid = document.getElementById('mc-performance-grid');
-    if (!grid) return;
-    if (!canAccessModule('team') && !isSuperAdmin()) return;
-
-    try {
-      var teamStored = localStorage.getItem('verde_os_team_employees');
-      if (teamStored) {
-        var teamEmps = JSON.parse(teamStored);
-        var activeEmps = teamEmps.filter(function(e) { return e.status === 'Active'; });
-        if (activeEmps.length > 0) {
-          var bgColors = ['var(--primary)', '#6366F1', '#EC4899', '#F59E0B', '#10B981', '#8B5CF6'];
-          grid.innerHTML = activeEmps.slice(0, 4).map(function(emp, i) {
-            var initials = (emp.name || '??').split(' ').map(function(w) { return w[0]; }).join('').substring(0, 2).toUpperCase();
-            var bgColor = bgColors[i % bgColors.length];
-            return '<div class="mc-perf-card">' +
-              '<div class="mc-perf-avatar" style="background:' + bgColor + ';">' + initials + '</div>' +
-              '<div style="flex: 1;">' +
-                '<div class="mc-perf-name" style="margin-bottom: 4px;">' + esc(emp.name) + '</div>' +
-                '<div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-3);">' +
-                  '<span>' + esc(emp.department || '\u2014') + '</span>' +
-                  '<span>' + esc(emp.role || '\u2014') + '</span>' +
-                  '<span style="color: var(--success); font-weight: 700;">' + esc(emp.status || 'Active') + '</span>' +
-                '</div>' +
-              '</div>' +
-            '</div>';
-          }).join('');
-        }
-      }
-    } catch(e) {}
-  }
-
-  // ══════════════════════════════════════════════════════════════════════════
-  // REFRESH ALL DASHBOARD DATA (CROSS-MODULE SYNC)
+  // MASTER REFRESH & CROSS-MODULE SYNC
   // ══════════════════════════════════════════════════════════════════════════
   function refreshAllDashboardData() {
     updateGreeting();
@@ -1073,7 +1006,6 @@
     syncMeetings();
     syncDashboardWithProjects();
     syncDashboardWithCRM();
-    syncDashboardWithTasks();
     syncDashboardWithFinance();
     syncHoursWorked();
     syncTeamPerformance();
@@ -1082,27 +1014,14 @@
   }
   window.refreshMissionControl = refreshAllDashboardData;
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // INITIALIZATION
-  // ══════════════════════════════════════════════════════════════════════════
   function init() {
-    // Part 1: Sidebar toggle
     initSidebarToggle();
-
-    // UI interactions
-    initTaskTabs();
-
-    // Part 7: Calendar
     renderCalendar();
     initCalendarNav();
-
-    // Part 11: Quick Notes
     initQuickNotes();
 
-    // Refresh all data
     refreshAllDashboardData();
 
-    // Live Clock & Periodic updates
     updateClock();
     updateTopbarDate();
     updateFooterTime();
@@ -1112,20 +1031,16 @@
     setInterval(updateFooterTime, 60000);
     setInterval(syncHoursWorked, 1000);
 
-    // Cross-Module Auto Sync Listeners
     window.addEventListener('focus', refreshAllDashboardData);
     document.addEventListener('visibilitychange', function() {
       if (!document.hidden) refreshAllDashboardData();
     });
-    window.addEventListener('storage', function() {
-      refreshAllDashboardData();
-    });
+    window.addEventListener('storage', refreshAllDashboardData);
     if (window.VerdeState && typeof window.VerdeState.subscribe === 'function') {
       window.VerdeState.subscribe('*', refreshAllDashboardData);
     }
   }
 
-  // Run when DOM is ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
