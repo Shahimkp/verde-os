@@ -286,12 +286,17 @@
     if (!tbody) return;
     tbody.innerHTML = '';
     
-    if (teamLeaves.length === 0) {
+    const isAdmin = window.VERDE_PERMISSIONS && window.VERDE_PERMISSIONS.can('team_add');
+    const myEmpId = window.resolveCurrentUserEmpId ? window.resolveCurrentUserEmpId() : (window.VERDE_SESSION ? window.VERDE_SESSION.getUser().id : null);
+    
+    let filteredLeaves = isAdmin ? teamLeaves : teamLeaves.filter(r => r.empId === myEmpId);
+    
+    if (filteredLeaves.length === 0) {
       tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:32px; color:var(--text-3);">No leave requests found</td></tr>`;
       return;
     }
     
-    const sorted = [...teamLeaves].reverse();
+    const sorted = [...filteredLeaves].reverse();
     
     sorted.forEach(record => {
       const emp = teamEmployees.find(e => e.id === record.empId) || { name: 'Unknown', id: record.empId, department: 'N/A', initials: 'XX', avatarBg: 'var(--text-3)' };
@@ -314,14 +319,17 @@
         <td style="color:var(--text-2); font-size:13px;">${record.reason || '--'}</td>
         <td><span class="badge badge-${statusColor}" style="${record.status === 'Cancelled' ? 'background:var(--bg-2); color:var(--text-2);' : ''}">${record.status}</span></td>
         <td style="text-align: right;">
-          ${record.status === 'Pending' ? `
-            <button class="btn btn-sm btn-ghost" style="color:var(--success); margin-right:4px;" onclick="window.approveLeave('${record.id}')">Approve</button>
-            <button class="btn btn-sm btn-ghost" style="color:var(--danger); margin-right:4px;" onclick="window.rejectLeave('${record.id}')">Reject</button>
-          ` : record.status === 'Approved' ? `
-            <button class="btn btn-sm btn-ghost" style="color:var(--warning); margin-right:4px;" onclick="window.cancelLeave('${record.id}')">Cancel</button>
+        <td style="text-align: right;">
+          ${isAdmin ? `
+            ${record.status === 'Pending' ? `
+              <button class="btn btn-sm btn-ghost" style="color:var(--success); margin-right:4px;" onclick="window.approveLeave('${record.id}')">Approve</button>
+              <button class="btn btn-sm btn-ghost" style="color:var(--danger); margin-right:4px;" onclick="window.rejectLeave('${record.id}')">Reject</button>
+            ` : record.status === 'Approved' ? `
+              <button class="btn btn-sm btn-ghost" style="color:var(--warning); margin-right:4px;" onclick="window.cancelLeave('${record.id}')">Cancel</button>
+            ` : ''}
+            <button class="btn btn-sm btn-ghost" style="margin-right:4px;" onclick="window.openLeaveModal('${record.id}')">Edit</button>
+            <button class="btn btn-sm btn-ghost" style="color:var(--danger);" onclick="window.deleteLeaveRecord('${record.id}')">Delete</button>
           ` : ''}
-          <button class="btn btn-sm btn-ghost" style="margin-right:4px;" onclick="window.openLeaveModal('${record.id}')">Edit</button>
-          <button class="btn btn-sm btn-ghost" style="color:var(--danger);" onclick="window.deleteLeaveRecord('${record.id}')">Delete</button>
         </td>
       `;
       tbody.appendChild(tr);
@@ -1520,15 +1528,24 @@
   };
 
   window.openLeaveModal = function(recordId = null) {
-    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('team_add')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
+    const isAdmin = window.VERDE_PERMISSIONS && window.VERDE_PERMISSIONS.can('team_add');
+    const myEmpId = window.resolveCurrentUserEmpId ? window.resolveCurrentUserEmpId() : (window.VERDE_SESSION ? window.VERDE_SESSION.getUser().id : null);
+    
     let editRecord = null;
     if (recordId) {
       editRecord = teamLeaves.find(r => r.id === recordId);
       if (!editRecord) return;
+      if (!isAdmin) {
+        if (window.VerdeToast) window.VerdeToast.error('Only administrators can edit leave requests.');
+        return;
+      }
     }
 
     const today = new Date().toISOString().split('T')[0];
-    let empOptions = teamEmployees.map(e => `<option value="${e.id}" ${editRecord && editRecord.empId === e.id ? 'selected' : ''}>${e.name} (${e.id})</option>`).join('');
+    let empOptions = '';
+    if (isAdmin) {
+      empOptions = teamEmployees.map(e => `<option value="${e.id}" ${editRecord && editRecord.empId === e.id ? 'selected' : (!editRecord && myEmpId === e.id ? 'selected' : '')}>${e.name} (${e.id})</option>`).join('');
+    }
 
     const formHtml = `
       <style>
@@ -1540,9 +1557,11 @@
       <div id="leave-modal-form">
         <div class="lv-form-group">
           <label class="lv-form-label">Employee</label>
-          <select id="lv-empId" class="lv-form-select" ${editRecord ? 'disabled' : ''}>
-            ${empOptions}
-          </select>
+          ${isAdmin 
+            ? `<select id="lv-empId" class="lv-form-select" ${editRecord ? 'disabled' : ''}>${empOptions}</select>`
+            : `<input type="text" class="lv-form-input" value="${(teamEmployees.find(e => e.id === myEmpId) || {}).name} (${myEmpId})" readonly>
+               <input type="hidden" id="lv-empId" value="${myEmpId}">`
+          }
         </div>
         <div class="lv-form-group">
           <label class="lv-form-label">Leave Type</label>
@@ -1571,6 +1590,7 @@
           <label class="lv-form-label">Reason</label>
           <textarea id="lv-reason" class="lv-form-textarea" rows="3">${editRecord ? editRecord.reason : ''}</textarea>
         </div>
+        ${isAdmin ? `
         <div class="lv-form-group">
           <label class="lv-form-label">Status</label>
           <select id="lv-status" class="lv-form-select">
@@ -1580,77 +1600,86 @@
             <option value="Cancelled" ${editRecord && editRecord.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
           </select>
         </div>
+        ` : ``}
       </div>
     `;
 
     if (window.VerdeModal && window.VerdeModal.create) {
-      const modal = window.VerdeModal.create({
-        title: editRecord ? 'Edit Leave Request' : 'Create Leave Request',
-        body: formHtml,
-        confirmText: editRecord ? 'Update Request' : 'Submit Request',
-        cancelText: 'Cancel'
-      });
+      window.VerdeModal.create(
+        editRecord ? 'Edit Leave Request' : 'Create Leave Request',
+        formHtml,
+        function() {
+          let empId = document.getElementById('lv-empId').value;
+          const type = document.getElementById('lv-type').value;
+          const start = document.getElementById('lv-start').value;
+          const end = document.getElementById('lv-end').value;
+          const days = parseInt(document.getElementById('lv-days').value) || 0;
+          const reason = document.getElementById('lv-reason').value;
+          let statusElement = document.getElementById('lv-status');
+          let status = statusElement ? statusElement.value : 'Pending';
 
-      const btnSave = modal.querySelector('.modal-confirm-btn');
-      btnSave.addEventListener('click', function() {
-        const empId = document.getElementById('lv-empId').value;
-        const type = document.getElementById('lv-type').value;
-        const start = document.getElementById('lv-start').value;
-        const end = document.getElementById('lv-end').value;
-        const days = parseInt(document.getElementById('lv-days').value) || 0;
-        const reason = document.getElementById('lv-reason').value;
-        const status = document.getElementById('lv-status').value;
+          const isAdmin = window.VERDE_PERMISSIONS && window.VERDE_PERMISSIONS.can('team_add');
+          const myEmpId = window.resolveCurrentUserEmpId ? window.resolveCurrentUserEmpId() : (window.VERDE_SESSION ? window.VERDE_SESSION.getUser().id : null);
 
-        if (!empId || !start || !end) {
-          if (window.VerdeToast) window.VerdeToast.error('Please fill in all required fields.');
-          return;
+          if (!isAdmin) {
+            if (empId !== myEmpId) {
+              if (window.VerdeToast) window.VerdeToast.error('You can only submit leave for yourself.');
+              return;
+            }
+            empId = myEmpId;
+            status = 'Pending';
+          }
+
+          if (!empId || !start || !end) {
+            if (window.VerdeToast) window.VerdeToast.error('Please fill in all required fields.');
+            return;
+          }
+
+          if (new Date(end) < new Date(start)) {
+            if (window.VerdeToast) window.VerdeToast.error('End Date cannot be before Start Date.');
+            return;
+          }
+
+          const overlapping = teamLeaves.find(r => 
+            r.empId === empId && 
+            r.status !== 'Rejected' && r.status !== 'Cancelled' &&
+            ((start >= r.startDate && start <= r.endDate) || (end >= r.startDate && end <= r.endDate) || (start <= r.startDate && end >= r.endDate)) &&
+            (!editRecord || r.id !== editRecord.id)
+          );
+
+          if (overlapping) {
+            if (window.VerdeToast) window.VerdeToast.error('Leave request overlaps with an existing request for this employee.');
+            return;
+          }
+
+          if (editRecord) {
+            editRecord.empId = empId;
+            editRecord.type = type;
+            editRecord.startDate = start;
+            editRecord.endDate = end;
+            editRecord.days = days;
+            editRecord.reason = reason;
+            editRecord.status = status;
+          } else {
+            teamLeaves.push({
+              id: 'LV-' + Date.now(),
+              empId: empId,
+              type: type,
+              startDate: start,
+              endDate: end,
+              days: days,
+              reason: reason,
+              status: status
+            });
+          }
+          
+          saveLeaveData();
+          renderLeaveTable();
+          renderLeaveKPIs();
+          
+          if (window.VerdeToast) window.VerdeToast.success(editRecord ? 'Leave request updated.' : 'Leave request submitted.');
         }
-
-        if (new Date(end) < new Date(start)) {
-          if (window.VerdeToast) window.VerdeToast.error('End Date cannot be before Start Date.');
-          return;
-        }
-
-        const overlapping = teamLeaves.find(r => 
-          r.empId === empId && 
-          r.status !== 'Rejected' && r.status !== 'Cancelled' &&
-          ((start >= r.startDate && start <= r.endDate) || (end >= r.startDate && end <= r.endDate) || (start <= r.startDate && end >= r.endDate)) &&
-          (!editRecord || r.id !== editRecord.id)
-        );
-
-        if (overlapping) {
-          if (window.VerdeToast) window.VerdeToast.error('Leave request overlaps with an existing request for this employee.');
-          return;
-        }
-
-        if (editRecord) {
-          editRecord.empId = empId;
-          editRecord.type = type;
-          editRecord.startDate = start;
-          editRecord.endDate = end;
-          editRecord.days = days;
-          editRecord.reason = reason;
-          editRecord.status = status;
-        } else {
-          teamLeaves.push({
-            id: 'LV-' + Date.now(),
-            empId: empId,
-            type: type,
-            startDate: start,
-            endDate: end,
-            days: days,
-            reason: reason,
-            status: status
-          });
-        }
-        
-        saveLeaveData();
-        renderLeaveTable();
-        renderLeaveKPIs();
-        
-        if (window.VerdeToast) window.VerdeToast.success(editRecord ? 'Leave request updated.' : 'Leave request submitted.');
-        window.VerdeModal.close(modal);
-      });
+      );
     }
   };
 
@@ -1671,7 +1700,8 @@
   };
 
   window.deleteLeaveRecord = function(recordId) {
-    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('team_remove')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
+    const isAdmin = window.VERDE_PERMISSIONS && window.VERDE_PERMISSIONS.can('team_add');
+    if (!isAdmin) { if(window.VerdeToast) window.VerdeToast.error('Only administrators can delete leave requests.'); return; }
     if (window.VerdeModal && window.VerdeModal.delete) {
       window.VerdeModal.delete(
         'Delete Request',
@@ -1688,7 +1718,8 @@
   };
 
   window.approveLeave = function(recordId) {
-    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('team_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
+    const isAdmin = window.VERDE_PERMISSIONS && window.VERDE_PERMISSIONS.can('team_add');
+    if (!isAdmin) { if(window.VerdeToast) window.VerdeToast.error('Only administrators can manage leave approvals.'); return; }
     const record = teamLeaves.find(r => r.id === recordId);
     if (record) {
       record.status = 'Approved';
@@ -1700,7 +1731,8 @@
   };
 
   window.rejectLeave = function(recordId) {
-    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('team_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
+    const isAdmin = window.VERDE_PERMISSIONS && window.VERDE_PERMISSIONS.can('team_add');
+    if (!isAdmin) { if(window.VerdeToast) window.VerdeToast.error('Only administrators can manage leave approvals.'); return; }
     const record = teamLeaves.find(r => r.id === recordId);
     if (record) {
       record.status = 'Rejected';
@@ -1712,6 +1744,8 @@
   };
 
   window.cancelLeave = function(recordId) {
+    const isAdmin = window.VERDE_PERMISSIONS && window.VERDE_PERMISSIONS.can('team_add');
+    if (!isAdmin) { if(window.VerdeToast) window.VerdeToast.error('Only administrators can manage leave requests.'); return; }
     const record = teamLeaves.find(r => r.id === recordId);
     if (record) {
       record.status = 'Cancelled';
