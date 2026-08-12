@@ -62,7 +62,13 @@
   function loadAttendanceData() {
     const stored = localStorage.getItem('verde_os_team_attendance');
     if (stored) {
-      teamAttendance = JSON.parse(stored);
+      const parsed = JSON.parse(stored);
+      const unique = {};
+      parsed.forEach(record => {
+        unique[record.empId + '|' + record.date] = record;
+      });
+      teamAttendance = Object.values(unique);
+      saveAttendanceData();
     } else {
       const today = new Date().toISOString().split('T')[0];
       teamAttendance = [
@@ -243,6 +249,7 @@
     }
     
     const sorted = [...teamAttendance].reverse();
+    const isAdmin = window.VERDE_PERMISSIONS && window.VERDE_PERMISSIONS.can('team_add');
     
     sorted.forEach(record => {
       const emp = teamEmployees.find(e => e.id === record.empId) || { name: 'Unknown', id: record.empId, department: 'N/A', initials: 'XX', avatarBg: 'var(--text-3)' };
@@ -264,8 +271,10 @@
         <td style="font-weight:700;">${record.hours || '0h 0m'}</td>
         <td><span class="badge badge-${statusColor}">${record.status}</span></td>
         <td style="text-align: right;">
+          ${isAdmin ? `
           <button class="btn btn-sm btn-ghost" style="margin-right:4px;" onclick="window.openMarkAttendanceModal('${record.id}')">Edit</button>
           <button class="btn btn-sm btn-ghost" style="color:var(--danger);" onclick="window.deleteAttendanceRecord('${record.id}')">Delete</button>
+          ` : ''}
         </td>
       `;
       tbody.appendChild(tr);
@@ -416,23 +425,30 @@
   }
 
   function resolveCurrentUserEmpId() {
-    const sessionUser = window.VerdeState ? window.VerdeState.get('user') : null;
+    const sessionUser = window.VERDE_SESSION && typeof window.VERDE_SESSION.getUser === 'function' ? window.VERDE_SESSION.getUser() : null;
     if (!sessionUser) return null;
-    let matched = teamEmployees.find(e => e.id === sessionUser.id);
+
+    const sId = sessionUser.userId || sessionUser.id;
+
+    let matched = sId ? teamEmployees.find(e => e.id === sId) : null;
     if (matched) return matched.id;
-    const sessionNum = sessionUser.id ? String(sessionUser.id).replace(/\D/g, '') : null;
+
+    const sessionNum = sId ? String(sId).replace(/\D/g, '') : null;
     if (sessionNum) {
       matched = teamEmployees.find(e => e.id && String(e.id).replace(/\D/g, '') === sessionNum);
       if (matched) return matched.id;
     }
+
     if (sessionUser.email) {
       matched = teamEmployees.find(e => e.email && e.email.toLowerCase() === sessionUser.email.toLowerCase());
       if (matched) return matched.id;
     }
+
     if (sessionUser.name) {
       matched = teamEmployees.find(e => e.name && e.name.toLowerCase() === sessionUser.name.toLowerCase());
       if (matched) return matched.id;
     }
+
     return null;
   }
 
@@ -449,8 +465,8 @@
     if (recordId) {
       editRecord = teamAttendance.find(r => r.id === recordId);
       if (!editRecord) return;
-      if (!isAdmin && editRecord.empId !== myEmpId) {
-        if(window.VerdeToast) window.VerdeToast.error('Access Denied');
+      if (!isAdmin) {
+        if(window.VerdeToast) window.VerdeToast.error('Only administrators can edit attendance.');
         return;
       }
     }
@@ -477,13 +493,18 @@
       <div id="attendance-modal-form">
         <div class="att-form-group">
           <label class="att-form-label">Employee</label>
-          <select id="att-empId" class="att-form-select" ${(editRecord || !isAdmin) ? 'disabled' : ''}>
-            ${empOptions}
-          </select>
+          ${isAdmin 
+            ? `<select id="att-empId" class="att-form-select" ${editRecord ? 'disabled' : ''}>${empOptions}</select>`
+            : `<input type="text" class="att-form-input" value="${(teamEmployees.find(e => e.id === myEmpId) || {}).name} (${myEmpId})" readonly>
+               <input type="hidden" id="att-empId" value="${myEmpId}">`
+          }
         </div>
         <div class="att-form-group">
           <label class="att-form-label">Date</label>
-          <input type="date" id="att-date" class="att-form-input" value="${editRecord ? editRecord.date : today}">
+          ${isAdmin
+            ? `<input type="date" id="att-date" class="att-form-input" value="${editRecord ? editRecord.date : today}">`
+            : `<input type="date" id="att-date" class="att-form-input" value="${today}" min="${today}" max="${today}" readonly>`
+          }
         </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
           <div class="att-form-group">
@@ -495,6 +516,7 @@
             <input type="time" id="att-checkout" class="att-form-input" value="${editRecord && editRecord.checkOut ? convertToTimeInput(editRecord.checkOut) : '17:00'}">
           </div>
         </div>
+        ${isAdmin ? `
         <div class="att-form-group">
           <label class="att-form-label">Status</label>
           <select id="att-status" class="att-form-select">
@@ -505,6 +527,7 @@
             <option value="Leave" ${editRecord && editRecord.status === 'Leave' ? 'selected' : ''}>Leave</option>
           </select>
         </div>
+        ` : `<input type="hidden" id="att-status" value="Present">`}
       </div>
     `;
 
@@ -513,15 +536,41 @@
         editRecord ? 'Edit Attendance' : 'Mark Attendance',
         formHtml,
         function() {
-        const empId = document.getElementById('att-empId').value;
-        const date = document.getElementById('att-date').value;
+        let empId = document.getElementById('att-empId').value;
+        let date = document.getElementById('att-date').value;
         const checkin = document.getElementById('att-checkin').value;
         const checkout = document.getElementById('att-checkout').value;
-        const status = document.getElementById('att-status').value;
+        let status = document.getElementById('att-status').value;
+        
+        const currentLocalToday = new Date().toISOString().split('T')[0];
+        
+        if (!isAdmin) {
+          empId = myEmpId;
+          date = currentLocalToday;
+          status = 'Present';
+          
+          if (empId !== myEmpId || date !== currentLocalToday || status !== 'Present') {
+            if (window.VerdeToast) window.VerdeToast.error('Invalid member data.');
+            return;
+          }
+        }
 
         if (!empId || !date) {
           if (window.VerdeToast) window.VerdeToast.error('Employee and Date are required.');
           return;
+        }
+        
+        if (!editRecord) {
+          const duplicate = teamAttendance.find(r => r.empId === empId && r.date === date);
+          if (duplicate) {
+            if (!isAdmin) {
+              if (window.VerdeToast) window.VerdeToast.error('Attendance already marked for today.');
+            } else {
+              if (window.VerdeToast) window.VerdeToast.error('Attendance already exists for this employee on this date.');
+            }
+            setTimeout(() => window.openMarkAttendanceModal(editRecord ? editRecord.id : null), 250);
+            return;
+          }
         }
 
         let hoursStr = '0h 0m';
@@ -581,10 +630,8 @@
     if (!record) return;
 
     if (!isAdmin) {
-      if (!myEmpId || record.empId !== myEmpId) {
-        if(window.VerdeToast) window.VerdeToast.error('Access Denied'); 
-        return;
-      }
+      if(window.VerdeToast) window.VerdeToast.error('Only administrators can delete attendance.');
+      return;
     }
     if (window.VerdeModal && window.VerdeModal.delete) {
       window.VerdeModal.delete(
