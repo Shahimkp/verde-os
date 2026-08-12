@@ -44,6 +44,9 @@
 
   function saveLeaveData() {
     localStorage.setItem('verde_os_team_leaves', JSON.stringify(teamLeaves));
+    if (typeof updateDashboardKPIs === 'function') {
+      updateDashboardKPIs();
+    }
   }
 
   function loadTeamData() {
@@ -130,30 +133,63 @@
       grid.appendChild(card);
     });
 
-    // Update KPI Cards
+    if (typeof updateDashboardKPIs === 'function') {
+      updateDashboardKPIs();
+    }
+  }
+
+  function updateDashboardKPIs() {
     const totalEl = document.getElementById('kpi-total-employees');
     const onlineEl = document.getElementById('kpi-online-now');
     const leaveEl = document.getElementById('kpi-on-leave');
     const prodEl = document.getElementById('kpi-avg-productivity');
 
-    if (totalEl) {
-      totalEl.textContent = teamEmployees.length;
-    }
+    if (totalEl) totalEl.textContent = teamEmployees.length;
+
+    let onlineCount = 0;
+    let leaveCount = 0;
+    let totalProd = 0;
+    let countProd = 0;
     
-    if (onlineEl || leaveEl) {
-      let onlineCount = 0;
-      let leaveCount = 0;
-      teamEmployees.forEach(emp => {
-        const status = (emp.status || 'Active').toLowerCase();
-        if (status === 'online' || status === 'active') onlineCount++;
-        else if (status === 'on leave') leaveCount++;
-      });
-      if (onlineEl) onlineEl.textContent = onlineCount;
-      if (leaveEl) leaveEl.textContent = leaveCount;
+    const today = new Date().toISOString().split('T')[0];
+    const onLeaveEmpIds = new Set();
+    
+    if (typeof teamLeaves !== 'undefined') {
+        teamLeaves.forEach(lv => {
+            if (lv.status === 'Approved' && lv.startDate <= today && lv.endDate >= today) {
+                onLeaveEmpIds.add(lv.empId);
+            }
+        });
     }
+
+    teamEmployees.forEach(emp => {
+      if (onLeaveEmpIds.has(emp.id)) {
+          leaveCount++;
+      } else {
+          const status = (emp.status || 'Active').toLowerCase();
+          if (status === 'online' || status === 'active') {
+              onlineCount++;
+          }
+      }
+      
+      if (emp.productivity !== undefined && emp.productivity !== null) {
+          const val = parseInt(emp.productivity);
+          if (!isNaN(val)) {
+              totalProd += val;
+              countProd++;
+          }
+      }
+    });
+
+    if (onlineEl) onlineEl.textContent = onlineCount;
+    if (leaveEl) leaveEl.textContent = leaveCount;
     
     if (prodEl) {
-      prodEl.textContent = '94%'; // Mock average productivity
+        if (countProd > 0) {
+            prodEl.textContent = Math.round(totalProd / countProd) + '%';
+        } else {
+            prodEl.textContent = '0%';
+        }
     }
   }
 
