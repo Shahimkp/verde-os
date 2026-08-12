@@ -415,16 +415,57 @@
     if (elAvg) elAvg.textContent = formatCurrency(Math.round(avgSalary));
   }
 
+  function resolveCurrentUserEmpId() {
+    const sessionUser = window.VerdeState ? window.VerdeState.get('user') : null;
+    if (!sessionUser) return null;
+    let matched = teamEmployees.find(e => e.id === sessionUser.id);
+    if (matched) return matched.id;
+    const sessionNum = sessionUser.id ? String(sessionUser.id).replace(/\D/g, '') : null;
+    if (sessionNum) {
+      matched = teamEmployees.find(e => e.id && String(e.id).replace(/\D/g, '') === sessionNum);
+      if (matched) return matched.id;
+    }
+    if (sessionUser.email) {
+      matched = teamEmployees.find(e => e.email && e.email.toLowerCase() === sessionUser.email.toLowerCase());
+      if (matched) return matched.id;
+    }
+    if (sessionUser.name) {
+      matched = teamEmployees.find(e => e.name && e.name.toLowerCase() === sessionUser.name.toLowerCase());
+      if (matched) return matched.id;
+    }
+    return null;
+  }
+
   window.openMarkAttendanceModal = function(recordId = null) {
-    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('team_add')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
+    const isAdmin = window.VERDE_PERMISSIONS && window.VERDE_PERMISSIONS.can('team_add');
+    const myEmpId = resolveCurrentUserEmpId();
+
+    if (!isAdmin && !myEmpId) {
+      if(window.VerdeToast) window.VerdeToast.error('Access Denied');
+      return;
+    }
+
     let editRecord = null;
     if (recordId) {
       editRecord = teamAttendance.find(r => r.id === recordId);
       if (!editRecord) return;
+      if (!isAdmin && editRecord.empId !== myEmpId) {
+        if(window.VerdeToast) window.VerdeToast.error('Access Denied');
+        return;
+      }
     }
 
     const today = new Date().toISOString().split('T')[0];
-    let empOptions = teamEmployees.map(e => `<option value="${e.id}" ${editRecord && editRecord.empId === e.id ? 'selected' : ''}>${e.name} (${e.id})</option>`).join('');
+    let empOptions = '';
+    
+    if (isAdmin) {
+      empOptions = teamEmployees.map(e => `<option value="${e.id}" ${editRecord && editRecord.empId === e.id ? 'selected' : (!editRecord && myEmpId === e.id ? 'selected' : '')}>${e.name} (${e.id})</option>`).join('');
+    } else {
+      const myEmp = teamEmployees.find(e => e.id === myEmpId);
+      if (myEmp) {
+        empOptions = `<option value="${myEmp.id}" selected>${myEmp.name} (${myEmp.id})</option>`;
+      }
+    }
 
     const formHtml = `
       <style>
@@ -436,7 +477,7 @@
       <div id="attendance-modal-form">
         <div class="att-form-group">
           <label class="att-form-label">Employee</label>
-          <select id="att-empId" class="att-form-select" ${editRecord ? 'disabled' : ''}>
+          <select id="att-empId" class="att-form-select" ${(editRecord || !isAdmin) ? 'disabled' : ''}>
             ${empOptions}
           </select>
         </div>
@@ -468,15 +509,10 @@
     `;
 
     if (window.VerdeModal && window.VerdeModal.create) {
-      const modal = window.VerdeModal.create({
-        title: editRecord ? 'Edit Attendance' : 'Mark Attendance',
-        body: formHtml,
-        confirmText: 'Save Record',
-        cancelText: 'Cancel'
-      });
-
-      const btnSave = modal.querySelector('.modal-confirm-btn');
-      btnSave.addEventListener('click', function() {
+      window.VerdeModal.create(
+        editRecord ? 'Edit Attendance' : 'Mark Attendance',
+        formHtml,
+        function() {
         const empId = document.getElementById('att-empId').value;
         const date = document.getElementById('att-date').value;
         const checkin = document.getElementById('att-checkin').value;
@@ -532,15 +568,24 @@
         saveAttendanceData();
         renderAttendanceTable();
         renderAttendanceKPIs();
-        
         if (window.VerdeToast) window.VerdeToast.success('Attendance record saved successfully.');
-        window.VerdeModal.close(modal);
       });
     }
   };
 
   window.deleteAttendanceRecord = function(recordId) {
-    if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('team_remove')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
+    const isAdmin = window.VERDE_PERMISSIONS && window.VERDE_PERMISSIONS.can('team_remove');
+    const myEmpId = resolveCurrentUserEmpId();
+    
+    const record = teamAttendance.find(r => r.id === recordId);
+    if (!record) return;
+
+    if (!isAdmin) {
+      if (!myEmpId || record.empId !== myEmpId) {
+        if(window.VerdeToast) window.VerdeToast.error('Access Denied'); 
+        return;
+      }
+    }
     if (window.VerdeModal && window.VerdeModal.delete) {
       window.VerdeModal.delete(
         'Delete Record',
