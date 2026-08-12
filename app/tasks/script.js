@@ -13,6 +13,34 @@
   // Dynamic Team Members loaded from VerdeServices
   let teamMembers = [];
 
+  function resolveCurrentUserEmpId() {
+    const sessionUser = window.VERDE_SESSION && typeof window.VERDE_SESSION.getUser === 'function' ? window.VERDE_SESSION.getUser() : null;
+    if (!sessionUser) return null;
+
+    const sId = sessionUser.userId || sessionUser.id;
+
+    let matched = sId ? teamMembers.find(e => e.id === sId) : null;
+    if (matched) return matched.id;
+
+    const sessionNum = sId ? String(sId).replace(/\D/g, '') : null;
+    if (sessionNum) {
+      matched = teamMembers.find(e => e.id && String(e.id).replace(/\D/g, '') === sessionNum);
+      if (matched) return matched.id;
+    }
+
+    if (sessionUser.email) {
+      matched = teamMembers.find(e => e.email && e.email.toLowerCase() === sessionUser.email.toLowerCase());
+      if (matched) return matched.id;
+    }
+
+    if (sessionUser.name) {
+      matched = teamMembers.find(e => e.name && e.name.toLowerCase() === sessionUser.name.toLowerCase());
+      if (matched) return matched.id;
+    }
+
+    return sId; // fallback
+  }
+
   function getAvatar(id) {
     if (!id || id === 'Unassigned') return { initials: '?', color: 'var(--text-3)' };
     const nameStr = id;
@@ -246,16 +274,24 @@
             this.style.border = 'none';
             const taskId = e.dataTransfer.getData('text/plain');
             if (taskId) {
-              window.VerdeServices.Tasks.updateTask(taskId, { status: col.id }).then(function() {
-                renderTasks();
-                window.VerdeServices.Tasks.getTaskById(taskId).then(t => {
-                   if (t && t.projectId) updateProjectProgressFromTasks(t.projectId);
+              window.VerdeServices.Tasks.getTaskById(taskId).then(t => {
+                if (!t) return;
+                const isAdmin = window.VERDE_PERMISSIONS && window.VERDE_PERMISSIONS.can('tasks_edit');
+                const myEmpId = resolveCurrentUserEmpId();
+                if (!isAdmin && t.assigneeId !== myEmpId) {
+                  if (window.VerdeToast) window.VerdeToast.error('You can only update tasks assigned to you.');
+                  renderTasks();
+                  return;
+                }
+                window.VerdeServices.Tasks.updateTask(taskId, { status: col.id }).then(function() {
+                  renderTasks();
+                  if (t.projectId) updateProjectProgressFromTasks(t.projectId);
+                  if (window.syncDashboardWithTasks) window.syncDashboardWithTasks();
+                }).catch(function(err) {
+                  if (window.VerdeToast) window.VerdeToast.error(err.message || 'Cannot move task.');
+                  else alert(err.message || 'Cannot move task.');
+                  renderTasks(); // Revert UI
                 });
-                if (window.syncDashboardWithTasks) window.syncDashboardWithTasks();
-              }).catch(function(err) {
-                if (window.VerdeToast) window.VerdeToast.error(err.message || 'Cannot move task.');
-                else alert(err.message || 'Cannot move task.');
-                renderTasks(); // Revert UI
               });
             }
           });
@@ -388,90 +424,107 @@
             if (existing) existing.remove();
             
             const taskId = this.getAttribute('data-id');
-            const dropdown = document.createElement('div');
-            dropdown.className = 'quick-menu-dropdown';
-            dropdown.style.position = 'absolute';
-            dropdown.style.top = '100%';
-            dropdown.style.right = '0';
-            dropdown.style.background = 'var(--surface)';
-            dropdown.style.border = '1px solid var(--border)';
-            dropdown.style.boxShadow = 'var(--shadow-lg)';
-            dropdown.style.borderRadius = '8px';
-            dropdown.style.padding = '8px';
-            dropdown.style.zIndex = '100';
-            dropdown.style.display = 'flex';
-            dropdown.style.flexDirection = 'column';
-            dropdown.style.minWidth = '140px';
-            
-            const btnStyle = "background:none; border:none; text-align:left; padding:8px 12px; font-size:13px; font-weight:600; color:var(--text-2); cursor:pointer; border-radius:4px;";
-            
-            dropdown.innerHTML = `
-              <button class="qm-open" style="${btnStyle}">Open Drawer</button>
-              <button class="qm-edit" style="${btnStyle}">Edit Task</button>
-              <button class="qm-dup" style="${btnStyle}">Duplicate</button>
-              <button class="qm-done" style="${btnStyle} color:var(--success);">Mark Complete</button>
-              <button class="qm-archive" style="${btnStyle}">Archive Task</button>
-              <div class="qm-move-container" style="position:relative; margin-top:4px; padding-top:4px; border-top:1px solid var(--border);">
-                 <div style="font-size:11px; font-weight:700; color:var(--text-3); padding:4px 12px; text-transform:uppercase;">Move to</div>
-                 <button class="qm-move" data-col="Backlog" style="${btnStyle}">Backlog</button>
-                 <button class="qm-move" data-col="To Do" style="${btnStyle}">To Do</button>
-                 <button class="qm-move" data-col="In Progress" style="${btnStyle}">In Progress</button>
-                 <button class="qm-move" data-col="Review" style="${btnStyle}">Review</button>
-              </div>
-              <hr style="border:none; border-top:1px solid var(--border); margin:4px 0;">
-              <button class="qm-del" style="${btnStyle} color:var(--danger);">Delete Task</button>
-            `;
-            
-            this.parentElement.appendChild(dropdown);
-            
-            dropdown.querySelector('.qm-open').onclick = () => { openTaskDrawer(taskId); dropdown.remove(); };
-            dropdown.querySelector('.qm-edit').onclick = () => { openCreateModal(taskId); dropdown.remove(); };
-            dropdown.querySelector('.qm-dup').onclick = () => { 
-               if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('tasks_create')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; } 
-               window.VerdeServices.Tasks.getTaskById(taskId).then(t => {
-                  let d = Object.assign({}, t);
-                  delete d.id;
-                  d.title = d.title + ' (Copy)';
-                  window.VerdeServices.Tasks.createTask(d).then(() => {
-                     renderTasks();
-                     if(window.VerdeToast) window.VerdeToast.success('Task duplicated');
-                  });
-               });
-            };
-            dropdown.querySelector('.qm-done').onclick = () => {
-               if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('tasks_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
-               window.VerdeServices.Tasks.updateTask(taskId, {status: 'Completed'}).then(nt => {
-                  renderTasks();
-                  if(nt.projectId) updateProjectProgressFromTasks(nt.projectId);
-               });
-            };
-            dropdown.querySelector('.qm-archive').onclick = () => {
-               if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('tasks_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
-               window.VerdeServices.Tasks.updateTask(taskId, {status: 'Archived'}).then(nt => {
-                  renderTasks();
-                  if(nt.projectId) updateProjectProgressFromTasks(nt.projectId);
-               });
-            };
-            dropdown.querySelectorAll('.qm-move').forEach(b => {
-               b.onclick = () => {
-                  if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('tasks_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
-                  const col = b.getAttribute('data-col');
-                  window.VerdeServices.Tasks.updateTask(taskId, {status: col}).then(nt => {
-                     renderTasks();
-                     if(nt.projectId) updateProjectProgressFromTasks(nt.projectId);
-                  });
-               };
+            window.VerdeServices.Tasks.getTaskById(taskId).then(t => {
+              if (!t) return;
+              const isAdmin = window.VERDE_PERMISSIONS && window.VERDE_PERMISSIONS.can('tasks_edit');
+              const myEmpId = resolveCurrentUserEmpId();
+
+              const dropdown = document.createElement('div');
+              dropdown.className = 'quick-menu-dropdown';
+              dropdown.style.position = 'absolute';
+              dropdown.style.top = '100%';
+              dropdown.style.right = '0';
+              dropdown.style.background = 'var(--surface)';
+              dropdown.style.border = '1px solid var(--border)';
+              dropdown.style.boxShadow = 'var(--shadow-lg)';
+              dropdown.style.borderRadius = '8px';
+              dropdown.style.padding = '8px';
+              dropdown.style.zIndex = '100';
+              dropdown.style.display = 'flex';
+              dropdown.style.flexDirection = 'column';
+              dropdown.style.minWidth = '140px';
+              
+              const btnStyle = "background:none; border:none; text-align:left; padding:8px 12px; font-size:13px; font-weight:600; color:var(--text-2); cursor:pointer; border-radius:4px;";
+              
+              let html = `<button class="qm-open" style="${btnStyle}">Open Drawer</button>`;
+              if (isAdmin) {
+                html += `
+                  <button class="qm-edit" style="${btnStyle}">Edit Task</button>
+                  <button class="qm-dup" style="${btnStyle}">Duplicate</button>
+                `;
+              }
+              if (isAdmin || t.assigneeId === myEmpId) {
+                html += `
+                  <button class="qm-done" style="${btnStyle} color:var(--success);">Mark Complete</button>
+                  <div class="qm-move-container" style="position:relative; margin-top:4px; padding-top:4px; border-top:1px solid var(--border);">
+                     <div style="font-size:11px; font-weight:700; color:var(--text-3); padding:4px 12px; text-transform:uppercase;">Move to</div>
+                     <button class="qm-move" data-col="Backlog" style="${btnStyle}">Backlog</button>
+                     <button class="qm-move" data-col="To Do" style="${btnStyle}">To Do</button>
+                     <button class="qm-move" data-col="In Progress" style="${btnStyle}">In Progress</button>
+                     <button class="qm-move" data-col="Review" style="${btnStyle}">Review</button>
+                  </div>
+                `;
+              }
+              if (isAdmin) {
+                html += `
+                  <button class="qm-archive" style="${btnStyle}">Archive Task</button>
+                  <hr style="border:none; border-top:1px solid var(--border); margin:4px 0;">
+                  <button class="qm-del" style="${btnStyle} color:var(--danger);">Delete Task</button>
+                `;
+              }
+              dropdown.innerHTML = html;
+              
+              this.parentElement.appendChild(dropdown);
+              
+              if (dropdown.querySelector('.qm-open')) dropdown.querySelector('.qm-open').onclick = () => { openTaskDrawer(taskId); dropdown.remove(); };
+              if (dropdown.querySelector('.qm-edit')) dropdown.querySelector('.qm-edit').onclick = () => { openCreateModal(taskId); dropdown.remove(); };
+              if (dropdown.querySelector('.qm-dup')) dropdown.querySelector('.qm-dup').onclick = () => { 
+                 if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('tasks_create')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; } 
+                 window.VerdeServices.Tasks.getTaskById(taskId).then(taskObj => {
+                    let d = Object.assign({}, taskObj);
+                    delete d.id;
+                    d.title = d.title + ' (Copy)';
+                    window.VerdeServices.Tasks.createTask(d).then(() => {
+                       renderTasks();
+                       if(window.VerdeToast) window.VerdeToast.success('Task duplicated');
+                    });
+                 });
+              };
+              if (dropdown.querySelector('.qm-done')) dropdown.querySelector('.qm-done').onclick = () => {
+                 if (!isAdmin && t.assigneeId !== myEmpId) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
+                 window.VerdeServices.Tasks.updateTask(taskId, {status: 'Completed'}).then(nt => {
+                    renderTasks();
+                    if(nt.projectId) updateProjectProgressFromTasks(nt.projectId);
+                 });
+              };
+              if (dropdown.querySelector('.qm-archive')) dropdown.querySelector('.qm-archive').onclick = () => {
+                 if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('tasks_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
+                 window.VerdeServices.Tasks.updateTask(taskId, {status: 'Archived'}).then(nt => {
+                    renderTasks();
+                    if(nt.projectId) updateProjectProgressFromTasks(nt.projectId);
+                 });
+              };
+              dropdown.querySelectorAll('.qm-move').forEach(b => {
+                 b.onclick = () => {
+                    if (!isAdmin && t.assigneeId !== myEmpId) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
+                    const col = b.getAttribute('data-col');
+                    window.VerdeServices.Tasks.updateTask(taskId, {status: col}).then(nt => {
+                       renderTasks();
+                       if(nt.projectId) updateProjectProgressFromTasks(nt.projectId);
+                    });
+                 };
+              });
+              if (dropdown.querySelector('.qm-del')) dropdown.querySelector('.qm-del').onclick = () => {
+                 if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('tasks_delete')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
+                 if(confirm('Delete task?')) {
+                   window.VerdeServices.Tasks.deleteTask(taskId, false).then(() => renderTasks());
+                 }
+              };
+              
+              // Close when clicking outside
+              const closeDropdown = () => { if(dropdown) dropdown.remove(); document.removeEventListener('click', closeDropdown); };
+              setTimeout(() => document.addEventListener('click', closeDropdown), 0);
             });
-            dropdown.querySelector('.qm-del').onclick = () => {
-               if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('tasks_delete')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
-               if(confirm('Delete task?')) {
-                 window.VerdeServices.Tasks.deleteTask(taskId, false).then(() => renderTasks());
-               }
-            };
-            
-            // Close when clicking outside
-            const closeDropdown = () => { if(dropdown) dropdown.remove(); document.removeEventListener('click', closeDropdown); };
-            setTimeout(() => document.addEventListener('click', closeDropdown), 0);
           });
         });
         
@@ -676,6 +729,9 @@
     const container = document.getElementById('task-drawer-tab-content');
     if (!container) return;
     
+    const isAdmin = window.VERDE_PERMISSIONS && window.VERDE_PERMISSIONS.can('tasks_edit');
+    const myEmpId = resolveCurrentUserEmpId();
+    
     if (currentDrawerTab === 'Overview') {
       const avatar = getAvatar(t.assigneeId);
       container.innerHTML = `
@@ -717,23 +773,28 @@
           <p style="font-size:14px; color:var(--text-2); line-height:1.6; white-space:pre-wrap;">${t.description || 'No description provided.'}</p>
         </div>
         
+        ${isAdmin ? `
         <div style="display:flex; gap:12px; margin-top:32px;">
           <button class="btn btn-primary" style="flex:1;" id="btn-drawer-edit">Edit Task</button>
           <button class="btn btn-ghost" style="flex:1; border:1px solid var(--border); color:var(--danger);" id="btn-drawer-delete">Delete Task</button>
         </div>
+        ` : ''}
       `;
-      document.getElementById('btn-drawer-edit').addEventListener('click', function() { openCreateModal(t.id); });
-      document.getElementById('btn-drawer-delete').addEventListener('click', function() {
-        if (confirm('Are you sure you want to delete this task?')) {
-          window.VerdeServices.Tasks.deleteTask(t.id, false).then(function() {
-            closeTaskDrawer();
-            if(window.VerdeToast) window.VerdeToast.success('Task deleted');
-            renderTasks();
-            if (t.projectId) updateProjectProgressFromTasks(t.projectId);
-            if (window.syncDashboardWithTasks) window.syncDashboardWithTasks();
-          });
-        }
-      });
+      if (isAdmin) {
+        document.getElementById('btn-drawer-edit').addEventListener('click', function() { openCreateModal(t.id); });
+        document.getElementById('btn-drawer-delete').addEventListener('click', function() {
+          if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('tasks_delete')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
+          if (confirm('Are you sure you want to delete this task?')) {
+            window.VerdeServices.Tasks.deleteTask(t.id, false).then(function() {
+              closeTaskDrawer();
+              if(window.VerdeToast) window.VerdeToast.success('Task deleted');
+              renderTasks();
+              if (t.projectId) updateProjectProgressFromTasks(t.projectId);
+              if (window.syncDashboardWithTasks) window.syncDashboardWithTasks();
+            });
+          }
+        });
+      }
     } else if (currentDrawerTab === 'Subtasks') {
       const subtasks = t.subtasks || [];
       const completed = subtasks.filter(s => s.completed).length;
@@ -776,6 +837,11 @@
       // Events
       document.querySelectorAll('.subtask-checkbox').forEach(cb => {
         cb.addEventListener('change', function() {
+          if (!isAdmin && t.assigneeId !== myEmpId) {
+            this.checked = !this.checked;
+            if(window.VerdeToast) window.VerdeToast.error('Access Denied');
+            return;
+          }
           const sid = this.getAttribute('data-id');
           const isDone = this.checked;
           window.VerdeServices.Tasks.toggleSubtask(t.id, sid, isDone).then(nt => refreshDrawerTask(nt));
@@ -783,6 +849,7 @@
       });
       document.querySelectorAll('.btn-delete-subtask').forEach(btn => {
         btn.addEventListener('click', function() {
+          if (!isAdmin && t.assigneeId !== myEmpId) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
           const sid = this.getAttribute('data-id');
           if(confirm('Delete subtask?')) {
             window.VerdeServices.Tasks.deleteSubtask(t.id, sid).then(nt => refreshDrawerTask(nt));
@@ -790,6 +857,7 @@
         });
       });
       document.getElementById('btn-add-subtask').addEventListener('click', function() {
+        if (!isAdmin && t.assigneeId !== myEmpId) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
         const val = document.getElementById('inpNewSubtask').value.trim();
         if(val) window.VerdeServices.Tasks.addSubtask(t.id, val).then(nt => refreshDrawerTask(nt));
       });
@@ -861,29 +929,16 @@
       if(att.length === 0) html += '<div style="color:var(--text-3); font-size:13px; text-align:center; padding:16px;">No attachments.</div>';
       html += '</div>';
       
-      html += `
-        <div style="border:1px dashed var(--border); border-radius:8px; padding:24px; text-align:center; background:var(--bg-2); cursor:pointer;" id="dropzone-att">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3); margin-bottom:8px;"><path d="M21.2 15c.7-1.2 1-2.5.7-3.9-.6-2-2.4-3.5-4.4-3.5h-1.2c-.7-3-3.2-5.2-6.2-5.6-3-.3-5.9 1.3-7.3 4-1.2 2.5-1 6.5.5 8.8m8.7-1.6V21"/><path d="M16 16l-4-4-4 4"/></svg>
-          <div style="font-size:13px; font-weight:600; color:var(--text-1);">Click to upload file</div>
-          <div style="font-size:11px; color:var(--text-3);">Simulated local storage upload</div>
-        </div>
-      `;
       container.innerHTML = html;
       
       document.querySelectorAll('.btn-delete-att').forEach(btn => {
         btn.addEventListener('click', function() {
+          if (!isAdmin) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
           const aid = this.getAttribute('data-id');
           if(confirm('Delete attachment?')) {
             window.VerdeServices.Tasks.deleteAttachment(t.id, aid).then(nt => refreshDrawerTask(nt));
           }
         });
-      });
-      document.getElementById('dropzone-att').addEventListener('click', function() {
-        const name = prompt("Enter mock file name (e.g. design.png):");
-        if(name) {
-          const size = (Math.random() * 5 + 0.1).toFixed(1) + ' MB';
-          window.VerdeServices.Tasks.addAttachment(t.id, name, size).then(nt => refreshDrawerTask(nt));
-        }
       });
       
     } else if (currentDrawerTab === 'Activity') {
