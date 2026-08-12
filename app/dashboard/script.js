@@ -594,16 +594,17 @@
       }
     } catch(e) {}
 
-    // 2. Secondary: Transactions store
+    // 2. Transactions store (always included)
     try {
       var rawTx = localStorage.getItem('verde_os_finance_transactions');
       if (rawTx) {
         var transactions = JSON.parse(rawTx);
         transactions.forEach(function(t) {
-          if (t.type === 'Income' && t.status === 'Completed' && totalRevenue === 0) {
+          if (t.isDeleted) return;
+          if (t.type === 'Income' && t.status === 'Completed') {
             totalRevenue += parseAmount(t.amount || 0);
           }
-          if (t.type === 'Income' && (t.status === 'Processing' || t.status === 'Pending') && pendingInvoiceCount === 0) {
+          if (t.type === 'Income' && (t.status === 'Processing' || t.status === 'Pending')) {
             pendingInvoiceCount++;
           }
         });
@@ -687,6 +688,7 @@
       }).catch(function() {});
     }
   }
+  window.syncDashboardWithCRM = syncDashboardWithCRM;
 
   // ══════════════════════════════════════════════════════════════════════════
   // PART 8 — TEAM ACTIVITY FEED
