@@ -1,34 +1,61 @@
 const { errorResponse } = require('../utils/response');
+const supabase = require('../config/supabase');
+const authService = require('../services/auth.service');
 
 /**
- * Temporary development middleware to establish the organization boundary.
- * In a real environment, this will decode the JWT and fetch organization_members.
+ * Validates the Supabase JWT Bearer token and resolves the user's ERP identity.
  */
-const requireAuth = (req, res, next) => {
-  // Extract mock values for development testing
-  const userId = req.headers['x-user-id'] || '00000000-0000-0000-0000-000000000000';
-  const orgId = req.headers['x-organization-id'];
-  const role = req.headers['x-role'] || 'Member';
-
-  if (!orgId) {
+const requireAuth = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return errorResponse(res, {
       code: 'UNAUTHORIZED',
-      message: 'Missing x-organization-id header (temporary mock auth)'
+      message: 'Missing or invalid Authorization header'
     }, 401);
   }
 
-  // Inject into request object for downstream use
-  req.user = {
-    id: userId,
-    role: role
-  };
-  req.organizationId = orgId;
+  const token = authHeader.split(' ')[1];
 
-  next();
+  try {
+    // 1. Validate token with Supabase
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    
+    if (error || !user) {
+      return errorResponse(res, {
+        code: 'UNAUTHORIZED',
+        message: 'Invalid or expired access token'
+      }, 401);
+    }
+
+    // 2. Resolve ERP identity (users, organization, role, permissions)
+    const identity = await authService.resolveIdentity(user.id);
+
+    if (!identity) {
+      return errorResponse(res, {
+        code: 'FORBIDDEN',
+        message: 'User does not belong to any active organization.'
+      }, 403);
+    }
+
+    // 3. Attach to request
+    req.user = identity.user;
+    req.organizationId = identity.organization.id;
+    req.organization = identity.organization;
+    req.role = identity.role;
+    req.permissions = identity.permissions;
+
+    next();
+  } catch (err) {
+    return errorResponse(res, {
+      code: 'INTERNAL_ERROR',
+      message: 'Failed to resolve user identity',
+      details: err.message
+    }, 500);
+  }
 };
 
 const requireAdmin = (req, res, next) => {
-  if (req.user.role !== 'Admin' && req.user.role !== 'SuperAdmin') {
+  if (req.role !== 'Admin' && req.role !== 'SuperAdmin') {
     return errorResponse(res, {
       code: 'FORBIDDEN',
       message: 'Administrative privileges required.'
@@ -37,7 +64,24 @@ const requireAdmin = (req, res, next) => {
   next();
 };
 
+const requirePermission = (permissionName) => {
+  return (req, res, next) => {
+    if (req.role === 'SuperAdmin') return next(); // Bypass for super admin
+    
+    if (!req.permissions || !req.permissions.includes(permissionName)) {
+      return errorResponse(res, {
+        code: 'FORBIDDEN',
+        message: `Missing required permission: ${permissionName}`
+      }, 403);
+    }
+    next();
+  };
+};
+
 module.exports = {
   requireAuth,
-  requireAdmin
+  requireAdmin,
+  requirePermission
 };
+
+

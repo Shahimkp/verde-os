@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 
 const healthRoutes = require('./routes/health.routes');
+const authRoutes = require('./routes/auth.routes');
 const orgRoutes = require('./routes/organizations.routes');
 const userRoutes = require('./routes/users.routes');
 const clientRoutes = require('./routes/clients.routes');
@@ -27,6 +28,7 @@ if (process.env.NODE_ENV === 'development') {
 
 // Routes
 app.use('/api/health', healthRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/organizations', orgRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/clients', clientRoutes);
