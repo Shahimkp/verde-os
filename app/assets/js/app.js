@@ -6,6 +6,39 @@
 (function () {
   'use strict';
 
+  // --- FIREBASE FOUNDATION INJECTION ---
+  (function() {
+    const scripts = [
+      "https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js",
+      "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js",
+      "../assets/js/firebase/config.js",
+      "../assets/js/firebase/service.js"
+    ];
+    
+    function loadScript(src) {
+      return new Promise(function(resolve, reject) {
+        const s = document.createElement('script');
+        s.src = src;
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+    }
+
+    async function loadFirebase() {
+      try {
+        for (let i = 0; i < scripts.length; i++) {
+          await loadScript(scripts[i]);
+        }
+      } catch (e) {
+        console.error("[VERDE OS] Failed to load Firebase foundation scripts", e);
+      }
+    }
+    
+    loadFirebase();
+  })();
+  // -------------------------------------
+
     window.updateNotificationUI = function() {
     if (!window.VerdeServices || !window.VerdeServices.Notifications) return;
     window.VerdeServices.Notifications.getNotifications().then(notifs => {
