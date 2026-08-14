@@ -1466,6 +1466,40 @@
             }
           });
         });
+
+        // Fetch and render assigned projects dynamically
+        if (window.VerdeServices && window.VerdeServices.Projects) {
+          const tabProjects = modal.querySelector('#tab-projects');
+          if (tabProjects) {
+            tabProjects.innerHTML = '<div style="text-align: center; padding: 60px 0; color: var(--text-3); font-size: 14px; font-weight: 600;">Loading Projects...</div>';
+            window.VerdeServices.Projects.getProjects().then(function(projects) {
+              const activeProjects = projects.filter(p => p.status === 'Active' && p.team && p.team.includes(empId));
+              if (activeProjects.length > 0) {
+                tabProjects.innerHTML = '<div style="display:flex; flex-direction:column; gap:16px; padding-right:4px;">' +
+                  activeProjects.map(p => 
+                    '<div style="background:var(--bg-2); border:1px solid var(--border); border-radius:12px; padding:16px;">' +
+                      '<div style="font-weight:800; color:var(--text-1); font-size:16px; margin-bottom:6px;">' + p.name + '</div>' +
+                      '<div style="font-size:13px; color:var(--text-2); font-weight:600; margin-bottom:12px;">' + p.client + ' &bull; ' + p.category + '</div>' +
+                      '<div style="display:flex; align-items:center; justify-content:space-between;">' +
+                        '<span class="badge badge-primary" style="font-size:11px; padding:4px 8px;">' + p.status + '</span>' +
+                        '<span style="font-size:12px; color:var(--text-3); font-weight:600;">Due: ' + (p.dueDate || 'N/A') + '</span>' +
+                      '</div>' +
+                    '</div>'
+                  ).join('') +
+                '</div>';
+              } else {
+                tabProjects.innerHTML = '<div style="text-align: center; padding: 60px 0; color: var(--text-3); font-size: 14px; font-weight: 600;">No Projects Assigned</div>';
+              }
+              // Update summary count dynamically based on live data
+              const summaryCards = modal.querySelectorAll('.profile-summary-card');
+              if (summaryCards.length > 1) {
+                const projCountEl = summaryCards[1].querySelector('.profile-summary-val');
+                if (projCountEl) projCountEl.textContent = activeProjects.length;
+              }
+            });
+          }
+        }
+
       }, 10);
     } else {
       alert('Modal system missing!');

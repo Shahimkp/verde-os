@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Firebase Migration Browser</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0b0f19;
+      --card-bg: #111827;
+      --text: #f9fafb;
+      --text-muted: #9ca3af;
+      --primary: #3b82f6;
+      --success: #10b981;
+      --border: #1f2937;
+    }
+    body {
+      background: var(--bg-color);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .migration-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 30px;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+    h1 { margin-top: 0; font-size: 24px; font-weight: 800; text-align: center; }
+    p { color: var(--text-muted); text-align: center; margin-bottom: 24px; line-height: 1.5; }
+    .btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s;
+    }
+    .btn:hover { background: #2563eb; }
+    .btn:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; }
+    .console-out {
+      margin-top: 24px;
+      background: #000;
+      border-radius: 8px;
+      padding: 16px;
+      font-family: monospace;
+      font-size: 13px;
+      color: #34d399;
+      height: 250px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+    }
+    .log-entry { margin-bottom: 4px; }
+    .log-success { color: var(--success); }
+    .log-error { color: #ef4444; }
+  </style>
+</head>
+<body>
+
+  <div class="migration-card">
+    <h1>Data Migration Tool</h1>
+    <p>This browser tool will scan your local computer's cache (LocalStorage) for all ERP data (Projects, Team Members, Tasks, CRM, etc.) and push it securely into your new Firebase Firestore.</p>
+    
+    <button class="btn" id="startBtn" onclick="runMigration()">Migrate Local Data to Firebase</button>
+
+    <div class="console-out" id="console">
+      <div class="log-entry">> System ready.</div>
+    </div>
+  </div>
+
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  
+  <!-- Config and Service -->
+  <script src="../assets/js/firebase/config.js"></script>
+  <script src="../assets/js/firebase/service.js"></script>
+  
+  <script>
+    function logMsg(msg, type = '') {
+      const el = document.getElementById('console');
+      const entry = document.createElement('div');
+      entry.className = 'log-entry ' + (type === 'success' ? 'log-success' : type === 'error' ? 'log-error' : '');
+      entry.innerText = '> ' + msg;
+      el.appendChild(entry);
+      el.scrollTop = el.scrollHeight;
+    }
+
+    function runMigration() {
+      const btn = document.getElementById('startBtn');
+      btn.disabled = true;
+      btn.innerText = 'Migrating...';
+      logMsg('Connecting to Firebase...');
+
+      setTimeout(function() {
+        if (!window.verdeFirestore) {
+          logMsg('Firestore connection failed. Please check your config.js', 'error');
+          btn.innerText = 'Migration Failed';
+          return;
+        }
+
+        logMsg('Connection established. Extracting local data modules...', 'success');
+        
+        if (window.VerdeFirebaseService && window.VerdeFirebaseService.migrateAllModules) {
+          window.VerdeFirebaseService.migrateAllModules()
+            .then(results => {
+              logMsg('----------------------------------');
+              let totalMigrated = 0;
+              results.forEach(res => {
+                if (res.migrated > 0) {
+                   logMsg(`Uploaded ${res.migrated}/${res.total} items to '${res.coll}' collection.`, 'success');
+                   totalMigrated += res.migrated;
+                } else if (res.total === 0) {
+                   logMsg(`Skipped '${res.coll}' (No local data found)`);
+                } else {
+                   logMsg(`Failed to upload '${res.coll}' items. Error: ${res.error.message || res.error}`, 'error');
+                }
+              });
+              logMsg('----------------------------------');
+              if (totalMigrated > 0) {
+                logMsg(`MIGRATION COMPLETE! Successfully transferred ${totalMigrated} items to Firebase.`, 'success');
+                btn.innerText = 'Migration Complete';
+                btn.style.background = 'var(--success)';
+              } else {
+                logMsg('Migration finished. No local data found to migrate.', 'success');
+                btn.innerText = 'Nothing to Migrate';
+              }
+            })
+            .catch(err => {
+              logMsg('Migration encountered an error: ' + err.message, 'error');
+              btn.innerText = 'Migration Error';
+            });
+        } else {
+          logMsg('Migration service not found.', 'error');
+          btn.innerText = 'Migration Error';
+        }
+      }, 1500);
+    }
+  </script>
+</body>
+</html>

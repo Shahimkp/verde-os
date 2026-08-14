@@ -1,17 +1,19 @@
-/* ==========================================================================
-   VERDE OS — APPLICATION ENTRY POINT & ORCHESTRATOR
+﻿/* ==========================================================================
+   VERDE OS â€” APPLICATION ENTRY POINT & ORCHESTRATOR
    Initializes State, Components, Services, Navigation & Permissions
    ========================================================================== */
 
 (function () {
   'use strict';
 
+
   // --- FIREBASE FOUNDATION INJECTION ---
   (function() {
     const scripts = [
       "https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js",
       "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js",
-      "../assets/js/firebase/config.js",
+      "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js",
+      "../assets/js/firebase/config.js?v=3",
       "../assets/js/firebase/service.js"
     ];
     
@@ -30,6 +32,9 @@
         for (let i = 0; i < scripts.length; i++) {
           await loadScript(scripts[i]);
         }
+        if (window.VerdeFirebaseService && typeof window.VerdeFirebaseService.startRealtimeSync === 'function') {
+          window.VerdeFirebaseService.startRealtimeSync();
+        }
       } catch (e) {
         console.error("[VERDE OS] Failed to load Firebase foundation scripts", e);
       }
@@ -38,7 +43,6 @@
     loadFirebase();
   })();
   // -------------------------------------
-
     window.updateNotificationUI = function() {
     if (!window.VerdeServices || !window.VerdeServices.Notifications) return;
     window.VerdeServices.Notifications.getNotifications().then(notifs => {

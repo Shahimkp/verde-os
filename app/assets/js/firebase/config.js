@@ -2,14 +2,16 @@
   'use strict';
 
   var firebaseConfig = {
-    apiKey: "AIzaSyCr3vPtSIsNhHGAXozN7rzDEnfuSCBHeFo",
-    authDomain: "verde-fe1d1.firebaseapp.com",
-    projectId: "verde-fe1d1",
-    storageBucket: "verde-fe1d1.firebasestorage.app",
-    messagingSenderId: "775235527332",
-    appId: "1:775235527332:web:ef9176bdfd0231e1a7bc31",
-    measurementId: "G-KMYM8MDQK4"
+    apiKey: "AIzaSyDsimlcBO30D4pO7mCLHm_QpJFoOW7yJeQ",
+    authDomain: "verde-os.firebaseapp.com",
+    projectId: "verde-os",
+    storageBucket: "verde-os.firebasestorage.app",
+    messagingSenderId: "1073737150629",
+    appId: "1:1073737150629:web:f123fc155caf2515259d4c",
+    measurementId: "G-MCLS496GS6"
   };
+
+  window.VERDE_FIREBASE_CONFIG = firebaseConfig;
 
   try {
     // Initialize Firebase
@@ -19,11 +21,22 @@
       window.verdeFirebaseApp = firebase.app();
     }
     
-    // Initialize Firestore
-    window.verdeFirestore = firebase.firestore();
+    // Make auth and db accessible
+    window.verdeAuth = firebase.auth();
+    window.verdeDb = firebase.firestore();
     
-    console.log('[VERDE OS] Firebase Foundation initialized successfully.');
+    // Enable offline persistence for Firestore
+    window.verdeDb.enablePersistence({ synchronizeTabs: true })
+      .catch(function(err) {
+        if (err.code == 'failed-precondition') {
+          console.warn('Multiple tabs open, offline persistence enabled in first tab only');
+        } else if (err.code == 'unimplemented') {
+          console.warn('Browser does not support offline persistence');
+        }
+      });
+      
+    console.log("[VERDE OS] Firebase Foundation Connected");
   } catch (error) {
-    console.error('[VERDE OS] Firebase initialization failed:', error);
+    console.error("[VERDE OS] Firebase initialization error:", error);
   }
 })();

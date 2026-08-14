@@ -1,5 +1,5 @@
-/* ==========================================================================
-   VERDE OS — SESSION MANAGER
+﻿/* ==========================================================================
+   VERDE OS â€” SESSION MANAGER
    Log In Session State & User Profile Initialization
    ========================================================================== */
 
@@ -129,19 +129,76 @@
     },
 
     clearSession: function () {
-      localStorage.removeItem('verde_session');
-      window.location.href = '../auth/index.html';
+      if (window.verdeAuth) {
+        window.verdeAuth.signOut().then(() => {
+          localStorage.removeItem('verde_session');
+          window.location.href = '../auth/index.html';
+        });
+      } else {
+        localStorage.removeItem('verde_session');
+        window.location.href = '../auth/index.html';
+      }
     }
   };
 
-  const currentUser = window.VERDE_SESSION.initCore();
+  function bootFirebaseSession() {
+    const path = window.location.pathname;
+    const isAuthPage = path.includes('/auth/');
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () {
-      window.VERDE_SESSION.initUI(currentUser);
-    });
-  } else {
-    window.VERDE_SESSION.initUI(currentUser);
+    const waitForAuth = setInterval(() => {
+      if (window.verdeAuth) {
+        clearInterval(waitForAuth);
+        
+        window.verdeAuth.onAuthStateChanged((user) => {
+          if (user) {
+            let currentUser = {
+              id: user.uid,
+              name: user.email.split('@')[0],
+              initials: user.email.substring(0, 2).toUpperCase(),
+              email: user.email,
+              role: 'SuperAdmin',
+              workspace: 'VERDE LABS',
+              loggedIn: true
+            };
+
+            let storedWorkspaces = [];
+            try {
+              const w = localStorage.getItem('verde_emp_workspaces');
+              if (w) storedWorkspaces = JSON.parse(w);
+            } catch(err) {}
+            
+            const matchedWs = storedWorkspaces.find(w => w.userId === user.email);
+            if (matchedWs) {
+               currentUser.role = matchedWs.role;
+               currentUser.workspace = matchedWs.name;
+               currentUser.name = matchedWs.employeeName;
+               currentUser.department = matchedWs.department;
+               currentUser.initials = (matchedWs.employeeName || 'UN').substring(0, 2).toUpperCase();
+            }
+
+            if (isAuthPage) {
+              window.location.href = '../dashboard/index.html';
+            } else {
+              window.VERDE_SESSION.loadPermissions(currentUser);
+              window.VERDE_SESSION.enforceGlobalPermissions();
+              
+              if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => window.VERDE_SESSION.initUI(currentUser));
+              } else {
+                window.VERDE_SESSION.initUI(currentUser);
+              }
+            }
+          } else {
+            if (!isAuthPage) {
+              window.location.href = '../auth/index.html';
+            }
+          }
+        });
+      }
+    }, 50);
   }
+
+  bootFirebaseSession();
 })();
+
 
