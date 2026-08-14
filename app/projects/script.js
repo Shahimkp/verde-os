@@ -297,23 +297,56 @@
     // 5. Team
     var teamList = document.getElementById('drawer-team-list');
     teamList.innerHTML = '<div style="margin-bottom:12px; text-align:right;"><button class="btn btn-sm btn-primary" onclick="openTeamModal()">+ Assign Member</button></div>';
+    
     if (proj.detailedTeam && proj.detailedTeam.length > 0) {
-      proj.detailedTeam.forEach(function(t) {
-        var html = '<div class="proj-box" style="padding:16px; display:flex; justify-content:space-between; align-items:center;">' +
-          '<div style="display:flex; align-items:center; gap:16px;">' +
-            '<div class="proj-avatar" style="width:40px; height:40px; font-size:14px;">' + t.id.substring(0,2).toUpperCase() + '</div>' +
-            '<div>' +
-              '<div style="font-size:14px; font-weight:700;">' + t.id + '</div>' +
-              '<div style="font-size:12px; color:var(--text-2); margin-top:4px;">' + (t.role || 'Member') + ' &bull; ' + (t.department || 'General') + '</div>' +
-              '<div style="font-size:11px; color:var(--text-3); margin-top:4px;">Assigned: ' + (t.assignedDate || new Date().toLocaleDateString()) + '</div>' +
+      if (window.VerdeServices && window.VerdeServices.Identity) {
+        teamList.innerHTML += '<div style="color:var(--text-3); font-size:13px;" id="team-loading-msg">Loading team...</div>';
+        window.VerdeServices.Identity.resolveUsers().then(function(allEmployees) {
+          var newHtml = '<div style="margin-bottom:12px; text-align:right;"><button class="btn btn-sm btn-primary" onclick="openTeamModal()">+ Assign Member</button></div>';
+          proj.detailedTeam.forEach(function(t) {
+            var empData = allEmployees.find(function(e) { return e.id === t.id; }) || {};
+            var displayName = empData.name || empData.contactPerson || t.id;
+            var initials = empData.initials || (displayName.length >= 2 ? displayName.substring(0,2).toUpperCase() : t.id.substring(0,2).toUpperCase());
+            var displayRole = empData.role || t.role || 'Member';
+            var displayDept = empData.department || t.department || 'General';
+            var avatarUrl = empData.avatarUrl || empData.avatar_bg || '';
+            var avatarBg = avatarUrl ? ('background-image:url(' + avatarUrl + '); background-size:cover; color:transparent;') : 'background:var(--primary); color:#fff;';
+
+            var safeInitials = (initials || displayName || "??").substring(0,2).toUpperCase();
+            newHtml += '<div class="proj-box" style="padding:16px; display:flex; justify-content:space-between; align-items:center;">' +
+              '<div style="display:flex; align-items:center; gap:16px; flex:1; min-width:0;">' +
+                '<div class="member-avatar" style="' + avatarBg + '">' + safeInitials + '</div>' +
+                '<div class="member-info">' +
+                  '<div style="font-size:14px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + displayName + '</div>' +
+                  '<div style="font-size:12px; color:var(--text-2); margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + displayRole + ' &bull; ' + displayDept + '</div>' +
+                  '<div style="font-size:11px; color:var(--text-3); margin-top:4px;">Assigned: ' + (t.assignedDate || new Date().toLocaleDateString()) + '</div>' +
+                '</div>' +
+              '</div>' +
+              '<div style="flex-shrink:0; margin-left:16px;">' +
+                '<button class="btn btn-sm btn-ghost" onclick="removeMember(\'' + t.id + '\')" style="color:var(--danger);">Remove</button>' +
+              '</div>' +
+            '</div>';
+          });
+          teamList.innerHTML = newHtml;
+        });
+      } else {
+        proj.detailedTeam.forEach(function(t) {
+          var html = '<div class="proj-box" style="padding:16px; display:flex; justify-content:space-between; align-items:center;">' +
+            '<div style="display:flex; align-items:center; gap:16px; flex:1; min-width:0;">' +
+              '<div class="member-avatar" style="background:var(--primary);">' + t.id.substring(0,2).toUpperCase() + '</div>' +
+              '<div class="member-info">' +
+                '<div style="font-size:14px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + t.id + '</div>' +
+                '<div style="font-size:12px; color:var(--text-2); margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + (t.role || 'Member') + ' &bull; ' + (t.department || 'General') + '</div>' +
+                '<div style="font-size:11px; color:var(--text-3); margin-top:4px;">Assigned: ' + (t.assignedDate || new Date().toLocaleDateString()) + '</div>' +
+              '</div>' +
             '</div>' +
-          '</div>' +
-          '<div>' +
-            '<button class="btn btn-sm btn-ghost" onclick="removeMember(\'' + t.id + '\')" style="color:var(--danger);">Remove</button>' +
-          '</div>' +
-        '</div>';
-        teamList.innerHTML += html;
-      });
+            '<div style="flex-shrink:0; margin-left:16px;">' +
+              '<button class="btn btn-sm btn-ghost" onclick="removeMember(\'' + t.id + '\')" style="color:var(--danger);">Remove</button>' +
+            '</div>' +
+          '</div>';
+          teamList.innerHTML += html;
+        });
+      }
     } else {
       teamList.innerHTML += '<div style="color:var(--text-3); font-size:13px;">No team members assigned.</div>';
     }
@@ -602,7 +635,7 @@
     if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('projects_edit')) { if (window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
     teamModalFilter = 'All';
     teamModalSearch = '';
-    teamModalSelected = [];
+    teamModalSelected = (currentProjectData && currentProjectData.team) ? currentProjectData.team.slice() : [];
     document.getElementById('team-search-input').value = '';
     
     document.querySelectorAll('.team-filter-btn').forEach(function(btn) {
@@ -647,7 +680,6 @@
     if (window.VerdeServices && window.VerdeServices.Identity) {
       window.VerdeServices.Identity.resolveUsers().then(function(allEmployees) {
         var filtered = allEmployees.filter(function(emp) {
-          if (existingTeamIds.includes(emp.id)) return false; // Hide already assigned members
           if (teamModalFilter !== 'All' && emp.department !== teamModalFilter) return false;
           if (teamModalSearch) {
             var nameStr = (emp.name || '').toLowerCase();
@@ -675,7 +707,7 @@
           
           var html = '<div class="proj-box" style="padding:12px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; ' + borderStyle + '" onclick="toggleEmployeeSelection(\'' + emp.id + '\')">' +
             '<div style="display:flex; align-items:center; gap:12px;">' +
-              '<div class="proj-avatar" style="width:36px; height:36px; font-size:12px;">' + name.substring(0,2).toUpperCase() + '</div>' +
+              '<div class="member-avatar" style="width:36px; height:36px; min-width:36px; min-height:36px; font-size:12px; background:var(--primary);">' + name.substring(0,2).toUpperCase() + '</div>' +
               '<div>' +
                 '<div style="font-size:13px; font-weight:700;">' + avail + ' ' + name + ' <span style="font-weight:500; color:var(--text-3);">(' + dept + ')</span></div>' +
                 '<div style="font-size:11px; color:var(--text-2); margin-top:2px;">' + role + ' &bull; ' + workload + '</div>' +
@@ -700,38 +732,37 @@
   };
 
   window.assignSelectedMembers = function() {
-    if(teamModalSelected.length === 0) {
-      window.closeTeamModal();
-      return;
-    }
-    
-    if(window.VerdeServices && window.VerdeServices.Projects) {
+    if(window.VerdeServices && window.VerdeServices.Projects && window.VerdeServices.Identity) {
       window.VerdeServices.Projects.getProjectById(currentProjectId).then(function(p) {
-        var dTeam = p.detailedTeam || [];
-        var team = p.team || [];
+        var team = teamModalSelected.slice();
         var act = p.activities || [];
         
-        teamModalSelected.forEach(function(memberId) {
-          if (!team.includes(memberId)) {
-            team.push(memberId);
-            var empData = MOCK_EMPLOYEES.find(function(e) { return e.id === memberId; });
+        window.VerdeServices.Identity.resolveUsers().then(function(allEmployees) {
+          var dTeam = [];
+          
+          team.forEach(function(memberId) {
+            var empData = allEmployees.find(function(e) { return e.id === memberId; });
+            var existingMember = (p.detailedTeam || []).find(function(dt) { return dt.id === memberId; });
+            var assignedDate = existingMember ? (existingMember.assignedDate || new Date().toLocaleDateString()) : new Date().toLocaleDateString();
+            
             dTeam.push({ 
               id: memberId, 
               role: empData ? empData.role : 'Member', 
               department: empData ? empData.department : 'General',
-              assignedDate: new Date().toLocaleDateString() 
+              assignedDate: assignedDate
             });
-            act.unshift({ id: 'ACT-' + Date.now() + Math.floor(Math.random()*1000), action: 'Member Assigned', details: memberId + ' was assigned to the project', date: new Date().toISOString(), user: 'System Admin' });
-          }
-        });
-        
-        window.VerdeServices.Projects.updateProject(currentProjectId, { team: team, detailedTeam: dTeam, activities: act }).then(function(updated) {
-          currentProjectData = updated;
-          populateProjectSubviews(updated);
-          window.openProjectDetails(currentProjectId);
-          window.renderProjectsList();
-          window.closeTeamModal();
-          if(window.VerdeToast) window.VerdeToast.success('Members assigned successfully.');
+          });
+          
+          act.unshift({ id: 'ACT-' + Date.now() + Math.floor(Math.random()*1000), action: 'Team Updated', details: 'Project team members were updated.', date: new Date().toISOString(), user: window.VERDE_SESSION ? window.VERDE_SESSION.getUser().name : 'System Admin' });
+          
+          window.VerdeServices.Projects.updateProject(currentProjectId, { team: team, detailedTeam: dTeam, activities: act }).then(function(updated) {
+            currentProjectData = updated;
+            populateProjectSubviews(updated);
+            window.openProjectDetails(currentProjectId);
+            window.renderProjectsList();
+            window.closeTeamModal();
+            if(window.VerdeToast) window.VerdeToast.success('Team updated successfully.');
+          });
         });
       });
     }
@@ -1289,7 +1320,8 @@
 
         var teamHtml = (p.team || ['SH']).map(function (m, idx) {
           var bg = idx === 1 ? 'background:var(--success);' : (idx === 2 ? 'background:var(--warning);' : '');
-          return '<div class="proj-avatar" style="' + bg + '">' + m + '</div>';
+          var safeInitials = m && m.length >= 2 ? m.substring(0,2).toUpperCase() : '?';
+          return '<div class="proj-avatar" style="' + bg + '">' + safeInitials + '</div>';
         }).join('');
 
         var cardHtml = 

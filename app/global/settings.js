@@ -49,8 +49,19 @@
 
   function saveSettings() {
   if (window.VERDE_PERMISSIONS && !window.VERDE_PERMISSIONS.can('settings_edit')) { if(window.VerdeToast) window.VerdeToast.error('Access Denied'); return; }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+      window.dispatchEvent(new CustomEvent('verde:company-updated'));
+    } catch (e) {
+      console.error("Failed to save settings. Possibly QuotaExceededError from a large logo.", e);
+      if (window.VerdeToast) window.VerdeToast.show("Failed to save settings. Try a smaller image.", "error");
+    }
   }
+
+  window.saveCompanyInfo = function() {
+    gatherUI();
+    if (window.VerdeToast) window.VerdeToast.show('Company Information saved successfully', 'success');
+  };
 
   // ── TAB SWITCHING ── //
   window.switchSetTab = function (tabId) {
@@ -128,44 +139,40 @@
   function gatherUI() {
     function getVal(id) { var el = document.getElementById(id); if (!el) return undefined; return el.type === 'checkbox' ? el.checked : el.value; }
 
-    settings.appName = getVal('gs-app-name') || settings.appName;
-    settings.orgName = getVal('gs-org-name') || settings.orgName;
-    settings.dashboard = getVal('gs-dashboard') || settings.dashboard;
-    settings.timezone = getVal('gs-timezone') || settings.timezone;
-    settings.weekStart = getVal('gs-weekstart') || settings.weekStart;
-    settings.dateFormat = getVal('gs-dateformat') || settings.dateFormat;
-    settings.timeFormat = getVal('gs-timeformat') || settings.timeFormat;
+    var v;
+    v = getVal('gs-app-name'); if (v !== undefined) settings.appName = v;
+    v = getVal('gs-org-name'); if (v !== undefined) settings.orgName = v;
+    v = getVal('gs-dashboard'); if (v !== undefined) settings.dashboard = v;
+    v = getVal('gs-timezone'); if (v !== undefined) settings.timezone = v;
+    v = getVal('gs-weekstart'); if (v !== undefined) settings.weekStart = v;
+    v = getVal('gs-dateformat'); if (v !== undefined) settings.dateFormat = v;
+    v = getVal('gs-timeformat'); if (v !== undefined) settings.timeFormat = v;
 
-    settings.coName = getVal('gs-co-name') || settings.coName;
-    settings.coEmail = getVal('gs-co-email') || settings.coEmail;
-    settings.coPhone = getVal('gs-co-phone') || settings.coPhone;
-    settings.coWeb = getVal('gs-co-web') || settings.coWeb;
-    settings.coGst = getVal('gs-co-gst') || '';
-    settings.coAddr = getVal('gs-co-addr') || '';
-    settings.coCurrency = getVal('gs-co-currency') || settings.coCurrency;
+    v = getVal('gs-co-name'); if (v !== undefined) settings.coName = v;
+    v = getVal('gs-co-email'); if (v !== undefined) settings.coEmail = v;
+    v = getVal('gs-co-phone'); if (v !== undefined) settings.coPhone = v;
+    v = getVal('gs-co-web'); if (v !== undefined) settings.coWeb = v;
+    v = getVal('gs-co-gst'); if (v !== undefined) settings.coGst = v;
+    v = getVal('gs-co-addr'); if (v !== undefined) settings.coAddr = v;
+    v = getVal('gs-co-currency'); if (v !== undefined) settings.coCurrency = v;
 
-    settings.locLang = getVal('gs-loc-lang') || settings.locLang;
-    settings.locCurrency = getVal('gs-loc-currency') || settings.locCurrency;
-    settings.locNumFmt = getVal('gs-loc-numfmt') || settings.locNumFmt;
-    settings.locDateFmt = getVal('gs-loc-datefmt') || settings.locDateFmt;
-    settings.locTz = getVal('gs-loc-tz') || settings.locTz;
+    v = getVal('gs-loc-lang'); if (v !== undefined) settings.locLang = v;
+    v = getVal('gs-loc-currency'); if (v !== undefined) settings.locCurrency = v;
+    v = getVal('gs-loc-numfmt'); if (v !== undefined) settings.locNumFmt = v;
+    v = getVal('gs-loc-datefmt'); if (v !== undefined) settings.locDateFmt = v;
+    v = getVal('gs-loc-tz'); if (v !== undefined) settings.locTz = v;
 
-    settings.appTheme = getVal('gs-app-theme') || settings.appTheme;
-    settings.appColor = getVal('gs-app-color') || settings.appColor;
-    settings.appSidebar = getVal('gs-app-sidebar') || settings.appSidebar;
-    var compactVal = getVal('gs-app-compact');
-    if (compactVal !== undefined) settings.appCompact = compactVal;
-    var animsVal = getVal('gs-app-anims');
-    if (animsVal !== undefined) settings.appAnims = animsVal;
+    v = getVal('gs-app-theme'); if (v !== undefined) settings.appTheme = v;
+    v = getVal('gs-app-color'); if (v !== undefined) settings.appColor = v;
+    v = getVal('gs-app-sidebar'); if (v !== undefined) settings.appSidebar = v;
+    v = getVal('gs-app-compact'); if (v !== undefined) settings.appCompact = v;
+    v = getVal('gs-app-anims'); if (v !== undefined) settings.appAnims = v;
 
-    settings.secTimeout = getVal('gs-sec-timeout') || settings.secTimeout;
-    settings.secPwPolicy = getVal('gs-sec-pwpolicy') || settings.secPwPolicy;
-    var v2fa = getVal('gs-sec-2fa');
-    if (v2fa !== undefined) settings.sec2fa = v2fa;
-    var vLogin = getVal('gs-sec-loginnotif');
-    if (vLogin !== undefined) settings.secLoginNotif = vLogin;
-    var vTrust = getVal('gs-sec-devtrust');
-    if (vTrust !== undefined) settings.secDevTrust = vTrust;
+    v = getVal('gs-sec-timeout'); if (v !== undefined) settings.secTimeout = v;
+    v = getVal('gs-sec-pwpolicy'); if (v !== undefined) settings.secPwPolicy = v;
+    v = getVal('gs-sec-2fa'); if (v !== undefined) settings.sec2fa = v;
+    v = getVal('gs-sec-loginnotif'); if (v !== undefined) settings.secLoginNotif = v;
+    v = getVal('gs-sec-devtrust'); if (v !== undefined) settings.secDevTrust = v;
 
     saveSettings();
   }
@@ -209,10 +216,40 @@
       if (!file) return;
       var reader = new FileReader();
       reader.onload = function (ev) {
-        settings.coLogo = ev.target.result;
-        var prev = document.getElementById('co-logo-preview');
-        if (prev) prev.innerHTML = '<img src="' + ev.target.result + '" style="width:100%; height:100%; object-fit:cover; border-radius:16px;">';
-        saveSettings();
+        var img = new Image();
+        img.onload = function() {
+          var canvas = document.createElement('canvas');
+          var ctx = canvas.getContext('2d');
+          
+          var MAX_WIDTH = 256;
+          var MAX_HEIGHT = 256;
+          var width = img.width;
+          var height = img.height;
+          
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height = Math.round(height *= MAX_WIDTH / width);
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width = Math.round(width *= MAX_HEIGHT / height);
+              height = MAX_HEIGHT;
+            }
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          var dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          settings.coLogo = dataUrl;
+          
+          var prev = document.getElementById('co-logo-preview');
+          if (prev) prev.innerHTML = '<img src="' + dataUrl + '" style="width:100%; height:100%; object-fit:cover; border-radius:16px;">';
+          saveSettings();
+        };
+        img.src = ev.target.result;
       };
       reader.readAsDataURL(file);
     });

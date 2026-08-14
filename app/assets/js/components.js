@@ -12,10 +12,10 @@
   <div class="sidebar-top-content">
     <!-- Brand Header -->
     <div class="sidebar-header sidebar-brand">
-      <div class="sidebar-logo">V</div>
+      <div class="sidebar-logo" id="global-sidebar-logo">V</div>
       <div class="sidebar-title">
-        <span class="sidebar-name">VERDE OS</span>
-        <span class="sidebar-subtitle">MISSION CONTROL</span>
+        <span class="sidebar-name" id="global-sidebar-name">VERDE OS</span>
+        <span class="sidebar-subtitle" id="global-sidebar-subtitle">MISSION CONTROL</span>
       </div>
       <button class="sidebar-collapse-btn" id="sidebar-collapse-btn" title="Toggle Sidebar (Ctrl+B)">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -301,8 +301,42 @@
       if (topbarContainer && !topbarContainer.innerHTML.trim()) topbarContainer.innerHTML = TOPBAR_HTML;
       if (statusbarContainer && !statusbarContainer.innerHTML.trim()) statusbarContainer.innerHTML = STATUSBAR_HTML;
       if (overlaysContainer && !overlaysContainer.innerHTML.trim()) overlaysContainer.innerHTML = OVERLAYS_HTML;
+      
+      this.syncBranding();
+    },
+    syncBranding: function () {
+      try {
+        var s = localStorage.getItem('verde_admin_settings');
+        if (s) {
+          var settings = JSON.parse(s);
+          
+          var logoEl = document.getElementById('global-sidebar-logo');
+          if (logoEl) {
+            if (settings.coLogo) {
+              logoEl.innerHTML = '<img src="' + settings.coLogo + '" style="width:100%; height:100%; object-fit:cover; border-radius:8px;">';
+              logoEl.style.background = 'transparent';
+              logoEl.style.color = 'transparent';
+            } else {
+              logoEl.innerHTML = 'V';
+              logoEl.style.background = 'var(--primary)';
+              logoEl.style.color = '#fff';
+            }
+          }
+          
+          var nameEl = document.getElementById('global-sidebar-name');
+          if (nameEl && settings.coName) {
+            nameEl.textContent = settings.coName.toUpperCase();
+          }
+        }
+      } catch (e) {
+        console.error('Failed to sync global branding', e);
+      }
     }
   };
+
+  window.addEventListener('verde:company-updated', function() {
+    if (window.VERDE_COMPONENTS) window.VERDE_COMPONENTS.syncBranding();
+  });
 
   // Execute immediately to inject layout before first paint!
   window.VERDE_COMPONENTS.render();
