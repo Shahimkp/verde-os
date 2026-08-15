@@ -647,6 +647,40 @@
 
           <!-- ═══════════ TAB: SECURITY ═══════════ -->
           <div id="stab-security" class="set-tab-content" style="display:none; max-width:800px;">
+            
+            <!-- Personal Security -->
+            <div class="set-box" style="margin-bottom:24px;">
+              <div class="set-box-header"><div class="set-box-title">Personal Account Security</div></div>
+              <div style="padding:24px; display:flex; flex-direction:column; gap:20px;">
+                <div>
+                  <label style="font-size:13px; font-weight:700; color:var(--text-1); display:block; margin-bottom:8px;">Change Password</label>
+                  <div style="display:flex; flex-direction:column; gap:12px; max-width:300px;">
+                    <input type="email" id="personal-email" class="input" placeholder="Your Email Address" />
+                    
+                    <div style="position:relative;">
+                      <input type="password" id="personal-old-pw" class="input" placeholder="Current Password" style="width:100%; padding-right:40px;" />
+                      <div onclick="const p=document.getElementById('personal-old-pw'); p.type=p.type==='password'?'text':'password';" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; color:var(--text-3);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                      </div>
+                    </div>
+
+                    <div style="height:1px; background:var(--border); margin:4px 0;"></div>
+                    
+                    <div style="position:relative;">
+                      <input type="password" id="personal-new-pw" class="input" placeholder="New Password (min 8 chars)" style="width:100%; padding-right:40px;" />
+                      <div onclick="const p=document.getElementById('personal-new-pw'); p.type=p.type==='password'?'text':'password';" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; color:var(--text-3);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                      </div>
+                    </div>
+
+                    <button type="button" class="btn btn-primary" style="width:fit-content;" onclick="window.changePersonalPassword()">Update Password</button>
+                  </div>
+                  <div id="personal-pw-msg" style="font-size:12px; font-weight:600; margin-top:12px; display:none;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Workspace Security -->
             <div class="set-box" style="margin-bottom:24px;">
               <div class="set-box-header"><div class="set-box-title">Security Configuration</div></div>
               <div style="padding:24px; display:flex; flex-direction:column; gap:24px;">

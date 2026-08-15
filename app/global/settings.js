@@ -63,6 +63,69 @@
     if (window.VerdeToast) window.VerdeToast.show('Company Information saved successfully', 'success');
   };
 
+  window.changePersonalPassword = function() {
+    const emailInput = document.getElementById('personal-email');
+    const oldPwInput = document.getElementById('personal-old-pw');
+    const newPwInput = document.getElementById('personal-new-pw');
+    const msgBox = document.getElementById('personal-pw-msg');
+    
+    if (!emailInput || !oldPwInput || !newPwInput || !msgBox) return;
+    
+    const email = emailInput.value.trim();
+    const oldPw = oldPwInput.value;
+    const newPw = newPwInput.value;
+    
+    msgBox.style.display = 'none';
+
+    if (!email || !oldPw) {
+      msgBox.style.display = 'block';
+      msgBox.style.color = 'var(--danger)';
+      msgBox.textContent = 'Please enter your email and current password.';
+      return;
+    }
+    
+    if (newPw.length < 8) {
+      msgBox.style.display = 'block';
+      msgBox.style.color = 'var(--danger)';
+      msgBox.textContent = 'New password must be at least 8 characters long.';
+      return;
+    }
+    
+    if (!window.verdeAuth) {
+      msgBox.style.display = 'block';
+      msgBox.style.color = 'var(--danger)';
+      msgBox.textContent = 'Firebase Auth is not initialized.';
+      return;
+    }
+
+    msgBox.style.display = 'block';
+    msgBox.style.color = 'var(--text-2)';
+    msgBox.textContent = 'Authenticating...';
+
+    // First, authenticate the user to ensure a fresh session
+    window.verdeAuth.signInWithEmailAndPassword(email, oldPw)
+      .then((userCredential) => {
+        // Now update the password
+        msgBox.textContent = 'Updating password...';
+        return userCredential.user.updatePassword(newPw);
+      })
+      .then(() => {
+        msgBox.style.color = 'var(--success)';
+        msgBox.textContent = 'Password updated successfully!';
+        oldPwInput.value = '';
+        newPwInput.value = '';
+        if (window.VerdeToast) window.VerdeToast.success('Password updated successfully');
+      })
+      .catch((error) => {
+        msgBox.style.color = 'var(--danger)';
+        if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+           msgBox.textContent = 'Invalid email or current password.';
+        } else {
+           msgBox.textContent = 'Error: ' + error.message;
+        }
+      });
+  };
+
   // ── TAB SWITCHING ── //
   window.switchSetTab = function (tabId) {
     document.querySelectorAll('.set-tab').forEach(function (t) {

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -1458,32 +1458,82 @@
       }
 
       window.verdeAuth.signInWithEmailAndPassword(emailInput, pw)
-        .then(() => {
+        .then((userCredential) => {
+          let storedWorkspaces = [];
+          try {
+            const w = localStorage.getItem('verde_emp_workspaces');
+            if (w) storedWorkspaces = JSON.parse(w);
+          } catch(err) {}
+          
+          const matchedWs = storedWorkspaces.find(w => w.userId === emailInput);
+          
+          if (emailInput !== 'shahim.admin' && emailInput !== 'shahim.admin@verdelabs.com') {
+            if (!matchedWs) {
+              btn.classList.remove('loading');
+              btn.disabled = false;
+              document.getElementById('login-error-text').textContent = 'Workspace not found for this email.';
+              document.getElementById('login-error').classList.add('show');
+              // Optionally log them back out of Firebase since they don't have a workspace
+              window.verdeAuth.signOut();
+              return;
+            }
+
+            if (matchedWs.canLogin !== 'Yes') {
+              btn.classList.remove('loading');
+              btn.disabled = false;
+              document.getElementById('login-error-text').textContent = 'Login is disabled for this workspace.';
+              document.getElementById('login-error').classList.add('show');
+              window.verdeAuth.signOut();
+              return;
+            }
+
+            if (matchedWs.status !== 'Active') {
+              btn.classList.remove('loading');
+              btn.disabled = false;
+              document.getElementById('login-error-text').textContent = 'This workspace portal is disabled. Contact your administrator.';
+              document.getElementById('login-error').classList.add('show');
+              window.verdeAuth.signOut();
+              return;
+            }
+            
+            const sessionPayload = {
+              id: matchedWs.employeeId,
+              name: matchedWs.employeeName || matchedWs.name,
+              initials: (matchedWs.employeeName || matchedWs.name || 'UN').substring(0, 2).toUpperCase(),
+              role: matchedWs.role,
+              department: matchedWs.department,
+              workspaceId: matchedWs.id,
+              workspace: matchedWs.name,
+              userId: matchedWs.userId,
+              avatarUrl: '',
+              loggedIn: true,
+              lastActive: new Date().toISOString()
+            };
+            localStorage.setItem('verde_session', JSON.stringify(sessionPayload));
+          } else {
+             // Admin bypass
+             const sessionPayload = {
+              id: 'admin_001',
+              name: 'Shahim',
+              initials: 'SH',
+              role: 'SuperAdmin',
+              department: 'Management',
+              workspaceId: 'ws_admin',
+              workspace: 'VERDE LABS SuperAdmin',
+              userId: 'shahim.admin',
+              avatarUrl: '',
+              loggedIn: true,
+              lastActive: new Date().toISOString()
+            };
+            localStorage.setItem('verde_session', JSON.stringify(sessionPayload));
+          }
+
           btn.classList.remove('loading');
           showLoadingScreen();
         })
         .catch((error) => {
           btn.classList.remove('loading');
           btn.disabled = false;
-          document.getElementById('login-error-text').textContent = error.message;
-          document.getElementById('login-error').classList.add('show');
-        });
-    }
-
-
-
-      btn.disabled = true;
-      btn.innerHTML = '<span class="btn-spinner" style="display:block"></span>';
-
-      if (!window.verdeAuth) return;
-
-      window.verdeAuth.createUserWithEmailAndPassword(emailInput, pw)
-        .then(() => {
-          showLoadingScreen();
-        })
-        .catch((error) => {
-          btn.disabled = false;
-          btn.innerHTML = '<span class="btn-label">Create new Admin Account</span>';
           document.getElementById('login-error-text').textContent = error.message;
           document.getElementById('login-error').classList.add('show');
         });
